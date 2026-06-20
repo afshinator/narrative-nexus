@@ -1,8 +1,8 @@
-# Narrative Probe — Design Brief
+# Narrative Nexus — Design Brief
 
 ## Product Concept
 
-Narrative Probe is a dashboard that tracks how ~20 news outlets relate to *consensus reality* — the version of events most of the panel agrees on. It measures which outlets break stories early that later become the consensus view, which generate claims that never stick, and whose coverage most closely aligns with the mainstream account.
+Narrative Nexus is a dashboard that tracks how ~20 news outlets relate to *consensus reality* — the version of events most of the panel agrees on. It measures which outlets break stories early that later become the consensus view, which generate claims that never stick, and whose coverage most closely aligns with the mainstream account.
 
 **The system never says a source is "right" or "wrong."** It shows data across six independent metrics. The user makes their own judgment.
 
@@ -10,7 +10,7 @@ Narrative Probe is a dashboard that tracks how ~20 news outlets relate to *conse
 - **Primary:** Analysts (journalists, OSINT researchers, policy analysts) who need to understand the media landscape
 - **Secondary:** Hackathon judges / demo visitors who need to grasp the core idea in under 2 minutes
 
-**Key constraint:** "Narrative Probe tracks consensus reality, not truth." — this phrase appears in the footer of every page and as a qualifier on the coverage analysis report.
+**Key constraint:** "Narrative Nexus tracks consensus reality, not truth." — this phrase appears in the footer of every page and as a qualifier on the coverage analysis report.
 
 ## Current Mock Status
 
@@ -67,7 +67,7 @@ Narrative Probe is a dashboard that tracks how ~20 news outlets relate to *conse
 - 24px grid gap in 2-column layouts
 - No card borders — chart containers use subtle box-shadow instead
 - Table: header with background, row hover highlights in navy tint
-- Footer: centered, italic, "Narrative Probe tracks consensus reality, not truth."
+- Footer: centered, italic, "Narrative Nexus tracks consensus reality, not truth."
 
 ## Navigation Flow
 

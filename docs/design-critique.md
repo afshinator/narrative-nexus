@@ -1,4 +1,4 @@
-# Narrative Probe — Design Critique
+# Narrative Nexus — Design Critique
 
 **Date:** 2026-06-20
 **Target:** `docs/mocks/index.html`

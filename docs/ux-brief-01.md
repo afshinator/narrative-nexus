@@ -1,4 +1,4 @@
-# Narrative Probe — UX Brief
+# Narrative Nexus — UX Brief
 
 **Audience:** Hackathon judges, future users, and anyone who needs to understand what this system *feels like* to use.
 
@@ -6,7 +6,7 @@
 
 ## 1. The Core Idea
 
-Narrative Probe is a dashboard for the trustworthiness of news sources — not based on who you agree with, but on measurable behavior across hundreds of stories. It watches a curated panel of ~20 news outlets and tracks, for each one: Do they break stories early that later become the consensus view? Or do they generate a lot of noise that never pans out? Do they quietly edit articles without telling anyone? Do they issue formal corrections?
+Narrative Nexus is a dashboard for the trustworthiness of news sources — not based on who you agree with, but on measurable behavior across hundreds of stories. It watches a curated panel of ~20 news outlets and tracks, for each one: Do they break stories early that later become the consensus view? Or do they generate a lot of noise that never pans out? Do they quietly edit articles without telling anyone? Do they issue formal corrections?
 
 The most important rule of the interface: **the system never says a source is "right" or "wrong."** It shows you how a source's coverage relates to what the majority of the panel describes. The user makes their own judgment.
 
@@ -26,7 +26,7 @@ The most important rule of the interface: **the system never says a source is "r
 
 A 5-step walkthrough explains what the system does and, just as importantly, what it does NOT do. Key message delivered in the persistent footer on every page:
 
-> *"Narrative Probe tracks consensus reality, not truth."*
+> *"Narrative Nexus tracks consensus reality, not truth."*
 
 The walkthrough defines the five terms the system uses:
 
@@ -116,7 +116,7 @@ Settings page will have controls not only for font-size adjustments (that apply 
 
 The nav bar is sticky at the top and lists all 7 app sections plus a Settings link. Mocked pages are active links; non-mocked pages are muted with `(coming)` treatment but navigable to layout stubs.
 
-Every page carries the footer: *"Narrative Probe tracks consensus reality, not truth."* ,
+Every page carries the footer: *"Narrative Nexus tracks consensus reality, not truth."* ,
 if time permits we'll animate this going across the screen, ticker-tape effect.
 
 ---

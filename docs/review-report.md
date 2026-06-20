@@ -1,4 +1,4 @@
-# Narrative Probe — Design Review
+# Narrative Nexus — Design Review
 
 **Date:** 2026-06-20
 **Mode:** Review

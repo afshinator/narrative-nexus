@@ -13,4 +13,4 @@ See [ui-design/taste.md](ui-design/taste.md)
 - Be precise about which design tokens/patterns actually exist in the code vs extrapolated — verify across all pages before making assertions. Confidence: 0.70
 
 # docs
-- UX briefs and design docs should describe only the current design state — omit version history, 'previously' language, and references to discarded/earlier designs. Define base functionality, not specific decoration-level items (colors, fonts, etc.) that are easy to change. Confidence: 0.80
+- UX briefs and design docs should describe only the current design state — omit version history, 'previously' language, and references to discarded/earlier designs. Define base functionality, not specific decoration-level items (colors, fonts, etc.) that are easy to change. Confidence: 0.85

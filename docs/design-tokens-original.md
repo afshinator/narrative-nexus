@@ -1,4 +1,4 @@
-# Narrative Probe — Design Tokens
+# Narrative Nexus — Design Tokens
 
 Audited from `docs/mocks-v3/index.html`. Items under "Needs tokenization" are hardcoded values that appear in multiple places.
 
