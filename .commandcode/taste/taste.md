@@ -1,11 +1,16 @@
 # ui-design
-- Ensure text meets WCAG AA contrast ratio (4.5:1 for normal text, 3:1 for large text). Muted/subtitle text must clear the threshold, not just be \"readable.\" Confidence: 0.85
-- Include light/dark mode toggle in the UI. Confidence: 0.75
-- Landing/home page should include contextual introduction explaining what the app is and what it currently tracks. Confidence: 0.75
-- For dismissable intro/onboarding content, use an accordion-style expandable panel under the header (not a modal). Include a toggle button to roll/unroll it. Confidence: 0.85
-- Accordion panels should be dismissable purely via the roll/unroll toggle — no "don't show again" checkbox or localStorage persistence. Confidence: 0.70
-
+See [ui-design/taste.md](ui-design/taste.md)
 # ui-design
 See [ui-design/taste.md](ui-design/taste.md)
 # navigation
 - Drill-down/detail pages should not be top-level navigation items; only accessible via click-through from parent views (e.g., source profile → cluster, timeline → article). Confidence: 0.70
+
+# project-boundaries
+- Treat differently-named projects as distinct even when their files coexist in the same directory tree (e.g., design docs/mocks in `docs/` of another repo are a separate project, not part of the containing repo). Confidence: 0.90
+- When saving information to a project knowledge file, append new information rather than overwriting existing content. Confidence: 0.80
+
+# analysis-accuracy
+- Be precise about which design tokens/patterns actually exist in the code vs extrapolated — verify across all pages before making assertions. Confidence: 0.70
+
+# docs
+- UX briefs and design docs should describe only the current design state — omit version history, 'previously' language, and references to discarded/earlier designs. Define base functionality, not specific decoration-level items (colors, fonts, etc.) that are easy to change. Confidence: 0.80

@@ -3,120 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Narrative Alpha</title>
+<title>Narrative Probe</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ── Theme ───────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
   font-size: var(--fs-base, 16px);
+  line-height: 1.6;
 }
-.mono { font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; }
+.mono { font-family: 'JetBrains Mono', monospace; }
 
-/* ── Colors: Dark (default) ──────────────────────── */
+/* ── Colors: Light (default) ─────────────────────── */
 :root {
   --fs-base: 16px;
-  --bg: #0a0a0f;
-  --surface: #111118;
-  --surface2: #1a1a24;
-  --border: #2a2a3a;
-  --text: #e0e0e0;
-  --text-dim: #ccc;
-  --green: #00ff88;
-  --amber: #ffaa00;
-  --red: #ff4444;
-  --green-dim: rgba(0,255,136,.15);
-  --amber-dim: rgba(255,170,0,.15);
-  --red-dim: rgba(255,68,68,.15);
+  --bg: #f5f3ee;
+  --surface: #ffffff;
+  --surface2: #ece8e0;
+  --border: #d8d4cc;
+  --text: #1c1a16;
+  --text-dim: #7a7568;
+  --navy: #1e3a5f;
+  --navy-dim: rgba(30,58,95,.08);
+  --forest: #2d6a4f;
+  --forest-dim: rgba(45,106,79,.1);
+  --amber: #b8860b;
+  --amber-dim: rgba(184,134,11,.1);
+  --red: #b91c1c;
+  --red-dim: rgba(185,28,28,.1);
+  --accent: var(--navy);
+  --badge-eb: #1e3a5f;
+  --badge-ng: #b91c1c;
+  --badge-sa: #0f766e;
+  --badge-cf: #64748b;
+  --chart-grid: rgba(0,0,0,.06);
+  --chart-line-positive: #2d6a4f;
+  --chart-line-prior: #555;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-pill: 16px;
+  --radius-full: 50%;
+  --shadow-card: 0 1px 3px rgba(0,0,0,.06);
+  --shadow-card-strong: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --font-heading: 'DM Serif Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --transition-fast: .12s;
+  --transition-base: .15s;
+  --transition-accordion: .3s ease;
 }
 
-/* ── Colors: Light ───────────────────────────────── */
-body.light {
-  --bg: #f4f4ee;
-  --surface: #ffffff;
-  --surface2: #eaeae4;
-  --border: #d4d4ce;
-  --text: #1a1a1a;
-  --text-dim: #666;
-  --green-dim: rgba(0,180,100,.12);
-  --amber-dim: rgba(200,130,0,.12);
-  --red-dim: rgba(200,50,50,.12);
+/* ── Colors: Dark ────────────────────────────────── */
+body.dark {
+  --bg: #0c0b12;
+  --surface: #14131d;
+  --surface2: #1e1c2e;
+  --border: #2a2840;
+  --text: #e6e4f0;
+  --text-dim: #8a86a0;
+  --navy: #60a5fa;
+  --navy-dim: rgba(59,130,246,.12);
+  --forest: #34d399;
+  --forest-dim: rgba(52,211,153,.1);
+  --amber: #fbbf24;
+  --amber-dim: rgba(251,191,36,.1);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,.12);
+  --accent: var(--navy);
+  --badge-eb: #60a5fa;
+  --badge-ng: #f87171;
+  --badge-sa: #34d399;
+  --badge-cf: #94a3b8;
+  --chart-grid: rgba(255,255,255,.08);
+  --chart-line-positive: #34d399;
+  --chart-line-prior: #8a86a0;
 }
-body.light .intro-text strong { color: #000; }
-body.light .intro-panel { border-color: #c8c8c2; }
-.green  { color: var(--green); }
+body.dark .intro-text strong { color: var(--text); }
+body.dark .intro-panel { border-color: #2a2840; }
+.navy   { color: var(--navy); }
+.forest  { color: var(--forest); }
 .amber  { color: var(--amber); }
 .red    { color: var(--red); }
-.bg-green  { background: var(--green-dim); }
+.bg-navy   { background: var(--navy-dim); }
+.bg-forest  { background: var(--forest-dim); }
 .bg-amber  { background: var(--amber-dim); }
 .bg-red    { background: var(--red-dim); }
 
 /* ── Layout ──────────────────────────────────────── */
 .page { display: none; padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
 .page.active { display: block; }
-h1 { font-size: 1.25rem; color: #fff; margin-bottom: 4px; }
-h2 { font-size: 1rem; color: #eee; margin-bottom: 16px; }
-.subtitle { color: var(--text-dim); font-size: .85rem; margin-bottom: 24px; line-height: 1.5; }
+h1 { font-size: 1.5rem; font-family: 'DM Serif Display', serif; color: var(--text); margin-bottom: 4px; font-weight: 400; }
+h2 { font-size: 1.1rem; font-family: 'DM Serif Display', serif; color: var(--text); margin-bottom: 16px; font-weight: 400; }
+.subtitle { color: var(--text-dim); font-size: .9rem; margin-bottom: 24px; line-height: 1.6; }
 
 /* ── Nav Bar ─────────────────────────────────────── */
 .nav {
-  display: flex; gap: 2px; background: var(--surface); padding: 4px 24px 0;
+  display: flex; gap: 2px; background: var(--surface); padding: 0 24px;
   border-bottom: 1px solid var(--border); align-items: stretch;
   position: sticky; top: 0; z-index: 100;
+  height: 52px;
 }
 .nav a {
-  padding: 10px 16px; font-size: .8rem; color: var(--text-dim); text-decoration: none;
+  padding: 0 16px; font-size: .85rem; color: var(--text-dim); text-decoration: none;
   border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap;
+  display: flex; align-items: center; transition: color .15s, border-color .15s;
 }
-.nav a:hover { color: #aaa; }
-.nav a.active { color: var(--green); border-bottom-color: var(--green); }
+.nav a:hover { color: var(--navy); }
+.nav a.active { color: var(--navy); border-bottom-color: var(--navy); font-weight: 500; }
 .nav a.coming { color: #444; cursor: default; font-style: italic; }
 .nav a.coming:hover { color: #444; }
 .nav .spacer { flex: 1; }
-.nav .brand { padding: 10px 16px 10px 0; font-weight: 600; color: #fff; font-size: .85rem; }
+.nav .brand { padding: 12px 20px 12px 0; font-weight: 400; color: var(--accent); font-size: 1.1rem; font-family: 'DM Serif Display', serif; }
 
 /* ── Table ───────────────────────────────────────── */
-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
-th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
-th { color: var(--text-dim); font-weight: 500; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; cursor: pointer; user-select: none; }
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+th { color: var(--text-dim); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; cursor: pointer; user-select: none; background: var(--surface); }
 th:hover { color: #fff; }
 th .arrow { margin-left: 4px; }
 td { font-family: 'JetBrains Mono', monospace; }
-td.name { font-family: 'Inter', sans-serif; font-weight: 500; color: #ddd; cursor: pointer; }
-td.name:hover { color: var(--green); }
+tbody tr { transition: background .12s; }
+tbody tr:hover { background: var(--navy-dim); }
+td.name { font-family: 'DM Sans', sans-serif; font-weight: 500; color: var(--text); cursor: pointer; }
+td.name:hover { color: var(--navy); }
 .metric-cell { padding: 2px 8px; border-radius: 3px; font-size: .8rem; display: inline-block; }
 
 /* ── Scatter ─────────────────────────────────────── */
-.chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 24px; }
+.chart-container { background: var(--surface); border-radius: 8px; padding: 20px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04); }
 .chart-container canvas { max-height: 420px; }
 
 /* ── Archetype pills ────────────────────────────── */
 .pills { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.pill { padding: 4px 12px; border-radius: 12px; font-size: .8rem; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-dim); }
-.pill.active { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+.pill { padding: 4px 14px; border-radius: 16px; font-size: .8rem; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-dim); transition: all .15s; }
+.pill:hover { border-color: var(--navy); color: var(--navy); }
+.pill.active { border-color: var(--navy); color: var(--navy); background: var(--navy-dim); }
 
 /* ── Source Profile ──────────────────────────────── */
-.profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+.profile-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .profile-header h1 { margin-bottom: 0; }
-.badge { padding: 2px 10px; border-radius: 4px; font-size: .75rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
-.badge-eb { background: rgba(0,255,136,.15); color: var(--green); }
-.badge-ng { background: rgba(255,68,68,.15); color: var(--red); }
-.badge-sa { background: rgba(0,200,255,.15); color: #00c8ff; }
-.badge-cf { background: rgba(255,170,0,.15); color: var(--amber); }
-.stat-row { display: flex; gap: 32px; margin-bottom: 24px; }
+.badge { padding: 3px 12px; border-radius: 4px; font-size: .75rem; font-weight: 600; letter-spacing: .02em; }
+.badge-eb { background: color-mix(in srgb, var(--badge-eb) 10%, transparent); color: var(--badge-eb); }
+.badge-ng { background: var(--red-dim); color: var(--red); }
+.badge-sa { background: color-mix(in srgb, var(--badge-sa) 10%, transparent); color: var(--badge-sa); }
+.badge-cf { background: color-mix(in srgb, var(--badge-cf) 10%, transparent); color: var(--badge-cf); }
+.stat-row { display: flex; gap: 40px; margin-bottom: 24px; }
 .stat-item { font-size: .75rem; color: var(--text-dim); }
-.stat-item .value { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #fff; display: block; }
-.grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.stat-item .value { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; color: var(--text); display: block; }
+.grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
 
 /* ── Waterfall ───────────────────────────────────── */
 .waterfall { display: flex; flex-direction: column; gap: 4px; }
 .wf-bar { display: flex; align-items: center; gap: 8px; }
 .wf-bar .label { font-size: .75rem; color: var(--text-dim); width: 140px; text-align: right; flex-shrink: 0; }
-.wf-bar .track { flex: 1; height: 20px; background: var(--surface2); border-radius: 3px; overflow: hidden; display: flex; }
+.wf-bar .track { flex: 1; height: 20px; background: var(--border); border-radius: 3px; overflow: hidden; display: flex; }
 .wf-bar .track .seg { height: 100%; }
 .wf-bar .count { font-family: 'JetBrains Mono', monospace; font-size: .8rem; width: 30px; }
 .summary-row { display: flex; gap: 16px; margin-top: 12px; }
@@ -129,21 +176,21 @@ td.name:hover { color: var(--green); }
 .edit-log .date { font-family: 'JetBrains Mono', monospace; font-size: .75rem; width: 80px; color: var(--text-dim); }
 .edit-log .article { flex: 1; }
 .edit-log .actions { display: flex; gap: 4px; }
-.edit-log button { padding: 2px 8px; border-radius: 3px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); font-size: .7rem; cursor: pointer; }
-.edit-log button:hover { border-color: var(--green); color: var(--green); }
+.edit-log button { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); font-size: .75rem; cursor: pointer; transition: all .12s; }
+.edit-log button:hover { border-color: var(--navy); color: var(--navy); background: var(--navy-dim); }
 
 /* ── Cluster Report ──────────────────────────────── */
-.zone { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 20px; margin-bottom: 20px; }
-.zone h3 { font-size: .85rem; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.zone { background: var(--surface); border-radius: 8px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.zone h3 { font-size: .9rem; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .zone h3 .tag { font-size: .7rem; padding: 1px 8px; border-radius: 3px; background: var(--surface2); color: var(--text-dim); font-weight: 400; }
 .zone p { font-size: .85rem; line-height: 1.6; color: #aaa; }
 .zone .qualifier { font-size: .75rem; color: var(--text-dim); font-style: italic; margin-top: 8px; }
-.omission-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; width: 80px; }
+.omission-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; width: 80px; }
 .omission-bar .fill { height: 100%; border-radius: 3px; }
-.warning-banner { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 4px; font-size: .8rem; margin-bottom: 12px; }
+.warning-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 6px; font-size: .85rem; margin-bottom: 12px; }
 .warning-banner.amber { background: var(--amber-dim); border-left: 3px solid var(--amber); color: var(--amber); }
 .warning-banner.red { background: var(--red-dim); border-left: 3px solid var(--red); color: var(--red); }
-.outlier-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin-bottom: 8px; }
+.outlier-card { background: var(--surface2); border-radius: 6px; padding: 14px; margin-bottom: 8px; }
 .outlier-card .meta { font-size: .75rem; color: var(--text-dim); margin-top: 6px; }
 
 /* ── Timeline ────────────────────────────────────── */
@@ -155,8 +202,8 @@ td.name:hover { color: var(--green); }
 .tl-dot { position: absolute; width: 10px; height: 10px; border-radius: 50%; top: 50%; transform: translate(-50%,-50%); cursor: pointer; }
 .tl-dot:hover { box-shadow: 0 0 8px currentColor; z-index: 10; }
 .tl-diamond { position: absolute; width: 10px; height: 10px; top: 50%; transform: translate(-50%,-50%) rotate(45deg); cursor: pointer; border: 2px solid var(--amber); }
-.tl-absorption { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--green); opacity: .5; }
-.tl-absorption::after { content: 'Consensus Absorption — Day 14'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: .75rem; color: var(--green); white-space: nowrap; }
+.tl-absorption { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--forest); opacity: .5; }
+.tl-absorption::after { content: 'Consensus Absorption — Day 14'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: .75rem; color: var(--forest); white-space: nowrap; }
 .tl-header { display: flex; height: 24px; margin-bottom: 8px; }
 .tl-header .tl-label { height: 100%; }
 .tl-header .tl-track { position: relative; }
@@ -165,7 +212,7 @@ td.name:hover { color: var(--green); }
 .tl-dot:hover + .tl-tooltip, .tl-diamond:hover + .tl-tooltip { display: block; }
 
 /* ── Footer ──────────────────────────────────────── */
-.footer { text-align: center; padding: 32px; color: var(--text-dim); font-size: .8rem; font-style: italic; border-top: 1px solid var(--border); margin-top: 40px; }
+.footer { text-align: center; padding: 40px; color: var(--text-dim); font-size: .85rem; font-style: italic; border-top: 1px solid var(--border); margin-top: 40px; }
 
 /* ── Nav extras ──────────────────────────────────── */
 .nav-divider { width: 1px; background: var(--border); margin: 8px 8px; }
@@ -179,8 +226,8 @@ td.name:hover { color: var(--green); }
 /* ── Intro accordion panel ──────────────────────── */
 .intro-panel {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
   margin-bottom: 20px;
   overflow: hidden;
   transition: all .3s ease;
@@ -207,8 +254,8 @@ td.name:hover { color: var(--green); }
 }
 .intro-text p { margin-bottom: 12px; }
 .intro-text p:last-child { margin-bottom: 0; }
-.intro-text strong { color: #fff; }
-.intro-text em { color: var(--green); font-style: normal; }
+.intro-text strong { color: var(--text); }
+.intro-text em { color: var(--navy); font-style: italic; }
 .intro-actions {
   display: flex;
   flex-direction: column;
@@ -226,7 +273,7 @@ td.name:hover { color: var(--green); }
   cursor: pointer;
   font-size: .8rem;
 }
-.intro-collapse-btn:hover { border-color: var(--green); color: var(--green); }
+.intro-collapse-btn:hover { border-color: var(--navy); color: var(--navy); }
 .intro-reopen {
   display: none;
   width: 100%;
@@ -241,7 +288,7 @@ td.name:hover { color: var(--green); }
   margin-bottom: 20px;
   transition: all .2s;
 }
-.intro-reopen:hover { border-color: var(--green); color: var(--green); }
+.intro-reopen:hover { border-color: var(--navy); color: var(--navy); }
 
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 900px) {
@@ -256,22 +303,22 @@ td.name:hover { color: var(--green); }
 
 <!-- ── Navigation ──────────────────────────── -->
 <nav class="nav">
-  <span class="brand">Narrative Alpha</span>
-  <a class="active" data-page="leaderboard">Leaderboard</a>
+  <span class="brand">Narrative Probe</span>
+  <a class="active" data-page="leaderboard">Sources</a>
   <a data-page="source-profile">Source Profile</a>
-  <a class="coming" title="Mock coming in next iteration">Pipeline Flow</a>
-  <a class="coming" title="Mock coming in next iteration">Ad-Hoc</a>
-  <a class="coming" title="Mock coming in next iteration">Panel</a>
+  <a style="color:#444;font-style:italic" data-page="pipeline-flow">Pipeline Flow</a>
+  <a style="color:#444;font-style:italic" data-page="ad-hoc">Ad-Hoc</a>
+  <a style="color:#444;font-style:italic" data-page="panel">Panel</a>
   <span class="spacer"></span>
-  <a title="Help / Onboarding walkthrough" style="color:#444;font-style:italic">Onboarding</a>
+  <a style="color:#444;font-style:italic" data-page="onboarding">Onboarding</a>
   <span class="nav-divider"></span>
-  <label class="theme-toggle" title="Toggle light/dark mode">
+  <label class="theme-toggle" title="Toggle light/dark theme">
     <input type="checkbox" id="themeCheckbox">
-    <span class="toggle-track">☾</span>
+    <span class="toggle-track" style="font-size:1.1rem">☀</span>
   </label>
   <label class="font-slider" title="Font size">
     <span style="font-size:.6rem;color:var(--text-dim)">A</span>
-    <input type="range" id="fontSlider" min="12" max="22" value="16" style="width:50px;accent-color:var(--green);background:transparent">
+    <input type="range" id="fontSlider" min="12" max="22" value="16" style="width:50px;accent-color:var(--navy);background:transparent">
     <span style="font-size:.8rem;color:var(--text-dim)">A</span>
   </label>
 </nav>
@@ -280,14 +327,14 @@ td.name:hover { color: var(--green); }
 <!-- PAGE 1: LEADERBOARD                       -->
 <!-- ══════════════════════════════════════════ -->
 <section class="page active" id="page-leaderboard">
-  <h1>Leaderboard</h1>
-  <p class="subtitle">Click any source name or scatter dot to explore their profile.</p>
+  <h1>Sources</h1>
+  <p class="subtitle">Click any source name or scatter dot to explore their profile. <a style="color:#555;cursor:pointer;text-decoration:none;border-bottom:1px dashed #444" onclick="showPage('panel')">Manage your panel →</a> <span style="color:#555;font-size:.75rem">(stub)</span></p>
 
   <!-- Intro accordion panel -->
   <div class="intro-panel" id="introPanel">
     <div class="intro-body" id="introBody">
       <div class="intro-text">
-        <p><strong>Narrative Alpha</strong> tracks how news sources relate to <em>consensus reality</em> — the version of events most of the panel agrees on. It measures which outlets break stories early that later become the consensus view, which generate claims that never stick, and whose coverage most closely aligns with the mainstream account.</p>
+        <p><strong>Narrative Probe</strong> tracks how news sources relate to <em>consensus reality</em> — the version of events most of the panel agrees on. It measures which outlets break stories early that later become the consensus view, which generate claims that never stick, and whose coverage most closely aligns with the mainstream account.</p>
         <p>The system <strong>never says a source is "right" or "wrong."</strong> It shows you the data across six independent metrics. You decide which sources to trust.</p>
       </div>
       <div class="intro-actions">
@@ -295,14 +342,7 @@ td.name:hover { color: var(--green); }
       </div>
     </div>
   </div>
-  <button class="intro-reopen" id="introReopenBtn" title="What is Narrative Alpha?">▲ What is Narrative Alpha?</button>
-
-  <!-- Scatter plot -->
-  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-    <span style="font-size:.85rem;color:var(--text-dim);line-height:1.6">Each dot is one source.<br><strong style="color:var(--text)">Y axis (Validation Rate):</strong> Of the claims a source originates first, what fraction were later corroborated by other independent sources? Higher = other outlets independently confirmed their scoops.<br><strong style="color:var(--text)">X axis (Origination Rate):</strong> How many unique claims does this source publish that no other outlet is simultaneously reporting? Higher = more original reporting.</span>
-    <span style="font-size:.7rem;color:#555;font-style:italic">Click any dot to view that source</span>
-  </div>
-  <div class="chart-container" style="margin-bottom:40px"><canvas id="scatterChart"></canvas></div>
+  <button class="intro-reopen" id="introReopenBtn" title="What is Narrative Probe?">▲ What is Narrative Probe?</button>
 
   <!-- Archetype filter pills -->
   <div class="pills" style="margin-bottom:28px">
@@ -331,6 +371,13 @@ td.name:hover { color: var(--green); }
     <tbody id="table-body"></tbody>
   </table>
   </div>
+
+  <!-- Scatter plot -->
+  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+    <span style="font-size:.85rem;color:var(--text-dim);line-height:1.6">Each dot is one source.<br><strong style="color:var(--text)">Y axis (Validation Rate):</strong> Of the claims a source originates first, what fraction were later corroborated by other independent sources? Higher = other outlets independently confirmed their scoops.<br><strong style="color:var(--text)">X axis (Origination Rate):</strong> How many unique claims does this source publish that no other outlet is simultaneously reporting? Higher = more original reporting.</span>
+    <span style="font-size:.7rem;color:#555;font-style:italic">Click any dot to view that source</span>
+  </div>
+  <div class="chart-container" style="margin-bottom:40px"><canvas id="scatterChart"></canvas></div>
 </section>
 
 <!-- ══════════════════════════════════════════ -->
@@ -338,9 +385,11 @@ td.name:hover { color: var(--green); }
 <!-- ══════════════════════════════════════════ -->
 <section class="page" id="page-source-profile">
   <div class="profile-header">
-    <a style="color:var(--text-dim);font-size:.8rem;cursor:pointer;text-decoration:none" onclick="showPage('leaderboard')">← Back to Leaderboard</a>
+    <a style="color:var(--text-dim);font-size:.8rem;cursor:pointer;text-decoration:none" onclick="showPage('leaderboard')">← Back to Sources</a>
     <h1 id="sp-name">Reuters</h1>
     <span class="badge badge-eb" id="sp-badge">Early Breaker</span>
+    <span style="flex:1"></span>
+    <a style="color:#555;font-size:.8rem;cursor:pointer;text-decoration:none;border:1px solid #333;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center" onclick="showPage('onboarding')" title="What is Narrative Probe?">?</a>
     <span class="stat-item" style="font-size:.75rem;color:var(--text-dim)">United Kingdom · Wire Service</span>
   </div>
 
@@ -363,7 +412,7 @@ td.name:hover { color: var(--green); }
       <h2>Outlier Claim Outcomes</h2>
       <div class="waterfall" id="waterfall"></div>
       <div class="summary-row">
-        <span><span class="summary-dot" style="background:var(--green)"></span> Consensus-absorbed</span>
+        <span><span class="summary-dot" style="background:var(--forest)"></span> Consensus-absorbed</span>
         <span><span class="summary-dot" style="background:#00c8ff"></span> Cross-source convergent</span>
         <span><span class="summary-dot" style="background:var(--amber)"></span> Self-consistent</span>
         <span><span class="summary-dot" style="background:var(--red)"></span> Unresolved</span>
@@ -418,7 +467,7 @@ td.name:hover { color: var(--green); }
     <h3>Zone 1<span class="tag">What the consensus says</span></h3>
     <p>Based on what the majority of the panel described, the Nakatomi Space Treaty negotiations opened on June 3 with competing frameworks for orbital resource rights. The Nakatomi delegation proposed a "first-use" allocation model granting priority claims to nations with existing orbital infrastructure. A coalition of 14 signatories countered with an "equitable access" framework requiring phased redistribution of orbital slots. By late July, a compromise emerged: a 5-year grandfather period followed by progressive reallocation. The treaty was provisionally adopted on August 28, pending ratification by the Nakatomi Federal Council.</p>
     <p style="margin-top:12px">A minority of sources (3 of 12) described the negotiations as collapsing on July 12, citing a diplomatic walkout by the Nakatomi delegation. This account was not reflected in the majority narrative after July 15.</p>
-    <p class="qualifier">Narrative Alpha tracks consensus reality, not truth. This summary reflects the version of events described by the majority of the panel (≥9 of 12 sources).</p>
+    <p class="qualifier">Narrative Probe tracks consensus reality, not truth. This summary reflects the version of events described by the majority of the panel (≥9 of 12 sources).</p>
   </div>
 
   <!-- Zone 2 -->
@@ -428,16 +477,16 @@ td.name:hover { color: var(--green); }
     <table>
       <thead><tr><th>Source</th><th>Articles</th><th>Omission Index</th><th>Framing Volatility</th><th>Notable Divergence</th></tr></thead>
       <tbody>
-        <tr><td class="name">Reuters</td><td>8</td><td><div class="omission-bar"><div class="fill bg-green" style="width:8%"></div></div> 8%</td><td><span class="green">Low</span></td><td>—</td></tr>
-        <tr><td class="name">AP News</td><td>7</td><td><div class="omission-bar"><div class="fill bg-green" style="width:10%"></div></div> 10%</td><td><span class="green">Low</span></td><td>—</td></tr>
-        <tr><td class="name">Bloomberg</td><td>6</td><td><div class="omission-bar"><div class="fill bg-green" style="width:14%"></div></div> 14%</td><td><span class="green">Low</span></td><td>—</td></tr>
+        <tr><td class="name">Reuters</td><td>8</td><td><div class="omission-bar"><div class="fill bg-teal" style="width:8%"></div></div> 8%</td><td><span class="teal">Low</span></td><td>—</td></tr>
+        <tr><td class="name">AP News</td><td>7</td><td><div class="omission-bar"><div class="fill bg-teal" style="width:10%"></div></div> 10%</td><td><span class="teal">Low</span></td><td>—</td></tr>
+        <tr><td class="name">Bloomberg</td><td>6</td><td><div class="omission-bar"><div class="fill bg-teal" style="width:14%"></div></div> 14%</td><td><span class="teal">Low</span></td><td>—</td></tr>
         <tr><td class="name">The Guardian</td><td>4</td><td><div class="omission-bar"><div class="fill bg-amber" style="width:32%"></div></div> 32%</td><td><span class="amber">Moderate</span></td><td>Focused on human rights implications of orbital slot allocation; omitted economic provisions</td></tr>
         <tr><td class="name">Fox News</td><td>5</td><td><div class="omission-bar"><div class="fill bg-red" style="width:58%"></div></div> 58%</td><td><span class="red">High</span></td><td>Framed treaty as "UN power grab"; omitted Nakatomi compromise proposal</td></tr>
         <tr><td class="name">Breitbart</td><td>3</td><td><div class="omission-bar"><div class="fill bg-red" style="width:72%"></div></div> 72%</td><td><span class="red">High</span></td><td>Described treaty as "collapsed" on July 12 — contradicted by consensus</td></tr>
         <tr><td class="name">Daily Mail</td><td>3</td><td><div class="omission-bar"><div class="fill bg-amber" style="width:44%"></div></div> 44%</td><td><span class="amber">Moderate</span></td><td>Coverage focused on Nakatomi "concessions" angle</td></tr>
-        <tr><td class="name">Al Jazeera</td><td>5</td><td><div class="omission-bar"><div class="fill bg-green" style="width:18%"></div></div> 18%</td><td><span class="green">Low</span></td><td>Emphasized Global South coalition role</td></tr>
-        <tr><td class="name">The Economist</td><td>4</td><td><div class="omission-bar"><div class="fill bg-green" style="width:12%"></div></div> 12%</td><td><span class="green">Low</span></td><td>—</td></tr>
-        <tr><td class="name">The NYT</td><td>6</td><td><div class="omission-bar"><div class="fill bg-green" style="width:16%"></div></div> 16%</td><td><span class="green">Low</span></td><td>—</td></tr>
+        <tr><td class="name">Al Jazeera</td><td>5</td><td><div class="omission-bar"><div class="fill bg-teal" style="width:18%"></div></div> 18%</td><td><span class="teal">Low</span></td><td>Emphasized Global South coalition role</td></tr>
+        <tr><td class="name">The Economist</td><td>4</td><td><div class="omission-bar"><div class="fill bg-teal" style="width:12%"></div></div> 12%</td><td><span class="teal">Low</span></td><td>—</td></tr>
+        <tr><td class="name">The NYT</td><td>6</td><td><div class="omission-bar"><div class="fill bg-teal" style="width:16%"></div></div> 16%</td><td><span class="teal">Low</span></td><td>—</td></tr>
         <tr><td class="name">CNN</td><td>4</td><td><div class="omission-bar"><div class="fill bg-amber" style="width:28%"></div></div> 28%</td><td><span class="amber">Moderate</span></td><td>Split focus between treaty and domestic political reactions</td></tr>
         <tr><td class="name" style="color:var(--text-dim)">Newsmax <span style="font-size:.7rem;background:var(--surface2);padding:1px 6px;border-radius:3px;margin-left:4px">BODY_UNAVAILABLE</span></td><td>2</td><td colspan="3" style="color:var(--text-dim);font-size:.75rem">Article bodies could not be retrieved — metadata only</td></tr>
       </tbody>
@@ -477,9 +526,12 @@ td.name:hover { color: var(--green); }
     </div>
 
     <p style="margin-top:16px;font-size:.8rem;color:var(--text-dim)">
-    <a style="color:var(--green);cursor:pointer" onclick="showPage('timeline')">→ View timeline of this cluster</a>
+    <a style="color:var(--navy);cursor:pointer" onclick="showPage('timeline')">→ View timeline of this cluster</a>
     &nbsp;·&nbsp;
-    <span style="color:#444;cursor:default;font-style:italic">→ Run ad-hoc investigation on this topic (coming)</span>
+    <a style="color:var(--text-dim);cursor:pointer;text-decoration:none;border-bottom:1px dashed var(--border)" onclick="showPage('pipeline-flow')">→ See how this cluster flowed through the pipeline</a> <span style="color:#555;font-size:.75rem">(stub)</span>
+    <br>
+    &nbsp;·&nbsp;
+    <a style="color:var(--text-dim);cursor:pointer;text-decoration:none;border-bottom:1px dashed var(--border)" onclick="showPage('ad-hoc')">→ Run ad-hoc investigation on this topic</a> <span style="color:#555;font-size:.75rem">(stub)</span>
     </p>
   </div>
 </section>
@@ -499,14 +551,82 @@ td.name:hover { color: var(--green); }
   </div>
 
   <div style="margin-top:16px;display:flex;gap:24px;font-size:.75rem;color:var(--text-dim)">
-    <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);margin-right:4px"></span> Article</span>
+    <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--forest);margin-right:4px"></span> Article</span>
     <span><span style="display:inline-block;width:10px;height:10px;border:2px solid var(--amber);transform:rotate(45deg);margin-right:4px"></span> Outlier claim</span>
-    <span><span style="display:inline-block;width:2px;height:12px;background:var(--green);opacity:.5;vertical-align:middle;margin-right:4px"></span> Consensus absorption</span>
+    <span><span style="display:inline-block;width:2px;height:12px;background:var(--forest);opacity:.5;vertical-align:middle;margin-right:4px"></span> Consensus absorption</span>
   </div>
 </section>
 
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 5: PIPELINE FLOW (stub)              -->
+<!-- ══════════════════════════════════════════ -->
+<section class="page" id="page-pipeline-flow">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+    <h1 style="margin-bottom:0">Pipeline Flow</h1>
+  </div>
+  <p class="subtitle">Animated diagram of the live data pipeline — RSS feeds → clustering → neutralization → graph extraction → reputation ledger.</p>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:60px 20px;text-align:center;margin-bottom:20px">
+    <p style="font-size:1rem;color:var(--text-dim);margin-bottom:8px">Contents TBD</p>
+    <p style="font-size:.8rem;color:#555">Each stage node shows status and throughput. Replay mode lets you watch a past cluster's journey through the pipeline.</p>
+  </div>
+  <p style="font-size:.8rem;color:var(--text-dim)">
+    <a style="color:var(--text-dim);cursor:pointer;text-decoration:none" onclick="showPage('cluster-report')">← Back to Coverage Analysis</a>
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 6: AD-HOC (stub)                     -->
+<!-- ══════════════════════════════════════════ -->
+<section class="page" id="page-ad-hoc">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+    <h1 style="margin-bottom:0">Ad-Hoc Investigation</h1>
+  </div>
+  <p class="subtitle">Enter a search query and get a forensic report from the panel's coverage — a current-moment snapshot.</p>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:60px 20px;text-align:center;margin-bottom:20px">
+    <p style="font-size:1rem;color:var(--text-dim);margin-bottom:8px">Contents TBD</p>
+    <p style="font-size:.8rem;color:#555">Search bar, result list, and a forensic report view that recycles the Coverage Analysis layout. <em style="color:var(--amber)">Claim resolution states not available for ad-hoc reports.</em></p>
+  </div>
+  <p style="font-size:.8rem;color:var(--text-dim)">
+    <a style="color:var(--text-dim);cursor:pointer;text-decoration:none" onclick="showPage('cluster-report')">← Back to Coverage Analysis</a>
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 7: PANEL (stub)                      -->
+<!-- ══════════════════════════════════════════ -->
+<section class="page" id="page-panel">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+    <h1 style="margin-bottom:0">Panel Management</h1>
+  </div>
+  <p class="subtitle">Activate or deactivate sources from the pre-vetted catalog of 18 outlets.</p>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:60px 20px;text-align:center;margin-bottom:20px">
+    <p style="font-size:1rem;color:var(--text-dim);margin-bottom:8px">Contents TBD</p>
+    <p style="font-size:.8rem;color:#555">Source catalog with activate/deactivate toggles, panel size warning (&lt;12), and category balance indicator. Archived sources retain all history on reactivation.</p>
+  </div>
+  <p style="font-size:.8rem;color:var(--text-dim)">
+    <a style="color:var(--text-dim);cursor:pointer;text-decoration:none" onclick="showPage('leaderboard')">← Back to Sources</a>
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PAGE 8: ONBOARDING (stub)                 -->
+<!-- ══════════════════════════════════════════ -->
+<section class="page" id="page-onboarding">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
+    <h1 style="margin-bottom:0">Onboarding</h1>
+  </div>
+  <p class="subtitle">What is Narrative Probe, and what does it <em>not</em> do?</p>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:60px 20px;text-align:center;margin-bottom:20px">
+    <p style="font-size:1rem;color:var(--text-dim);margin-bottom:8px">Contents TBD</p>
+    <p style="font-size:.8rem;color:#555">5-step walkthrough explaining key terms: consensus reality, consensus-absorbed, cross-source convergent, self-consistent, and unresolved.</p>
+  </div>
+  <p style="font-size:.8rem;color:var(--text-dim)">
+    <a style="color:var(--text-dim);cursor:pointer;text-decoration:none" onclick="showPage('leaderboard')">← Back to Sources</a>
+  </p>
+</section>
+
 <!-- ── Footer ──────────────────────────────── -->
-<div class="footer">Narrative Alpha tracks consensus reality, not truth.</div>
+<div class="footer">Narrative Probe tracks consensus reality, not truth.</div>
 
 <script>
 /* ═══════════════════════════════════════════════ *
@@ -515,7 +635,7 @@ td.name:hover { color: var(--green); }
 
 const ARCHETYPES = ['Early Breaker', 'Noise Generator', 'Selective but Accurate', 'Consensus Follower'];
 const ARCH_CLASSES = { 'Early Breaker': 'badge-eb', 'Noise Generator': 'badge-ng', 'Selective but Accurate': 'badge-sa', 'Consensus Follower': 'badge-cf' };
-const ARCH_COLORS = { 'Early Breaker': '#00ff88', 'Noise Generator': '#ff4444', 'Selective but Accurate': '#00c8ff', 'Consensus Follower': '#ffaa00' };
+const ARCH_COLORS = { 'Early Breaker': '#1e3a5f', 'Noise Generator': '#b91c1c', 'Selective but Accurate': '#0f766e', 'Consensus Follower': '#64748b' };
 
 const sources = [
   { name:'Reuters', arch:'Early Breaker', cat:'Wire', ctry:'UK', ori:92, val:88, acc:94, rel:96, con:90, ed:0, art:14230 },
@@ -544,8 +664,8 @@ function cellClass(val, metric) {
   };
   const t = thresholds[metric];
   if (!t) return '';
-  if (metric === 'ed') return val <= t[0] ? 'green' : val <= t[1] ? 'amber' : 'red';
-  return val >= t[0] ? 'green' : val >= t[1] ? 'amber' : 'red';
+  if (metric === 'ed') return val <= t[0] ? 'forest' : val <= t[1] ? 'amber' : 'red';
+  return val >= t[0] ? 'forest' : val >= t[1] ? 'amber' : 'red';
 }
 
 /* ═══════════════════════════════════════════════ *
@@ -659,7 +779,7 @@ function renderWaterfall(s) {
     { label:'Mars habitat radiation data', outcome:'unresolved', segs:[30,0,0,0] },
     { label:'Fusion energy breakeven claim', outcome:'unresolved', segs:[0,25,0,0] },
   ];
-  const colors = ['#00ff88','#00c8ff','#ffaa00','#ff4444'];
+  const colors = ['#2d6a4f','#0f766e','#b8860b','#b91c1c'];
   const el = document.getElementById('waterfall');
   el.innerHTML = outcomes.map(o => {
     const total = o.segs.reduce((a,b)=>a+b,0);
@@ -730,8 +850,8 @@ function renderTimeline() {
 
   // Absorption line
   const ax = padLeft + absorptionDay * xScale;
-  html += `<div style="position:absolute;left:${ax}px;top:0;bottom:20px;width:2px;background:var(--green);opacity:.5"></div>`;
-  html += `<div style="position:absolute;left:${ax-60}px;top:-2px;font-size:.75rem;color:var(--green);white-space:nowrap">Consensus Absorption — Day ${absorptionDay}</div>`;
+  html += `<div style="position:absolute;left:${ax}px;top:0;bottom:20px;width:2px;background:var(--forest);opacity:.5"></div>`;
+  html += `<div style="position:absolute;left:${ax-60}px;top:-2px;font-size:.75rem;color:var(--forest);white-space:nowrap">Consensus Absorption — Day ${absorptionDay}</div>`;
 
   // Day marks
   for (let d = 0; d <= daySpan; d += 15) {
@@ -793,8 +913,8 @@ function renderScatter() {
         }
       },
       scales: {
-        x: { min: 0, max: 100, title: { display: true, text: 'Origination Rate →', color: '#ccc', font: { size: 12 } }, grid: { color: '#1a1a24' }, ticks: { color: '#999', stepSize: 20 } },
-        y: { min: 0, max: 100, title: { display: true, text: 'Validation Rate →', color: '#ccc', font: { size: 12 } }, grid: { color: '#1a1a24' }, ticks: { color: '#999', stepSize: 20 } }
+        x: { min: 0, max: 100, title: { display: true, text: 'Origination Rate →', color: '#ccc', font: { size: 12 } }, grid: { color: 'rgba(0,0,0,.06)' }, ticks: { color: '#999', stepSize: 20 } },
+        y: { min: 0, max: 100, title: { display: true, text: 'Validation Rate →', color: '#ccc', font: { size: 12 } }, grid: { color: 'rgba(0,0,0,.06)' }, ticks: { color: '#999', stepSize: 20 } }
       },
       onClick: (e, items) => {
         if (items.length > 0) {
@@ -819,13 +939,13 @@ function renderScatter() {
         ctx.font = 'bold 12px Inter, sans-serif';
         ctx.textAlign = 'center';
 
-        ctx.fillStyle = '#00ff88';
+        ctx.fillStyle = '#1e3a5f';
         ctx.fillText('Early Breaker', (xMid + chart.chartArea.right) / 2, (yAxis.getPixelForValue(100) + yMid) / 2 + 4);
         ctx.fillStyle = '#ff4444';
         ctx.fillText('Noise Generator', (xMid + chart.chartArea.right) / 2, (yMid + chart.chartArea.bottom) / 2 + 4);
-        ctx.fillStyle = '#ffaa00';
+        ctx.fillStyle = '#64748b';
         ctx.fillText('Consensus Follower', (chart.chartArea.left + xMid) / 2, (yMid + chart.chartArea.bottom) / 2 + 4);
-        ctx.fillStyle = '#00c8ff';
+        ctx.fillStyle = '#0f766e';
         ctx.fillText('Selective but Accurate', (chart.chartArea.left + xMid) / 2, (yAxis.getPixelForValue(100) + yMid) / 2 + 4);
 
         // quadrant divider lines
@@ -860,7 +980,7 @@ function renderRadar() {
     data: {
       labels,
       datasets: [
-        { label: 'Current Month', data: current, borderColor: '#00ff88', backgroundColor: 'rgba(0,255,136,0.1)', pointBackgroundColor: '#00ff88' },
+        { label: 'Current Month', data: current, borderColor: '#2d6a4f', backgroundColor: 'rgba(45,106,79,0.08)', pointBackgroundColor: '#2d6a4f' },
         { label: 'Previous Month', data: previous, borderColor: '#555', backgroundColor: 'transparent', borderDash: [4, 4], pointBackgroundColor: '#555', pointRadius: 3 }
       ]
     },
@@ -872,7 +992,7 @@ function renderRadar() {
         r: {
           min: 0, max: 100,
           ticks: { color: '#555', backdropColor: 'transparent', stepSize: 20 },
-          grid: { color: '#1a1a24' },
+          grid: { color: 'rgba(0,0,0,.06)' },
           angleLines: { color: '#1a1a24' },
           pointLabels: { color: '#aaa', font: { size: 11 } }
         }
@@ -894,12 +1014,12 @@ function renderVolatility() {
       labels: months,
       datasets: [{
         data: values,
-        borderColor: '#00ff88',
-        backgroundColor: 'rgba(0,255,136,0.08)',
+        borderColor: '#2d6a4f',
+        backgroundColor: 'rgba(45,106,79,0.06)',
         fill: true,
         tension: 0.3,
         pointRadius: 3,
-        pointBackgroundColor: '#00ff88'
+        pointBackgroundColor: '#2d6a4f'
       }]
     },
     options: {
@@ -910,8 +1030,8 @@ function renderVolatility() {
         annotation: undefined // not using plugin
       },
       scales: {
-        x: { grid: { color: '#1a1a24' }, ticks: { color: '#666', font: { size: 10 } } },
-        y: { min: 0, max: 100, grid: { color: '#1a1a24' }, ticks: { color: '#666', stepSize: 20 } }
+        x: { grid: { color: 'rgba(0,0,0,.06)' }, ticks: { color: '#666', font: { size: 10 } } },
+        y: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,.06)' }, ticks: { color: '#666', stepSize: 20 } }
       }
     },
     plugins: [{
@@ -922,7 +1042,7 @@ function renderVolatility() {
         const thresholds = [
           { value: 70, color: '#ff4444', label: 'High Volatility' },
           { value: 40, color: '#ffaa00', label: 'Medium' },
-          { value: 20, color: '#00ff88', label: 'Low' },
+          { value: 20, color: '#2d6a4f', label: 'Low' },
         ];
         ctx.save();
         thresholds.forEach(t => {
@@ -964,13 +1084,13 @@ function renderCharts() {
   // Theme
   const savedTheme = localStorage.getItem('na-theme');
   const themeCheckbox = document.getElementById('themeCheckbox');
-  if (savedTheme === 'light') {
-    document.body.classList.add('light');
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark');
     themeCheckbox.checked = true;
   }
   themeCheckbox.addEventListener('change', () => {
-    document.body.classList.toggle('light', themeCheckbox.checked);
-    localStorage.setItem('na-theme', themeCheckbox.checked ? 'light' : 'dark');
+    document.body.classList.toggle('dark', themeCheckbox.checked);
+    localStorage.setItem('na-theme', themeCheckbox.checked ? 'dark' : 'light');
   });
 
   // Font size
@@ -1013,3 +1133,5 @@ renderTimeline();
 </script>
 </body>
 </html>
+html>
+

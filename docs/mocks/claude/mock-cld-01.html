@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Narrative Probe — Sources (Concept)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.mono{font-family:'JetBrains Mono',monospace}
+:root{
+  --bg:#f5f3ee; --surface:#ffffff; --surface2:#ece8e0; --border:#d8d4cc;
+  --text:#1c1a16; --text-dim:#7a7568;
+  --navy:#1e3a5f; --navy-dim:rgba(30,58,95,.09);
+  --forest:#2d6a4f; --forest-dim:rgba(45,106,79,.1);
+  --amber:#b8860b; --amber-dim:rgba(184,134,11,.1);
+  --red:#b91c1c; --red-dim:rgba(185,28,28,.09);
+  --teal:#0f766e; --teal-dim:rgba(15,118,110,.09);
+  --grey:#64748b; --grey-dim:rgba(100,116,139,.09);
+}
+body.dark{
+  --bg:#0c0b12; --surface:#14131d; --surface2:#1e1c2e; --border:#2a2840;
+  --text:#e6e4f0; --text-dim:#8a86a0;
+  --navy:#60a5fa; --navy-dim:rgba(96,165,250,.12);
+  --forest:#34d399; --forest-dim:rgba(52,211,153,.12);
+  --amber:#fbbf24; --amber-dim:rgba(251,191,36,.12);
+  --red:#f87171; --red-dim:rgba(248,113,113,.12);
+  --teal:#2dd4bf; --teal-dim:rgba(45,212,191,.12);
+  --grey:#94a3b8; --grey-dim:rgba(148,163,184,.12);
+}
+.page{padding:28px 32px 60px;max-width:1320px;margin:0 auto}
+.topbar{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px}
+h1{font-size:1.6rem;font-family:'DM Serif Display',serif;font-weight:400}
+.subtitle{color:var(--text-dim);font-size:.88rem;margin-bottom:22px}
+.note{font-size:.72rem;color:var(--text-dim);font-style:italic}
+button.toggle{font-size:.72rem;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);padding:5px 10px;border-radius:6px;cursor:pointer}
+
+/* ── Pulse strip ─────────────────────────────────── */
+.pulse{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:26px}
+.pulse-item{background:var(--surface);padding:16px 18px;border-left:3px solid transparent}
+.pulse-item .num{font-family:'DM Serif Display',serif;font-size:1.9rem;line-height:1}
+.pulse-item .lbl{font-size:.72rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.pulse-item .sub{font-size:.72rem;margin-top:6px}
+.pulse-item.eb{border-left-color:var(--navy)}
+.pulse-item.ng{border-left-color:var(--red)}
+.pulse-item.flag{border-left-color:var(--amber)}
+.pulse-item.mover .num{color:var(--forest)}
+
+/* ── Pills ───────────────────────────────────────── */
+.pills{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.pill{padding:5px 14px;border-radius:16px;font-size:.78rem;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-dim);transition:all .15s;font-weight:500}
+.pill[data-c="all"].active{border-color:var(--text);color:var(--text);background:var(--surface2)}
+.pill[data-c="eb"]{}
+.pill[data-c="eb"].active{border-color:var(--navy);color:var(--navy);background:var(--navy-dim)}
+.pill[data-c="ng"].active{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+.pill[data-c="sa"].active{border-color:var(--teal);color:var(--teal);background:var(--teal-dim)}
+.pill[data-c="cf"].active{border-color:var(--grey);color:var(--grey);background:var(--grey-dim)}
+.pill:hover{filter:brightness(0.97)}
+.pill .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+/* ── Hero map ────────────────────────────────────── */
+.hero{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px 8px;margin-bottom:30px;position:relative}
+.hero-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.hero-head h2{font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:400}
+.hero-head .hint{font-size:.72rem;color:var(--text-dim);font-style:italic}
+.chartwrap{position:relative;height:520px}
+.legend-key{display:flex;gap:18px;margin-top:6px;padding-top:10px;border-top:1px solid var(--border);font-size:.74rem;color:var(--text-dim);flex-wrap:wrap}
+.legend-key span{display:inline-flex;align-items:center;gap:6px}
+.legend-key i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.legend-key .sz{display:inline-flex;align-items:center;gap:4px}
+
+/* ── Ledger ──────────────────────────────────────── */
+.ledger-head{display:flex;justify-content:space-between;align-items:baseline;margin:0 0 10px}
+.ledger-head h2{font-family:'DM Serif Display',serif;font-size:1.05rem;font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+th{text-align:left;font-size:.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.05em;font-weight:600;padding:8px 10px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr.row{transition:background .12s}
+tr.row:hover{background:var(--surface2)}
+tr.row.linked{background:var(--surface2)}
+td.name{font-weight:500;cursor:pointer}
+td.name .ti{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.meter{position:relative;height:6px;width:84px;background:var(--surface2);border-radius:3px}
+.meter-fill{position:absolute;left:0;top:0;height:100%;border-radius:3px}
+.meter-med{position:absolute;top:-2px;width:2px;height:10px;background:var(--text-dim);opacity:.6}
+.meter-row{display:flex;align-items:center;gap:8px}
+.meter-row .v{font-family:'JetBrains Mono',monospace;font-size:.72rem;width:24px;text-align:right;flex-shrink:0}
+.shape-cell{display:flex;align-items:center;gap:8px}
+.shape-cell .edits{font-size:.7rem;color:var(--text-dim)}
+.badge{padding:3px 11px;border-radius:4px;font-size:.7rem;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.forest{color:var(--forest)} .amber{color:var(--amber)} .red{color:var(--red)}
+.footer-note{margin-top:30px;font-size:.72rem;color:var(--text-dim);font-style:italic;text-align:center}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="topbar">
+    <h1>Sources</h1>
+    <button class="toggle" onclick="document.body.classList.toggle('dark')">Toggle dark / light</button>
+  </div>
+  <p class="subtitle">CONCEPT — same data, same tokens, same Chart.js. Reworked for scan-ability and a stronger first five seconds.</p>
+
+  <!-- PULSE STRIP -->
+  <div class="pulse" id="pulse"></div>
+
+  <!-- PILLS -->
+  <div class="pills" id="pills">
+    <span class="pill active" data-c="all">All sources</span>
+    <span class="pill" data-c="eb"><i class="dot" style="background:var(--navy)"></i>Early Breaker</span>
+    <span class="pill" data-c="ng"><i class="dot" style="background:var(--red)"></i>Noise Generator</span>
+    <span class="pill" data-c="sa"><i class="dot" style="background:var(--teal)"></i>Selective but Accurate</span>
+    <span class="pill" data-c="cf"><i class="dot" style="background:var(--grey)"></i>Consensus Follower</span>
+  </div>
+
+  <!-- HERO MAP -->
+  <div class="hero">
+    <div class="hero-head">
+      <h2>The Reputation Map</h2>
+      <span class="hint">Bubble size = stories covered · hover a bubble or a row below</span>
+    </div>
+    <div class="chartwrap"><canvas id="scatter"></canvas></div>
+    <div class="legend-key">
+      <span><i style="background:var(--navy)"></i>Early Breaker — breaks news, panel later agrees</span>
+      <span><i style="background:var(--red)"></i>Noise Generator — breaks news, panel rarely agrees</span>
+      <span><i style="background:var(--teal)"></i>Selective but Accurate — rarely first, usually right</span>
+      <span><i style="background:var(--grey)"></i>Consensus Follower — tracks the room</span>
+      <span class="sz"><svg width="34" height="14"><circle cx="7" cy="7" r="4" fill="none" stroke="currentColor"/><circle cx="24" cy="7" r="7" fill="none" stroke="currentColor"/></svg>bubble size = volume</span>
+    </div>
+  </div>
+
+  <!-- LEDGER -->
+  <div class="hero" style="padding-bottom:14px">
+    <div class="ledger-head">
+      <h2>Full Ledger</h2>
+      <span class="hint">Click a row to open the source profile · click a header to sort</span>
+    </div>
+    <div style="overflow-x:auto">
+    <table id="tbl">
+      <thead><tr>
+        <th data-k="name">Source</th>
+        <th data-k="arch">Verdict</th>
+        <th data-k="ori">Origination</th>
+        <th data-k="val">Validation</th>
+        <th>Profile shape</th>
+        <th data-k="ed">Silent edits</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    </div>
+  </div>
+
+  <p class="footer-note">Narrative Probe tracks consensus reality, not truth.</p>
+</div>
+
+<script>
+const ARCH_KEY = { 'Early Breaker':'eb','Noise Generator':'ng','Selective but Accurate':'sa','Consensus Follower':'cf' };
+const ARCH_COLOR = { 'Early Breaker':'#1e3a5f','Noise Generator':'#b91c1c','Selective but Accurate':'#0f766e','Consensus Follower':'#64748b' };
+const ARCH_COLOR_DARK = { 'Early Breaker':'#60a5fa','Noise Generator':'#f87171','Selective but Accurate':'#2dd4bf','Consensus Follower':'#94a3b8' };
+const ARCH_BADGE_CLASS = { 'Early Breaker':'navy','Noise Generator':'red','Selective but Accurate':'teal','Consensus Follower':'grey' };
+
+const sources = [
+  { name:'Reuters', arch:'Early Breaker', ori:92, val:88, acc:94, rel:96, con:90, ed:0, art:14230, init:'RT' },
+  { name:'AP News', arch:'Early Breaker', ori:85, val:82, acc:88, rel:90, con:85, ed:0, art:12800, init:'AP' },
+  { name:'BBC News', arch:'Selective but Accurate', ori:65, val:78, acc:76, rel:82, con:72, ed:2, art:9800, init:'BBC' },
+  { name:'Bloomberg', arch:'Early Breaker', ori:78, val:75, acc:80, rel:84, con:76, ed:1, art:11200, init:'BB' },
+  { name:'The Guardian', arch:'Selective but Accurate', ori:55, val:70, acc:68, rel:72, con:65, ed:3, art:7600, init:'GU' },
+  { name:'The New York Times', arch:'Consensus Follower', ori:45, val:72, acc:70, rel:74, con:68, ed:4, art:10500, init:'NYT' },
+  { name:'The Washington Post', arch:'Consensus Follower', ori:40, val:68, acc:66, rel:70, con:64, ed:5, art:9200, init:'WP' },
+  { name:'The Wall Street Journal', arch:'Selective but Accurate', ori:60, val:80, acc:82, rel:86, con:78, ed:1, art:8700, init:'WSJ' },
+  { name:'CNN', arch:'Consensus Follower', ori:50, val:62, acc:60, rel:64, con:58, ed:6, art:11400, init:'CNN' },
+  { name:'Fox News', arch:'Noise Generator', ori:82, val:35, acc:38, rel:40, con:32, ed:12, art:9600, init:'FOX' },
+  { name:'MSNBC', arch:'Consensus Follower', ori:48, val:58, acc:56, rel:60, con:54, ed:4, art:7800, init:'MS' },
+  { name:'Daily Mail', arch:'Noise Generator', ori:75, val:30, acc:32, rel:34, con:28, ed:15, art:8200, init:'DM' },
+  { name:'Breitbart', arch:'Noise Generator', ori:88, val:22, acc:24, rel:26, con:20, ed:20, art:5400, init:'BRB' },
+  { name:'Al Jazeera', arch:'Selective but Accurate', ori:58, val:72, acc:74, rel:76, con:70, ed:2, art:5100, init:'AJ' },
+  { name:'The Economist', arch:'Selective but Accurate', ori:62, val:85, acc:86, rel:88, con:82, ed:0, art:4200, init:'ECN' },
+  { name:'NPR', arch:'Selective but Accurate', ori:48, val:76, acc:74, rel:78, con:72, ed:1, art:6300, init:'NPR' },
+  { name:'Newsmax', arch:'Noise Generator', ori:80, val:18, acc:20, rel:22, con:18, ed:18, art:3800, init:'NM' },
+  { name:'Axios', arch:'Early Breaker', ori:72, val:74, acc:76, rel:78, con:72, ed:0, art:4600, init:'AX' },
+];
+
+function median(arr){ const s=[...arr].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2 ? s[m] : (s[m-1]+s[m])/2; }
+const MED = { ori: median(sources.map(s=>s.ori)), val: median(sources.map(s=>s.val)) };
+
+function isDark(){ return document.body.classList.contains('dark'); }
+function archColor(arch){ return isDark() ? ARCH_COLOR_DARK[arch] : ARCH_COLOR[arch]; }
+
+/* ── Pulse strip ─────────────────────────────────── */
+function renderPulse(){
+  const eb = sources.filter(s=>s.arch==='Early Breaker').length;
+  const ng = sources.filter(s=>s.arch==='Noise Generator').length;
+  const flagged = sources.filter(s=>s.ed>=8).length;
+  const mover = sources.reduce((a,b)=> b.val>a.val?b:a, sources[0]);
+  document.getElementById('pulse').innerHTML = `
+    <div class="pulse-item"><div class="num mono">${sources.length}</div><div class="lbl">Active sources</div><div class="sub" style="color:var(--text-dim)">10 consensus pool · 8 tracked</div></div>
+    <div class="pulse-item eb"><div class="num mono">${eb}</div><div class="lbl">Early Breakers</div><div class="sub" style="color:var(--navy)">break stories the panel later confirms</div></div>
+    <div class="pulse-item ng"><div class="num mono">${ng}</div><div class="lbl">Noise Generators</div><div class="sub" style="color:var(--red)">high volume, low validation</div></div>
+    <div class="pulse-item flag"><div class="num mono">${flagged}</div><div class="lbl">Silent-edit flags</div><div class="sub" style="color:var(--amber)">≥8 edits, this vertical</div></div>
+  `;
+}
+
+/* ── Pills filter ────────────────────────────────── */
+let filterKey = 'all';
+document.querySelectorAll('#pills .pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    document.querySelectorAll('#pills .pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    filterKey = p.dataset.c;
+    renderAll();
+  });
+});
+
+/* ── Shape signature SVG ─────────────────────────── */
+function shapeSVG(s, color){
+  const dims = [s.val, s.acc, s.rel, s.con, Math.max(0,100-s.ed*5)];
+  const n = dims.length, R = 16, cx=18, cy=18;
+  const pt = (i,r) => {
+    const a = (Math.PI*2*i/n) - Math.PI/2;
+    return [cx + r*Math.cos(a), cy + r*Math.sin(a)];
+  };
+  const outer = dims.map((_,i)=>pt(i,R).join(',')).join(' ');
+  const poly = dims.map((v,i)=>pt(i, (v/100)*R).join(',')).join(' ');
+  return `<svg width="36" height="36" viewBox="0 0 36 36">
+    <polygon points="${outer}" fill="none" stroke="var(--border)" stroke-width="1"/>
+    <polygon points="${poly}" fill="${color}" fill-opacity="0.32" stroke="${color}" stroke-width="1.3"/>
+  </svg>`;
+}
+
+/* ── Table ───────────────────────────────────────── */
+let sortKey='val', sortDir=-1;
+function renderTable(){
+  const filtered = filterKey==='all' ? sources : sources.filter(s=>ARCH_KEY[s.arch]===filterKey);
+  const sorted = [...filtered].sort((a,b)=>{
+    let va=a[sortKey]??a.name, vb=b[sortKey]??b.name;
+    if (typeof va==='string') return sortDir*va.localeCompare(vb);
+    return sortDir*(va-vb);
+  });
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = sorted.map(s=>{
+    const c = archColor(s.arch);
+    const editClass = s.ed<=2?'forest':s.ed<=8?'amber':'red';
+    return `<tr class="row" data-name="${s.name}" onclick="goProfile('${s.name}')" onmouseenter="linkHover('${s.name}',true)" onmouseleave="linkHover('${s.name}',false)">
+      <td class="name"><span class="ti" style="background:${c}"></span>${s.name}</td>
+      <td><span class="badge" style="background:${c}22;color:${c}">${s.arch}</span></td>
+      <td><div class="meter-row"><div class="meter"><div class="meter-fill" style="width:${s.ori}%;background:${c}"></div><div class="meter-med" style="left:${MED.ori}%"></div></div><span class="v mono">${s.ori}</span></div></td>
+      <td><div class="meter-row"><div class="meter"><div class="meter-fill" style="width:${s.val}%;background:${c}"></div><div class="meter-med" style="left:${MED.val}%"></div></div><span class="v mono">${s.val}</span></div></td>
+      <td>${shapeSVG(s, c)}</td>
+      <td><span class="${editClass} mono">${s.ed}</span></td>
+    </tr>`;
+  }).join('');
+}
+document.querySelectorAll('#tbl th[data-k]').forEach(th=>{
+  th.addEventListener('click', ()=>{
+    const k = th.dataset.k;
+    if (sortKey===k) sortDir*=-1; else { sortKey=k; sortDir=1; }
+    renderTable();
+  });
+});
+
+/* ── Scatter (hero map) ──────────────────────────── */
+let chart;
+function renderScatter(){
+  const filtered = filterKey==='all' ? sources : sources.filter(s=>ARCH_KEY[s.arch]===filterKey);
+  const ctx = document.getElementById('scatter').getContext('2d');
+  if (chart) chart.destroy();
+  const gridColor = isDark() ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.06)';
+  const tickColor = isDark() ? '#8a86a0' : '#7a7568';
+
+  const dataset = {
+    data: filtered.map(s=>({x:s.ori, y:s.val, r: 6+Math.sqrt(s.art)/22, name:s.name, init:s.init, arch:s.arch})),
+    backgroundColor: filtered.map(s=> archColor(s.arch) + 'cc'),
+    borderColor: filtered.map(s=> archColor(s.arch)),
+    borderWidth: 1.5,
+  };
+
+  chart = new Chart(ctx, {
+    type:'bubble',
+    data:{ datasets:[dataset] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      layout:{ padding: { top: 30, right: 110, bottom: 6, left: 6 } },
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          callbacks:{
+            title: items => items[0].raw.name,
+            label: item => [`Archetype: ${item.raw.arch}`, `Origination ${item.raw.x} · Validation ${item.raw.y}`]
+          }
+        }
+      },
+      scales:{
+        x:{ min:0, max:100, title:{ display:true, text:'Origination Rate →  (how often they break first)', color:tickColor, font:{size:11} }, grid:{ color:gridColor }, ticks:{ color:tickColor, stepSize:20 } },
+        y:{ min:0, max:100, title:{ display:true, text:'Validation Rate →  (how often the panel agrees)', color:tickColor, font:{size:11} }, grid:{ color:gridColor }, ticks:{ color:tickColor, stepSize:20 } }
+      },
+      onHover:(e, items)=>{
+        e.native.target.style.cursor = items.length ? 'pointer' : 'default';
+        document.querySelectorAll('#tbody tr').forEach(r=>r.classList.remove('linked'));
+        if (items.length){
+          const name = chart.data.datasets[items[0].datasetIndex].data[items[0].index].name;
+          const row = document.querySelector(`#tbody tr[data-name="${name}"]`);
+          if (row) row.classList.add('linked');
+        }
+      },
+      onClick:(e, items)=>{ if (items.length) goProfile(chart.data.datasets[items[0].datasetIndex].data[items[0].index].name); }
+    },
+    plugins:[{
+      id:'quadrants',
+      beforeDraw(c){
+        const {left,right,top,bottom} = c.chartArea;
+        const xMid = c.scales.x.getPixelForValue(50);
+        const yMid = c.scales.y.getPixelForValue(50);
+        const ctx = c.ctx;
+        ctx.save();
+        const navy = isDark()?'#60a5fa':'#1e3a5f', red=isDark()?'#f87171':'#b91c1c', teal=isDark()?'#2dd4bf':'#0f766e', grey=isDark()?'#94a3b8':'#64748b';
+        const a = isDark()?0.085:0.07;
+        ctx.globalAlpha=a;
+        ctx.fillStyle=navy; ctx.fillRect(xMid,top,right-xMid,yMid-top);
+        ctx.fillStyle=red;  ctx.fillRect(xMid,yMid,right-xMid,bottom-yMid);
+        ctx.fillStyle=teal; ctx.fillRect(left,top,xMid-left,yMid-top);
+        ctx.fillStyle=grey; ctx.fillRect(left,yMid,xMid-left,bottom-yMid);
+        ctx.restore();
+
+        ctx.save();
+        ctx.strokeStyle = isDark()?'rgba(255,255,255,.12)':'rgba(0,0,0,.12)';
+        ctx.setLineDash([4,4]); ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(xMid,top); ctx.lineTo(xMid,bottom); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(left,yMid); ctx.lineTo(right,yMid); ctx.stroke();
+        ctx.restore();
+
+        ctx.save();
+        ctx.font = '700 11px DM Sans, sans-serif';
+        ctx.fillStyle = navy; ctx.textAlign='right'; ctx.fillText('EARLY BREAKERS', right-8, top+16);
+        ctx.fillStyle = red; ctx.fillText('NOISE GENERATORS', right-8, bottom-10);
+        ctx.fillStyle = teal; ctx.textAlign='left'; ctx.fillText('SELECTIVE BUT ACCURATE', left+8, top+16);
+        ctx.fillStyle = grey; ctx.fillText('CONSENSUS FOLLOWERS', left+8, bottom-10);
+        ctx.restore();
+      },
+      afterDraw(c){
+        const ctx = c.ctx;
+        const meta = c.getDatasetMeta(0);
+        ctx.save();
+        ctx.font = '600 9px JetBrains Mono, monospace';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillStyle = isDark() ? '#0c0b12' : '#ffffff';
+        meta.data.forEach((el,i)=>{
+          const d = dataset.data[i];
+          if (el.options.radius > 9) ctx.fillText(d.init, el.x, el.y);
+        });
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+function linkHover(name, on){
+  if (!chart) return;
+  const idx = chart.data.datasets[0].data.findIndex(d=>d.name===name);
+  if (idx<0) return;
+  chart.setActiveElements(on ? [{datasetIndex:0, index:idx}] : []);
+  chart.tooltip.setActiveElements(on ? [{datasetIndex:0, index:idx}] : [], {x:0,y:0});
+  chart.update();
+}
+
+function goProfile(name){ console.log('→ navigate to source profile:', name); }
+
+function renderAll(){ renderPulse(); renderTable(); renderScatter(); }
+renderAll();
+document.querySelector('button.toggle').addEventListener('click', ()=> setTimeout(renderAll, 30));
+</script>
+</body>
+</html>

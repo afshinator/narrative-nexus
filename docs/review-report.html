@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Narrative Probe — Review Report</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+		.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+		.report-section { border: 1px solid #222226; background: #0a0a0b; position: relative; }
+		.corner-box { position: absolute; width: 20px; height: 20px; border: 1px solid #222226; background: #000; }
+	</style>
+</head>
+<body class="bg-black text-[#fafafa]">
+	<main class="mx-auto w-full max-w-6xl px-5 py-8 md:px-10 md:py-12">
+		<header class="report-section mb-8 p-6 md:p-8">
+			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
+			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
+			<div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+				<div>
+					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// REVIEW</div>
+					<h1 class="text-4xl font-bold tracking-tight md:text-6xl">Narrative Probe</h1>
+				</div>
+				<div class="mono text-left text-xs text-[#666] md:text-right">
+					<div>COMMANDCODE REPORT</div>
+					<div class="text-[#444]">2026-06-20</div>
+				</div>
+			</div>
+		</header>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="corner-box left-0 top-0 -translate-x-1/2 -translate-y-1/2"></div>
+			<div class="corner-box right-0 top-0 translate-x-1/2 -translate-y-1/2"></div>
+			<div class="grid gap-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+				<div>
+					<div class="mono mb-2 text-xs tracking-widest text-[#666]">// OVERALL</div>
+					<div class="text-6xl font-bold tracking-tight md:text-7xl">31</div>
+					<div class="mt-1 text-lg text-[#666]">/ 50</div>
+					<div class="mt-4 inline-flex border border-[#fbbf24]/30 bg-[#fbbf24]/10 px-3 py-1 text-sm text-[#fbbf24]">STRUCTURALLY SOUND</div>
+				</div>
+				<div>
+					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// TL;DR</div>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Strong forensic identity and a clear core concept, but the leaderboard prioritizes the scatter plot over the table (the primary scanning tool), archetype colors collide with the polarity system, and interaction states are mostly absent. The foundation is solid — fixes are targeted, not structural.</p>
+					<p class="mt-4 text-sm leading-6 text-[#fbbf24]">PRIMARY FIX: Swap the scatter plot and table on the leaderboard so the data table is the first thing the user sees.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// HEURISTIC SCORES</div>
+			<div class="overflow-x-auto">
+				<table class="w-full min-w-[720px] border-collapse text-sm">
+					<thead>
+						<tr class="border-b border-[#222226] text-left mono text-xs text-[#666]">
+							<th class="py-3 pr-4 font-normal">#</th>
+							<th class="py-3 pr-4 font-normal">HEURISTIC</th>
+							<th class="py-3 pr-4 font-normal">SCORE</th>
+							<th class="py-3 font-normal">KEY FINDING</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">1</td>
+							<td class="py-4 pr-4 text-[#fafafa]">First Impression</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">6/10</td>
+							<td class="py-4 text-[#a0a0a0]">Strong genre identity but "Leaderboard" landing creates gamified tone mismatch</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">2</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Hierarchy</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">7/10</td>
+							<td class="py-4 text-[#a0a0a0]">Source profile and cluster report flow well; leaderboard prioritizes viz over data</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">3</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Color Voice</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">6/10</td>
+							<td class="py-4 text-[#a0a0a0]">Archetype colors collide with polarity colors; meaningful signals blur together</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">4</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Type Voice</td>
+							<td class="py-4 pr-4 text-[#fbbf24]">7/10</td>
+							<td class="py-4 text-[#a0a0a0]">Inter + JetBrains Mono is a solid pair; sizes feel chosen ad-hoc rather than from a scale</td>
+						</tr>
+						<tr class="border-b border-[#1a1a1e]">
+							<td class="py-4 pr-4 text-[#555]">5</td>
+							<td class="py-4 pr-4 text-[#fafafa]">Interaction Feel</td>
+							<td class="py-4 pr-4 text-[#ef4444]">5/10</td>
+							<td class="py-4 text-[#a0a0a0]">Table sorting and nav work; timeline dots not clickable, no loading/empty/error states, focus states missing</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// COGNITIVE LOAD / RISK</div>
+			<div class="grid gap-6 md:grid-cols-2">
+				<div>
+					<div class="mb-3 text-xl font-semibold">MODERATE</div>
+					<ul class="space-y-3 text-sm text-[#a0a0a0]">
+						<li><span class="mono mr-2 text-[#34d399]">LOW</span>Core navigation flow is intuitive — leaderboard → profile → analysis → timeline</li>
+						<li><span class="mono mr-2 text-[#fbbf24]">WATCH</span>Archetype colors read as polarity signals, causing visual misdirection</li>
+						<li><span class="mono mr-2 text-[#ef4444]">HIGH</span>No focus states, click feedback, or loading/empty/error states anywhere</li>
+					</ul>
+				</div>
+				<div>
+					<div class="mono mb-3 text-xs tracking-widest text-[#666]">// NEXT MODES</div>
+					<div class="flex flex-wrap gap-2">
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/recolor</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/relayout</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/interaction</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/typeset</span>
+						<span class="border border-[#333] px-3 py-1 text-sm text-[#a0a0a0]">/surface</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// WHAT'S WORKING</div>
+			<div class="grid gap-4 md:grid-cols-3">
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">Forensic Genre Identity</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">Dark terminal palette, green/amber/red polarity, and monospace data values immediately communicate "analytical tool." Product name, tone, and visual language are aligned.</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">Scatter Plot as Anchor</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">The 4-quadrant chart with labeled archetypes is the strongest design element. Clear axis descriptions below it make the core concept scannable.</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">Coverage Analysis Zones</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">The 3-zone layout (consensus → matrix → forensic) creates a clear narrative arc. Warning banners, outlier cards, and pathway hints make it feel like a real product.</p>
+				</article>
+				<article class="border border-[#1f1f24] p-4">
+					<h2 class="mb-2 text-sm font-semibold">Light/Dark Toggle + Font Slider</h2>
+					<p class="text-sm leading-6 text-[#a0a0a0]">These show attention to real user needs beyond just visual polish. Persistence via localStorage is correctly implemented.</p>
+				</article>
+			</div>
+		</section>
+
+		<section class="report-section mb-8 p-6 md:p-8">
+			<div class="mono mb-6 text-xs tracking-widest text-[#666]">// PRIORITY ISSUES</div>
+			<div class="space-y-5">
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">P1</div>
+					<h2 class="mb-2 text-lg font-semibold">Archetype colors collide with polarity colors</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Early Breaker = green, Noise Generator = red, Selective but Accurate = blue, Consensus Follower = amber. These overlap directly with the green/amber/red polarity system. A green Early Breaker dot in the bottom-right quadrant reads as positive even when the source has low validation. An amber Consensus Follower dot in the top-right quadrant reads as a warning when it isn't one.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Use four hues with equal lightness that don't overlap with the polarity palette — a desaturated set (blue-cyan, purple, teal, rose) that only appears on badges and scatter plot dots, never on metric cells.</div>
+				</article>
+
+				<article class="border border-[#2a1d22] bg-[#110b0d] p-5">
+					<div class="mono mb-2 text-xs text-[#f43f5e]">P1</div>
+					<h2 class="mb-2 text-lg font-semibold">Scatter plot renders above the table on the leaderboard</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">The leaderboard is the primary scanning surface. Users arrive to compare sources across 6 metrics. The scatter plot is supplementary — it visualizes the same data. Stacking it first means users scroll past a large chart every visit. The table — the actual working instrument — is below the fold.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Move the table above the scatter plot, or use a side-by-side layout on wider screens so both are visible simultaneously.</div>
+				</article>
+
+				<article class="border border-[#1f2233] bg-[#0c0e17] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">P2</div>
+					<h2 class="mb-2 text-lg font-semibold">Interactive elements lack states</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Focus states are absent throughout — tabbing reveals no visible ring. Timeline dots have title attributes but no click behavior (the brief describes clicking to navigate). Chart.js tooltips show data but the scatter chart's onClick only works when hitting a data point exactly. No loading, empty, or error states exist for any chart container.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Add visible focus rings (2-3px, 3:1 contrast). Make timeline dots clickable to coverage analysis. Implement loading/empty/error states for each chart. Broad scatter chart click target area.</div>
+				</article>
+
+				<article class="border border-[#1f2233] bg-[#0c0e17] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">P2</div>
+					<h2 class="mb-2 text-lg font-semibold">Body type runs small without a consistent scale</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">Metric labels at 0.75rem, body at 0.85rem, table cells at 0.82rem, nav at 0.8rem. Sizes appear chosen independently rather than from a scale. The smallest sizes on dark backgrounds with mid-gray text may dip near WCAG AA contrast limits.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Define a 3-step type scale (e.g., 0.75/0.875/1rem for body, 1.25rem for headings). Increase body minimum to 0.875rem. Verify all text combos against WCAG AA 4.5:1.</div>
+				</article>
+
+				<article class="border border-[#1f2233] bg-[#0c0e17] p-5">
+					<div class="mono mb-2 text-xs text-[#fbbf24]">P2</div>
+					<h2 class="mb-2 text-lg font-semibold">Stub pages communicate nothing useful</h2>
+					<p class="mb-4 text-sm leading-6 text-[#a0a0a0]">The 4 stub pages (Pipeline Flow, Ad-Hoc, Panel, Onboarding) show "Contents TBD" with a description but no structural skeleton. Landing on a blank centered box with text feels broken rather than "coming soon." The muted nav styling is correct, but the pages themselves need layout bones.</p>
+					<div class="border-l border-[#fbbf24] pl-4 text-sm leading-6 text-[#fbbf24]">FIX: Give each stub a minimal page frame — show the eventual layout shape (left panel, content area, search bar skeleton, etc.) even if all interior content is placeholder.</div>
+				</article>
+
+			</div>
+		</section>
+
+		<footer class="mono py-8 text-center text-xs tracking-widest text-[#444]">
+			Generated with CommandCode — 2026-06-20
+		</footer>
+	</main>
+</body>
+</html>
