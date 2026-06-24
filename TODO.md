@@ -2,6 +2,8 @@
 *Ordered by dependency. Items within a phase can run in parallel.*
 *API access not yet available — all Phase 1–5 work is fully unblocked.*
 
+STATUS: finished up to 1.9; now trying to decide on plan-slices as per dev-workflow.
+
 ---
 
 > **VERIFICATION NOTE**
@@ -268,9 +270,13 @@ These are imported by almost every component. Write them once now so they're sta
 
 Stubs are fine at this stage — the interfaces matter more than the implementations.
 
+// NOTE:  now have bare implementation of those.
+
 ---
 
 **D3 + React DOM pattern — establish this before writing any D3 component:**
+
+// NOTE: tmi!  not necessary at this point.  Nothing actionable here.
 
 D3 and React both want to control the DOM. You must pick one approach per component and not mix them.
 
