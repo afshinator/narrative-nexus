@@ -72,7 +72,7 @@ describe("Router Shell — Slice 0", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("link", { name: /^panel/i }));
     const main = screen.getByRole("main");
-    expect(within(main).getByText("Panel")).toBeInTheDocument();
+    expect(within(main).getByText("Panel Management")).toBeInTheDocument();
   });
 
   it("navigates to Settings at /settings", async () => {

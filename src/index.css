@@ -138,4 +138,12 @@
   html {
     @apply font-sans;
     }
+  }
+
+:root {
+  --font-scale: 1;
+}
+
+html {
+  font-size: calc(1rem * var(--font-scale));
 }

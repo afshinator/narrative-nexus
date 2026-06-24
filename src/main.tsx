@@ -18,4 +18,8 @@ document.documentElement.classList.toggle(
 
 useStore.subscribe((state) => {
   document.documentElement.classList.toggle("dark", state.theme === "dark");
+  document.documentElement.style.setProperty(
+    "--font-scale",
+    String(state.fontScale),
+  );
 });
