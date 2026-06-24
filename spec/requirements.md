@@ -1,5 +1,5 @@
 # Narrative Nexus — Development Requirements
-**Source:** `docs/spec-1-1.md` (v1.1)
+**Source:** `docs/design-v1.2.md` (v1.2)
 **Tag system:** [desired] = grep-verifiable | [compromise] = verified tradeoff | [stack-bound] = informational | [aspirational] = excluded from checks
 **Grep scope:** `src/` (recursive)
 

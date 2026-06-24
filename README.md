@@ -1,32 +1,55 @@
-# React + TypeScript + Vite
+# Narrative Nexus
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geopolitical analysts. Monitors ~20 news outlets and algorithmically measures their reporting behavior over time — not to judge who is "right," but to answer which sources reliably break stories ahead of consensus, which generate noise, and which quietly rewrite history after publication.
 
-Currently, two official plugins are available:
+> *"Narrative Nexus tracks consensus reality, not truth."*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Layer | Tools |
+|-------|-------|
+| Frontend | React 19.2, TypeScript 6, Vite 8, Tailwind 4, shadcn (Nova) |
+| Routing / State | react-router v8, zustand 5 |
+| Visualizations | D3 v7 (scatter, sparklines, waterfall, timeline, pipeline), Chart.js 4 (radar) |
+| Backend | FastAPI, SQLite (WAL), APScheduler |
+| ML | sentence-transformers on AMD GPU (ROCm), Fireworks AI API |
 
-## Expanding the Oxlint configuration
+## Quick start
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev       # Vite dev server on port 5173, proxies /api to localhost:8000
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+For the backend, see Phase 2 slices in `docs/plan/`.
+
+---
+
+## Documentation map
+
+The project follows the [dev-workflow](https://github.com/afshinator/dev-workflow) process. Here's which doc to reach for when:
+
+| When you need… | Open this |
+|----------------|-----------|
+| The product narrative, architecture, analytical model, demo strategy | `docs/design-v1.2.md` |
+| Tagged requirements that `verify-spec-coverage.ts` checks | `spec/requirements.md` |
+| Resolved design decisions (filtering behavior, badge colors, etc.) | `CONTEXT.md` |
+| Architecture decision records (why we built it this way) | `docs/adr/0001` through `0004` |
+| Implementation reference (commands, gotchas, dependency notes) | `docs/older/TODO-pre-workflow.md` |
+
+### How they relate
+
+- **`docs/design-v1.2.md`** — the design document. Product narrative, system architecture, analytical model, page descriptions, demo strategy. Reference it for context behind the requirements.
+- **`spec/requirements.md`** — the dev-workflow spec. Every requirement is tagged (`[desired]`, `[compromise]`, `[stack-bound]`, `[aspirational]`). This is what `verify-spec-coverage.ts` checks, what plan slices reference, and what adversarial reviews verify against.
+- **`CONTEXT.md`** — domain glossary of design decisions made during the grilling phase. Captures the nuance between a requirement and its implementation (e.g., "scatter plot uses dim-mode filtering, not hide-mode; radar chart inverts three axes so outward = favorable").
+- **`docs/adr/`** — Architecture Decision Records. Each documents a significant decision, alternatives considered, and consequences.
+
+## Phases
+
+The project is currently at **Phase 3 (Plan)** of the dev-workflow. Vertical slices live in `docs/plan/`.
+
+---
+
+*"Narrative Nexus tracks consensus reality, not truth."*

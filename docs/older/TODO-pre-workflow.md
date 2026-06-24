@@ -1,3 +1,9 @@
+# Build Reference — Pre-Workflow TODO
+
+> **Purpose:** This file was the original build checklist written before the dev-workflow was adopted. It contains useful implementation details, dependency notes, gotchas, and commands — but it is **not** the active plan.
+>
+> The active plan lives in `docs/plan/*.md` (dev-workflow Phase 3 vertical slices). Reference this file during implementation for specific commands and traps, but follow the plan slices for order and scope.
+
 # Narrative Nexus — Build Todo List
 *Ordered by dependency. Items within a phase can run in parallel.*
 *API access not yet available — all Phase 1–5 work is fully unblocked.*
@@ -267,6 +273,7 @@ These are imported by almost every component. Write them once now so they're sta
 **`src/utils/polarity.ts`** — maps (dimension, value) → CSS color var (`--nn-green`, `--nn-amber`, `--nn-red`, `--nn-neutral`)
 **`src/utils/format.ts`** — number formatting helpers (percentages, days, rates)
 **`src/utils/cssVar.ts`** — `getCssVar(name: string): string` helper for reading CSS custom properties in JS (needed for Chart.js canvas rendering which cannot read CSS vars directly)
+**`src/utils/shapes.ts`** — maps source tier → D3 symbol type
 
 Stubs are fine at this stage — the interfaces matter more than the implementations.
 
@@ -498,122 +505,4 @@ RUN pip install --no-cache-dir sentence-transformers torch --index-url https://d
 WORKDIR /app
 COPY worker.py .
 EXPOSE 8001
-CMD ["uvicorn", "worker:app", "--host", "0.0.0.0", "--port", "8001"]
 ```
-
-The confirmed current ROCm PyTorch base image format is `rocm/pytorch:rocm6.X_ubuntuXX.XX_pyX.XX_pytorch_release_X.X.X`. Switch the FROM line when you have pod access and know the exact tag. The sentence-transformers install step is the same regardless.
-
----
-
-### 4.3 — `docker-compose.yml`
-
-```yaml
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    ports:
-      - "3000:8000"
-    environment:
-      - FIREWORKS_API_KEY=${FIREWORKS_API_KEY}
-      - WORKER_URL=http://worker:8001
-    volumes:
-      - ./nn.db:/app/nn.db
-    depends_on:
-      - worker
-
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.worker
-    devices:
-      - /dev/kfd
-      - /dev/dri
-    group_add:
-      - video
-    ports:
-      - "8001:8001"
-```
-
-The `devices` block is what gives the worker container access to the AMD GPU. It will be silently ignored if no GPU is present (local dev on CPU).
-
----
-
-### 4.4 — Verify `docker compose up` starts cleanly
-
-```bash
-docker compose up --build
-```
-
-Frontend should be reachable at `localhost:3000`. If the worker fails on CPU (no GPU locally), that's expected — the app container's mock endpoints will still work.
-
----
-
-## PHASE 5 — Scraping pipeline
-*No API access needed. Real network calls, real edge cases.*
-
-- [ ] **5.1** `ingestion.py` — RSS polling with feedparser for all Tier 1+2 sources
-- [ ] **5.2** Add newspaper4k body extraction with the full fallback chain: `newspaper4k` → RSS `<content:encoded>` → Firecrawl (budget-gated) → RSS summary
-- [ ] **5.3** `check_firecrawl_budget()` — `firecrawl_usage` table, daily cap = 16 credits, reset midnight UTC
-- [ ] **5.4** DuckDuckGo URL discovery for panel fan-out (`site:{domain} {cluster_topic_label}`)
-- [ ] **5.5** Validation gates — 300 char / 50 word floor, paywall detection regex, nav-bloat detection. Log all rejections with `passed_validation = 0`.
-- [ ] **5.6** Source-specific edge cases:
-  - Fox News: always fetch fresh URL from RSS, never use stored URL
-  - ProPublica: use RSS `<content:encoded>` field directly
-  - NYT, WaPo, Economist: tag `BODY_UNAVAILABLE`, use RSS summary only
-- [ ] **5.7** Test against all 20 default sources — note failures, mark as `DEGRADED` candidates, verify fallback chain triggers correctly
-
----
-
-## PHASE 6 — Consensus math and reputation scoring
-*Pure Python. Write unit tests alongside the logic — this is the analytical core.*
-
-- [ ] **6.1** `reputation.py` — all table read/write helpers
-- [ ] **6.2** `compute_gc(cluster_id, threshold)` — consensus baseline from Tier 1+2 source graphs
-- [ ] **6.3** `compute_oi(source_graph, gc_nodes)` — omission index, gated on `body_available`
-- [ ] **6.4** Claim resolution state machine — `resolve_7d()`, `resolve_30d()`, `resolve_90d()`. Only `resolve_90d` writes UNRESOLVED. Convergence type written only at absorption.
-- [ ] **6.5** All six reputation dimensions: R_orig, R_val, R_speed, R_frame, R_edit, R_correct
-- [ ] **6.6** Archetype assignment — compare R_orig and R_val to panel medians → one of four archetypes
-- [ ] **6.7** `take_daily_snapshot()` — unconditional write once per UTC day per (source, vertical). No change-detection gate — sparklines and time-machine require gapless series.
-- [ ] **6.8** Unit tests for all of the above against synthetic source graphs with known expected outputs
-
----
-
-## PHASE 7 — Pre-baked demo corpus
-*Editorial research + data authoring. Not coding. Start early — it unblocks the demo.*
-
-- [ ] **7.1** Select 3–4 historical stories where coverage famously fractured
-- [ ] **7.2** For each story: write hardcoded article stubs (headline, body excerpt, source, published date) for all relevant panel sources
-- [ ] **7.3** Manually assign extracted claims, set `current_state` and `convergence_type` for each
-- [ ] **7.4** Author `reputation_snapshots` keyframes for the time-machine arc (Day 0 → Day 90 with event markers)
-- [ ] **7.5** Wire `Timeline.jsx` (3.5) to replay this corpus — the demo's centerpiece animation
-
----
-
-## PHASE 8 — Unblocked only after API access arrives
-*Do not attempt before credentials are confirmed.*
-
-- [ ] **8.1** Benchmark Fireworks: DeepSeek-V4-Pro vs Llama 3.3 70B. 20 extraction calls on demo corpus articles, compare JSON parse failure rate and output quality. Pick the winner.
-- [ ] **8.2** Set up sentence-transformers on the GPU pod with ROCm — confirm `device="cuda"` maps to the Radeon GPU via ROCm
-- [ ] **8.3** Confirm embedding model VRAM fit — `nomic-embed-text` or `bge-large-en`, both under 1GB
-- [ ] **8.4** `llm_client.py` — OpenAI-compatible client pointing at Fireworks base URL, key from env
-- [ ] **8.5** `processing.py` — entity clustering (sentence-transformer + DBSCAN), framing neutralization (LLM Call 2), Vf embeddings
-- [ ] **8.6** `analysis.py` — graph extraction (LLM Call 3), consensus baseline (wraps Phase 6), outlier detection (Python set math), forensic synthesis (LLM Call 4)
-- [ ] **8.7** Full pipeline end-to-end on demo corpus — verify against known expected values from Phase 7
-- [ ] **8.8** `scheduler.py` — APScheduler: 2-hour discovery, daily resolution at 3am UTC, daily snapshot at 3:30am UTC, watchdog every 30 min
-
----
-
-## QUICK REFERENCE — What's blocked vs unblocked
-
-| Unblocked now | Blocked until API access |
-|---|---|
-| Phases 1–7 entirely | Fireworks API calls (8.1, 8.4) |
-| All frontend pages | Sentence-transformer on GPU pod (8.2, 8.3) |
-| Database schema + seed | BERTopic clustering (needs embeddings) |
-| FastAPI mock endpoints | Full end-to-end pipeline run (8.7) |
-| Docker Compose setup | APScheduler with live pipeline (8.8) |
-| Scraping pipeline | LLM call wrappers (8.5, 8.6) |
-| Consensus + reputation math | — |
-| Demo corpus authoring | — |

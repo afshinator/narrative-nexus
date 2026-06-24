@@ -264,7 +264,19 @@ Monospace for all data values, labels, codes. Sans-serif for prose. Purposeful a
 
 ### Core principle [LOCKED]
 
-**Pre-baked corpus, not live scraping.** Live scraping during a 2-minute judge window is a liability. The demo replays a carefully selected historical corpus of 3–4 stories where media coverage famously fractured, showing the system's output rather than waiting for it to be computed.
+**There is no demo mode.** The application always works the same way — it reads from SQLite and serves all pages normally. The database is pre-seeded with data spanning 90 days by processing curated article URLs through the real pipeline before demo day. The app is unaware it is being demonstrated.
+
+### How the database gets 90 days of data [LOCKED]
+
+A one-shot seed script (`scripts/seed-demo.py`) runs before demo day. It:
+
+1. Accepts a list of ~80 article URLs organized by story (4 stories × ~20 sources each) — real articles from the last 90 days covering geopolitics, economics, and technology
+2. Fetches each URL via `newspaper4k` (same library the scraping stack uses, REQ-059)
+3. Feeds extracted text through the same pipeline functions the agents use: embeddings → claim extraction → consensus math → resolution checks
+4. Writes database records with timestamps matching the original publication dates, so the 7d/30d/90d resolution checkpoints fire correctly against real timestamps
+5. Populates daily reputation snapshots across the full 90-day span
+
+The seed script shares code paths with the live scheduler — it imports from the same `pipeline/` module. It does not modify the scheduler, does not create a "demo mode" flag, and does not write to a separate database. After seeding, the scheduler can resume normally going forward (or stay off during the demo).
 
 ### What the demo must show [LOCKED]
 
