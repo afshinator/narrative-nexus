@@ -23,6 +23,8 @@ services:
       dockerfile: Dockerfile.worker
     networks:
       - nn-network
+    expose:
+      - "8001"
     # ROCm base image + sentence-transformers (REQ-107)
     # AMD GPU pod — embedding workloads only
     # Communicates with app over HTTP (REQ-105)

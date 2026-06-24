@@ -71,11 +71,11 @@ describe("docker-compose.yml", () => {
       expect(services.worker).toBeDefined();
     });
 
-    it("has no published ports", () => {
+    it("has no published ports (internal only)", () => {
       const compose = loadCompose();
       const services = compose.services as Record<string, unknown>;
       const worker = services.worker as Record<string, unknown>;
-      // Worker should not have ports exposed externally
+      // Worker exposes port 8001 internally (expose:) but no published ports (ports:)
       expect(worker.ports || []).toEqual([]);
     });
 

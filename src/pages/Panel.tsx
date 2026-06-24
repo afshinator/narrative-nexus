@@ -110,6 +110,7 @@ export default function PanelPage() {
                   <Switch
                     checked={activeSources.includes(source.id)}
                     onCheckedChange={() => toggleSource(source.id)}
+                    aria-label={`Toggle ${source.name}`}
                   />
                 </div>
               ))}

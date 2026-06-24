@@ -1,15 +1,11 @@
 import { useStore } from "../store";
 import type { VerticalThresholdKey } from "../data/thresholds";
+import { formatPercent } from "../utils/format";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
-
-/** Pure: format a number as a percent string. */
-function formatPercent(n: number): string {
-  return `${n}%`;
-}
 
 const VERTICAL_LABELS: Record<VerticalThresholdKey, string> = {
   geopolitics: "Geopolitics",

@@ -81,17 +81,6 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
-
-      /* Narrative Nexus design tokens */
-    --nn-bg:      #0a0a0f;
-    --nn-surface: #111118;
-    --nn-border:  #1e1e2e;
-    --nn-green:   #00ff88;
-    --nn-amber:   #ffaa00;
-    --nn-red:     #ff4444;
-    --nn-neutral: #4a4a6a;
-    --nn-text:    #e0e0e0;
-    --nn-dim:     #888899;
 }
 
 .dark {
@@ -126,6 +115,17 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.556 0 0);
+
+    /* Narrative Nexus design tokens — dark theme only */
+    --nn-bg:      #0a0a0f;
+    --nn-surface: #111118;
+    --nn-border:  #1e1e2e;
+    --nn-green:   #00ff88;
+    --nn-amber:   #ffaa00;
+    --nn-red:     #ff4444;
+    --nn-neutral: #4a4a6a;
+    --nn-text:    #e0e0e0;
+    --nn-dim:     #888899;
 }
 
 @layer base {
