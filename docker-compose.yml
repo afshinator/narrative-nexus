@@ -1,0 +1,43 @@
+# Narrative Nexus — Docker Compose
+# Hackathon submission format (REQ-007, REQ-008, REQ-102–107)
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    ports:
+      - "8000:8000"
+    volumes:
+      - nn-data:/data
+    environment:
+      - DATABASE_URL=sqlite:///data/narrative-nexus.db
+    networks:
+      - nn-network
+    # All Fireworks API calls originate from app (REQ-106)
+    # No GPU access needed (REQ-108)
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    networks:
+      - nn-network
+    # ROCm base image + sentence-transformers (REQ-107)
+    # AMD GPU pod — embedding workloads only
+    # Communicates with app over HTTP (REQ-105)
+
+  db:
+    image: busybox
+    volumes:
+      - nn-data:/data
+    command: ["sh", "-c", "touch /data/.ready && tail -f /dev/null"]
+    networks:
+      - nn-network
+
+networks:
+  nn-network:
+    driver: bridge
+
+volumes:
+  nn-data:

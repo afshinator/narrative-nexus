@@ -1,0 +1,20 @@
+# Narrative Nexus — Worker Container
+# AMD GPU pod: sentence-transformers via ROCm (REQ-107)
+#
+# Dev/test: minimal placeholder (no heavy ML deps)
+#   FROM python:3.12-slim
+#
+# Production: ROCm base image with sentence-transformers
+#   FROM rocm/pytorch:latest
+#   RUN pip install sentence-transformers
+
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Placeholder — sentence-transformers installed only in production ROCm image
+COPY worker/ ./worker/
+
+EXPOSE 8001
+
+CMD ["python", "-c", "print('Worker ready'); import time; time.sleep(3600)"]
