@@ -13,9 +13,9 @@ React class component, ~25 lines. Native platform feature. No deps.
 File: `src/components/ErrorBoundary.tsx` (new)
 File: `src/components/PageShell.tsx` (wrap `<Outlet />`)
 
-### MI-01: Dead nav links
-Change `/source/example.com` → `#`, `/cluster/abc123` → `#`, `/timeline/abc123` → `#`. Add `aria-disabled="true"`. 3 lines changed.
-File: `src/components/AppNav.tsx`
+### MI-01: Dead nav links — REVERTED
+Changing to `#` broke React keys and tests. Ponytail re-evaluation: stub pages ARE valid pages — a stub is better UX than a broken link. Nav links stay as-is.
+→ ponytail: reverted, no change needed.
 
 ### MI-03: Unify formatPercent
 Delete local `formatPercent` from Settings.tsx. Rename shared in `format.ts` to `formatRate` (it expects 0–1 decimal). Add `formatPercent(n: number): string` → `${n}%`. Settings imports `formatPercent`. Pure, one-liner.
@@ -59,7 +59,6 @@ After deleting `Vertical` type from store (HI-04), the casing mismatch between s
 | `src/index.css` | Move nn-* block into .dark {} | 0 new, cut-paste |
 | `src/components/ErrorBoundary.tsx` | New | ~25 |
 | `src/components/PageShell.tsx` | Wrap Outlet | +1 |
-| `src/components/AppNav.tsx` | Fix 3 dead links | 3 lines changed |
 | `src/pages/Settings.tsx` | Delete local formatPercent, import shared | -3 +1 |
 | `src/utils/format.ts` | Rename + add formatPercent | +2 |
 | `src/pages/Panel.tsx` | Add aria-label to Switch | +1 |
@@ -67,12 +66,12 @@ After deleting `Vertical` type from store (HI-04), the casing mismatch between s
 | `docker-compose.yml` | Add expose: 8001 to worker | +1 |
 | `src/__tests__/docker/compose.test.ts` | Fix worker ports assertion | ~3 |
 
-Total: ~10 files, ~40 lines changed. No new deps. No speculative code.
+Total: 9 files, ~37 lines changed. No new deps. No speculative code.
+(MI-01 dead nav links reverted — no change to AppNav.tsx)
 
 ## Verification
 
 1. `npm run build` exits 0
-2. `npm run test` — 72 tests pass (some adjusted)
+2. `npm run test` — all 72 tests pass
 3. Light mode toggle renders correctly
 4. Error boundary catches throw in dev
-5. Dead nav links don't navigate
