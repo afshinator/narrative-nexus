@@ -40,9 +40,11 @@ The Cluster Report page handles **per-claim classification**: convergence type t
 
 They are linked via click-through: clicking a claim dot on the Timeline highlights it in the Cluster Report. Convergence badges do NOT appear on timeline dots — that would overcrowd the visualization.
 
-## Scatter Plot Archetype Filtering
+## Sources Page Archetype Filtering
 
-Archetype filter pills on the Sources page use **dim-mode filtering** (not hide-mode). Non-selected sources reduce to low opacity (~0.15) while selected sources remain at full opacity. This preserves quadrant context and reference frame. "All" restores full opacity to all sources.
+Archetype filter pills on the Sources page use dim-mode filtering (not hide-mode). Non-selected sources reduce to low opacity (~0.15) while selected sources remain at full opacity. This preserves quadrant context and reference frame. "All" restores full opacity to all sources.
+
+Both the scatter plot markers and the leaderboard table rows follow the same dim-mode rule — filtered-out table rows remain in the DOM at opacity 0.15 so cross-linked hover works bidirectionally regardless of filter state.
 
 ## Radar Chart Polarity Inversion
 

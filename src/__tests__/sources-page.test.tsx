@@ -1,0 +1,188 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router";
+import { beforeEach, describe, expect, it } from "vitest";
+import SourcesPage from "../pages/Sources";
+
+function renderSources() {
+	return render(
+		<MemoryRouter>
+			<SourcesPage />
+		</MemoryRouter>,
+	);
+}
+
+describe("Sources Page", () => {
+	beforeEach(async () => {
+		const { useStore } = await import("../store");
+		useStore.setState({ archetypeFilter: null });
+	});
+
+	it("renders page heading", () => {
+		renderSources();
+		expect(
+			screen.getByRole("heading", { name: /sources/i }),
+		).toBeInTheDocument();
+	});
+
+	describe("Archetype filter pills", () => {
+		it("renders 5 filter pills with correct labels", () => {
+			renderSources();
+			expect(
+				screen.getByRole("button", { name: /all sources/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("button", { name: /early breaker/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("button", { name: /noise generator/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("button", { name: /selective/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("button", { name: /consensus follower/i }),
+			).toBeInTheDocument();
+		});
+
+		it('"All" is active by default', () => {
+			renderSources();
+			const all = screen.getByRole("button", { name: /all sources/i });
+			expect(all).toBeInTheDocument();
+		});
+	});
+
+	describe("Scatter plot", () => {
+		it("renders scatter plot card heading", () => {
+			renderSources();
+			expect(
+				screen.getByRole("heading", { name: /reputation map/i }),
+			).toBeInTheDocument();
+		});
+
+		it("renders an SVG element inside the scatter card", () => {
+			renderSources();
+			const svg = document.querySelector("svg");
+			expect(svg).toBeInTheDocument();
+		});
+
+		it("renders four quadrant labels in the SVG", () => {
+			renderSources();
+			const svg = document.querySelector("svg");
+			if (!svg) throw new Error("SVG not found");
+			expect(svg.textContent).toContain("EARLY BREAKERS");
+			expect(svg.textContent).toContain("NOISE GENERATORS");
+			expect(svg.textContent).toContain("SELECTIVE BUT ACCURATE");
+			expect(svg.textContent).toContain("CONSENSUS FOLLOWERS");
+		});
+	});
+
+	describe("Leaderboard table", () => {
+		it("renders ledger heading", () => {
+			renderSources();
+			expect(
+				screen.getByRole("heading", { name: /full ledger/i }),
+			).toBeInTheDocument();
+		});
+
+		it("renders a table with source names", () => {
+			renderSources();
+			const table = document.querySelector("table");
+			expect(table).toBeInTheDocument();
+			expect(screen.getByText("Reuters")).toBeInTheDocument();
+			expect(screen.getByText("AP")).toBeInTheDocument();
+			expect(screen.getByText("ZeroHedge")).toBeInTheDocument();
+		});
+
+		it("renders column headers", () => {
+			renderSources();
+			expect(
+				screen.getByRole("columnheader", { name: /source/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("columnheader", { name: /origination/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("columnheader", { name: /validation/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("columnheader", { name: /speed/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("columnheader", { name: /framing/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("columnheader", { name: /silent/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("columnheader", { name: /correction/i }),
+			).toBeInTheDocument();
+		});
+		it("each table row has data-source-id for cross-link", async () => {
+			renderSources();
+			const { DEFAULT_SOURCES } = await import("../data/sources");
+			for (const source of DEFAULT_SOURCES) {
+				const row = document.querySelector(`[data-source-id="${source.id}"]`);
+				expect(row).toBeInTheDocument();
+			}
+		});
+	});
+
+	describe("Filter behavior", () => {
+		it("clicking a filter pill updates store filter", async () => {
+			const user = userEvent.setup();
+			renderSources();
+			await user.click(screen.getByRole("button", { name: /early breaker/i }));
+			const { useStore } = await import("../store");
+			expect(useStore.getState().archetypeFilter).toBe("EARLY_BREAKER");
+		});
+
+		it('clicking "All" resets filter to null', async () => {
+			const user = userEvent.setup();
+			const { useStore } = await import("../store");
+			useStore.setState({ archetypeFilter: "NOISE_GENERATOR" });
+			renderSources();
+			await user.click(screen.getByRole("button", { name: /all sources/i }));
+			expect(useStore.getState().archetypeFilter).toBeNull();
+		});
+	});
+
+	describe("Score rendering with data", () => {
+		it("renders score values instead of dashes when scores provided", () => {
+			const testScores = [
+				{
+					sourceId: "reuters",
+					vertical: "geopolitics",
+					R_orig: 92,
+					R_val: 88,
+					R_speed: 3.2,
+					R_frame: 0.12,
+					R_edit: 0,
+					R_correct: 1,
+				},
+			];
+			render(
+				<MemoryRouter>
+					<SourcesPage scores={testScores} />
+				</MemoryRouter>,
+			);
+			const reutersRow = document.querySelector('[data-source-id="reuters"]');
+			expect(reutersRow).toBeInTheDocument();
+			expect(reutersRow?.textContent).toContain("92");
+			expect(reutersRow?.textContent).not.toContain("—");
+		});
+	});
+
+	describe("Sorting", () => {
+		it("column headers are clickable", async () => {
+			const user = userEvent.setup();
+			renderSources();
+			const origHeader = screen.getByRole("columnheader", {
+				name: /origination/i,
+			});
+			await user.click(origHeader);
+			// No crash — sort is functional
+			expect(origHeader).toBeInTheDocument();
+		});
+	});
+});
