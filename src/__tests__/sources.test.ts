@@ -26,18 +26,20 @@ describe("DEFAULT_SOURCES", () => {
 		expect(tier2).toHaveLength(5);
 	});
 
-	it("each source has id, name, domain, tier", async () => {
-		const { DEFAULT_SOURCES } = await import("../data/sources");
-		for (const source of DEFAULT_SOURCES) {
-			expect(source).toHaveProperty("id");
-			expect(source).toHaveProperty("name");
-			expect(source).toHaveProperty("domain");
-			expect(source).toHaveProperty("tier");
-			expect(typeof source.id).toBe("string");
-			expect(typeof source.name).toBe("string");
-			expect(typeof source.domain).toBe("string");
-			expect(typeof source.tier).toBe("number");
-		}
+		it("each source has id, name, domain, tier, region", async () => {
+			const { DEFAULT_SOURCES } = await import("../data/sources");
+			for (const source of DEFAULT_SOURCES) {
+				expect(source).toHaveProperty("id");
+				expect(source).toHaveProperty("name");
+				expect(source).toHaveProperty("domain");
+				expect(source).toHaveProperty("tier");
+				expect(source).toHaveProperty("region");
+				expect(typeof source.id).toBe("string");
+				expect(typeof source.name).toBe("string");
+				expect(typeof source.domain).toBe("string");
+				expect(typeof source.tier).toBe("number");
+				expect(typeof source.region).toBe("string");
+			}
 	});
 });
 

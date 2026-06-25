@@ -41,9 +41,16 @@ Three sections, each with a shadcn Card:
 
 ## Panel Management page (`src/pages/Panel.tsx`)
 
-Two sections:
-1. **Category balance indicator** — bar showing tier distribution (Tier1: 5, Tier2: 5, Tier3: 5, Tier4: 3, Tier5: 2... and if deactivated, show "N active" vs "N total")
-2. **Source list** — grouped by tier, each source has name + domain + active/inactive toggle (shadcn Switch)
+Three sections:
+1. **Category balance indicator** — two rows:
+   - Tier distribution bar (Tier1–5 active/total with color-coded segments)
+   - Geographic spread bar (per-region count: NA, EU, ME, Asia, Africa, LatAm, SA)
+2. **Low-panel warning** — amber alert when active sources drop below 12
+3. **Source list** — grouped by tier, each source has name + domain + active/inactive toggle (shadcn Switch)
+
+### Source type
+
+Each source now has a `region` field (string union: `na | eu | me | asia | africa | latam | sa`) for the geographic breakdown. Added to `src/data/sources.ts`. Pure helper `getSourcesByRegion()` groups active sources by region.
 
 ## Font scale CSS
 
