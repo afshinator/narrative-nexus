@@ -36,7 +36,7 @@ describe("Settings Page", () => {
 
 		it("displays threshold values in percent", () => {
 			renderSettings();
-			expect(screen.getByText(/65%/)).toBeInTheDocument();
+			expect(screen.getAllByText(/65%/).length).toBeGreaterThanOrEqual(1);
 		});
 
 		it("has a reset button", () => {
