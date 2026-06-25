@@ -1,68 +1,68 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it } from "vitest";
 import { OnboardingDialog } from "../components/OnboardingDialog";
 
 const TERMS = [
-  "Consensus Reality",
-  "Consensus-Absorbed",
-  "Cross-Source Convergent",
-  "Self-Consistent",
-  "Unresolved",
+	"Consensus Reality",
+	"Consensus-Absorbed",
+	"Cross-Source Convergent",
+	"Self-Consistent",
+	"Unresolved",
 ];
 
 function renderDialog(open = true) {
-  const user = userEvent.setup();
-  return {
-    user,
-    ...render(<OnboardingDialog open={open} onOpenChange={() => {}} />),
-  };
+	const user = userEvent.setup();
+	return {
+		user,
+		...render(<OnboardingDialog open={open} onOpenChange={() => {}} />),
+	};
 }
 
 describe("OnboardingDialog", () => {
-  beforeEach(async () => {
-    const { useStore } = await import("../store");
-    useStore.setState({ onboardingComplete: false });
-  });
+	beforeEach(async () => {
+		const { useStore } = await import("../store");
+		useStore.setState({ onboardingComplete: false });
+	});
 
-  it("renders all 5 vocabulary terms in a single view", () => {
-    renderDialog();
-    for (const term of TERMS) {
-      expect(screen.getByText(term)).toBeInTheDocument();
-    }
-  });
+	it("renders all 5 vocabulary terms in a single view", () => {
+		renderDialog();
+		for (const term of TERMS) {
+			expect(screen.getByText(term)).toBeInTheDocument();
+		}
+	});
 
-  it('shows "Don\'t show on startup" checkbox', () => {
-    renderDialog();
-    expect(
-      screen.getByRole("checkbox", { name: /don't show on startup/i }),
-    ).toBeInTheDocument();
-  });
+	it('shows "Don\'t show on startup" checkbox', () => {
+		renderDialog();
+		expect(
+			screen.getByRole("checkbox", { name: /don't show on startup/i }),
+		).toBeInTheDocument();
+	});
 
-  it("sets onboardingComplete when checkbox is checked and dialog closed", async () => {
-    const { user } = renderDialog();
-    await user.click(
-      screen.getByRole("checkbox", { name: /don't show on startup/i }),
-    );
-    await user.click(screen.getByRole("button", { name: /close/i }));
+	it("sets onboardingComplete when checkbox is checked and dialog closed", async () => {
+		const { user } = renderDialog();
+		await user.click(
+			screen.getByRole("checkbox", { name: /don't show on startup/i }),
+		);
+		await user.click(screen.getByRole("button", { name: /close/i }));
 
-    const { useStore } = await import("../store");
-    expect(useStore.getState().onboardingComplete).toBe(true);
-  });
+		const { useStore } = await import("../store");
+		expect(useStore.getState().onboardingComplete).toBe(true);
+	});
 
-  it("does NOT set onboardingComplete when checkbox is unchecked and dialog closed", async () => {
-    const { user } = renderDialog();
-    await user.click(screen.getByRole("button", { name: /close/i }));
+	it("does NOT set onboardingComplete when checkbox is unchecked and dialog closed", async () => {
+		const { user } = renderDialog();
+		await user.click(screen.getByRole("button", { name: /close/i }));
 
-    const { useStore } = await import("../store");
-    expect(useStore.getState().onboardingComplete).toBe(false);
-  });
+		const { useStore } = await import("../store");
+		expect(useStore.getState().onboardingComplete).toBe(false);
+	});
 
-  it("closes dialog when Close button is clicked", async () => {
-    const handleChange = vi.fn();
-    const user = userEvent.setup();
-    render(<OnboardingDialog open={true} onOpenChange={handleChange} />);
-    await user.click(screen.getByRole("button", { name: /close/i }));
-    expect(handleChange).toHaveBeenCalledWith(false);
-  });
+	it("closes dialog when Close button is clicked", async () => {
+		const handleChange = vi.fn();
+		const user = userEvent.setup();
+		render(<OnboardingDialog open={true} onOpenChange={handleChange} />);
+		await user.click(screen.getByRole("button", { name: /close/i }));
+		expect(handleChange).toHaveBeenCalledWith(false);
+	});
 });

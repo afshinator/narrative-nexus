@@ -1,3 +1,3 @@
 export default function ClusterReportPage() {
-  return <div>Cluster Report</div>;
+	return <div>Cluster Report</div>;
 }

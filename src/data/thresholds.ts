@@ -7,7 +7,7 @@ export type VerticalThresholdKey = "geopolitics" | "economics" | "technology";
 export type Thresholds = Record<VerticalThresholdKey, number>;
 
 export const DEFAULT_THRESHOLDS: Thresholds = {
-  geopolitics: 65,
-  economics: 75,
-  technology: 75,
+	geopolitics: 65,
+	economics: 75,
+	technology: 75,
 };

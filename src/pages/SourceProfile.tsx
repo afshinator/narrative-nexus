@@ -1,3 +1,3 @@
 export default function SourceProfilePage() {
-  return <div>Source Profile</div>;
+	return <div>Source Profile</div>;
 }
