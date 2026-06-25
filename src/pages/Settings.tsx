@@ -24,9 +24,12 @@ export default function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="font-heading text-2xl font-semibold tracking-tight text-foreground">
+      <h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
         Settings
       </h1>
+      <p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
+        Configure thresholds, appearance, and preferences
+      </p>
 
       {/* Consensus Thresholds */}
       <Card className="p-6">

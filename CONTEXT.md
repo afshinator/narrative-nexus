@@ -2,6 +2,7 @@
 
 Decisions here are grouped into two categories:
 - **UI conventions** — rendering rules, component behavior, UX patterns (this file)
+- **Visual design** — colors, fonts, spacing, component styles — see `docs/design-tokens.md`
 - **Architecture decisions** — system structure, execution model, page boundaries — see `docs/adr/0001` through `0004`
 
 ---
@@ -12,7 +13,16 @@ The Investigate page is NOT a dead-end wall. It shows stripped-frame article tex
 
 ## Onboarding UX
 
-The onboarding walkthrough uses a **shadcn Dialog** (not an accordion panel). It is a 5-step first-launch walkthrough stored in localStorage via `onboardingComplete` in the zustand store. Re-accessible from the `?` icon in the nav bar. Steps define all five vocabulary terms from Section 1 of the spec. The spec (REQ-093–095) overrides earlier taste preferences about accordion-based intro panels.
+The onboarding walkthrough uses a **shadcn Dialog** (not an accordion panel). It is a 5-step walkthrough defining all five vocabulary terms from Section 1 of the spec. Stored in localStorage via `onboardingComplete` in the zustand store. The spec (REQ-093–095) overrides earlier taste preferences about accordion-based intro panels.
+
+**Behavior:**
+- Auto-opens on first visit (when `onboardingComplete` is `false`)
+- Last step has a **"Don't show again" checkbox**
+  - Checked + dismissed → `onboardingComplete = true`, never auto-shows again
+  - Not checked + dismissed → stays `false`, auto-shows again next visit
+- Re-accessible anytime from the `?` icon in the nav bar (regardless of `onboardingComplete` state)
+- No Settings page toggle — the `?` icon is sufficient
+- **TODO:** Each vocabulary term needs a unique icon (e.g. from lucide-react). These icons will appear both in the glossary dialog and on the Sources page as visual clues connecting terms to data points.
 
 ## Demo Strategy — No Demo Mode
 
@@ -47,7 +57,7 @@ On the radar chart (6 axes, percentile-oriented, outward = favorable), three gra
 | R_orig | Trait (neutral) | As-is, neutral color |
 | R_correct | Trait (neutral) | As-is, neutral color |
 
-Raw values still display in tooltips and tables — only the radar polygon position gets inverted. The color for trait dimensions remains `--nn-neutral` regardless of percentile.
+Raw values still display in tooltips and tables — only the radar polygon position gets inverted. The color for trait dimensions remains `--nn-slate` regardless of percentile.
 
 ## Container Architecture (App vs Worker Split)
 
@@ -69,8 +79,8 @@ Each source archetype gets a semantic badge color, distinct from the polarity co
 
 | Archetype | Badge Color | Rationale |
 |-----------|-------------|-----------|
-| EARLY_BREAKER | `--nn-green` | High origination + high validation — the prized category |
-| SELECTIVE_ACCURATE | `--nn-amber` | Selective but reliable when they report |
+| EARLY_BREAKER | `--nn-navy` | High origination + high validation — the prized category |
+| SELECTIVE_ACCURATE | `--nn-teal` | Selective but reliable when they report |
 | NOISE_GENERATOR | `--nn-red` | High origination but nothing validates |
-| CONSENSUS_FOLLOWER | `--nn-neutral` | Safe but uninformative |
-| null (unclassified) | `--nn-dim` | Not enough data yet |
+| CONSENSUS_FOLLOWER | `--nn-slate` | Safe but uninformative |
+| null (unclassified) | `--nn-text-dim` | Not enough data yet |

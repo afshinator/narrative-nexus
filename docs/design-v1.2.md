@@ -238,19 +238,9 @@ Sticky app-level nav bar on every page:
 
 **Settings** — Consensus thresholds (per vertical), LLM model config, font scale slider (rem-based, persisted to localStorage), theme/skin selector, Firecrawl budget display, system health panel, manual pipeline trigger.
 
-### Visual tone [LOCKED]
+### Visual tone → See `docs/design-tokens.md`
 
-Dark terminal / forensic intelligence console:
-
-```
-Background:  #0a0a0f    Surface:   #111118    Border:    #1e1e2e
-Accent green: #00ff88   Amber:     #ffaa00    Red:       #ff4444
-Neutral:      #4a4a6a   Text:      #e0e0e0    Dim text:  #888899
-```
-
-Polarity binding is normative: green = favorable, amber = middling, red = unfavorable. Trait metrics (R_orig, R_correct) always render in neutral purple-grey — never colored evaluatively.
-
-Monospace for all data values, labels, codes. Sans-serif for prose. Purposeful animation only.
+The visual design language is defined in `docs/design-tokens.md`, extracted from the mock HTML files via `designlang`. That file is the single source of truth for colors, fonts, spacing, and component patterns. This section kept only for historical reference of the build order.
 
 **Build order:** `style.css` → `pipeline.html` → `index.html` → `source.html` → `cluster.html` → `timeline.html` → `investigate.html` → `panel.html` → `settings.html`
 

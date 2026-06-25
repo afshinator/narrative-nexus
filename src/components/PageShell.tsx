@@ -6,12 +6,12 @@ export default function PageShell() {
   return (
     <div className="flex min-h-screen flex-col">
       <AppNav />
-      <main className="flex-1 p-6">
+      <main className="mx-auto w-full max-w-[1340px] flex-1 px-8 py-7">
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
       </main>
-      <footer className="border-t border-border px-6 py-4 text-center text-sm text-muted-foreground">
+      <footer className="py-9 text-center font-mono text-[0.7rem] tracking-[0.04em] text-[var(--nn-text-dim)]">
         Narrative Nexus tracks consensus reality, not truth
       </footer>
     </div>

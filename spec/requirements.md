@@ -131,18 +131,18 @@
 
 ### Visual Design Tokens
 
-[desired] [REQ-073] CSS custom property nn-bg must be defined as 0a0a0f.
-[desired] [REQ-074] CSS custom property nn-surface must be defined as 111118.
-[desired] [REQ-075] CSS custom property nn-border must be defined as 1e1e2e.
-[desired] [REQ-076] CSS custom property nn-green must be defined as 00ff88.
-[desired] [REQ-077] CSS custom property nn-amber must be defined as ffaa00.
-[desired] [REQ-078] CSS custom property nn-red must be defined as ff4444.
-[desired] [REQ-079] CSS custom property nn-neutral must be defined as 4a4a6a.
-[desired] [REQ-080] CSS custom property nn-text must be defined as e0e0e0.
-[desired] [REQ-081] CSS custom property nn-dim must be defined as 888899.
+[desired] [REQ-073] CSS custom properties for the Narrative Nexus design language must be defined per docs/design-tokens.md (extracted from mock HTML files). See that file for exact color values, which differ between light and dark modes.
+[desired] [REQ-074] Covered by REQ-073 — all nn-* tokens defined in design-tokens.md.
+[desired] [REQ-075] Covered by REQ-073.
+[desired] [REQ-076] Covered by REQ-073.
+[desired] [REQ-077] Covered by REQ-073.
+[desired] [REQ-078] Covered by REQ-073.
+[desired] [REQ-079] Covered by REQ-073.
+[desired] [REQ-080] Covered by REQ-073.
+[desired] [REQ-081] Covered by REQ-073.
 [desired] [REQ-082] Polarity binding must assign color by dimension using getPolarityColor.
 [desired] [REQ-083] Monospace font must be used for all data values labels and codes.
-[desired] [REQ-084] The app must use the Geist variable font.
+[desired] [REQ-084] The app must use the font families defined in docs/design-tokens.md (Space Grotesk for headings, IBM Plex Sans for body, IBM Plex Mono for monospace/data).
 
 ### Page Features
 

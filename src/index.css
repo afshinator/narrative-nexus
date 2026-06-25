@@ -1,13 +1,24 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: 'Geist Variable', sans-serif;
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+    /* shadcn color mappings */
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -49,83 +60,113 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
+    /* shadcn light — from sources.html mock palette */
+    --background: hsl(84 13% 93%);      /* #eef0eb */
+    --foreground: hsl(90 14% 11%);      /* #1c2018 */
+    --card: hsl(80 14% 97%);            /* #f7f8f5 */
+    --card-foreground: hsl(90 14% 11%);
+    --popover: hsl(80 14% 97%);
+    --popover-foreground: hsl(90 14% 11%);
+    --primary: hsl(218 46% 33%);        /* #2e4a7c — navy */
+    --primary-foreground: hsl(84 13% 93%);
+    --secondary: hsl(2 56% 35%);        /* #8b2c28 — red */
+    --secondary-foreground: hsl(84 13% 93%);
+    --muted: hsl(84 14% 87%);
+    --muted-foreground: hsl(92 9% 44%); /* #717a68 — text-dim */
+    --accent: hsl(36 69% 28%);          /* #7a5217 — amber */
+    --accent-foreground: hsl(84 13% 93%);
+    --destructive: hsl(2 56% 35%);
+    --border: hsl(85 14% 81%);          /* #d0d5c7 */
+    --input: hsl(85 14% 81%);
+    --ring: hsl(218 46% 33%);
+    --chart-1: hsl(218 46% 33%);
+    --chart-2: hsl(2 56% 35%);
+    --chart-3: hsl(159 63% 25%);
+    --chart-4: hsl(116 11% 38%);
+    --chart-5: hsl(92 9% 44%);
     --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sidebar: hsl(84 13% 93%);
+    --sidebar-foreground: hsl(90 14% 11%);
+    --sidebar-primary: hsl(218 46% 33%);
+    --sidebar-primary-foreground: hsl(84 13% 93%);
+    --sidebar-accent: hsl(84 14% 87%);
+    --sidebar-accent-foreground: hsl(90 14% 11%);
+    --sidebar-border: hsl(85 14% 81%);
+    --sidebar-ring: hsl(218 46% 33%);
+
+    /* Narrative Nexus design tokens — light mode (from sources.html) */
+    --nn-bg:      #eef0eb;
+    --nn-nav-bg:  #e0e4da;
+    --nn-surface: #f7f8f5;
+    --nn-surface2:#e8ebe3;
+    --nn-border:  #d0d5c7;
+    --nn-text:    #1c2018;
+    --nn-text-dim:#717a68;
+
+    --nn-navy:    #2e4a7c;
+    --nn-red:     #8b2c28;
+    --nn-teal:    #276b52;
+    --nn-slate:   #5c6b5a;
+    --nn-amber:   #7a5217;
+
+    --nn-navy-dim:  rgba(46,74,124,.10);
+    --nn-red-dim:   rgba(139,44,40,.10);
+    --nn-teal-dim:  rgba(39,107,82,.10);
+    --nn-slate-dim: rgba(92,107,90,.10);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: hsl(105 15% 5%);    /* #0c0f0b */
+    --foreground: hsl(92 32% 83%);    /* #d2e4c5 */
+    --card: hsl(90 18% 9%);           /* #161a12 */
+    --card-foreground: hsl(92 32% 83%);
+    --popover: hsl(92 21% 12%);       /* #1f2619 */
+    --popover-foreground: hsl(92 32% 83%);
+    --primary: hsl(208 61% 69%);      /* #7eb3e0 — navy */
+    --primary-foreground: hsl(105 15% 5%);
+    --secondary: hsl(0 56% 66%);      /* #d97878 — red */
+    --secondary-foreground: hsl(105 15% 5%);
+    --muted: hsl(92 21% 12%);
+    --muted-foreground: hsl(96 13% 46%);  /* #738567 — text-dim */
+    --accent: hsl(41 52% 51%);         /* #c49a42 — amber */
+    --accent-foreground: hsl(105 15% 5%);
+    --destructive: hsl(0 56% 66%);
+    --border: hsl(95 19% 18%);         /* #2c3625 */
+    --input: hsl(95 19% 18%);
+    --ring: hsl(208 61% 69%);
+    --chart-1: hsl(208 61% 69%);
+    --chart-2: hsl(0 56% 66%);
+    --chart-3: hsl(98 18% 58%);
+    --chart-4: hsl(41 52% 51%);
+    --chart-5: hsl(96 13% 46%);
+    --sidebar: hsl(90 18% 9%);
+    --sidebar-foreground: hsl(92 32% 83%);
+    --sidebar-primary: hsl(208 61% 69%);
+    --sidebar-primary-foreground: hsl(105 15% 5%);
+    --sidebar-accent: hsl(92 21% 12%);
+    --sidebar-accent-foreground: hsl(92 32% 83%);
+    --sidebar-border: hsl(95 19% 18%);
+    --sidebar-ring: hsl(208 61% 69%);
 
-    /* Narrative Nexus design tokens — dark theme only */
-    --nn-bg:      #0a0a0f;
-    --nn-surface: #111118;
-    --nn-border:  #1e1e2e;
-    --nn-green:   #00ff88;
-    --nn-amber:   #ffaa00;
-    --nn-red:     #ff4444;
-    --nn-neutral: #4a4a6a;
-    --nn-text:    #e0e0e0;
-    --nn-dim:     #888899;
+    /* Narrative Nexus design tokens — from docs/design-tokens.md */
+    --nn-bg:      #0c0f0b;
+    --nn-nav-bg:  #141810;
+    --nn-surface: #161a12;
+    --nn-surface2:#1f2619;
+    --nn-border:  #2c3625;
+    --nn-text:    #d2e4c5;
+    --nn-text-dim:#738567;
+
+    --nn-navy:    #7eb3e0;
+    --nn-red:     #d97878;
+    --nn-teal:    #5ebd8e;
+    --nn-slate:   #90a882;
+    --nn-amber:   #c49a42;
+
+    --nn-navy-dim:  rgba(126,179,224,.13);
+    --nn-red-dim:   rgba(217,120,120,.13);
+    --nn-teal-dim:  rgba(94,189,142,.13);
+    --nn-slate-dim: rgba(144,168,130,.13);
 }
 
 @layer base {

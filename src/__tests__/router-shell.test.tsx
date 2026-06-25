@@ -4,10 +4,13 @@ import userEvent from "@testing-library/user-event";
 import { App } from "../App";
 
 describe("Router Shell — Slice 0", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // jsdom's initial window.location is unreliable across environments.
     // Force it to "/" so the index route (Sources) is active.
     window.history.pushState({}, "", "/");
+    // Suppress auto-opening onboarding dialog in router tests
+    const { useStore } = await import("../store");
+    useStore.setState({ onboardingComplete: true });
   });
   it("renders nav bar with 8 navigation links", () => {
     render(<App />);

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Design extraction output (generated, not source)
+design-extract-output/
