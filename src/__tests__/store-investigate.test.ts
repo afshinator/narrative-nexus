@@ -2,13 +2,15 @@ import { describe, expect, it } from "vitest";
 import { useStore } from "../store";
 
 describe("adHocResults store", () => {
-	it("defaults to empty array", () => {
+	beforeEach(() => {
 		useStore.setState({ adHocResults: [] });
+	});
+
+	it("defaults to empty array", () => {
 		expect(useStore.getState().adHocResults).toEqual([]);
 	});
 
 	it("addAdHocResult appends a result", () => {
-		useStore.setState({ adHocResults: [] });
 		const result = {
 			id: "test-1",
 			query: "https://example.com/article",
@@ -35,5 +37,28 @@ describe("adHocResults store", () => {
 		});
 		useStore.getState().clearAdHocResults();
 		expect(useStore.getState().adHocResults).toEqual([]);
+	});
+
+	it("removeAdHocResult removes a single result by id", () => {
+		useStore.setState({
+			adHocResults: [
+				{ id: "a", query: "first", timestamp: 1, claims: [] },
+				{ id: "b", query: "second", timestamp: 2, claims: [] },
+				{ id: "c", query: "third", timestamp: 3, claims: [] },
+			],
+		});
+		useStore.getState().removeAdHocResult("b");
+		const remaining = useStore.getState().adHocResults;
+		expect(remaining).toHaveLength(2);
+		expect(remaining[0].id).toBe("a");
+		expect(remaining[1].id).toBe("c");
+	});
+
+	it("removeAdHocResult is a no-op for unknown id", () => {
+		useStore.setState({
+			adHocResults: [{ id: "a", query: "first", timestamp: 1, claims: [] }],
+		});
+		useStore.getState().removeAdHocResult("nonexistent");
+		expect(useStore.getState().adHocResults).toHaveLength(1);
 	});
 });

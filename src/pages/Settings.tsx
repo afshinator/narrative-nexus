@@ -28,7 +28,7 @@ export default function SettingsPage() {
 	return (
 		<div className="mx-auto max-w-2xl space-y-6">
 			{/* Page header — mock style */}
-			<div className="pagehead">
+			<div className="flex items-center gap-3 mb-1.5">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
 					Settings
 				</h1>

@@ -53,25 +53,29 @@ describe("Investigate Page", () => {
 		expect(screen.getByText(/no ad-hoc queries yet/i)).toBeInTheDocument();
 	});
 
-	it("stores query result on submit", async () => {
+	it("does NOT store empty result on submit — shows transient status instead", async () => {
 		const { user } = renderPage();
 		const textarea = screen.getByRole("textbox");
 		await user.type(textarea, "https://example.com/article");
 		await user.click(screen.getByRole("button", { name: /submit/i }));
 
+		// Should show transient submitted message
+		expect(screen.getByText(/submitted/i)).toBeInTheDocument();
+
+		// Should NOT add to the store
 		const { useStore } = await import("../store");
-		const results = useStore.getState().adHocResults;
-		expect(results).toHaveLength(1);
-		expect(results[0].query).toBe("https://example.com/article");
+		expect(useStore.getState().adHocResults).toHaveLength(0);
 	});
 
-	it("shows submitted query in results list", async () => {
+	it("removes individual result via per-card dismiss button", async () => {
+		const { useStore } = await import("../store");
+		useStore.setState({
+			adHocResults: [{ id: "a", query: "first", timestamp: 1, claims: [] }],
+		});
 		const { user } = renderPage();
-		const textarea = screen.getByRole("textbox");
-		await user.type(textarea, "https://example.com/article");
-		await user.click(screen.getByRole("button", { name: /submit/i }));
-
-		expect(screen.getByText("https://example.com/article")).toBeInTheDocument();
+		expect(screen.getByText("first")).toBeInTheDocument();
+		await user.click(screen.getByRole("button", { name: /dismiss result/i }));
+		expect(useStore.getState().adHocResults).toHaveLength(0);
 	});
 
 	it("clear results button empties the list", async () => {

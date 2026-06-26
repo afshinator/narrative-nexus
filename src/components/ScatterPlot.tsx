@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
+import type { Archetype } from "../store";
 
 interface EnrichedSource {
 	sourceId: string;
@@ -7,7 +8,15 @@ interface EnrichedSource {
 	tier: number;
 	R_orig: number;
 	R_val: number;
+	archetype: Archetype;
 }
+
+const ARCHETYPE_FILL: Record<string, string> = {
+	EARLY_BREAKER: "var(--nn-navy)",
+	NOISE_GENERATOR: "var(--nn-red)",
+	SELECTIVE_ACCURATE: "var(--nn-teal)",
+	CONSENSUS_FOLLOWER: "var(--nn-slate)",
+};
 
 interface Props {
 	data: EnrichedSource[];
@@ -168,7 +177,12 @@ export default function ScatterPlot({
 					"transform",
 					(d) => `translate(${xScale(d.R_orig)},${yScale(d.R_val)})`,
 				)
-				.attr("fill", "var(--nn-navy)")
+				.attr(
+					"fill",
+					(d) =>
+						ARCHETYPE_FILL[d.archetype ?? "CONSENSUS_FOLLOWER"] ??
+						"var(--nn-slate)",
+				)
 				.attr("stroke", "var(--nn-bg)")
 				.attr("stroke-width", 1)
 				.attr("opacity", 1)

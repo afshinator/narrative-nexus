@@ -1,23 +1,30 @@
-import { Search, Send } from "lucide-react";
-import { useState } from "react";
+import { Search, Send, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "../store";
+
+const STATUS_TIMEOUT = 3000;
 
 export default function InvestigatePage() {
 	const [query, setQuery] = useState("");
+	const [submitted, setSubmitted] = useState(false);
+	const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 	const adHocResults = useStore((s) => s.adHocResults);
-	const addAdHocResult = useStore((s) => s.addAdHocResult);
+	const removeAdHocResult = useStore((s) => s.removeAdHocResult);
 	const clearAdHocResults = useStore((s) => s.clearAdHocResults);
+
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) clearTimeout(timeoutRef.current);
+		};
+	}, []);
 
 	function handleSubmit() {
 		const trimmed = query.trim();
 		if (!trimmed) return;
-		addAdHocResult({
-			id: crypto.randomUUID(),
-			query: trimmed,
-			timestamp: Date.now(),
-			claims: [],
-		});
+		setSubmitted(true);
 		setQuery("");
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+		timeoutRef.current = setTimeout(() => setSubmitted(false), STATUS_TIMEOUT);
 	}
 
 	return (
@@ -52,15 +59,23 @@ export default function InvestigatePage() {
 					rows={5}
 					className="mb-4 w-full resize-y rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface2)] px-4 py-3 font-sans text-[0.84rem] text-[var(--nn-text)] placeholder:text-[var(--nn-text-dim)] focus:border-[var(--nn-navy)] focus:outline-none"
 				/>
-				<button
-					type="button"
-					onClick={handleSubmit}
-					disabled={!query.trim()}
-					className="inline-flex items-center gap-2 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy)] px-5 py-2 font-heading text-[0.82rem] font-semibold text-white transition-opacity disabled:opacity-40"
-				>
-					<Send size={14} />
-					Submit
-				</button>
+				<div className="flex items-center gap-4">
+					<button
+						type="button"
+						onClick={handleSubmit}
+						disabled={!query.trim()}
+						className="inline-flex items-center gap-2 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy)] px-5 py-2 font-heading text-[0.82rem] font-semibold text-white transition-opacity disabled:opacity-40"
+					>
+						<Send size={14} />
+						Submit
+					</button>
+					{submitted && (
+						<span className="font-sans text-[0.82rem] text-[var(--nn-teal)]">
+							Submitted &mdash; pipeline analysis will populate results when the
+							backend runs stages 1&ndash;3.
+						</span>
+					)}
+				</div>
 			</div>
 
 			{/* Results */}
@@ -107,6 +122,14 @@ export default function InvestigatePage() {
 											{new Date(result.timestamp).toLocaleString()}
 										</p>
 									</div>
+									<button
+										type="button"
+										onClick={() => removeAdHocResult(result.id)}
+										className="shrink-0 rounded p-1 text-[var(--nn-text-dim)] hover:text-[var(--nn-text)] transition-colors"
+										aria-label="Dismiss result"
+									>
+										<X size={14} />
+									</button>
 								</div>
 								{result.claims.length === 0 ? (
 									<p className="font-sans text-[0.74rem] italic text-[var(--nn-text-dim)]">

@@ -27,6 +27,7 @@ CREATE TABLE articles (
 );
 
 CREATE INDEX idx_articles_source ON articles(source_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_articles_url ON articles(url);
 
 -- Story clusters (grouped by semantic similarity)
 CREATE TABLE clusters (

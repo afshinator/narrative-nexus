@@ -46,6 +46,7 @@ interface StoreState {
 	toggleSource: (id: string) => void;
 	addAdHocResult: (result: AdHocResult) => void;
 	clearAdHocResults: () => void;
+	removeAdHocResult: (id: string) => void;
 }
 
 export const useStore = create<StoreState>()(
@@ -82,6 +83,10 @@ export const useStore = create<StoreState>()(
 					adHocResults: [...state.adHocResults, result],
 				})),
 			clearAdHocResults: () => set({ adHocResults: [] }),
+			removeAdHocResult: (id) =>
+				set((state) => ({
+					adHocResults: state.adHocResults.filter((r) => r.id !== id),
+				})),
 		}),
 		{ name: "nn-store" },
 	),

@@ -110,6 +110,66 @@ describe("Sources Page", () => {
 			const markers = svg?.querySelectorAll("path.marker");
 			expect(markers?.length).toBe(20);
 		});
+
+		it("colors scatter markers by archetype", () => {
+			// 4 sources, one in each quadrant → 4 different archetypes
+			const fourScores = [
+				{
+					sourceId: "reuters",
+					vertical: "geopolitics",
+					R_orig: 90,
+					R_val: 85,
+					R_speed: 2,
+					R_frame: 0.1,
+					R_edit: 0,
+					R_correct: 1,
+				},
+				{
+					sourceId: "zerohedge",
+					vertical: "geopolitics",
+					R_orig: 85,
+					R_val: 10,
+					R_speed: 5,
+					R_frame: 2,
+					R_edit: 0,
+					R_correct: 3,
+				},
+				{
+					sourceId: "nyt",
+					vertical: "geopolitics",
+					R_orig: 15,
+					R_val: 80,
+					R_speed: 4,
+					R_frame: 0.5,
+					R_edit: 0,
+					R_correct: 2,
+				},
+				{
+					sourceId: "fox-news",
+					vertical: "geopolitics",
+					R_orig: 20,
+					R_val: 20,
+					R_speed: 7,
+					R_frame: 3,
+					R_edit: 0,
+					R_correct: 0,
+				},
+			];
+			render(
+				<MemoryRouter>
+					<SourcesPage scores={fourScores} />
+				</MemoryRouter>,
+			);
+			const svg = document.querySelector("svg");
+			if (!svg) throw new Error("SVG not found");
+			const fills = new Set<string>();
+			svg.querySelectorAll("path.marker").forEach((m) => {
+				const f = m.getAttribute("fill");
+				if (f) fills.add(f);
+			});
+			// Should have at least 4 different fill colors (one per archetype)
+			expect(fills.size).toBeGreaterThanOrEqual(4);
+		});
 	});
 
 	describe("Leaderboard table", () => {

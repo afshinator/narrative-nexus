@@ -15,3 +15,5 @@ Consolidated list of items explicitly deferred during planning or implementation
 | Onboarding vocabulary icons (5 terms) | lucide-react icons not selected yet | Icon selection | Slice 3, CONTEXT.md |
 | ~~Worker `requirements.txt`~~ | Worker is a stub container (M1 ponytail skip) | **Resolved in Slice 8a** — deps added to project `requirements.txt` | M1 |
 | ~~Multi-stage Dockerfile~~ | Current workflow builds before Docker (M1 ponytail skip) | **Resolved in Slice 8a** — python config files added | M1 |
+| Pipeline Flow page: scraper start/stop toggle | UI control for scheduler — backend endpoints exist but no frontend wiring | 8b (endpoints must exist first) | 8b |
+| App header: scraper status indicator (running vs paused) | Visual feedback that scraping is active — needs scheduler state exposed | 8b | 8b |

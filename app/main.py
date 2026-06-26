@@ -2,17 +2,32 @@
 
 API routes prefixed with /api/. Vite dev server proxies /api/* to localhost:8000.
 """
+import os
+from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+
 from db.sources import list_sources
 from db.articles import list_articles
 from db.clusters import list_clusters
 from db.claims import list_claims
 from db.snapshots import list_snapshots
 from db.connection import get_db
+from pipeline.scheduler import ScraperScheduler
 
-app = FastAPI(title="Narrative Nexus", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    db_path = os.environ.get("NN_DB_PATH", "data/nn.db")
+    os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
+    scheduler = ScraperScheduler(db_path=db_path)
+    application.state.scraper = scheduler  # paused on startup
+    yield
+    scheduler.shutdown()
+
+
+app = FastAPI(title="Narrative Nexus", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -87,3 +102,22 @@ def api_snapshots(source_id: int | None = None, vertical: str | None = None, lim
         return {"snapshots": snapshots}
     finally:
         conn.close()
+
+
+# ── Scraper control endpoints ──────────────────────────────────────────
+
+@app.get("/api/scraper/status")
+def scraper_status(request: Request) -> dict:
+    return request.app.state.scraper.status()
+
+
+@app.post("/api/scraper/start")
+def scraper_start(request: Request) -> dict:
+    request.app.state.scraper.start()
+    return {"status": "started"}
+
+
+@app.post("/api/scraper/stop")
+def scraper_stop(request: Request) -> dict:
+    request.app.state.scraper.stop()
+    return {"status": "stopped"}

@@ -66,6 +66,12 @@ def update_article_body(
     return cur.rowcount > 0
 
 
+def article_exists_by_url(conn: sqlite3.Connection, url: str) -> bool:
+    """Check if an article with the given URL already exists."""
+    row = conn.execute("SELECT 1 FROM articles WHERE url = ?", (url,)).fetchone()
+    return row is not None
+
+
 def delete_article(conn: sqlite3.Connection, article_id: int) -> bool:
     """Delete an article by id. Returns True if a row was deleted."""
     cur = conn.execute("DELETE FROM articles WHERE id = ?", (article_id,))

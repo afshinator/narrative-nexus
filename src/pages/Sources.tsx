@@ -59,20 +59,29 @@ export default function SourcesPage({ scores = [] }: Props) {
 		};
 	}, [scores]);
 
-	// Scatter plot data: enriched sources with scores for positioning
+	// Scatter plot data: enriched sources with scores and archetype for color encoding
 	const scatterData = useMemo(
 		() =>
 			DEFAULT_SOURCES.map((source) => {
 				const score = scoreMap.get(source.id);
+				const archetype = score
+					? getArchetype(
+							score.R_orig,
+							score.R_val,
+							panelMedian.orig,
+							panelMedian.val,
+						)
+					: null;
 				return {
 					sourceId: source.id,
 					name: source.name,
 					tier: source.tier,
 					R_orig: score?.R_orig ?? 0,
 					R_val: score?.R_val ?? 0,
+					archetype,
 				};
 			}),
-		[scoreMap],
+		[scoreMap, panelMedian],
 	);
 
 	// Enrich sources with scores + archetype, then filter + sort
@@ -139,7 +148,7 @@ export default function SourcesPage({ scores = [] }: Props) {
 	return (
 		<div className="mx-auto max-w-[1340px] space-y-6">
 			{/* Page header */}
-			<div className="pagehead">
+			<div className="flex items-center gap-3 mb-1.5">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
 					Sources
 				</h1>

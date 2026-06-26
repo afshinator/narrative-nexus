@@ -8,8 +8,9 @@ from db.sources import insert_source
 
 @pytest.fixture
 def client():
-    """FastAPI test client that uses the application directly."""
-    return TestClient(app)
+    """FastAPI test client with lifespan (scheduler attached to app.state)."""
+    with TestClient(app) as c:
+        yield c
 
 
 class TestHealth:
@@ -93,3 +94,19 @@ class TestRouteErrors:
     def test_not_found_returns_404(self, client):
         resp = client.get("/api/nonexistent")
         assert resp.status_code == 404
+
+
+class TestScraperRoutes:
+    def test_status_returns_paused_by_default(self, client):
+        resp = client.get("/api/scraper/status")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["running"] is False
+
+    def test_start_stop(self, client):
+        resp = client.post("/api/scraper/start")
+        assert resp.status_code == 200
+        assert client.get("/api/scraper/status").json()["running"] is True
+        resp = client.post("/api/scraper/stop")
+        assert resp.status_code == 200
+        assert client.get("/api/scraper/status").json()["running"] is False

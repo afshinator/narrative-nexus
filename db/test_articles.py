@@ -96,3 +96,10 @@ class TestDeleteArticle:
 
     def test_returns_false_for_missing(self, db):
         assert delete_article(db, 999) is False
+
+
+class TestUrlUniqueness:
+    def test_duplicate_url_raises(self, db, src):
+        insert_article(db, src, "https://src.com/dup", "First")
+        with pytest.raises(Exception):
+            insert_article(db, src, "https://src.com/dup", "Second")
