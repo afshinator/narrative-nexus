@@ -2,8 +2,11 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
 import ScatterPlot from "../components/ScatterPlot";
+import VerticalPills from "../components/VerticalPills";
 import type { ReputationScore } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
+import type { VerticalThresholdKey } from "../data/thresholds";
+import { VERTICAL_LABELS } from "../data/thresholds";
 import { useStore } from "../store";
 import { getArchetype } from "../utils/archetype";
 
@@ -27,6 +30,7 @@ export default function SourcesPage({ scores = [] }: Props) {
 	const [hoveredSource, setHoveredSource] = useState<string | null>(null);
 	const [sortKey, setSortKey] = useState<SortKey>("name");
 	const [sortDir, setSortDir] = useState<1 | -1>(1);
+	const [vertical, setVertical] = useState<VerticalThresholdKey>("geopolitics");
 
 	const filter = useStore((s) => s.archetypeFilter);
 
@@ -141,11 +145,16 @@ export default function SourcesPage({ scores = [] }: Props) {
 				</h1>
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-				Behavioral reputation across 20 monitored outlets — GEOPOLITICS vertical
+				Behavioral reputation across 20 monitored outlets —{" "}
+				{VERTICAL_LABELS[vertical]} vertical
 			</p>
 
-			{/* Archetype filter pills */}
-			<ArchetypePills />
+			{/* Vertical picker + Archetype filter */}
+			<div className="flex flex-wrap items-center gap-4">
+				<VerticalPills vertical={vertical} onChange={setVertical} />
+				<div className="h-6 w-px bg-[var(--nn-border)]" />
+				<ArchetypePills />
+			</div>
 
 			{/* Scatter plot card */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">

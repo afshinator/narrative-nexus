@@ -220,4 +220,32 @@ describe("Sources Page", () => {
 			expect(origHeader).toBeInTheDocument();
 		});
 	});
+
+	describe("Vertical filter", () => {
+		it("renders 3 vertical picker pills", () => {
+			renderSources();
+			expect(
+				screen.getByRole("button", { name: /geopolitics/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("button", { name: /economics/i }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("button", { name: /technology/i }),
+			).toBeInTheDocument();
+		});
+
+		it("Geopolitics is the default vertical pill", () => {
+			renderSources();
+			const geo = screen.getByRole("button", { name: /geopolitics/i });
+			expect(geo.className).toContain("border-[var(--nn-navy)]");
+		});
+
+		it("clicking Economics updates subtitle", async () => {
+			const user = userEvent.setup();
+			renderSources();
+			await user.click(screen.getByRole("button", { name: /economics/i }));
+			expect(screen.getByText(/economics vertical/i)).toBeInTheDocument();
+		});
+	});
 });

@@ -18,6 +18,7 @@ import {
 } from "react";
 import { Radar } from "react-chartjs-2";
 import { Link, useParams } from "react-router";
+import VerticalPills from "../components/VerticalPills";
 import type { DailySnapshot, ProfileEvent } from "../data/scores";
 import { DIMENSIONS } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
@@ -225,53 +226,6 @@ function SourceProfilePage({
 }
 
 // ─── Sub-components ───
-
-const VERTICAL_LABELS: Record<VerticalThresholdKey, string> = {
-	geopolitics: "Geopolitics",
-	economics: "Economics",
-	technology: "Technology",
-};
-
-const VERTICAL_ORDER: VerticalThresholdKey[] = [
-	"geopolitics",
-	"economics",
-	"technology",
-];
-
-function VerticalPills({
-	vertical,
-	onChange,
-}: {
-	vertical: VerticalThresholdKey;
-	onChange: (v: VerticalThresholdKey) => void;
-}) {
-	return (
-		<div className="flex gap-2">
-			{VERTICAL_ORDER.map((v) => (
-				<button
-					key={v}
-					type="button"
-					onClick={() => onChange(v)}
-					className={`rounded-full border px-4 py-1.5 font-heading text-[0.78rem] font-semibold transition-colors ${
-						v === vertical
-							? "border-[var(--nn-navy)] text-[var(--nn-navy)]"
-							: "border-[var(--nn-border)] text-[var(--nn-text-dim)] hover:border-[var(--nn-text-dim)] hover:text-[var(--nn-text)]"
-					}`}
-					style={
-						v === vertical
-							? {
-									backgroundColor:
-										"color-mix(in srgb, var(--nn-navy) 10%, transparent)",
-								}
-							: undefined
-					}
-				>
-					{VERTICAL_LABELS[v]}
-				</button>
-			))}
-		</div>
-	);
-}
 
 function StatPanel({
 	snapshot,

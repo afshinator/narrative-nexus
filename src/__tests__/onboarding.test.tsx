@@ -26,11 +26,14 @@ describe("OnboardingDialog", () => {
 		useStore.setState({ onboardingComplete: false });
 	});
 
-	it("renders all 6 vocabulary terms in a single view", () => {
+	it("renders all 6 vocabulary terms with icons in a single view", () => {
 		renderDialog();
 		for (const term of TERMS) {
 			expect(screen.getByText(term)).toBeInTheDocument();
 		}
+		// Each term heading has an icon (aria-hidden SVGs)
+		const icons = document.querySelectorAll("h3 svg");
+		expect(icons.length).toBe(6);
 	});
 
 	it('shows "Don\'t show on startup" checkbox', () => {

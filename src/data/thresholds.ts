@@ -11,3 +11,15 @@ export const DEFAULT_THRESHOLDS: Thresholds = {
 	economics: 75,
 	technology: 75,
 };
+
+export const VERTICAL_LABELS: Record<VerticalThresholdKey, string> = {
+	geopolitics: "Geopolitics",
+	economics: "Economics",
+	technology: "Technology",
+};
+
+export const VERTICAL_ORDER: VerticalThresholdKey[] = [
+	"geopolitics",
+	"economics",
+	"technology",
+];

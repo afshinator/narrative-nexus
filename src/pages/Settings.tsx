@@ -2,21 +2,9 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import type { VerticalThresholdKey } from "../data/thresholds";
+import { VERTICAL_LABELS, VERTICAL_ORDER } from "../data/thresholds";
 import { useStore } from "../store";
 import { formatPercent } from "../utils/format";
-
-const VERTICAL_LABELS: Record<VerticalThresholdKey, string> = {
-	geopolitics: "Geopolitics",
-	economics: "Economics",
-	technology: "Technology",
-};
-
-const VERTICAL_ORDER: VerticalThresholdKey[] = [
-	"geopolitics",
-	"economics",
-	"technology",
-];
 
 const FONT_PRESETS = [
 	{ value: "0.8", label: "80%" },
