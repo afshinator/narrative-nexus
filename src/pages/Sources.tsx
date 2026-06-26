@@ -2,22 +2,10 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
 import ScatterPlot from "../components/ScatterPlot";
+import type { ReputationScore } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
 import { useStore } from "../store";
 import { getArchetype } from "../utils/archetype";
-
-/** Reputation score for one source in one vertical.
- *  Extracted to a shared location when backend exists. */
-export interface ReputationScore {
-	sourceId: string;
-	vertical: string;
-	R_orig: number;
-	R_val: number;
-	R_speed: number;
-	R_frame: number;
-	R_edit: number;
-	R_correct: number;
-}
 
 interface Props {
 	scores?: ReputationScore[];
@@ -66,6 +54,22 @@ export default function SourcesPage({ scores = [] }: Props) {
 					: (sorted.val[mid - 1].R_val + sorted.val[mid].R_val) / 2,
 		};
 	}, [scores]);
+
+	// Scatter plot data: enriched sources with scores for positioning
+	const scatterData = useMemo(
+		() =>
+			DEFAULT_SOURCES.map((source) => {
+				const score = scoreMap.get(source.id);
+				return {
+					sourceId: source.id,
+					name: source.name,
+					tier: source.tier,
+					R_orig: score?.R_orig ?? 0,
+					R_val: score?.R_val ?? 0,
+				};
+			}),
+		[scoreMap],
+	);
 
 	// Enrich sources with scores + archetype, then filter + sort
 	const rows = useMemo(() => {
@@ -151,7 +155,7 @@ export default function SourcesPage({ scores = [] }: Props) {
 					</h2>
 				</div>
 				<ScatterPlot
-					data={[]}
+					data={scatterData}
 					hoveredId={hoveredSource}
 					onHover={setHoveredSource}
 					onSelect={handleSelect}

@@ -6,7 +6,7 @@ import { OnboardingDialog } from "./OnboardingDialog";
 
 const navItems = [
 	{ to: "/", label: "Sources" },
-	{ to: "/source/example.com", label: "Source Profile" },
+	{ to: "/source/reuters.com", label: "Source Profile" },
 	{ to: "/cluster/abc123", label: "Cluster Report" },
 	{ to: "/timeline/abc123", label: "Timeline" },
 	{ to: "/pipeline", label: "Pipeline" },
@@ -22,8 +22,15 @@ export default function AppNav() {
 		<nav className="sticky top-0 z-50 flex h-[52px] items-stretch gap-0.5 border-b border-[var(--nn-border)] bg-[var(--nn-nav-bg)] px-7">
 			{/* Brand */}
 			<span className="flex items-center gap-2.5 pr-6 font-heading text-[1rem] font-bold tracking-[-0.01em] text-[var(--nn-text)]">
-				<svg width="20" height="20" viewBox="0 0 26 26" className="shrink-0" role="img" aria-label="Narrative Nexus logo">
-				  <title>Narrative Nexus</title>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 26 26"
+					className="shrink-0"
+					role="img"
+					aria-label="Narrative Nexus logo"
+				>
+					<title>Narrative Nexus</title>
 					<circle
 						cx="13"
 						cy="13"

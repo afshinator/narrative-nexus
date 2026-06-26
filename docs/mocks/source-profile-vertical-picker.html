@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Source Profile — Vertical Picker Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0f0b; --surface:#161a12; --surface2:#1f2619; --border:#2c3625;
+  --text:#d2e4c5; --text-dim:#738567;
+  --navy:#7eb3e0; --navy-dim:rgba(126,179,224,.13);
+  --red:#d97878; --red-dim:rgba(217,120,120,.13);
+  --teal:#5ebd8e; --teal-dim:rgba(94,189,142,.13);
+  --slate:#90a882; --slate-dim:rgba(144,168,130,.13);
+  --amber:#c49a42;
+}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);padding:34px 28px}
+.page{max-width:1340px;margin:0 auto}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2rem;letter-spacing:-.02em;margin-bottom:4px}
+.lede{color:var(--text-dim);font-size:.88rem;margin-bottom:24px}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:30px}
+.section h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:16px}
+.section h3{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.92rem;margin-bottom:8px;color:var(--text-dim)}
+.grid{display:grid;gap:24px;grid-template-columns:1fr 1fr 1fr}
+.grid-2{display:grid;gap:24px;grid-template-columns:1fr 1fr}
+@media(max-width:1100px){.grid,.grid-2{grid-template-columns:1fr}}
+.card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.tag{display:inline-flex;font-family:'IBM Plex Mono',monospace;font-size:.66rem;padding:3px 8px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:12px}
+.tag.a{background:var(--navy-dim);color:var(--navy)}
+.tag.b{background:var(--teal-dim);color:var(--teal)}
+.tag.c{background:var(--red-dim);color:var(--red)}
+.label{font-size:.74rem;color:var(--text-dim);margin-bottom:6px}
+
+/* vertical pills */
+.vtabs{display:flex;gap:6px;margin-bottom:16px}
+.vtab{font-family:'IBM Plex Mono',monospace;font-size:.72rem;padding:5px 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface);color:var(--text-dim);cursor:pointer;transition:all .15s}
+.vtab.active{border-color:var(--navy);color:var(--navy);background:var(--navy-dim)}
+.vtab.dual{border-color:var(--teal);color:var(--teal);background:var(--teal-dim)}
+
+/* stat rows */
+.stat{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--border);padding:6px 0}
+.stat:last-child{border-bottom:none}
+.stat .l{font-size:.76rem;color:var(--text-dim)}
+.stat .v{font-family:'IBM Plex Mono',monospace;font-size:.82rem}
+.stat .v .up{color:var(--teal)}.stat .v .down{color:var(--red)}.stat .v .flat{color:var(--text-dim)}
+
+/* radar placeholder */
+.radar-placeholder{width:100%;aspect-ratio:1/.85;background:var(--surface2);border:1px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem;color:var(--text-dim);font-family:'IBM Plex Mono',monospace}
+
+/* sparkline placeholder */
+.spark-row{display:flex;align-items:center;gap:10px;padding:4px 0}
+.spark-label{width:80px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--text-dim);flex-shrink:0;text-align:right}
+.spark-bar{flex:1;height:22px;background:var(--surface2);border-radius:3px;overflow:hidden;position:relative}
+.spark-fill{height:100%;border-radius:3px;transition:width .3s}
+
+/* pro/con lists */
+.pros{font-size:.78rem;margin-top:8px}
+.pros li{color:var(--teal);margin-bottom:2px;list-style:none}
+.pros li::before{content:"+ ";color:var(--teal)}
+.cons{font-size:.78rem;margin-top:4px}
+.cons li{color:var(--red);margin-bottom:2px;list-style:none}
+.cons li::before{content:"– ";color:var(--red)}
+
+.pros-list{color:var(--teal);font-size:.78rem;margin-top:8px}
+.pros-list div{margin-bottom:2px}
+.pros-list::before{content:"Strengths";display:block;font-family:'Space Grotesk',sans-serif;font-size:.7rem;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.cons-list{color:var(--red);font-size:.78rem;margin-top:8px}
+.cons-list div{margin-bottom:2px}
+.cons-list::before{content:"Weaknesses";display:block;font-family:'Space Grotesk',sans-serif;font-size:.7rem;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="page">
+  <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:4px">
+    <h1>Source Profile — Vertical Picker</h1>
+    <span class="tag a">Decision 1 of 3</span>
+  </div>
+  <p class="lede">Each source has <strong>3 independent reputation profiles</strong> — one per vertical (GEOPOLITICS, ECONOMICS, TECHNOLOGY). The question: how does the user switch between them?</p>
+
+  <!-- OPTION A: Pill switcher -->
+  <div class="section">
+    <h2><span style="color:var(--navy)">A.</span> Vertical pills — active tab selected</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:16px">Like Sources page ArchetypePills. User clicks a tab, the radar + stats + sparklines re-render for that vertical. "All" not meaningful here — each vertical is independent.</p>
+
+    <div class="card">
+      <!-- Source header -->
+      <div style="margin-bottom:12px">
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem">Reuters</span>
+        <span style="font-size:.74rem;color:var(--text-dim);margin-left:8px">Tier 1 · Wire · reuters.com</span>
+      </div>
+
+      <!-- Vertical pills -->
+      <div class="vtabs">
+        <span class="vtab dual active">GEOPOLITICS</span>
+        <span class="vtab">ECONOMICS</span>
+        <span class="vtab">TECHNOLOGY</span>
+      </div>
+
+      <!-- Layout: radar + stats -->
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:18px">
+        <div class="radar-placeholder">Radar chart: GEOPOLITICS profile</div>
+        <div>
+          <div style="display:inline-flex;font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;background:var(--navy-dim);color:var(--navy);margin-bottom:12px">Early Breaker</div>
+          <div class="stat"><span class="l">Origination Rate</span><span class="v">58 <span class="flat">·</span></span></div>
+          <div class="stat"><span class="l">Validation Rate</span><span class="v">75 <span class="up">▲15</span></span></div>
+          <div class="stat"><span class="l">Speed Premium</span><span class="v">68 <span class="up">▲18</span></span></div>
+          <div class="stat"><span class="l">Framing Consistency</span><span class="v">62 <span class="flat">▲2</span></span></div>
+          <div class="stat"><span class="l">Silent Edit Rate</span><span class="v">50 <span class="down">▼20</span></span></div>
+          <div class="stat"><span class="l">Correction Rate</span><span class="v">56 <span class="flat">·</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px">
+      <div class="pros-list">
+        <div>User sees exactly which vertical they're looking at</div>
+        <div>Matches existing ArchetypePills UX pattern</div>
+        <div>Can show different archetypes per vertical (a source may be EB in GEOPOLITICS but NF in ECONOMICS)</div>
+      </div>
+      <div class="cons-list">
+        <div>Requires user to click to see other verticals — hidden by default</div>
+        <div>Vertical context changes when switching — user must remember what they saw</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION B: Stacked / All 3 visible -->
+  <div class="section">
+    <h2><span style="color:var(--teal)">B.</span> All 3 verticals shown simultaneously (stacked)</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:16px">Three rows, one per vertical. Each has its own radar + stats. User scrolls or tabs between sections. "At a glance" comparison.</p>
+
+    <div class="card">
+      <div style="margin-bottom:12px">
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem">Reuters</span>
+        <span style="font-size:.74rem;color:var(--text-dim);margin-left:8px">Tier 1 · Wire · reuters.com</span>
+      </div>
+
+      <!-- Vertical 1 -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:10px;background:var(--navy-dim);border-radius:6px">
+        <span class="tag a" style="margin-bottom:0">GEOPOLITICS</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:4px;background:var(--navy-dim);color:var(--navy)">Early Breaker</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;margin-bottom:20px">
+        <div class="radar-placeholder" style="height:160px">Radar · GEOPOLITICS</div>
+        <div style="font-size:.7rem">
+          <div class="stat" style="padding:3px 0"><span class="l">Origination</span><span class="v">58</span></div>
+          <div class="stat" style="padding:3px 0"><span class="l">Validation</span><span class="v">75 ▲</span></div>
+        </div>
+      </div>
+
+      <hr style="border-color:var(--border);margin:12px 0">
+
+      <!-- Vertical 2 -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:10px;background:var(--teal-dim);border-radius:6px">
+        <span class="tag b" style="margin-bottom:0">ECONOMICS</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:4px;background:var(--teal-dim);color:var(--teal)">Selective but Accurate</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 280px;gap:14px;margin-bottom:20px">
+        <div class="radar-placeholder" style="height:160px">Radar · ECONOMICS</div>
+        <div style="font-size:.7rem">
+          <div class="stat" style="padding:3px 0"><span class="l">Origination</span><span class="v">42</span></div>
+          <div class="stat" style="padding:3px 0"><span class="l">Validation</span><span class="v">80 ▲</span></div>
+        </div>
+      </div>
+
+      <hr style="border-color:var(--border);margin:12px 0">
+
+      <!-- Vertical 3 -->
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:10px;background:var(--red-dim);border-radius:6px">
+        <span class="tag c" style="margin-bottom:0">TECHNOLOGY</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:4px;background:var(--red-dim);color:var(--red)">Noise Generator</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 280px;gap:14px">
+        <div class="radar-placeholder" style="height:160px">Radar · TECHNOLOGY</div>
+        <div style="font-size:.7rem">
+          <div class="stat" style="padding:3px 0"><span class="l">Origination</span><span class="v">65</span></div>
+          <div class="stat" style="padding:3px 0"><span class="l">Validation</span><span class="v">38 ▼</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px">
+      <div class="pros-list">
+        <div>All 3 profiles visible at once — instant cross-vertical comparison</div>
+        <div>No hidden state, no clicking to explore</div>
+        <div>Shows the power of multi-vertical tracking immediately</div>
+      </div>
+      <div class="cons-list">
+        <div>3× the content — tall page, potentially overwhelming</div>
+        <div>Day scrubber would control all 3 radars simultaneously (consistent time)</div>
+        <div>Event markers from different verticals interleaved on timeline</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPTION C: Single default, no picker -->
+  <div class="section">
+    <h2><span style="color:var(--red)">C.</span> Single default vertical — no picker</h2>
+    <p style="font-size:.82rem;color:var(--text-dim);margin-bottom:16px">Pick one vertical as the default view. The page shows only that vertical's data. Simplest implementation, but the user can't see the others without going somewhere else (e.g. a settings dropdown).</p>
+
+    <div class="card">
+      <div style="margin-bottom:12px">
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem">Reuters</span>
+        <span style="font-size:.74rem;color:var(--text-dim);margin-left:8px">Tier 1 · Wire · reuters.com</span>
+      </div>
+
+      <div style="display:inline-flex;font-family:'IBM Plex Mono',monospace;font-size:.66rem;padding:3px 8px;border-radius:4px;background:var(--slate-dim);color:var(--slate);margin-bottom:12px">Showing: GEOPOLITICS (default)</div>
+
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:18px">
+        <div class="radar-placeholder">Radar chart</div>
+        <div>
+          <div style="display:inline-flex;font-family:'IBM Plex Mono',monospace;font-size:.68rem;padding:4px 10px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;background:var(--navy-dim);color:var(--navy);margin-bottom:12px">Early Breaker</div>
+          <div class="stat"><span class="l">Origination</span><span class="v">58</span></div>
+          <div class="stat"><span class="l">Validation</span><span class="v">75 ▲</span></div>
+          <div class="stat"><span class="l">Speed</span><span class="v">68 ▲</span></div>
+          <div class="stat"><span class="l">Framing</span><span class="v">62</span></div>
+          <div class="stat"><span class="l">Silent Edits</span><span class="v">50 ▼</span></div>
+          <div class="stat"><span class="l">Corrections</span><span class="v">56</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px">
+      <div class="pros-list">
+        <div>Simplest to build — one data path, no vertical state management</div>
+        <div>Clean, focused layout</div>
+      </div>
+      <div class="cons-list">
+        <div>Hides the multi-vertical nature of the product</div>
+        <div>Analyst can't compare cross-vertical behavior without leaving the page</div>
+        <div>Requires awkward external control (dropdown? settings?) to change vertical</div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--text-dim);text-align:center;margin-top:20px">Narrative Nexus tracks consensus reality, not truth.</p>
+</div>
+</body>
+</html>

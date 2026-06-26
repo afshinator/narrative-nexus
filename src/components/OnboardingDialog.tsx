@@ -34,6 +34,11 @@ const TERMS = [
 		definition:
 			"A claim that never became consensus-absorbed after 90 days. Terminal state.",
 	},
+	{
+		term: "Outlier Claim",
+		definition:
+			"A claim present in one or few sources but absent from the consensus baseline at extraction time.",
+	},
 ] as const;
 
 interface Props {

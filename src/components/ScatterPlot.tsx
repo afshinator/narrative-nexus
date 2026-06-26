@@ -5,6 +5,8 @@ interface EnrichedSource {
 	sourceId: string;
 	name: string;
 	tier: number;
+	R_orig: number;
+	R_val: number;
 }
 
 interface Props {
@@ -14,11 +16,20 @@ interface Props {
 	onSelect: (id: string) => void;
 }
 
+// Tier-based shape encoding per design tokens
+const TIER_SYMBOLS: Record<number, d3.SymbolType> = {
+	1: d3.symbolCircle,
+	2: d3.symbolSquare,
+	3: d3.symbolDiamond,
+	4: d3.symbolTriangle,
+	5: d3.symbolCross,
+};
+
 export default function ScatterPlot({
-	data: _data,
-	hoveredId: _hoveredId,
-	onHover: _onHover,
-	onSelect: _onSelect,
+	data,
+	hoveredId,
+	onHover,
+	onSelect,
 }: Props) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -138,7 +149,40 @@ export default function ScatterPlot({
 			.append("g")
 			.call(yAxis)
 			.attr("transform", `translate(${xScale(0)},0)`);
-	}, []);
+
+		// Render data markers
+		if (data.length > 0) {
+			const symbol = d3.symbol().size(120);
+
+			const markers = svg
+				.selectAll("path.marker")
+				.data(data)
+				.enter()
+				.append("path")
+				.attr("class", "marker")
+				.attr(
+					"d",
+					(d) => symbol.type(TIER_SYMBOLS[d.tier] ?? d3.symbolCircle)() ?? "",
+				)
+				.attr(
+					"transform",
+					(d) => `translate(${xScale(d.R_orig)},${yScale(d.R_val)})`,
+				)
+				.attr("fill", "var(--nn-navy)")
+				.attr("stroke", "var(--nn-bg)")
+				.attr("stroke-width", 1)
+				.attr("opacity", 1)
+				.style("cursor", "pointer")
+				.on("mouseenter", (_e, d) => onHover(d.sourceId))
+				.on("mouseleave", () => onHover(null))
+				.on("click", (_e, d) => onSelect(d.sourceId));
+
+			// Dim non-hovered markers when hover is active (dim-mode)
+			if (hoveredId) {
+				markers.attr("opacity", (d) => (d.sourceId === hoveredId ? 1 : 0.15));
+			}
+		}
+	}, [data, hoveredId, onHover, onSelect]);
 
 	return (
 		<div ref={containerRef} className="relative h-[380px] w-full">

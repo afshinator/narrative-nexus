@@ -9,6 +9,7 @@ const TERMS = [
 	"Cross-Source Convergent",
 	"Self-Consistent",
 	"Unresolved",
+	"Outlier Claim",
 ];
 
 function renderDialog(open = true) {
@@ -25,7 +26,7 @@ describe("OnboardingDialog", () => {
 		useStore.setState({ onboardingComplete: false });
 	});
 
-	it("renders all 5 vocabulary terms in a single view", () => {
+	it("renders all 6 vocabulary terms in a single view", () => {
 		renderDialog();
 		for (const term of TERMS) {
 			expect(screen.getByText(term)).toBeInTheDocument();

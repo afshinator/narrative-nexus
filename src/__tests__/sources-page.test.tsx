@@ -75,6 +75,41 @@ describe("Sources Page", () => {
 			expect(svg.textContent).toContain("SELECTIVE BUT ACCURATE");
 			expect(svg.textContent).toContain("CONSENSUS FOLLOWERS");
 		});
+
+		it("renders scatter markers when scores are provided", () => {
+			const testScores = [
+				{
+					sourceId: "reuters",
+					vertical: "geopolitics",
+					R_orig: 92,
+					R_val: 88,
+					R_speed: 3.2,
+					R_frame: 0.12,
+					R_edit: 0,
+					R_correct: 1,
+				},
+				{
+					sourceId: "zerohedge",
+					vertical: "geopolitics",
+					R_orig: 75,
+					R_val: 10,
+					R_speed: 8.7,
+					R_frame: 3.4,
+					R_edit: 0,
+					R_correct: 5,
+				},
+			];
+			render(
+				<MemoryRouter>
+					<SourcesPage scores={testScores} />
+				</MemoryRouter>,
+			);
+			const svg = document.querySelector("svg");
+			expect(svg).toBeInTheDocument();
+			// All 20 sources render — scored ones at their R_orig/R_val, unscored at origin
+			const markers = svg?.querySelectorAll("path.marker");
+			expect(markers?.length).toBe(20);
+		});
 	});
 
 	describe("Leaderboard table", () => {

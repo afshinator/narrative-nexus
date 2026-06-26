@@ -36,12 +36,12 @@ describe("Router Shell — Slice 0", () => {
 		expect(within(main).getByText("Sources")).toBeInTheDocument();
 	});
 
-	it("navigates to Source Profile at /source/example.com", async () => {
+	it("navigates to Source Profile at /source/reuters.com — shows Reuters profile", async () => {
 		render(<App />);
 		const user = userEvent.setup();
 		await user.click(screen.getByRole("link", { name: /source profile/i }));
 		const main = screen.getByRole("main");
-		expect(within(main).getByText("Source Profile")).toBeInTheDocument();
+		expect(within(main).getByText("Reuters")).toBeInTheDocument();
 	});
 
 	it("navigates to Cluster Report at /cluster/abc123", async () => {
