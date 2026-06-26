@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pipeline Flow — The Machine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0f0b; --surface:#161a12; --surface2:#1f2619; --border:#2c3625;
+  --text:#d2e4c5; --text-dim:#738567;
+  --navy:#7eb3e0; --navy-dim:rgba(126,179,224,.13);
+  --red:#d97878; --red-dim:rgba(217,120,120,.13);
+  --teal:#5ebd8e; --teal-dim:rgba(94,189,142,.13);
+  --slate:#90a882; --slate-dim:rgba(144,168,130,.13);
+  --amber:#c49a42;
+}
+body{
+  font-family:'IBM Plex Sans',sans-serif;
+  background:var(--bg);color:var(--text);
+  padding:34px 28px;
+  min-height:100vh;
+}
+.page{max-width:1340px;margin:0 auto}
+h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:2rem;
+  letter-spacing:-.02em;margin-bottom:2px;
+  color:var(--text);
+}
+.lede{color:var(--text-dim);font-size:.88rem;margin-bottom:28px}
+
+/* Pipeline flow container */
+.pipeline{
+  display:flex;align-items:center;gap:0;
+  overflow-x:auto;
+  padding:8px 0 4px;
+  margin-bottom:24px;
+}
+
+/* Stage card */
+.stage{
+  flex-shrink:0;width:220px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:20px 18px 16px;
+  text-align:center;
+  position:relative;
+}
+.stage .agent-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;font-size:.92rem;
+  color:var(--text);
+  margin-bottom:6px;
+}
+.stage .agent-desc{
+  font-size:.74rem;
+  color:var(--text-dim);
+  line-height:1.4;
+  margin-bottom:12px;
+}
+
+/* Compute badge */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.64rem;font-weight:500;
+  padding:3px 10px;
+  border-radius:999px;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.badge.gpu{
+  background:var(--red-dim);
+  color:var(--red);
+  border:1px solid var(--red);
+}
+.badge.api{
+  background:var(--navy-dim);
+  color:var(--navy);
+  border:1px solid var(--navy);
+}
+.badge.cpu{
+  background:var(--slate-dim);
+  color:var(--slate);
+  border:1px solid var(--slate);
+}
+.badge.combo{
+  background:var(--red-dim);
+  color:var(--red);
+  border:1px solid var(--red);
+}
+
+/* Status dot */
+.status-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--slate);
+  margin:12px auto 0;
+}
+.status-dot.offline{background:var(--slate)}
+
+/* Connector between stages */
+.connector{
+  flex-shrink:0;
+  display:flex;align-items:center;
+  width:48px;height:3px;
+  margin:0 -4px;
+  position:relative;
+}
+.connector .line{
+  width:100%;height:2px;
+  background:var(--border);
+  border-radius:1px;
+}
+.connector .arrow{
+  width:0;height:0;
+  border-left:6px solid var(--border);
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
+}
+/* animating connector */
+.connector.anim .line,
+.connector.anim .arrow{
+  animation:pulse 2s ease-in-out infinite;
+}
+.connector:nth-child(2) .line,
+.connector:nth-child(2) .arrow{animation-delay:0s}
+.connector:nth-child(4) .line,
+.connector:nth-child(4) .arrow{animation-delay:.4s}
+.connector:nth-child(6) .line,
+.connector:nth-child(6) .arrow{animation-delay:.8s}
+.connector:nth-child(8) .line,
+.connector:nth-child(8) .arrow{animation-delay:1.2s}
+.connector:nth-child(10) .line,
+.connector:nth-child(10) .arrow{animation-delay:1.6s}
+
+@keyframes pulse{
+  0%,100%{opacity:.25}
+  50%{opacity:1}
+}
+
+/* Entry/exit nodes — smaller, dimmer */
+.endpoint{
+  flex-shrink:0;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 16px;
+  text-align:center;
+  min-width:80px;
+}
+.endpoint .label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.66rem;
+  color:var(--text-dim);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.endpoint .icon{
+  font-size:1.2rem;
+  margin-bottom:4px;
+  color:var(--text-dim);
+}
+
+/* Status footer */
+.status-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:18px 24px;
+  display:flex;align-items:center;gap:12px;
+}
+.status-card .dot{
+  width:10px;height:10px;
+  border-radius:50%;
+  background:var(--slate);
+  flex-shrink:0;
+}
+.status-card .msg{
+  font-size:.82rem;
+  color:var(--text-dim);
+}
+.status-card .msg strong{color:var(--text)}
+
+/* Compute legend */
+.legend{
+  display:flex;gap:16px;flex-wrap:wrap;
+  margin-bottom:24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 22px;
+}
+.legend-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:.72rem;color:var(--text-dim);
+}
+
+/* Responsive */
+@media(max-width:1100px){
+  .pipeline{flex-wrap:wrap;justify-content:center;gap:12px}
+  .connector{display:none}
+  .stage{width:200px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Pipeline Flow</h1>
+  <p class="lede">The 4-agent swarm architecture — AMD GPU + Fireworks API + CPU</p>
+
+  <!-- Compute legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <span class="badge gpu" style="margin:0">AMD GPU</span>
+      <span>ROCm · Sentence Transformers · Embeddings</span>
+    </div>
+    <div class="legend-item">
+      <span class="badge api" style="margin:0">Fireworks API</span>
+      <span>AMD Instinct MI325X/MI355X · LLM Inference</span>
+    </div>
+    <div class="legend-item">
+      <span class="badge cpu" style="margin:0">CPU</span>
+      <span>Pure Python · Consensus Math · Snapshots</span>
+    </div>
+  </div>
+
+  <!-- Pipeline diagram -->
+  <div class="pipeline">
+
+    <!-- Entry: RSS Ingest -->
+    <div class="endpoint">
+      <div class="icon">📡</div>
+      <div class="label">RSS Ingest</div>
+      <span class="badge cpu" style="margin-top:8px;font-size:.58rem">CPU</span>
+    </div>
+
+    <div class="connector anim">
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- Stage 1 -->
+    <div class="stage">
+      <div class="agent-name">Intake &amp; Clustering</div>
+      <div class="agent-desc">Ingests articles, generates sentence embeddings, clusters by semantic similarity</div>
+      <span class="badge combo">AMD GPU</span>
+      <span class="badge api" style="margin-left:4px">Fireworks</span>
+      <div class="status-dot offline"></div>
+    </div>
+
+    <div class="connector anim">
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="stage">
+      <div class="agent-name">Forensic Extraction</div>
+      <div class="agent-desc">Strips editorial framing, extracts atomic factual claims as structured JSON</div>
+      <span class="badge api">Fireworks API</span>
+      <div class="status-dot offline"></div>
+    </div>
+
+    <div class="connector anim">
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="stage">
+      <div class="agent-name">Consensus Alignment</div>
+      <div class="agent-desc">Computes cross-source agreement, classifies claims, resolves lifecycle state</div>
+      <span class="badge cpu">CPU</span>
+      <div class="status-dot offline"></div>
+    </div>
+
+    <div class="connector anim">
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="stage">
+      <div class="agent-name">Silent Auditor</div>
+      <div class="agent-desc">Compares historical article snapshots, detects unreported edits, logs changes</div>
+      <span class="badge cpu">CPU</span>
+      <div class="status-dot offline"></div>
+    </div>
+
+    <div class="connector anim">
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- Exit: Database -->
+    <div class="endpoint">
+      <div class="icon">🗄️</div>
+      <div class="label">Database</div>
+      <span class="badge cpu" style="margin-top:8px;font-size:.58rem">SQLite</span>
+    </div>
+  </div>
+
+  <!-- Offline status -->
+  <div class="status-card">
+    <div class="dot"></div>
+    <div class="msg"><strong>Pipeline offline</strong> — no backend connected. All four agents will activate when the agent swarm runs against live article feeds. Each stage reports its compute target: AMD GPU for embeddings, Fireworks API for LLM inference, CPU for consensus math.</div>
+  </div>
+
+</div>
+</body>
+</html>

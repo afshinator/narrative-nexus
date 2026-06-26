@@ -65,7 +65,9 @@ describe("Router Shell — Slice 0", () => {
 		const user = userEvent.setup();
 		await user.click(screen.getByRole("link", { name: /pipeline/i }));
 		const main = screen.getByRole("main");
-		expect(within(main).getByText("Pipeline Flow")).toBeInTheDocument();
+		expect(
+			within(main).getByRole("heading", { name: /pipeline flow/i }),
+		).toBeInTheDocument();
 	});
 
 	it("navigates to Investigate at /investigate", async () => {
