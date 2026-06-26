@@ -3,7 +3,6 @@ logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
@@ -25,3 +24,11 @@ dist-ssr
 
 # Design extraction output (generated, not source)
 design-extract-output/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.coverage
+htmlcov/
+.pytest_cache/

@@ -13,5 +13,5 @@ Consolidated list of items explicitly deferred during planning or implementation
 | ~~ReputationScore extraction to shared location~~ | Was single consumer | **Resolved in Slice 5** | Slice 4 |
 | Vertical filter on Sources page | Vertical selector component didn't exist | Vertical picker built (Slice 5) — partially resolved | Slice 4 |
 | Onboarding vocabulary icons (5 terms) | lucide-react icons not selected yet | Icon selection | Slice 3, CONTEXT.md |
-| Worker `requirements.txt` | Worker is a stub container (M1 ponytail skip) | Worker build (backend phase) | M1 |
-| Multi-stage Dockerfile | Current workflow builds before Docker (M1 ponytail skip) | Container build change | M1 |
+| ~~Worker `requirements.txt`~~ | Worker is a stub container (M1 ponytail skip) | **Resolved in Slice 8a** — deps added to project `requirements.txt` | M1 |
+| ~~Multi-stage Dockerfile~~ | Current workflow builds before Docker (M1 ponytail skip) | **Resolved in Slice 8a** — python config files added | M1 |
