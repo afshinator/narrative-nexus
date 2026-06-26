@@ -232,7 +232,7 @@ Sticky app-level nav bar on every page:
 
 **Pipeline Flow ("The Machine")** — Animated pipeline diagram showing live status. Each stage node shows AMD GPU vs Fireworks API execution. Replay mode for past clusters.
 
-**Investigate** — Ad-hoc one-off forensic query. Searches curated panel only, not open web. Snapshot banner: "Claim resolution states are not available for ad-hoc reports." Does not write to reputation tables.
+**Investigate** — Ad-hoc forensic query tool. Accepts an article URL or pasted text. Runs through pipeline stages 1–3 (Intake & Clustering → Forensic Extraction → Consensus Alignment) as a read-only analysis. Displays extracted atomic claims, cross-source matches, and consensus baseline comparison inline. Results persist in localStorage and survive navigation, refresh, and browser restarts. Snapshot banner: "Claim resolution states are not available for ad-hoc reports." Does not write to reputation tables. Does not require database persistence for results.
 
 **Panel Management** — Activate/deactivate sources. Category balance indicator. Archived sources retain full history.
 

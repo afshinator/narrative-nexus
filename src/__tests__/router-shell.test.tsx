@@ -75,7 +75,9 @@ describe("Router Shell — Slice 0", () => {
 		const user = userEvent.setup();
 		await user.click(screen.getByRole("link", { name: /investigate/i }));
 		const main = screen.getByRole("main");
-		expect(within(main).getByText("Investigate")).toBeInTheDocument();
+		expect(
+			within(main).getByRole("heading", { name: /investigate/i }),
+		).toBeInTheDocument();
 	});
 
 	it("navigates to Panel at /panel", async () => {

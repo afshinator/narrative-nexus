@@ -152,6 +152,12 @@
 [desired] [REQ-088] The Timeline page must show horizontal Day 0 to 90 animation per claim with CONSENSUS_ABSORBED vertical line.
 [desired] [REQ-089] The Pipeline Flow page must show animated pipeline diagram with AMD GPU versus Fireworks API execution labeling.
 [desired] [REQ-090] The Investigate page must show snapshot banner about ad-hoc reports.
+[desired] [REQ-117] The Investigate page must accept article URL or pasted text as ad-hoc query input.
+[desired] [REQ-118] Ad-hoc query results must display extracted atomic claims from pipeline stages 1 through 3.
+[desired] [REQ-119] Ad-hoc query results must display cross-source matches and consensus baseline comparison for each claim.
+[desired] [REQ-120] Ad-hoc query results must persist in localStorage via zustand persist middleware and survive navigation page refresh and browser restarts.
+[desired] [REQ-121] The Investigate page must not write ad-hoc query results to reputation tables or the database.
+[desired] [REQ-122] Ad-hoc queries must run as read only analysis through pipeline stages 1 to 3 Intake and Clustering Forensic Extraction and Consensus Alignment.
 [desired] [REQ-091] The Panel Management page must allow activating and deactivating sources with category balance indicator.
 [desired] [REQ-092] The Settings page must allow configuring consensus thresholds font scale slider and theme selector.
 

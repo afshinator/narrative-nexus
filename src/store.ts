@@ -13,6 +13,19 @@ export type Archetype =
 	| "CONSENSUS_FOLLOWER"
 	| null;
 
+export interface AdHocClaim {
+	text: string;
+	sources: string[];
+	consensusPct: number | null;
+}
+
+export interface AdHocResult {
+	id: string;
+	query: string;
+	timestamp: number;
+	claims: AdHocClaim[];
+}
+
 interface StoreState {
 	theme: Theme;
 	archetypeFilter: Archetype;
@@ -20,6 +33,7 @@ interface StoreState {
 	onboardingComplete: boolean;
 	consensusThresholds: Thresholds;
 	activeSources: string[];
+	adHocResults: AdHocResult[];
 	setTheme: (theme: Theme) => void;
 	setArchetypeFilter: (f: Archetype) => void;
 	setFontScale: (scale: number) => void;
@@ -30,6 +44,8 @@ interface StoreState {
 	) => void;
 	resetThresholds: () => void;
 	toggleSource: (id: string) => void;
+	addAdHocResult: (result: AdHocResult) => void;
+	clearAdHocResults: () => void;
 }
 
 export const useStore = create<StoreState>()(
@@ -41,6 +57,7 @@ export const useStore = create<StoreState>()(
 			onboardingComplete: false,
 			consensusThresholds: DEFAULT_THRESHOLDS,
 			activeSources: DEFAULT_SOURCES.map((s) => s.id),
+			adHocResults: [],
 			setTheme: (theme) => set({ theme }),
 			setArchetypeFilter: (archetypeFilter) => set({ archetypeFilter }),
 			setFontScale: (fontScale) => set({ fontScale }),
@@ -60,6 +77,11 @@ export const useStore = create<StoreState>()(
 						? state.activeSources.filter((s) => s !== id)
 						: [...state.activeSources, id],
 				})),
+			addAdHocResult: (result) =>
+				set((state) => ({
+					adHocResults: [...state.adHocResults, result],
+				})),
+			clearAdHocResults: () => set({ adHocResults: [] }),
 		}),
 		{ name: "nn-store" },
 	),
