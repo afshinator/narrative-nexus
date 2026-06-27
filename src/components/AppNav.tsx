@@ -64,17 +64,6 @@ export default function AppNav() {
 					<circle cx="13" cy="13" r="2.2" fill="var(--nn-navy)" />
 				</svg>
 				Narrative Nexus
-				{scraperRunning !== null && (
-					<span
-						data-testid="scraper-status-dot"
-						className="ml-2 inline-block h-2 w-2 shrink-0 rounded-full"
-						style={{
-							backgroundColor: scraperRunning
-								? "var(--nn-teal)"
-								: "var(--nn-slate)",
-						}}
-					/>
-				)}
 			</span>
 
 			{/* Nav links */}
@@ -95,8 +84,40 @@ export default function AppNav() {
 				</NavLink>
 			))}
 
-			{/* Spacer + Settings */}
+			{/* Spacer + scraper status + Settings */}
 			<span className="flex-1" />
+			<span
+				className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 mr-2 font-mono text-[0.66rem] self-center ${
+					scraperRunning === null
+						? "border-[var(--nn-border)] text-[var(--nn-text-dim)]"
+						: scraperRunning
+							? "border-[var(--nn-teal)]/30 text-[var(--nn-teal)]"
+							: "border-[var(--nn-slate)]/30 text-[var(--nn-slate)]"
+				}`}
+				title={
+					scraperRunning === null
+						? "Scraper — no connection"
+						: scraperRunning
+							? "Scraper is running — polling RSS feeds every 30 min"
+							: "Scraper is paused — click Start on Pipeline page to resume"
+				}
+			>
+					<span
+						data-testid="scraper-status-dot"
+						className={`inline-block h-2 w-2 rounded-full ${
+							scraperRunning === true ? "animate-pulse" : ""
+						}`}
+						style={{
+							backgroundColor:
+								scraperRunning === null
+									? "var(--nn-text-dim)"
+									: scraperRunning
+										? "var(--nn-teal)"
+										: "var(--nn-slate)",
+						}}
+					/>
+					Scraper
+			</span>
 			<span className="my-[13px] w-px bg-[var(--nn-border)]" />
 			<NavLink
 				to="/settings"

@@ -63,7 +63,7 @@ describe("PipelineFlow Page", () => {
 	});
 
 	describe("Scraper controls", () => {
-		it("shows Start button and fetches status on mount", async () => {
+		it("shows Start button (disabled) and fetches status on mount", async () => {
 			const fetchMock = vi.fn().mockResolvedValueOnce({
 				ok: true,
 				json: () =>
@@ -77,9 +77,8 @@ describe("PipelineFlow Page", () => {
 
 			renderPage();
 
-			await waitFor(() => {
-				expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
-			});
+			const btn = screen.getByRole("button", { name: /start/i });
+			expect(btn).toBeInTheDocument();
 
 			expect(fetchMock).toHaveBeenCalledWith("/api/scraper/status");
 		});

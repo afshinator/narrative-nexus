@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Play, Square } from "lucide-react";
 
 interface ScraperStatus {
 	running: boolean;
@@ -94,26 +95,32 @@ export default function PipelineFlowPage() {
 				style={{ "--i": 1.5 } as React.CSSProperties}
 			>
 				<div className="flex items-center gap-4">
-					{status && (
-						<button
-							type="button"
-							disabled={pending}
-							onClick={() => toggle(status.running ? "stop" : "start")}
-							className={`inline-flex items-center gap-2 rounded-full border px-5 py-2 font-heading text-[0.82rem] font-semibold text-white transition-opacity disabled:opacity-40 ${
-								status.running
-									? "border-[var(--nn-red)] bg-[var(--nn-red)]"
-									: "border-[var(--nn-teal)] bg-[var(--nn-teal)]"
-							}`}
-						>
-							{status.running ? "Stop" : "Start"}
-						</button>
-					)}
+					<button
+						type="button"
+						disabled={pending || status === null}
+						onClick={() => toggle(status?.running ? "stop" : "start")}
+						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 hover:brightness-110 ${
+							status?.running
+								? "border-[var(--nn-red)] bg-[var(--nn-red)] text-white"
+								: "border-[var(--nn-teal)] bg-[var(--nn-teal)] text-white"
+						}`}
+					>
+						{status?.running ? (
+							<>
+								<Square size={14} fill="currentColor" /> Stop
+							</>
+						) : (
+							<>
+								<Play size={14} fill="currentColor" /> Start
+							</>
+						)}
+					</button>
 					<span className="font-mono text-[0.72rem] tabular-nums text-[var(--nn-text-dim)]">
 						{status
 							? status.running
 								? `Running · ${status.articles_inserted} articles · last run ${status.last_run?.slice(11, 16) ?? "—"}`
 								: "Paused"
-							: "Checking status…"}
+							: "No connection — start backend to control scraper"}
 					</span>
 				</div>
 				{error && (

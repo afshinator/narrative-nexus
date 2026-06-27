@@ -162,15 +162,15 @@ describe("Router Shell — Slice 0", () => {
 			expect(dot.style.backgroundColor).toBe("var(--nn-slate)");
 		});
 
-		it("hides dot when status fetch fails", async () => {
+		it("shows a dim dot when status fetch fails", async () => {
 			const fetchMock = vi.fn().mockRejectedValueOnce(new Error("Network error"));
 			vi.stubGlobal("fetch", fetchMock);
 
 			render(<App />);
 
-			await waitFor(() => {
-				expect(screen.queryByTestId("scraper-status-dot")).not.toBeInTheDocument();
-			});
+			const dot = await screen.findByTestId("scraper-status-dot");
+			expect(dot).toBeInTheDocument();
+			expect(dot.style.backgroundColor).toBe("var(--nn-text-dim)");
 		});
 	});
 });
