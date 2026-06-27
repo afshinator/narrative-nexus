@@ -1,4 +1,4 @@
-"""RSS feed polling for all 20 Narrative Nexus sources."""
+"""RSS feed polling for all 37 Narrative Nexus sources."""
 import feedparser
 from datetime import datetime, timezone
 
@@ -12,6 +12,9 @@ FEED_CONFIG: dict[str, dict] = {
     "the-guardian":    {"url": "https://www.theguardian.com/world/rss", "type": "native", "domain": "theguardian.com", "tier": 1},
     # Tier 2 — Mainstream Editorial
     "fox-news":        {"url": "https://moxie.foxnews.com/google-publisher/world.xml", "type": "native", "domain": "foxnews.com", "tier": 2},
+    "cnn":             {"url": "http://rss.cnn.com/rss/cnn_topstories.rss", "type": "native", "domain": "cnn.com", "tier": 2},
+    "cbs-news":        {"url": "https://www.cbsnews.com/latest/rss/main", "type": "native", "domain": "cbsnews.com", "tier": 2},
+    "abc-news":        {"url": "https://abcnews.go.com/abcnews/topstories", "type": "native", "domain": "abcnews.go.com", "tier": 2},
     "politico":        {"url": "https://rss.politico.com/politics-news.xml", "type": "native", "domain": "politico.com", "tier": 2},
     "the-economist":   {"url": "https://www.economist.com/international/rss.xml", "type": "native", "domain": "economist.com", "tier": 2},
     "nyt":             {"url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml", "type": "native", "domain": "nytimes.com", "tier": 2},
@@ -22,13 +25,27 @@ FEED_CONFIG: dict[str, dict] = {
     "nhk-world":       {"url": "https://news.google.com/rss/search?q=site:nhk.or.jp&hl=en-US&gl=US&ceid=US:en", "type": "google_news", "domain": "www3.nhk.or.jp", "tier": 3},
     "global-times":    {"url": "https://news.google.com/rss/search?q=site:globaltimes.cn&hl=en-US&gl=US&ceid=US:en", "type": "google_news", "domain": "globaltimes.cn", "tier": 3},
     "france24":        {"url": "https://www.france24.com/en/rss", "type": "native", "domain": "france24.com", "tier": 3},
+    "buenos-aires-times": {"url": "https://batimes.com.ar/feed/", "type": "native", "domain": "batimes.com.ar", "tier": 3},
+    "straits-times":   {"url": "https://www.straitstimes.com/news/asia/rss.xml", "type": "native", "domain": "straitstimes.com", "tier": 3},
+    "the-hindu":       {"url": "https://www.thehindu.com/news/international/feeder/default.rss", "type": "native", "domain": "thehindu.com", "tier": 3},
+    "premium-times-ng": {"url": "https://www.premiumtimesng.com/feed", "type": "native", "domain": "premiumtimesng.com", "tier": 3},
+    "times-of-israel": {"url": "https://www.timesofisrael.com/feed/", "type": "native", "domain": "timesofisrael.com", "tier": 3},
+    "vanguard-ng":     {"url": "https://www.vanguardngr.com/feed/", "type": "native", "domain": "vanguardngr.com", "tier": 3},
+    "the-reporter-et": {"url": "https://www.thereporterethiopia.com/feed/", "type": "native", "domain": "thereporterethiopia.com", "tier": 3},
+    "namibian":        {"url": "https://www.namibian.com.na/feed/", "type": "native", "domain": "namibian.com.na", "tier": 3},
+    "punch-ng":        {"url": "https://punchng.com/feed/", "type": "native", "domain": "punchng.com", "tier": 3},
+    "jamaica-observer": {"url": "https://www.jamaicaobserver.com/feed/", "type": "native", "domain": "jamaicaobserver.com", "tier": 3},
+    "mercopress":      {"url": "https://en.mercopress.com/rss", "type": "native", "domain": "en.mercopress.com", "tier": 3},
+    "tehran-times":    {"url": "https://www.tehrantimes.com/rss", "type": "native", "domain": "tehrantimes.com", "tier": 3},
     # Tier 4 — Independent / Investigative
     "the-intercept":   {"url": "https://theintercept.com/feed/?lang=en", "type": "native", "domain": "theintercept.com", "tier": 4},
     "propublica":      {"url": "https://www.propublica.org/feeds/propublica/main", "type": "native", "domain": "propublica.org", "tier": 4},
     "bellingcat":      {"url": "https://www.bellingcat.com/feed/", "type": "native", "domain": "bellingcat.com", "tier": 4},
+    "african-arguments": {"url": "https://africanarguments.org/feed/", "type": "native", "domain": "africanarguments.org", "tier": 4},
     # Tier 5 — Contrarian
     "zerohedge":       {"url": "https://feeds.feedburner.com/zerohedge/feed", "type": "feedburner", "domain": "zerohedge.com", "tier": 5},
     "the-gray-zone":   {"url": "https://thegrayzone.com/feed/", "type": "native", "domain": "thegrayzone.com", "tier": 5},
+    "sputnik":         {"url": "https://sputnikglobe.com/export/rss2/archive/index.xml", "type": "native", "domain": "sputnikglobe.com", "tier": 5},
 }
 
 
@@ -45,7 +62,7 @@ class RSSPoller:
             yield self._normalize(entry, cfg)
 
     def fetch_all(self):
-        """Yield normalized article dicts for all 20 sources."""
+        """Yield normalized article dicts for all sources."""
         for name in FEED_CONFIG:
             yield from self.fetch(name)
 

@@ -106,9 +106,9 @@ describe("Sources Page", () => {
 			);
 			const svg = document.querySelector("svg");
 			expect(svg).toBeInTheDocument();
-			// All 20 sources render — scored ones at their R_orig/R_val, unscored at origin
+			// All 37 sources render — scored ones at their R_orig/R_val, unscored at origin
 			const markers = svg?.querySelectorAll("path.marker");
-			expect(markers?.length).toBe(20);
+			expect(markers?.length).toBe(37);
 		});
 
 		it("colors scatter markers by archetype", () => {

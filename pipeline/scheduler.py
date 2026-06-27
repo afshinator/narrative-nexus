@@ -94,7 +94,7 @@ class ScraperScheduler:
         load_schema(conn)
         try:
             existing = list_sources(conn)
-            if len(existing) >= 20:
+            if len(existing) >= 37:
                 return
             seen = {s["domain"] for s in existing}
             for cfg in FEED_CONFIG.values():

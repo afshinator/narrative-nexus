@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 describe("DEFAULT_SOURCES", () => {
-	it("has exactly 20 entries", async () => {
+	it("has exactly 37 entries", async () => {
 		const { DEFAULT_SOURCES } = await import("../data/sources");
-		expect(DEFAULT_SOURCES).toHaveLength(20);
+		expect(DEFAULT_SOURCES).toHaveLength(37);
 	});
 
 	it("has 5 distinct tiers", async () => {
@@ -20,10 +20,10 @@ describe("DEFAULT_SOURCES", () => {
 		expect(tier1).toHaveLength(5);
 	});
 
-	it("Tier 2 has exactly 5 sources (consensus pool)", async () => {
+	it("Tier 2 has exactly 8 sources (consensus pool)", async () => {
 		const { DEFAULT_SOURCES } = await import("../data/sources");
 		const tier2 = DEFAULT_SOURCES.filter((s) => s.tier === 2);
-		expect(tier2).toHaveLength(5);
+		expect(tier2).toHaveLength(8);
 	});
 
 	it("each source has id, name, domain, tier, region", async () => {

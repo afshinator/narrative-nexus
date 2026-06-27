@@ -4,8 +4,8 @@ from pipeline.scraper import RSSPoller, FEED_CONFIG
 
 
 class TestFeedConfig:
-    def test_all_20_sources_have_entries(self):
-        assert len(FEED_CONFIG) == 20
+    def test_all_37_sources_have_entries(self):
+        assert len(FEED_CONFIG) == 37
 
     def test_every_entry_has_required_keys(self):
         for name, cfg in FEED_CONFIG.items():

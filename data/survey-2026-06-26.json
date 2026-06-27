@@ -1,0 +1,651 @@
+{
+  "polls": 3,
+  "started": "2026-06-27T04:36:14.706117+00:00",
+  "finished": "2026-06-27T04:36:51.537982+00:00",
+  "total_articles": 3588,
+  "per_poll": [
+    {
+      "index": 0,
+      "elapsed_ms": 13114,
+      "total": 1196,
+      "sources": {
+        "reuters": {
+          "count": 100,
+          "elapsed_ms": 128,
+          "type": "google_news",
+          "tier": 1,
+          "domain": "reuters.com"
+        },
+        "ap": {
+          "count": 100,
+          "elapsed_ms": 121,
+          "type": "google_news",
+          "tier": 1,
+          "domain": "apnews.com"
+        },
+        "bbc": {
+          "count": 42,
+          "elapsed_ms": 260,
+          "type": "native",
+          "tier": 1,
+          "domain": "bbc.com"
+        },
+        "npr": {
+          "count": 10,
+          "elapsed_ms": 121,
+          "type": "native",
+          "tier": 1,
+          "domain": "npr.org"
+        },
+        "the-guardian": {
+          "count": 45,
+          "elapsed_ms": 236,
+          "type": "native",
+          "tier": 1,
+          "domain": "theguardian.com"
+        },
+        "fox-news": {
+          "count": 25,
+          "elapsed_ms": 187,
+          "type": "native",
+          "tier": 2,
+          "domain": "foxnews.com"
+        },
+        "politico": {
+          "count": 30,
+          "elapsed_ms": 197,
+          "type": "native",
+          "tier": 2,
+          "domain": "politico.com"
+        },
+        "the-economist": {
+          "count": 300,
+          "elapsed_ms": 228,
+          "type": "native",
+          "tier": 2,
+          "domain": "economist.com"
+        },
+        "nyt": {
+          "count": 54,
+          "elapsed_ms": 176,
+          "type": "native",
+          "tier": 2,
+          "domain": "nytimes.com"
+        },
+        "washington-post": {
+          "count": 7,
+          "elapsed_ms": 9218,
+          "type": "native",
+          "tier": 2,
+          "domain": "washingtonpost.com"
+        },
+        "al-jazeera": {
+          "count": 25,
+          "elapsed_ms": 118,
+          "type": "native",
+          "tier": 3,
+          "domain": "aljazeera.com"
+        },
+        "deutsche-welle": {
+          "count": 148,
+          "elapsed_ms": 215,
+          "type": "native",
+          "tier": 3,
+          "domain": "dw.com"
+        },
+        "nhk-world": {
+          "count": 100,
+          "elapsed_ms": 117,
+          "type": "google_news",
+          "tier": 3,
+          "domain": "www3.nhk.or.jp"
+        },
+        "global-times": {
+          "count": 100,
+          "elapsed_ms": 125,
+          "type": "google_news",
+          "tier": 3,
+          "domain": "globaltimes.cn"
+        },
+        "france24": {
+          "count": 23,
+          "elapsed_ms": 130,
+          "type": "native",
+          "tier": 3,
+          "domain": "france24.com"
+        },
+        "the-intercept": {
+          "count": 20,
+          "elapsed_ms": 253,
+          "type": "native",
+          "tier": 4,
+          "domain": "theintercept.com"
+        },
+        "propublica": {
+          "count": 20,
+          "elapsed_ms": 282,
+          "type": "native",
+          "tier": 4,
+          "domain": "propublica.org"
+        },
+        "bellingcat": {
+          "count": 10,
+          "elapsed_ms": 263,
+          "type": "native",
+          "tier": 4,
+          "domain": "bellingcat.com"
+        },
+        "zerohedge": {
+          "count": 25,
+          "elapsed_ms": 627,
+          "type": "feedburner",
+          "tier": 5,
+          "domain": "zerohedge.com"
+        },
+        "the-gray-zone": {
+          "count": 12,
+          "elapsed_ms": 113,
+          "type": "native",
+          "tier": 5,
+          "domain": "thegrayzone.com"
+        }
+      }
+    },
+    {
+      "index": 1,
+      "elapsed_ms": 11779,
+      "total": 1196,
+      "sources": {
+        "reuters": {
+          "count": 100,
+          "elapsed_ms": 134,
+          "type": "google_news",
+          "tier": 1,
+          "domain": "reuters.com"
+        },
+        "ap": {
+          "count": 100,
+          "elapsed_ms": 129,
+          "type": "google_news",
+          "tier": 1,
+          "domain": "apnews.com"
+        },
+        "bbc": {
+          "count": 42,
+          "elapsed_ms": 117,
+          "type": "native",
+          "tier": 1,
+          "domain": "bbc.com"
+        },
+        "npr": {
+          "count": 10,
+          "elapsed_ms": 83,
+          "type": "native",
+          "tier": 1,
+          "domain": "npr.org"
+        },
+        "the-guardian": {
+          "count": 45,
+          "elapsed_ms": 179,
+          "type": "native",
+          "tier": 1,
+          "domain": "theguardian.com"
+        },
+        "fox-news": {
+          "count": 25,
+          "elapsed_ms": 152,
+          "type": "native",
+          "tier": 2,
+          "domain": "foxnews.com"
+        },
+        "politico": {
+          "count": 30,
+          "elapsed_ms": 168,
+          "type": "native",
+          "tier": 2,
+          "domain": "politico.com"
+        },
+        "the-economist": {
+          "count": 300,
+          "elapsed_ms": 281,
+          "type": "native",
+          "tier": 2,
+          "domain": "economist.com"
+        },
+        "nyt": {
+          "count": 54,
+          "elapsed_ms": 139,
+          "type": "native",
+          "tier": 2,
+          "domain": "nytimes.com"
+        },
+        "washington-post": {
+          "count": 7,
+          "elapsed_ms": 8320,
+          "type": "native",
+          "tier": 2,
+          "domain": "washingtonpost.com"
+        },
+        "al-jazeera": {
+          "count": 25,
+          "elapsed_ms": 129,
+          "type": "native",
+          "tier": 3,
+          "domain": "aljazeera.com"
+        },
+        "deutsche-welle": {
+          "count": 148,
+          "elapsed_ms": 143,
+          "type": "native",
+          "tier": 3,
+          "domain": "dw.com"
+        },
+        "nhk-world": {
+          "count": 100,
+          "elapsed_ms": 117,
+          "type": "google_news",
+          "tier": 3,
+          "domain": "www3.nhk.or.jp"
+        },
+        "global-times": {
+          "count": 100,
+          "elapsed_ms": 116,
+          "type": "google_news",
+          "tier": 3,
+          "domain": "globaltimes.cn"
+        },
+        "france24": {
+          "count": 23,
+          "elapsed_ms": 92,
+          "type": "native",
+          "tier": 3,
+          "domain": "france24.com"
+        },
+        "the-intercept": {
+          "count": 20,
+          "elapsed_ms": 264,
+          "type": "native",
+          "tier": 4,
+          "domain": "theintercept.com"
+        },
+        "propublica": {
+          "count": 20,
+          "elapsed_ms": 226,
+          "type": "native",
+          "tier": 4,
+          "domain": "propublica.org"
+        },
+        "bellingcat": {
+          "count": 10,
+          "elapsed_ms": 253,
+          "type": "native",
+          "tier": 4,
+          "domain": "bellingcat.com"
+        },
+        "zerohedge": {
+          "count": 25,
+          "elapsed_ms": 611,
+          "type": "feedburner",
+          "tier": 5,
+          "domain": "zerohedge.com"
+        },
+        "the-gray-zone": {
+          "count": 12,
+          "elapsed_ms": 125,
+          "type": "native",
+          "tier": 5,
+          "domain": "thegrayzone.com"
+        }
+      }
+    },
+    {
+      "index": 2,
+      "elapsed_ms": 11938,
+      "total": 1196,
+      "sources": {
+        "reuters": {
+          "count": 100,
+          "elapsed_ms": 136,
+          "type": "google_news",
+          "tier": 1,
+          "domain": "reuters.com"
+        },
+        "ap": {
+          "count": 100,
+          "elapsed_ms": 119,
+          "type": "google_news",
+          "tier": 1,
+          "domain": "apnews.com"
+        },
+        "bbc": {
+          "count": 42,
+          "elapsed_ms": 122,
+          "type": "native",
+          "tier": 1,
+          "domain": "bbc.com"
+        },
+        "npr": {
+          "count": 10,
+          "elapsed_ms": 84,
+          "type": "native",
+          "tier": 1,
+          "domain": "npr.org"
+        },
+        "the-guardian": {
+          "count": 45,
+          "elapsed_ms": 587,
+          "type": "native",
+          "tier": 1,
+          "domain": "theguardian.com"
+        },
+        "fox-news": {
+          "count": 25,
+          "elapsed_ms": 154,
+          "type": "native",
+          "tier": 2,
+          "domain": "foxnews.com"
+        },
+        "politico": {
+          "count": 30,
+          "elapsed_ms": 170,
+          "type": "native",
+          "tier": 2,
+          "domain": "politico.com"
+        },
+        "the-economist": {
+          "count": 300,
+          "elapsed_ms": 285,
+          "type": "native",
+          "tier": 2,
+          "domain": "economist.com"
+        },
+        "nyt": {
+          "count": 54,
+          "elapsed_ms": 130,
+          "type": "native",
+          "tier": 2,
+          "domain": "nytimes.com"
+        },
+        "washington-post": {
+          "count": 7,
+          "elapsed_ms": 8204,
+          "type": "native",
+          "tier": 2,
+          "domain": "washingtonpost.com"
+        },
+        "al-jazeera": {
+          "count": 25,
+          "elapsed_ms": 100,
+          "type": "native",
+          "tier": 3,
+          "domain": "aljazeera.com"
+        },
+        "deutsche-welle": {
+          "count": 148,
+          "elapsed_ms": 150,
+          "type": "native",
+          "tier": 3,
+          "domain": "dw.com"
+        },
+        "nhk-world": {
+          "count": 100,
+          "elapsed_ms": 164,
+          "type": "google_news",
+          "tier": 3,
+          "domain": "www3.nhk.or.jp"
+        },
+        "global-times": {
+          "count": 100,
+          "elapsed_ms": 161,
+          "type": "google_news",
+          "tier": 3,
+          "domain": "globaltimes.cn"
+        },
+        "france24": {
+          "count": 23,
+          "elapsed_ms": 103,
+          "type": "native",
+          "tier": 3,
+          "domain": "france24.com"
+        },
+        "the-intercept": {
+          "count": 20,
+          "elapsed_ms": 244,
+          "type": "native",
+          "tier": 4,
+          "domain": "theintercept.com"
+        },
+        "propublica": {
+          "count": 20,
+          "elapsed_ms": 279,
+          "type": "native",
+          "tier": 4,
+          "domain": "propublica.org"
+        },
+        "bellingcat": {
+          "count": 10,
+          "elapsed_ms": 265,
+          "type": "native",
+          "tier": 4,
+          "domain": "bellingcat.com"
+        },
+        "zerohedge": {
+          "count": 25,
+          "elapsed_ms": 375,
+          "type": "feedburner",
+          "tier": 5,
+          "domain": "zerohedge.com"
+        },
+        "the-gray-zone": {
+          "count": 12,
+          "elapsed_ms": 106,
+          "type": "native",
+          "tier": 5,
+          "domain": "thegrayzone.com"
+        }
+      }
+    }
+  ],
+  "aggregates": {
+    "al-jazeera": {
+      "total": 75,
+      "mean_per_poll": 25.0,
+      "stddev": 0.0,
+      "min": 25,
+      "max": 25,
+      "type": "native",
+      "tier": 3,
+      "domain": "aljazeera.com"
+    },
+    "ap": {
+      "total": 300,
+      "mean_per_poll": 100.0,
+      "stddev": 0.0,
+      "min": 100,
+      "max": 100,
+      "type": "google_news",
+      "tier": 1,
+      "domain": "apnews.com"
+    },
+    "bbc": {
+      "total": 126,
+      "mean_per_poll": 42.0,
+      "stddev": 0.0,
+      "min": 42,
+      "max": 42,
+      "type": "native",
+      "tier": 1,
+      "domain": "bbc.com"
+    },
+    "bellingcat": {
+      "total": 30,
+      "mean_per_poll": 10.0,
+      "stddev": 0.0,
+      "min": 10,
+      "max": 10,
+      "type": "native",
+      "tier": 4,
+      "domain": "bellingcat.com"
+    },
+    "deutsche-welle": {
+      "total": 444,
+      "mean_per_poll": 148.0,
+      "stddev": 0.0,
+      "min": 148,
+      "max": 148,
+      "type": "native",
+      "tier": 3,
+      "domain": "dw.com"
+    },
+    "fox-news": {
+      "total": 75,
+      "mean_per_poll": 25.0,
+      "stddev": 0.0,
+      "min": 25,
+      "max": 25,
+      "type": "native",
+      "tier": 2,
+      "domain": "foxnews.com"
+    },
+    "france24": {
+      "total": 69,
+      "mean_per_poll": 23.0,
+      "stddev": 0.0,
+      "min": 23,
+      "max": 23,
+      "type": "native",
+      "tier": 3,
+      "domain": "france24.com"
+    },
+    "global-times": {
+      "total": 300,
+      "mean_per_poll": 100.0,
+      "stddev": 0.0,
+      "min": 100,
+      "max": 100,
+      "type": "google_news",
+      "tier": 3,
+      "domain": "globaltimes.cn"
+    },
+    "nhk-world": {
+      "total": 300,
+      "mean_per_poll": 100.0,
+      "stddev": 0.0,
+      "min": 100,
+      "max": 100,
+      "type": "google_news",
+      "tier": 3,
+      "domain": "www3.nhk.or.jp"
+    },
+    "npr": {
+      "total": 30,
+      "mean_per_poll": 10.0,
+      "stddev": 0.0,
+      "min": 10,
+      "max": 10,
+      "type": "native",
+      "tier": 1,
+      "domain": "npr.org"
+    },
+    "nyt": {
+      "total": 162,
+      "mean_per_poll": 54.0,
+      "stddev": 0.0,
+      "min": 54,
+      "max": 54,
+      "type": "native",
+      "tier": 2,
+      "domain": "nytimes.com"
+    },
+    "politico": {
+      "total": 90,
+      "mean_per_poll": 30.0,
+      "stddev": 0.0,
+      "min": 30,
+      "max": 30,
+      "type": "native",
+      "tier": 2,
+      "domain": "politico.com"
+    },
+    "propublica": {
+      "total": 60,
+      "mean_per_poll": 20.0,
+      "stddev": 0.0,
+      "min": 20,
+      "max": 20,
+      "type": "native",
+      "tier": 4,
+      "domain": "propublica.org"
+    },
+    "reuters": {
+      "total": 300,
+      "mean_per_poll": 100.0,
+      "stddev": 0.0,
+      "min": 100,
+      "max": 100,
+      "type": "google_news",
+      "tier": 1,
+      "domain": "reuters.com"
+    },
+    "the-economist": {
+      "total": 900,
+      "mean_per_poll": 300.0,
+      "stddev": 0.0,
+      "min": 300,
+      "max": 300,
+      "type": "native",
+      "tier": 2,
+      "domain": "economist.com"
+    },
+    "the-gray-zone": {
+      "total": 36,
+      "mean_per_poll": 12.0,
+      "stddev": 0.0,
+      "min": 12,
+      "max": 12,
+      "type": "native",
+      "tier": 5,
+      "domain": "thegrayzone.com"
+    },
+    "the-guardian": {
+      "total": 135,
+      "mean_per_poll": 45.0,
+      "stddev": 0.0,
+      "min": 45,
+      "max": 45,
+      "type": "native",
+      "tier": 1,
+      "domain": "theguardian.com"
+    },
+    "the-intercept": {
+      "total": 60,
+      "mean_per_poll": 20.0,
+      "stddev": 0.0,
+      "min": 20,
+      "max": 20,
+      "type": "native",
+      "tier": 4,
+      "domain": "theintercept.com"
+    },
+    "washington-post": {
+      "total": 21,
+      "mean_per_poll": 7.0,
+      "stddev": 0.0,
+      "min": 7,
+      "max": 7,
+      "type": "native",
+      "tier": 2,
+      "domain": "washingtonpost.com"
+    },
+    "zerohedge": {
+      "total": 75,
+      "mean_per_poll": 25.0,
+      "stddev": 0.0,
+      "min": 25,
+      "max": 25,
+      "type": "feedburner",
+      "tier": 5,
+      "domain": "zerohedge.com"
+    }
+  }
+}

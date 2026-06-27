@@ -1,5 +1,5 @@
 // Single source of truth for the default source panel.
-// Per REQ-048–053: 20 sources across 5 tiers.
+// Per REQ-048–053: 37 sources across 5 tiers.
 // Modify this array to change the default panel.
 
 export type SourceRegion =
@@ -44,6 +44,27 @@ export const DEFAULT_SOURCES: Source[] = [
 		id: "fox-news",
 		name: "Fox News",
 		domain: "foxnews.com",
+		tier: 2,
+		region: "na",
+	},
+	{
+		id: "cnn",
+		name: "CNN",
+		domain: "cnn.com",
+		tier: 2,
+		region: "na",
+	},
+	{
+		id: "cbs-news",
+		name: "CBS News",
+		domain: "cbsnews.com",
+		tier: 2,
+		region: "na",
+	},
+	{
+		id: "abc-news",
+		name: "ABC News",
+		domain: "abcnews.go.com",
 		tier: 2,
 		region: "na",
 	},
@@ -106,6 +127,90 @@ export const DEFAULT_SOURCES: Source[] = [
 		tier: 3,
 		region: "eu",
 	},
+	{
+		id: "buenos-aires-times",
+		name: "Buenos Aires Times",
+		domain: "batimes.com.ar",
+		tier: 3,
+		region: "latam",
+	},
+	{
+		id: "straits-times",
+		name: "Straits Times",
+		domain: "straitstimes.com",
+		tier: 3,
+		region: "asia",
+	},
+	{
+		id: "the-hindu",
+		name: "The Hindu",
+		domain: "thehindu.com",
+		tier: 3,
+		region: "sa",
+	},
+	{
+		id: "premium-times-ng",
+		name: "Premium Times",
+		domain: "premiumtimesng.com",
+		tier: 3,
+		region: "africa",
+	},
+	{
+		id: "times-of-israel",
+		name: "Times of Israel",
+		domain: "timesofisrael.com",
+		tier: 3,
+		region: "me",
+	},
+	{
+		id: "vanguard-ng",
+		name: "Vanguard",
+		domain: "vanguardngr.com",
+		tier: 3,
+		region: "africa",
+	},
+	{
+		id: "the-reporter-et",
+		name: "The Reporter",
+		domain: "thereporterethiopia.com",
+		tier: 3,
+		region: "africa",
+	},
+	{
+		id: "namibian",
+		name: "Namibian",
+		domain: "namibian.com.na",
+		tier: 3,
+		region: "africa",
+	},
+	{
+		id: "punch-ng",
+		name: "Punch",
+		domain: "punchng.com",
+		tier: 3,
+		region: "africa",
+	},
+	{
+		id: "jamaica-observer",
+		name: "Jamaica Observer",
+		domain: "jamaicaobserver.com",
+		tier: 3,
+		region: "latam",
+	},
+	{
+		id: "mercopress",
+		name: "MercoPress",
+		domain: "en.mercopress.com",
+		tier: 3,
+		region: "latam",
+	},
+	{
+		id: "tehran-times",
+		name: "Tehran Times",
+		domain: "tehrantimes.com",
+		tier: 3,
+		region: "me",
+	},
 
 	// Tier 4 — Independent / Investigative (tracked only)
 	{
@@ -129,6 +234,13 @@ export const DEFAULT_SOURCES: Source[] = [
 		tier: 4,
 		region: "eu",
 	},
+	{
+		id: "african-arguments",
+		name: "African Arguments",
+		domain: "africanarguments.org",
+		tier: 4,
+		region: "africa",
+	},
 
 	// Tier 5 — Contrarian (tracked only)
 	{
@@ -144,6 +256,13 @@ export const DEFAULT_SOURCES: Source[] = [
 		domain: "thegrayzone.com",
 		tier: 5,
 		region: "na",
+	},
+	{
+		id: "sputnik",
+		name: "Sputnik",
+		domain: "sputnikglobe.com",
+		tier: 5,
+		region: "eu",
 	},
 ];
 
