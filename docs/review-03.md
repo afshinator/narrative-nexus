@@ -873,3 +873,10 @@ Fixes applied to all confirmed findings. 22 of 26 resolved. 4 deferred (known tr
 ### Files modified (21 files)
 
 `app/main.py`, `app/test_routes.py`, `db/claims.py`, `db/connection.py`, `db/schema.sql`, `pipeline/agent3_consensus.py`, `pipeline/extractor.py`, `pipeline/scraper.py`, `pipeline/scheduler.py`, `pipeline/test_scheduler.py`, `src/components/AppNav.tsx`, `src/components/ScatterPlot.tsx`, `src/main.tsx`, `src/pages/Investigate.tsx`, `src/pages/SourceProfile.tsx`, `src/pages/Sources.tsx`, `src/__tests__/investigate.test.tsx`, `src/__tests__/router-shell.test.tsx`, `src/utils/format.ts`, `src/utils/polarity.ts`, `src/utils/shapes.ts`
+
+---
+
+## Subsequent Reviews
+
+- **Slice 009 adversarial review** (2026-06-26): Scraper controls + header status indicator. 10 findings, 9 fixed, 1 pre-existing deferred. See plan doc for details.
+- **Slice 010 adversarial review** (2026-06-26): Agent 3 hardening + daily snapshots + pipeline orchestration. 10 findings, 4 critical/high fixed (T1+2 filter, idempotency), 6 deferred. See plan doc for details.

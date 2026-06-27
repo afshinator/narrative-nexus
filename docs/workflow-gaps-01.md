@@ -208,3 +208,22 @@ This is already partially implied in `CLAUDE.md` ("sanity-check the implementati
 | Add vertical filtering to REQ-054 | `spec/requirements.md` | H05 | Medium |
 | Add Data Format Contracts section | `docs/design-v1.2.md` §3 | C04, C05 | High |
 | Clarify consensus denominator scope | `docs/design-v1.2.md` §4 | H03 | High |
+
+---
+
+## Resolution — 2026-06-26
+
+All 6 gate improvements applied to `CLAUDE.md` (project-local fix, not upstreamed to dev-workflow repo yet):
+
+| Gap | Applied to CLAUDE.md | Gate affected |
+|-----|---------------------|---------------|
+| Cross-slice boundary check | Yes — added to Assumption Validation (a) | Phase 3.5 |
+| Downstream-impact tracing | Yes — "trace at least 3 downstream consequences" | Phase 3.5 |
+| Production-path step | Yes — "start app with production configuration" | Phase 5 Verify |
+| Flow tracing in adversarial review | Yes — "trace user flows step-by-step first" | Phase 5 Verify |
+| Flag spec ambiguities | Yes — "flag in plan document and escalate" | Phase 3 Plan |
+| Visual fidelity check | Yes — "load page with representative data" | Phase 5 Verify |
+
+Spec/doc changes also applied: REQ-022 tightened, REQ-082 clarified, REQ-123 added, REQ-054 updated for vertical filtering, Data Format Contracts §3 added to design doc.
+
+The `workflow-skill/SKILL.md` changes (for the portable dev-workflow repo) remain pending — only the project-local CLAUDE.md was updated.
