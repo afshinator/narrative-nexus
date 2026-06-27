@@ -35,8 +35,13 @@ export default function SourcesPage({ scores = [] }: Props) {
 	const filter = useStore((s) => s.archetypeFilter);
 
 	const scoreMap = useMemo(
-		() => new Map(scores.map((s) => [s.sourceId, s])),
-		[scores],
+		() =>
+			new Map(
+				scores
+					.filter((s) => s.vertical === vertical)
+					.map((s) => [s.sourceId, s]),
+			),
+		[scores, vertical],
 	);
 
 	// Compute panel median for archetype assignment

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from db.connection import get_db
+from db.connection import get_db, load_schema
 from db.sources import get_source_by_domain, insert_source, list_sources
 from db.articles import insert_article
 from pipeline.scraper import RSSPoller, FEED_CONFIG
@@ -16,7 +16,7 @@ class ScraperScheduler:
 
     def __init__(self, db_path: str = ":memory:"):
         self.db_path = db_path
-        self._scheduler = BackgroundScheduler()
+        self._scheduler = BackgroundScheduler(daemon=True)  # review-03 T01: daemon so tests don't hang
         self._running = False
         self._last_run: str | None = None
         self._articles_inserted = 0
@@ -61,6 +61,7 @@ class ScraperScheduler:
     def run_once(self):
         """Execute one full poll cycle. Used by scheduler and for manual testing."""
         conn = get_db(self.db_path)
+        load_schema(conn)
         try:
             for entry in self._poller.fetch_all():
                 source = get_source_by_domain(conn, entry["source_domain"])
@@ -90,6 +91,7 @@ class ScraperScheduler:
     # ponytail: sources seeded lazily on first start, no separate seed step
     def _ensure_sources(self):
         conn = get_db(self.db_path)
+        load_schema(conn)
         try:
             existing = list_sources(conn)
             if len(existing) >= 20:

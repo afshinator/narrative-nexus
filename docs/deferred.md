@@ -10,10 +10,8 @@ Consolidated list of items explicitly deferred during planning or implementation
 | Silent edit log | No SilentAuditorAgent output | Backend pipeline | Slice 5 |
 | Tier average radar polygon | No cross-source computation | Backend pipeline | Slice 5 |
 | Backend pipeline (Agents 1–4) | Frontend-first build order | Fireworks API key, AMD GPU pod access | Slice 2, 4 |
-| ~~ReputationScore extraction to shared location~~ | Was single consumer | **Resolved in Slice 5** | Slice 4 |
-| Vertical filter on Sources page | Vertical selector component didn't exist | Vertical picker built (Slice 5) — partially resolved | Slice 4 |
-| Onboarding vocabulary icons (5 terms) | lucide-react icons not selected yet | Icon selection | Slice 3, CONTEXT.md |
-| ~~Worker `requirements.txt`~~ | Worker is a stub container (M1 ponytail skip) | **Resolved in Slice 8a** — deps added to project `requirements.txt` | M1 |
-| ~~Multi-stage Dockerfile~~ | Current workflow builds before Docker (M1 ponytail skip) | **Resolved in Slice 8a** — python config files added | M1 |
-| Pipeline Flow page: scraper start/stop toggle | UI control for scheduler — backend endpoints exist but no frontend wiring | 8b (endpoints must exist first) | 8b |
-| App header: scraper status indicator (running vs paused) | Visual feedback that scraping is active — needs scheduler state exposed | 8b | 8b |
+| Onboarding vocabulary icons (5 terms) | lucide-react icons not selected yet | Icon selection | Slice 3 |
+| ~~Vertical filter on Sources page~~ | — | **Resolved in review-03 fix session** | Slice 4 |
+| ~~Route DB access pattern~~ | — | **Resolved in review-03 fix session** | Review 03 |
+| ~~Pipeline Flow page: scraper start/stop toggle~~ | — | **Resolved in Slice 9** | 8b |
+| ~~App header: scraper status indicator~~ | — | **Resolved in Slice 9** | 8b |

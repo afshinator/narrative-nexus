@@ -9,6 +9,7 @@ export default function InvestigatePage() {
 	const [submitted, setSubmitted] = useState(false);
 	const timeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
 	const adHocResults = useStore((s) => s.adHocResults);
+	const addAdHocResult = useStore((s) => s.addAdHocResult);
 	const removeAdHocResult = useStore((s) => s.removeAdHocResult);
 	const clearAdHocResults = useStore((s) => s.clearAdHocResults);
 
@@ -23,6 +24,12 @@ export default function InvestigatePage() {
 		if (!trimmed) return;
 		setSubmitted(true);
 		setQuery("");
+		addAdHocResult({
+			id: crypto.randomUUID(),
+			query: trimmed,
+			timestamp: Date.now(),
+			claims: [],
+		});
 		if (timeoutRef.current) clearTimeout(timeoutRef.current);
 		timeoutRef.current = setTimeout(() => setSubmitted(false), STATUS_TIMEOUT);
 	}

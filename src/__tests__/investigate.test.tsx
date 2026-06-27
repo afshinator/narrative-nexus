@@ -53,7 +53,7 @@ describe("Investigate Page", () => {
 		expect(screen.getByText(/no ad-hoc queries yet/i)).toBeInTheDocument();
 	});
 
-	it("does NOT store empty result on submit — shows transient status instead", async () => {
+	it("stores query on submit and shows transient status", async () => {
 		const { user } = renderPage();
 		const textarea = screen.getByRole("textbox");
 		await user.type(textarea, "https://example.com/article");
@@ -62,9 +62,13 @@ describe("Investigate Page", () => {
 		// Should show transient submitted message
 		expect(screen.getByText(/submitted/i)).toBeInTheDocument();
 
-		// Should NOT add to the store
+		// Should store the query in adHocResults
 		const { useStore } = await import("../store");
-		expect(useStore.getState().adHocResults).toHaveLength(0);
+		expect(useStore.getState().adHocResults).toHaveLength(1);
+		expect(useStore.getState().adHocResults[0].query).toBe(
+			"https://example.com/article",
+		);
+		expect(useStore.getState().adHocResults[0].claims).toEqual([]);
 	});
 
 	it("removes individual result via per-card dismiss button", async () => {

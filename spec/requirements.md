@@ -45,7 +45,7 @@
 
 ### Consensus Thresholds
 
-[desired] [REQ-022] The consensus baseline must be computed over Tier 1 and Tier 2 sources the consensus pool.
+[desired] [REQ-022] For each claim, the consensus baseline is the percentage of Tier 1+2 sources that have reported that specific claim, relative to the Tier 1+2 sources that have at least one claim in the same cluster. The denominator is not all Tier 1+2 sources — it is the subset whose coverage scope overlaps with the cluster's topic.
 [desired] [REQ-023] A claim enters the consensus baseline when it appears in more than threshold percent of the pool source graphs for that story.
 [desired] [REQ-024] Default consensus thresholds must be GEOPOLITICS 65 percent ECONOMICS 75 percent TECHNOLOGY 75 percent.
 [desired] [REQ-025] Consensus thresholds must be configurable at runtime.

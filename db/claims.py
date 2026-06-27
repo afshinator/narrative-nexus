@@ -70,6 +70,10 @@ def update_claim_state(
     absorbed_at: Optional[str] = None,
 ) -> bool:
     """Update claim state and optional convergence metadata. Returns True if updated."""
+    if state not in VALID_STATES:
+        raise ValueError(
+            f"Invalid claim state: {state!r}. Must be one of {VALID_STATES}."
+        )
     existing = get_claim(conn, claim_id)
     if existing is None:
         return False

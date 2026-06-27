@@ -22,5 +22,8 @@ See [ui-design/taste.md](ui-design/taste.md)
 - UX briefs and design docs should describe only the current design state — omit version history, 'previously' language, and references to discarded/earlier designs. Define base functionality, not specific decoration-level items (colors, fonts, etc.) that are easy to change. Confidence: 0.85
 - When extracting requirements from an original spec, keep derivative documents tightly coupled to the original's narrative structure. The user needs to see continuity between spec and requirements to make informed design decisions — a bare-bullet requirements doc that loses the "why" creates a disconnect that blocks progress. Confidence: 0.70
 
+# specs
+- Spec requirements should define desired behavior and outcomes, not implementation details or specific visual token values. Color definitions and visual tokens belong in the design system doc, and implementation specifics (e.g., which env var to use) belong in deferred.md or implementation docs, not in spec/requirements.md. Confidence: 0.70
+
 # architecture
 - Isolate configuration values (scatter shapes, timeline visuals, pipeline replay behavior, etc.) into dedicated constants files or functions so they can be easily modified without touching core logic. Always follow separation of concerns. Confidence: 0.90

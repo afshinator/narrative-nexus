@@ -3,7 +3,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from db.sources import insert_source
 
 
 @pytest.fixture

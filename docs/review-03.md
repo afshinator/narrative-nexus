@@ -794,3 +794,82 @@ Reviewing all 26 findings, several patterns emerge:
 5. **Leftover scaffold (3 findings):** T03 (empty test body), T05 (stub tests never replaced), T06 (untested frontend utility with tested backend port).
 
 6. **Not spec violations — missing production paths (2 findings):** C01 and C02 aren't design gaps — the spec and design doc are clear. They're production-readiness gaps that weren't caught because the test suite only tests `:memory:` databases, not the persistent file path.
+
+---
+
+## Post-Review Actions (2026-06-26)
+
+Based on the findings in this review, the following changes were made:
+
+### Spec changes
+
+- **REQ-022 tightened** (`spec/requirements.md`): The consensus baseline denominator is now specified as "Tier 1+2 sources that have at least one claim in the same cluster" rather than "all Tier 1+2 sources." Resolves the ambiguity that caused H03.
+
+### Design doc changes
+
+- **Data Format Contracts subsection added** to `docs/design-v1.2.md` §3 (System Architecture): Defines system-wide formats for dates (ISO 8601 UTC with frontend display in America/Los_Angeles), URLs (canonical, no Google redirects), numeric scales (0–100), and nullable fields. Prevents C04/C05 from recurring.
+
+### Deferred items
+
+- **Route DB access pattern** added to `docs/deferred.md`: Open question whether API routes accessing the persistent database path belongs in the spec or is purely an implementation detail — from C01/C02 discussion.
+
+### Workflow process gaps documented
+
+- **`docs/workflow-gaps-01.md`** written: Documents 6 gaps in the dev-workflow process where the gate chain failed to catch the bugs found in this review. Each gap is traced back to specific findings and includes proposed fixes for the workflow gates.
+
+## Fix Status — 2026-06-26 (implementation session)
+
+Fixes applied to all confirmed findings. 22 of 26 resolved. 4 deferred (known tradeoffs / scaffold / niche).
+
+### Fixed (22/26)
+
+| ID | Severity | Summary | Files changed |
+|----|----------|---------|---------------|
+| C01 | Critical | API routes query persistent DB via FastAPI `Depends` | `app/main.py`, `db/connection.py` |
+| C02 | Critical | `CREATE TABLE IF NOT EXISTS` on all schema objects; schema loaded once at startup | `db/schema.sql`, `db/connection.py`, `app/main.py` |
+| C03 | Critical | Investigate `handleSubmit` calls `addAdHocResult()` | `src/pages/Investigate.tsx`, `src/__tests__/investigate.test.tsx` |
+| C04 | Critical | `_days_since` handles naive datetimes (`.replace(tzinfo=utc)`) | `pipeline/agent3_consensus.py` |
+| C05 | Critical | Scraper uses `published_parsed` for ISO 8601 dates | `pipeline/scraper.py` |
+| H01 | High | `getPolarityColor` inverts low-is-good dimensions; `INVERTED_DIMS` centralized | `src/utils/polarity.ts` |
+| H02 | High | Tier average inverted on radar chart | `src/pages/SourceProfile.tsx` |
+| H03 | High | Consensus denominator = T1+T2 sources covering this story, not all T1+T2 | `pipeline/agent3_consensus.py` |
+| H05 | High | Sources page `scoreMap` filters by selected vertical | `src/pages/Sources.tsx` |
+| M01 | Medium | Theme reads localStorage before Zustand rehydrates | `src/main.tsx` |
+| M02 | Medium | Onboarding dialog opens via `useEffect` after hydration | `src/components/AppNav.tsx` |
+| M03 | Medium | Zero delta renders "0" (`.toString()`) | `src/pages/SourceProfile.tsx` |
+| M04 | Medium | D3 chart redraws on resize (`size` in useEffect deps) | `src/components/ScatterPlot.tsx` |
+| M05 | Medium | `_days_since` catches `(ValueError, TypeError)` | `pipeline/agent3_consensus.py` (combined with C04) |
+| M06 | Medium | `ArticleExtractor` catches `(ArticleException, OSError, ValueError)` | `pipeline/extractor.py` |
+| M07 | Medium | Tier→D3 symbol mapping centralized in `shapes.ts`; ScatterPlot imports it | `src/utils/shapes.ts`, `src/components/ScatterPlot.tsx` |
+| M08 | Medium | SparklineGrid uses parent's interpolated `currentSnapshot` | `src/pages/SourceProfile.tsx` |
+| M09 | Medium | Auto-resolved by C01/C02 (schema loaded once at startup, not per-connection) | — |
+| M10 | Medium | Auto-resolved by C01/C02 (`executescript` runs once at startup) | — |
+| L01 | Low | Removed `formatDecimalAsPercent`, unused `insert_source` import | `src/utils/format.ts`, `app/test_routes.py` |
+| L04 | Low | `useStore.subscribe` return captured; Vite HMR dispose added | `src/main.tsx` |
+| L06 | Low | `update_claim_state` validates against `VALID_STATES` | `db/claims.py` |
+| T01 | Test | `BackgroundScheduler(daemon=True)` | `pipeline/scheduler.py` |
+| T02 | Test | Temp file used so scheduler and assertion share DB | `pipeline/test_scheduler.py` |
+| T03 | Test | No-op test removed | `src/__tests__/router-shell.test.tsx` |
+
+### Deferred (4/26)
+
+| ID | Severity | Reason |
+|----|----------|--------|
+| H04 | High | KNOWN-TRADEOFF — 4 sources use Google News RSS with opaque redirect URLs. Needs native RSS feeds found for Reuters, AP, NHK World, Global Times. Scraper already marks these `BODY_UNAVAILABLE`. |
+| L02 | Low | Hardcoded nav IDs (`/source/reuters.com`, `/cluster/abc123`) are placeholder links. Not a bug — stub pages by design. |
+| L03 | Low | `color-mix()` no CSS fallback. Supported in Chrome 111+, Firefox 113+, Safari 16.2+. Only affects embedded webviews. |
+| L05 | Low | 3 region labels (`africa`, `latam`, `sa`) have zero sources. Visual clutter with `min-width: 4%` bar. Cosmetic. |
+| T04 | Test | Network tests lack timeouts. Already `@pytest.mark.network` — skipped in CI. |
+| T05 | Test | Stub tests verify stub behavior. Deliberate scaffold — agents are placeholders until backend pipeline is operational. |
+| T06 | Test | Untested TypeScript `archetype.ts`. Python backend tested (`pipeline/test_archetype.py`). TS version mirrors it. |
+
+### Test results after fixes
+
+- **vitest:** 135 passed, 4 skipped (Docker integration)
+- **pytest:** 155 passed, 6 deselected (network)
+- **tsc:** No errors
+- **Total:** 290 passing tests
+
+### Files modified (21 files)
+
+`app/main.py`, `app/test_routes.py`, `db/claims.py`, `db/connection.py`, `db/schema.sql`, `pipeline/agent3_consensus.py`, `pipeline/extractor.py`, `pipeline/scraper.py`, `pipeline/scheduler.py`, `pipeline/test_scheduler.py`, `src/components/AppNav.tsx`, `src/components/ScatterPlot.tsx`, `src/main.tsx`, `src/pages/Investigate.tsx`, `src/pages/SourceProfile.tsx`, `src/pages/Sources.tsx`, `src/__tests__/investigate.test.tsx`, `src/__tests__/router-shell.test.tsx`, `src/utils/format.ts`, `src/utils/polarity.ts`, `src/utils/shapes.ts`

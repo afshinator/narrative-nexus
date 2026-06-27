@@ -12,5 +12,7 @@ def db():
     Each test gets a fresh database.
     """
     conn = get_db()
+    from db.connection import load_schema
+    load_schema(conn)
     yield conn
     conn.close()

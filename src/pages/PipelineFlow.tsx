@@ -1,4 +1,47 @@
+import { useEffect, useRef, useState } from "react";
+
+interface ScraperStatus {
+	running: boolean;
+	last_run: string | null;
+	articles_inserted: number;
+}
+
+const DEBOUNCE_MS = 500;
+
 export default function PipelineFlowPage() {
+	const [status, setStatus] = useState<ScraperStatus | null>(null);
+	const [error, setError] = useState("");
+	const [pending, setPending] = useState(false);
+	const errorTimer = useRef<ReturnType<typeof setTimeout>>();
+
+	const showError = (msg: string) => {
+		clearTimeout(errorTimer.current);
+		setError(msg);
+		errorTimer.current = setTimeout(() => setError(""), 3000);
+	};
+
+	const fetchStatus = () => {
+		fetch("/api/scraper/status")
+			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad response"))))
+			.then(setStatus)
+			.catch(() => setStatus(null));
+	};
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: fetch on mount only
+	useEffect(() => {
+		fetchStatus();
+	}, []);
+
+	const toggle = (action: "start" | "stop") => {
+		setPending(true);
+		setError("");
+		clearTimeout(errorTimer.current);
+		fetch(`/api/scraper/${action}`, { method: "POST" })
+			.then(() => fetchStatus())
+			.catch(() => showError(`${action} failed — retry?`))
+			.finally(() => setTimeout(() => setPending(false), DEBOUNCE_MS));
+	};
+
 	return (
 		<div className="mx-auto max-w-[780px] space-y-0">
 			{/* Header */}
@@ -43,6 +86,41 @@ export default function PipelineFlowPage() {
 					}
 					label="Consensus Math · Snapshots"
 				/>
+			</div>
+
+			{/* Scraper Controls */}
+			<div
+				className="animate-fade-up rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5"
+				style={{ "--i": 1.5 } as React.CSSProperties}
+			>
+				<div className="flex items-center gap-4">
+					{status && (
+						<button
+							type="button"
+							disabled={pending}
+							onClick={() => toggle(status.running ? "stop" : "start")}
+							className={`inline-flex items-center gap-2 rounded-full border px-5 py-2 font-heading text-[0.82rem] font-semibold text-white transition-opacity disabled:opacity-40 ${
+								status.running
+									? "border-[var(--nn-red)] bg-[var(--nn-red)]"
+									: "border-[var(--nn-teal)] bg-[var(--nn-teal)]"
+							}`}
+						>
+							{status.running ? "Stop" : "Start"}
+						</button>
+					)}
+					<span className="font-mono text-[0.72rem] tabular-nums text-[var(--nn-text-dim)]">
+						{status
+							? status.running
+								? `Running · ${status.articles_inserted} articles · last run ${status.last_run?.slice(11, 16) ?? "—"}`
+								: "Paused"
+							: "Checking status…"}
+					</span>
+				</div>
+				{error && (
+					<p className="mt-3 font-sans text-[0.74rem] text-[var(--nn-red)]">
+						{error}
+					</p>
+				)}
 			</div>
 
 			{/* Pipeline */}

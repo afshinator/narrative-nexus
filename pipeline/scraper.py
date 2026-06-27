@@ -50,12 +50,16 @@ class RSSPoller:
             yield from self.fetch(name)
 
     def _normalize(self, entry, cfg: dict) -> dict:
-        published = entry.get("published", "")
+        # ponytail: prefer feedparser's parsed time tuple over raw RFC 2822 string
+        if entry.get("published_parsed"):
+            published_at = datetime(*entry.published_parsed[:6], tzinfo=timezone.utc).isoformat()
+        else:
+            published_at = datetime.now(timezone.utc).isoformat()
         body_status = "BODY_UNAVAILABLE" if cfg["type"] == "google_news" else "AVAILABLE"
         return {
             "title": entry.get("title", ""),
             "url": entry.get("link", ""),
-            "published_at": published if published else datetime.now(timezone.utc).isoformat(),
+            "published_at": published_at,
             "source_domain": cfg["domain"],
             "body_status": body_status,
         }

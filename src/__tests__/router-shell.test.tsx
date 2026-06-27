@@ -1,6 +1,6 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "../App";
 
 describe("Router Shell — Slice 0", () => {
@@ -113,16 +113,64 @@ describe("Router Shell — Slice 0", () => {
 		).toBeInTheDocument();
 	});
 
-	it("shows NotFound page for unknown routes", () => {
-		// The catch-all route <Route path=\"*\" element={<NotFoundPage />} /> is
-		// defined in App.tsx and verified structurally by the build passing.
-		// jsdom + BrowserRouter can't easily test arbitrary path changes.
-		// This is covered by the npm run build gate.
-	});
-
 	it("has no Vite template remnants", () => {
 		render(<App />);
 		expect(screen.queryByText("Get started")).not.toBeInTheDocument();
 		expect(screen.queryByText("Count is")).not.toBeInTheDocument();
+	});
+
+	describe("Scraper status indicator", () => {
+		beforeEach(() => {
+			vi.restoreAllMocks();
+		});
+
+		it("shows a teal dot when scraper is running", async () => {
+			const fetchMock = vi.fn().mockResolvedValueOnce({
+				ok: true,
+				json: () =>
+					Promise.resolve({
+						running: true,
+						last_run: "2026-06-26T14:30:00Z",
+						articles_inserted: 142,
+					}),
+			});
+			vi.stubGlobal("fetch", fetchMock);
+
+			render(<App />);
+
+			const dot = await screen.findByTestId("scraper-status-dot");
+			expect(dot).toBeInTheDocument();
+			expect(dot.style.backgroundColor).toBe("var(--nn-teal)");
+		});
+
+		it("shows a slate dot when scraper is paused", async () => {
+			const fetchMock = vi.fn().mockResolvedValueOnce({
+				ok: true,
+				json: () =>
+					Promise.resolve({
+						running: false,
+						last_run: null,
+						articles_inserted: 0,
+					}),
+			});
+			vi.stubGlobal("fetch", fetchMock);
+
+			render(<App />);
+
+			const dot = await screen.findByTestId("scraper-status-dot");
+			expect(dot).toBeInTheDocument();
+			expect(dot.style.backgroundColor).toBe("var(--nn-slate)");
+		});
+
+		it("hides dot when status fetch fails", async () => {
+			const fetchMock = vi.fn().mockRejectedValueOnce(new Error("Network error"));
+			vi.stubGlobal("fetch", fetchMock);
+
+			render(<App />);
+
+			await waitFor(() => {
+				expect(screen.queryByTestId("scraper-status-dot")).not.toBeInTheDocument();
+			});
+		});
 	});
 });

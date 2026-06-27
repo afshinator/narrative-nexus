@@ -1,20 +1,26 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import PipelineFlowPage from "../pages/PipelineFlow";
 
 function renderPage() {
-	return render(
-		<MemoryRouter>
-			<PipelineFlowPage />
-		</MemoryRouter>,
-	);
+	const user = userEvent.setup();
+	return {
+		user,
+		...render(
+			<MemoryRouter>
+				<PipelineFlowPage />
+			</MemoryRouter>,
+		),
+	};
 }
 
 describe("PipelineFlow Page", () => {
 	beforeEach(async () => {
 		const { useStore } = await import("../store");
 		useStore.setState({ onboardingComplete: true });
+		vi.restoreAllMocks();
 	});
 
 	it("renders page heading", () => {
@@ -56,53 +62,156 @@ describe("PipelineFlow Page", () => {
 		});
 	});
 
-	describe("Compute badges", () => {
-		it("shows AMD GPU badge", () => {
+	describe("Scraper controls", () => {
+		it("shows Start button and fetches status on mount", async () => {
+			const fetchMock = vi.fn().mockResolvedValueOnce({
+				ok: true,
+				json: () =>
+					Promise.resolve({
+						running: false,
+						last_run: null,
+						articles_inserted: 0,
+					}),
+			});
+			vi.stubGlobal("fetch", fetchMock);
+
 			renderPage();
-			const badges = screen.getAllByText(/amd gpu/i);
-			expect(badges.length).toBeGreaterThanOrEqual(2); // legend + accordion
+
+			await waitFor(() => {
+				expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
+			});
+
+			expect(fetchMock).toHaveBeenCalledWith("/api/scraper/status");
 		});
 
-		it("shows Fireworks API badge", () => {
+		it("shows Stop button and article count when running", async () => {
+			const fetchMock = vi.fn().mockResolvedValueOnce({
+				ok: true,
+				json: () =>
+					Promise.resolve({
+						running: true,
+						last_run: "2026-06-26T14:30:00Z",
+						articles_inserted: 142,
+					}),
+			});
+			vi.stubGlobal("fetch", fetchMock);
+
 			renderPage();
-			const badges = screen.getAllByText(/fireworks api/i);
-			expect(badges.length).toBeGreaterThanOrEqual(3); // legend + 2 accordions
+
+			await waitFor(() => {
+				expect(screen.getByRole("button", { name: /stop/i })).toBeInTheDocument();
+			});
+
+			expect(screen.getByText(/142 articles/i)).toBeInTheDocument();
 		});
 
-		it("shows CPU badge", () => {
-			renderPage();
-			const cpuBadges = screen.getAllByText("CPU");
-			expect(cpuBadges.length).toBeGreaterThanOrEqual(1);
-		});
-	});
+		it("sends POST /api/scraper/start on Start click and updates UI", async () => {
+			const fetchMock = vi
+				.fn()
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () =>
+						Promise.resolve({ running: false, last_run: null, articles_inserted: 0 }),
+				})
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () => Promise.resolve({ status: "started" }),
+				})
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () =>
+						Promise.resolve({
+							running: true,
+							last_run: "2026-06-26T14:30:00Z",
+							articles_inserted: 142,
+						}),
+				});
+			vi.stubGlobal("fetch", fetchMock);
 
-	describe("Entry and exit nodes", () => {
-		it("renders RSS/article ingest entry point", () => {
-			renderPage();
-			expect(screen.getByText(/article ingest/i)).toBeInTheDocument();
+			const { user } = renderPage();
+
+			await waitFor(() => {
+				expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
+			});
+
+			await user.click(screen.getByRole("button", { name: /start/i }));
+
+			expect(fetchMock).toHaveBeenCalledWith("/api/scraper/start", {
+				method: "POST",
+			});
+
+			// Should re-fetch and show running state (review-03 adversarial F10)
+			await waitFor(() => {
+				expect(screen.getByRole("button", { name: /stop/i })).toBeInTheDocument();
+			});
 		});
 
-		it("renders database exit point", () => {
-			renderPage();
-			expect(screen.getByText(/database/i)).toBeInTheDocument();
-		});
-	});
+		it("sends POST /api/scraper/stop on Stop click", async () => {
+			const fetchMock = vi
+				.fn()
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () =>
+						Promise.resolve({
+							running: true,
+							last_run: "2026-06-26T14:30:00Z",
+							articles_inserted: 142,
+						}),
+				})
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () => Promise.resolve({ status: "stopped" }),
+				})
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () =>
+						Promise.resolve({ running: false, last_run: null, articles_inserted: 142 }),
+				});
+			vi.stubGlobal("fetch", fetchMock);
 
-	describe("Connectors", () => {
-		it("renders visual connectors between stages", () => {
-			renderPage();
-			// Connectors have SVG chevron arrows — find them by the aria-hidden SVGs
-			const arrows = document.querySelectorAll(
-				'svg[aria-hidden="true"] path[d="M2 2 L7 7 L12 2"]',
+			const { user } = renderPage();
+
+			await waitFor(() => {
+				expect(screen.getByRole("button", { name: /stop/i })).toBeInTheDocument();
+			});
+
+			await user.click(screen.getByRole("button", { name: /stop/i }));
+
+			expect(fetchMock).toHaveBeenCalledWith("/api/scraper/stop", {
+				method: "POST",
+			});
+		});
+
+		it("shows and auto-clears error message on failed POST", async () => {
+			const fetchMock = vi
+				.fn()
+				.mockResolvedValueOnce({
+					ok: true,
+					json: () =>
+						Promise.resolve({ running: false, last_run: null, articles_inserted: 0 }),
+				})
+				.mockRejectedValueOnce(new Error("Network error"));
+			vi.stubGlobal("fetch", fetchMock);
+
+			const { user } = renderPage();
+
+			await waitFor(() => {
+				expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
+			});
+
+			await user.click(screen.getByRole("button", { name: /start/i }));
+
+			await waitFor(() => {
+				expect(screen.getByText(/failed/i)).toBeInTheDocument();
+			});
+
+			// Error auto-clears after 3s — wait with generous timeout (review-03 adversarial F6)
+			await waitFor(
+				() => {
+					expect(screen.queryByText(/failed/i)).not.toBeInTheDocument();
+				},
+				{ timeout: 5000 },
 			);
-			expect(arrows.length).toBe(5);
-		});
-	});
-
-	describe("Offline status", () => {
-		it("shows pipeline offline message", () => {
-			renderPage();
-			expect(screen.getByText(/pipeline offline/i)).toBeInTheDocument();
 		});
 	});
 });

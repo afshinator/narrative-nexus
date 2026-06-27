@@ -1,11 +1,3 @@
-import { useState } from "react";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
 import {
 	ArrowLeftRight,
 	ArrowUpRight,
@@ -14,6 +6,14 @@ import {
 	RefreshCw,
 	Users,
 } from "lucide-react";
+import { useState } from "react";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { useStore } from "../store";
 
 const TERMS = [
@@ -86,7 +86,10 @@ export function OnboardingDialog({ open, onOpenChange }: Props) {
 					{TERMS.map(({ term, definition, Icon }) => (
 						<div key={term}>
 							<h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-								<Icon className="size-4 shrink-0 text-[var(--nn-navy)]" aria-hidden="true" />
+								<Icon
+									className="size-4 shrink-0 text-[var(--nn-navy)]"
+									aria-hidden="true"
+								/>
 								{term}
 							</h3>
 							<p className="text-sm text-muted-foreground">{definition}</p>

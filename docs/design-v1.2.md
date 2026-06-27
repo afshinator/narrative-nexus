@@ -106,6 +106,15 @@ Compares historical snapshots of article body text to detect significant unrepor
 
 **[DECISION when access arrives]:** Which Fireworks model for extraction (Llama 3.3 70B vs DeepSeek-V4-Pro) and synthesis. Benchmark JSON output reliability on both before committing. DeepSeek-V4-Pro is the leading alternative to Llama for structured extraction tasks.
 
+### Data format contracts [LOCKED]
+
+The following formats apply system-wide across all pipeline stages and API boundaries:
+
+- **Dates:** All dates stored in ISO 8601 format with UTC timezone (`YYYY-MM-DDTHH:MM:SS+00:00`). Feed dates from RSS (RFC 2822) must be converted before storage. The frontend displays dates in Pacific Time (America/Los_Angeles) with the appropriate offset applied at render time — the canonical store is always UTC.
+- **URLs:** All article URLs stored as canonical source URLs. Redirect chains must be resolved before storage. Google News redirect URLs must not be stored as-is — extract the original source URL from the redirect target.
+- **Numeric scales:** All percentage values normalized to 0–100. No 0–1 fractional values in the database. Raw values (days, counts) stored at native scale.
+- **Nullable fields:** Dimensions not yet computable (R_frame, R_edit, R_correct until their respective agents are built) are stored as `NULL` in SQLite, not 0 or empty string. The frontend handles nulls gracefully (dash display, no rendering of missing data as zero).
+
 ---
 
 ## SECTION 4: THE ANALYTICAL MODEL

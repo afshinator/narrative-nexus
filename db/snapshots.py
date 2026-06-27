@@ -19,7 +19,7 @@ def insert_snapshot(
 ) -> int:
     """Insert a new snapshot. Returns the new row id."""
     cur = conn.execute(
-        "INSERT INTO snapshots "
+        "INSERT OR REPLACE INTO snapshots "
         "(source_id, vertical, date, r_orig, r_val, r_speed, r_frame, r_edit, r_correct, archetype) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (source_id, vertical, date, r_orig, r_val, r_speed, r_frame, r_edit, r_correct, archetype),

@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
 import type { Archetype } from "../store";
+import { TIER_D3_SYMBOL } from "../utils/shapes";
 
 interface EnrichedSource {
 	sourceId: string;
@@ -25,14 +26,7 @@ interface Props {
 	onSelect: (id: string) => void;
 }
 
-// Tier-based shape encoding per design tokens
-const TIER_SYMBOLS: Record<number, d3.SymbolType> = {
-	1: d3.symbolCircle,
-	2: d3.symbolSquare,
-	3: d3.symbolDiamond,
-	4: d3.symbolTriangle,
-	5: d3.symbolCross,
-};
+// Tier-based shape encoding — centralized in src/utils/shapes.ts (review-03 M07)
 
 export default function ScatterPlot({
 	data,
@@ -42,7 +36,7 @@ export default function ScatterPlot({
 }: Props) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [, setSize] = useState(0);
+	const [size, setSize] = useState(0);
 
 	// Re-render when container resizes
 	useEffect(() => {
@@ -53,6 +47,7 @@ export default function ScatterPlot({
 		return () => obs.disconnect();
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: size triggers D3 redraw on container resize (review-03 M04)
 	useEffect(() => {
 		const svg = d3.select(svgRef.current);
 		if (!svg.node()) return;
@@ -171,7 +166,7 @@ export default function ScatterPlot({
 				.attr("class", "marker")
 				.attr(
 					"d",
-					(d) => symbol.type(TIER_SYMBOLS[d.tier] ?? d3.symbolCircle)() ?? "",
+					(d) => symbol.type(TIER_D3_SYMBOL[d.tier] ?? d3.symbolCircle)() ?? "",
 				)
 				.attr(
 					"transform",
@@ -196,7 +191,7 @@ export default function ScatterPlot({
 				markers.attr("opacity", (d) => (d.sourceId === hoveredId ? 1 : 0.15));
 			}
 		}
-	}, [data, hoveredId, onHover, onSelect]);
+	}, [data, hoveredId, onHover, onSelect, size]);
 
 	return (
 		<div ref={containerRef} className="relative h-[380px] w-full">

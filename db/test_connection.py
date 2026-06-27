@@ -32,8 +32,8 @@ class TestGetDB:
 
     def test_schema_loaded_from_file(self):
         schema_sql = load_schema.__globals__["SCHEMA_PATH"].read_text()
-        assert "CREATE TABLE sources" in schema_sql
-        assert "CREATE TABLE articles" in schema_sql
+        assert "CREATE TABLE IF NOT EXISTS sources" in schema_sql
+        assert "CREATE TABLE IF NOT EXISTS articles" in schema_sql
 
     def test_foreign_keys_enabled(self, db):
         row = db.execute("PRAGMA foreign_keys").fetchone()

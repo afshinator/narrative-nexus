@@ -24,7 +24,7 @@ import { DIMENSIONS } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
 import type { VerticalThresholdKey } from "../data/thresholds";
 import { getArchetype } from "../utils/archetype";
-import { getPolarityColor } from "../utils/polarity";
+import { getPolarityColor, INVERTED_DIMS } from "../utils/polarity";
 
 ChartJS.register(
 	RadialLinearScale,
@@ -41,8 +41,7 @@ const ANIMATION_INTERVAL = 40; // ms
 const SPARKLINE_WINDOW = 30; // trailing days for sparklines
 const STAT_DELTA_THRESHOLD = 1; // delta < 1pt = · (flat)
 
-// Dimensions where "lower is better" — inverted on radar per CONTEXT.md
-const INVERTED_DIMS = new Set(["R_speed", "R_frame", "R_edit"]);
+// INVERTED_DIMS now centralized in src/utils/polarity.ts (review-03 H01)
 
 interface Props {
 	snapshots?: DailySnapshot[];
@@ -211,7 +210,11 @@ function SourceProfilePage({
 			</div>
 
 			{/* Sparklines */}
-			<SparklineGrid snapshots={filtered} currentDay={Math.round(currentDay)} />
+			<SparklineGrid
+				snapshots={filtered}
+				currentDay={Math.round(currentDay)}
+				currentSnapshot={currentSnapshot}
+			/>
 
 			{/* Day scrubber */}
 			<DayScrubber
@@ -306,7 +309,7 @@ function StatPanel({
 								{hasDelta && (
 									<span className={`font-mono text-[0.66rem] ${arrowColor}`}>
 										{arrow}
-										{Math.abs(Math.round(diff!)) || ""}
+										{Math.abs(Math.round(diff!)).toString()}
 									</span>
 								)}
 							</span>
@@ -370,7 +373,9 @@ function RadarChart({
 				? [
 						{
 							label: "Tier avg",
-							data: tierAvg,
+							data: tierAvg.map((v, i) =>
+								INVERTED_DIMS.has(DIMENSIONS[i].key) ? 100 - v : v,
+							),
 							borderColor: "var(--nn-slate)",
 							backgroundColor: "transparent",
 							borderWidth: 1.2,
@@ -446,9 +451,11 @@ function RadarChart({
 function SparklineGrid({
 	snapshots,
 	currentDay,
+	currentSnapshot,
 }: {
 	snapshots: DailySnapshot[];
 	currentDay: number;
+	currentSnapshot: DailySnapshot | null;
 }) {
 	// Build sparkline points for each dimension — trailing 30 days from currentDay
 	const sparkData = useMemo(() => {
@@ -474,14 +481,8 @@ function SparklineGrid({
 		});
 	}, [snapshots, currentDay]);
 
-	const currentVal =
-		snapshots.length > 0
-			? snapshots.reduce((prev, curr) =>
-					Math.abs(curr.day - currentDay) < Math.abs(prev.day - currentDay)
-						? curr
-						: prev,
-				)
-			: null;
+	// Use parent's interpolated currentSnapshot instead of re-computing closest (review-03 M08)
+	const currentVal = currentSnapshot;
 
 	return (
 		<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">

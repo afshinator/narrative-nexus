@@ -16,5 +16,5 @@ class ArticleExtractor:
             if len(body) > 0:
                 return body, "AVAILABLE"
             return "", "BODY_UNAVAILABLE"
-        except (ArticleException, Exception):
+        except (ArticleException, OSError, ValueError):
             return "", "BODY_UNAVAILABLE"

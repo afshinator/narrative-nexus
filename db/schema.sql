@@ -4,7 +4,7 @@ PRAGMA journal_mode = WAL;
 PRAGMA foreign_keys = ON;
 
 -- Source panel registry (REQ-048–053)
-CREATE TABLE sources (
+CREATE TABLE IF NOT EXISTS sources (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL,
     domain      TEXT NOT NULL UNIQUE,
@@ -14,7 +14,7 @@ CREATE TABLE sources (
 );
 
 -- Scraped article storage
-CREATE TABLE articles (
+CREATE TABLE IF NOT EXISTS articles (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     source_id     INTEGER NOT NULL REFERENCES sources(id),
     url           TEXT NOT NULL,
@@ -26,11 +26,11 @@ CREATE TABLE articles (
     created_at    TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX idx_articles_source ON articles(source_id);
+CREATE INDEX IF NOT EXISTS idx_articles_source ON articles(source_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_articles_url ON articles(url);
 
 -- Story clusters (grouped by semantic similarity)
-CREATE TABLE clusters (
+CREATE TABLE IF NOT EXISTS clusters (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     vertical    TEXT NOT NULL,
     title       TEXT,
@@ -38,7 +38,7 @@ CREATE TABLE clusters (
 );
 
 -- Extracted factual claims
-CREATE TABLE claims (
+CREATE TABLE IF NOT EXISTS claims (
     id                INTEGER PRIMARY KEY AUTOINCREMENT,
     article_id        INTEGER NOT NULL REFERENCES articles(id),
     cluster_id        INTEGER NOT NULL REFERENCES clusters(id),
@@ -50,12 +50,12 @@ CREATE TABLE claims (
     created_at        TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX idx_claims_article ON claims(article_id);
-CREATE INDEX idx_claims_cluster ON claims(cluster_id);
-CREATE INDEX idx_claims_state ON claims(state);
+CREATE INDEX IF NOT EXISTS idx_claims_article ON claims(article_id);
+CREATE INDEX IF NOT EXISTS idx_claims_cluster ON claims(cluster_id);
+CREATE INDEX IF NOT EXISTS idx_claims_state ON claims(state);
 
 -- Which sources published each claim
-CREATE TABLE claim_sources (
+CREATE TABLE IF NOT EXISTS claim_sources (
     claim_id      INTEGER NOT NULL REFERENCES claims(id),
     source_id     INTEGER NOT NULL REFERENCES sources(id),
     first_seen_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -63,7 +63,7 @@ CREATE TABLE claim_sources (
 );
 
 -- Daily reputation snapshots (one row per source per vertical per day)
-CREATE TABLE snapshots (
+CREATE TABLE IF NOT EXISTS snapshots (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     source_id   INTEGER NOT NULL REFERENCES sources(id),
     vertical    TEXT NOT NULL,
@@ -79,4 +79,4 @@ CREATE TABLE snapshots (
     UNIQUE(source_id, vertical, date)
 );
 
-CREATE INDEX idx_snapshots_source ON snapshots(source_id, vertical, date);
+CREATE INDEX IF NOT EXISTS idx_snapshots_source ON snapshots(source_id, vertical, date);

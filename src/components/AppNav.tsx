@@ -1,5 +1,5 @@
 import { HelpCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 import { useStore } from "../store";
 import { OnboardingDialog } from "./OnboardingDialog";
@@ -16,7 +16,20 @@ const navItems = [
 
 export default function AppNav() {
 	const onboardingComplete = useStore((s) => s.onboardingComplete);
-	const [dialogOpen, setDialogOpen] = useState(!onboardingComplete);
+	// Initialize closed — open via useEffect after Zustand rehydrates (review-03 M02)
+	const [dialogOpen, setDialogOpen] = useState(false);
+	useEffect(() => {
+		if (!onboardingComplete) setDialogOpen(true);
+	}, [onboardingComplete]);
+
+	// Scraper status indicator (review-03 slice 009)
+	const [scraperRunning, setScraperRunning] = useState<boolean | null>(null);
+	useEffect(() => {
+		fetch("/api/scraper/status")
+			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad response"))))
+			.then((s) => setScraperRunning(s.running))
+			.catch(() => setScraperRunning(null));
+	}, []);
 
 	return (
 		<nav className="sticky top-0 z-50 flex h-[52px] items-stretch gap-0.5 border-b border-[var(--nn-border)] bg-[var(--nn-nav-bg)] px-7">
@@ -51,6 +64,17 @@ export default function AppNav() {
 					<circle cx="13" cy="13" r="2.2" fill="var(--nn-navy)" />
 				</svg>
 				Narrative Nexus
+				{scraperRunning !== null && (
+					<span
+						data-testid="scraper-status-dot"
+						className="ml-2 inline-block h-2 w-2 shrink-0 rounded-full"
+						style={{
+							backgroundColor: scraperRunning
+								? "var(--nn-teal)"
+								: "var(--nn-slate)",
+						}}
+					/>
+				)}
 			</span>
 
 			{/* Nav links */}
