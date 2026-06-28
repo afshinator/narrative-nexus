@@ -68,6 +68,8 @@ The footer on every page reads: **"Narrative Nexus tracks consensus reality, not
 | Fireworks AI API credits | $50 | LLM inference |
 | Hackathon launch bonus credits | Unknown | TBD at kickoff |
 
+**Note:** These are hackathon-provided resources. The architecture is provider-agnostic — if credits are unavailable or exhausted, the pipeline falls back to alternate providers (OpenCode Zen, DeepSeek, OpenAI, local CPU). See §3 compute allocation table and `config/providers.json` for the full provider matrix.
+
 ---
 
 ## SECTION 3: SYSTEM ARCHITECTURE
@@ -79,32 +81,32 @@ The pipeline is framed as a **coordinated swarm of specialized AI Agents**, not 
 ### The four agents [LOCKED]
 
 **Agent 1 — Intake & Clustering Agent**
-Ingests article text, generates embeddings, clusters articles about the same event into unified story threads using semantic similarity. Runs on AMD GPU pod (embedding workload, VRAM-light).
+Ingests article text, generates embeddings, clusters articles about the same event into unified story threads using semantic similarity. Provider-configurable via JSON config + API (available: Fireworks, OpenCode Zen, OpenAI, Local CPU, AMD GPU pod via ROCm). Default: OpenCode Zen.
 
 **Agent 2 — Forensic Extraction Agent**
-Takes raw article text, strips editorial framing, and extracts atomic factual claims as structured JSON. Runs via Fireworks AI API. Enforces strict output schema — no freeform text output, only parseable claim arrays.
+Takes raw article text, strips editorial framing, and extracts atomic factual claims as structured JSON. Provider-configurable via JSON config + API (available: Fireworks, OpenCode Zen, DeepSeek, OpenAI). Enforces strict output schema — no freeform text output, only parseable claim arrays. Default: OpenCode Zen.
 
 **Agent 3 — Consensus Alignment Agent**
-Takes claims from all sources covering the same story, computes cross-source agreement, identifies the consensus baseline, and classifies each claim as consensus-absorbed, developing, or outlier. Pure Python set math — no GPU or LLM required for the core computation. LLM involved only for the final forensic synthesis narrative.
+Takes claims from all sources covering the same story, computes cross-source agreement, identifies the consensus baseline, and classifies each claim as consensus-absorbed, developing, or outlier. Pure Python set math — runs on CPU, no GPU or LLM required for the core computation.
 
 **Agent 4 — Silent Auditor Agent**
-Compares historical snapshots of article body text to detect significant unreported edits. Runs as a background job. Flags candidates for human review.
+Compares historical snapshots of article body text to detect significant unreported edits. Provider-configurable via JSON config + API (same providers as Agent 2). Runs as a background job. Flags candidates for human review. Default: OpenCode Zen.
 
 ### Compute allocation [LOCKED architecture, PENDING exact hardware specs]
 
-| Workload | Where it runs | Why |
+| Workload | Where it runs (configurable) | Why |
 |---|---|---|
-| Sentence transformer embeddings (BERTopic, entity clustering, vertical classification) | AMD GPU pod via ROCm | GPU-accelerated, VRAM-light (< 2GB), fits any Radeon |
-| LLM inference: framing neutralization, claim extraction, forensic synthesis | Fireworks AI API | AMD Instinct MI325X/MI355X-backed; no self-hosting needed |
+| Sentence transformer embeddings (BERTopic, entity clustering, vertical classification) | Configurable: Fireworks API / OpenAI API / OpenCode Zen / Local CPU via llama.cpp / AMD GPU pod via ROCm | Defaults to OpenCode Zen for dev; AMD GPU pod when available (VRAM-light, <2GB) |
+| LLM inference: framing neutralization, claim extraction, forensic synthesis | Configurable: Fireworks API / OpenCode Zen / DeepSeek API / OpenAI API | All providers support JSON schema output; calling Fireworks IS using AMD Instinct hardware |
 | Consensus math, reputation scoring, claim resolution | CPU (app server) | Pure Python, no GPU required |
 | Article scraping, RSS polling, scheduling | CPU (app server) | I/O bound, no GPU required |
 | SQLite database | App server volume | Sufficient for hackathon scale |
 
-**Note on Fireworks/AMD story:** Calling Fireworks IS using AMD Instinct hardware. Fireworks runs MI325X and MI355X under a multi-year AMD partnership. This is actually a stronger AMD integration story for judges than self-hosting on a pod: you get data-center-class Instinct inference without the operational overhead.
+**Note on provider selection:** Provider assignments are configurable at runtime via the Pipeline Flow page dropdowns, backed by `config/providers.json`. An AMD 1-click shortcut sets all agents to Fireworks (AMD Instinct-backed). Fallback providers ensure the pipeline works even without AMD access. See `docs/impact-provider-agnostic-architecture.md` for the full provider matrix.
 
 **[PENDING]:** Exact VRAM of hackathon Radeon GPU pods. Expected 16–48GB based on ROCm-on-Radeon documentation. All planned GPU workloads (embedding models) fit well within this.
 
-**[DECISION when access arrives]:** Which Fireworks model for extraction (Llama 3.3 70B vs DeepSeek-V4-Pro) and synthesis. Benchmark JSON output reliability on both before committing. DeepSeek-V4-Pro is the leading alternative to Llama for structured extraction tasks.
+**[DECISION when access arrives]:** Which Fireworks model for extraction (Llama 3.3 70B vs DeepSeek-V4-Pro) and synthesis. Benchmark JSON output reliability on both before committing. DeepSeek-V4-Pro is the leading alternative to Llama for structured extraction tasks. For non-Fireworks providers, model selection follows defaults in `config/providers.json`. 
 
 ### Data format contracts [LOCKED]
 
@@ -239,13 +241,13 @@ Sticky app-level nav bar on every page:
 
 **Timeline** — Horizontal Day 0–90 animation per claim. Echo-mimic dots (dashed connection to origin). CONSENSUS-ABSORBED vertical line. UNRESOLVED claims fade at Day 90.
 
-**Pipeline Flow ("The Machine")** — Animated pipeline diagram showing live status. Each stage node shows AMD GPU vs Fireworks API execution. Replay mode for past clusters.
+**Pipeline Flow ("The Machine")** — Animated pipeline diagram showing live status. Each stage node shows a dropdown selector for its compute provider, with an AMD 1-click shortcut button to switch all agents to AMD-backed providers. Replay mode for past clusters.
 
 **Investigate** — Ad-hoc forensic query tool. Accepts an article URL or pasted text. Runs through pipeline stages 1–3 (Intake & Clustering → Forensic Extraction → Consensus Alignment) as a read-only analysis. Displays extracted atomic claims, cross-source matches, and consensus baseline comparison inline. Results persist in localStorage and survive navigation, refresh, and browser restarts. Snapshot banner: "Claim resolution states are not available for ad-hoc reports." Does not write to reputation tables. Does not require database persistence for results.
 
 **Panel Management** — Activate/deactivate sources. Category balance indicator. Archived sources retain full history.
 
-**Settings** — Consensus thresholds (per vertical), LLM model config, font scale slider (rem-based, persisted to localStorage), theme/skin selector, Firecrawl budget display, system health panel, manual pipeline trigger.
+**Settings** — Consensus thresholds (per vertical), font scale slider (rem-based, persisted to localStorage), theme/skin selector, system health panel, manual pipeline trigger.
 
 ### Visual tone → See `docs/design-tokens.md`
 
@@ -283,7 +285,7 @@ The seed script shares code paths with the live scheduler — it imports from th
 
 2. **A reputation radar in motion** — scrub through 90 days on one source, watch the polygon morph, archetype badge change, event markers fire (claim absorbed / silent edit detected). This is the "this doesn't exist anywhere else" moment.
 
-3. **The pipeline replay** — the animated diagram showing which stage ran on the AMD GPU pod vs which called the Fireworks API. This is the "AMD integration is real, not decorative" moment.
+3. **The pipeline replay** — the animated diagram showing which stage ran on which provider (GPU pod / Fireworks / OpenCode / CPU). This is the "configurable architecture is real, not decorative" moment.
 
 4. **One live forensic pass** (if demo environment permits) — the live neutralization + claim extraction + threshold slider demo already built. Four outlets, one event, drag the threshold, watch claims snap between consensus-absorbed and outlier.
 
@@ -306,13 +308,14 @@ All submissions must be containerized. Docker Compose is the target format.
 ```
 services:
   app:          # FastAPI server — scheduler, API endpoints, frontend serving
-  worker:       # AMD GPU pod — embedding models via ROCm
+  worker:       # Optional — AMD GPU pod for embedding models via ROCm
+                # When not present, app calls external embedding APIs
   db:           # SQLite volume (or file mount on app container)
 ```
 
-The `app` and `worker` containers communicate over HTTP. All Fireworks API calls originate from `app`. No GPU access needed in `app`.
+The `app` and `worker` containers communicate over HTTP when both are present. All external API calls (Fireworks, OpenCode, DeepSeek, OpenAI) originate from `app`. No GPU access needed in `app`.
 
-The `worker` container requires ROCm base image and `sentence-transformers`. It is the only AMD GPU-dependent component.
+The `worker` container requires ROCm base image and `sentence-transformers`. It is the only AMD GPU-dependent component, and is omitted when embeddings are served via external APIs.
 
 **[PENDING]:** Exact ROCm base image tag for the hackathon's Radeon GPU pod. Confirm at access time.
 
@@ -325,10 +328,12 @@ These block specific implementation decisions but do not block design, frontend,
 | # | Question | Blocks | How to resolve |
 |---|---|---|---|
 | 1 | Exact hardware: what Radeon GPU pods does the hackathon provide? VRAM? | Worker container image, model size ceiling | Access + AMD support |
-| 2 | What LLM models are available on Fireworks for Track 3 and at what token cost? | Model selection for Agents 2/3 | First thing to test with API key |
+| 2 | What LLM models are available on each provider and at what token cost? | Model selection for Agents 2/3/4 | Test with each provider's API |
 | 3 | What are the "additional hackathon launch credits"? | Budget for dev vs demo inference | Revealed at kickoff |
-| 4 | DeepSeek-V4-Pro vs Llama 3.3 70B for structured JSON extraction? | Agent 2 and 3 prompt design | Benchmark once API access arrives |
+| 4 | Which provider+model gives best JSON extraction reliability? | Agent 2 and 3 prompt design | Benchmark once API access arrives |
 | 5 | Is fine-tuning worth attempting on Track 3 within the timeline? | Stretch scope | Decide after initial pipeline is stable |
+| 6 | How should the provider abstraction layer handle fallback if the primary provider is unreachable? | Pipeline reliability | Test failover during integration |
+| 7 | What's the optimal config for provider/model per agent for demo day? | Demo strategy | Benchmark with seed script data |
 
 ---
 

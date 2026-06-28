@@ -14,7 +14,7 @@ A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geop
 | Routing / State | react-router v8, zustand 5 |
 | Visualizations | D3 v7 (scatter, sparklines, waterfall, timeline, pipeline), Chart.js 4 (radar) |
 | Backend | FastAPI, SQLite (WAL), APScheduler |
-| ML | sentence-transformers on AMD GPU (ROCm), Fireworks AI API |
+| ML | Provider-agnostic: configurable LLM + embedding backends. Local CPU (sentence-transformers for embeddings), OpenCode Zen (free LLM), Fireworks (AMD Instinct), OpenAI, DeepSeek |
 
 ## Quick start
 
@@ -24,6 +24,20 @@ npm run dev       # Vite dev server on port 5173, proxies /api to localhost:8000
 ```
 
 For the backend, see Phase 2 slices in `docs/plan/`.
+
+### Provider configuration
+
+Pipeline stages use configurable AI providers. Defaults in `config/providers.json`, runtime overrides on the Pipeline Flow page.
+
+| Pipeline stage | Provider category | Options | Works today |
+|----------------|-------------------|---------|-------------|
+| Stage 1 — Embeddings (Agent 1) | embedding | Fireworks, OpenAI, **Local CPU** | Local CPU (sentence-transformers) |
+| Stage 1 — Classification (Agent 1) | llm | Fireworks, **OpenCode Zen**, DeepSeek, OpenAI | OpenCode Zen (free tier) |
+| Stage 2 — Forensic Extraction (Agent 2) | llm | same 4 | OpenCode Zen |
+| Stage 3 — Consensus Alignment (Agent 3) | none | Pure Python on CPU, not configurable | Always works |
+| Stage 4 — Silent Auditor (Agent 4) | llm | same 4 | OpenCode Zen |
+
+Providers without a set API key (`{PROVIDER}_API_KEY` env var) appear dimmed on the Pipeline Flow page. The AMD shortcut (1-click) switches all agents to Fireworks — dimmed until `FIREWORKS_API_KEY` is set.
 
 ---
 

@@ -1,8 +1,22 @@
 """Tests for FastAPI application — route responses."""
 
+import os
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
+
+
+@pytest.fixture(autouse=True)
+def _disable_pipeline():
+    """Prevent the pipeline scheduler from firing during route tests.
+
+    Without this, the TestClient triggers the app lifespan which starts
+    a BackgroundScheduler that writes snapshots to the default DB path.
+    Override per-test by setting os.environ["NN_NO_PIPELINE"] = "0".
+    """
+    os.environ["NN_NO_PIPELINE"] = "1"
+    yield
+    del os.environ["NN_NO_PIPELINE"]
 
 
 @pytest.fixture

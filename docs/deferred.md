@@ -8,8 +8,9 @@ Consolidated list of items explicitly deferred during planning or implementation
 | Vf trend chart | No Vf formula + daily snapshot data | Backend pipeline | Slice 5 |
 | Outlier waterfall | No claims through state machine | Backend pipeline | Slice 5 |
 | Silent edit log | No SilentAuditorAgent output | Backend pipeline | Slice 5 |
-| Tier average radar polygon | No cross-source computation | Backend pipeline | Slice 5 |
-| Backend pipeline (Agents 1–4) | Frontend-first build order | Fireworks API key, AMD GPU pod access | Slice 2, 4 |
+| Tier average radar polygon | No cross-source vertical classification | Backend pipeline (Agents 1, 2) | Slice 5 |
+| Backend pipeline (Agents 1–4) | Frontend-first build order | Provider abstraction layer (any configured provider) | Slice 2, 4 |
+| Google News opaque redirect URLs | 4 sources (Reuters, AP, NHK World, Global Times) use Google News RSS — URLs are opaque redirects, not canonical source URLs | Native RSS feeds for these sources | Review 03 (H04) |
 | ~~Onboarding vocabulary icons (5 terms)~~ | — | **Resolved (6 terms, all have lucide-react icons)** | Slice 3 |
 | ~~Vertical filter on Sources page~~ | — | **Resolved in review-03 fix session** | Slice 4 |
 | ~~Route DB access pattern~~ | — | **Resolved in review-03 fix session** | Review 03 |

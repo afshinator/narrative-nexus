@@ -1,0 +1,56 @@
+{
+  "providers": {
+    "embeddings": [
+      {
+        "id": "fireworks",
+        "name": "Fireworks AI",
+        "model": "nomic-ai/nomic-embed-text-v1.5",
+        "amd": true
+      },
+      {
+        "id": "openai",
+        "name": "OpenAI",
+        "model": "text-embedding-3-small",
+        "amd": false
+      },
+      {
+        "id": "local-cpu",
+        "name": "Local CPU (sentence-transformers)",
+        "model": "all-MiniLM-L6-v2",
+        "amd": false
+      }
+    ],
+    "llm": [
+      {
+        "id": "fireworks",
+        "name": "Fireworks AI",
+        "model": "accounts/fireworks/models/deepseek-v3p1",
+        "amd": true
+      },
+      {
+        "id": "opencode",
+        "name": "OpenCode Zen",
+        "model": "deepseek-v4-flash-free",
+        "amd": false
+      },
+      {
+        "id": "deepseek",
+        "name": "DeepSeek API",
+        "model": "deepseek-v4-flash",
+        "amd": false
+      },
+      {
+        "id": "openai",
+        "name": "OpenAI",
+        "model": "gpt-4o-mini",
+        "amd": false
+      }
+    ]
+  },
+  "defaults": {
+    "agent1_embedding": "local-cpu",
+    "agent1_llm": "opencode",
+    "agent2_llm": "opencode",
+    "agent4_llm": "opencode"
+  }
+}

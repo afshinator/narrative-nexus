@@ -66,8 +66,8 @@ export function OnboardingDialog({ open, onOpenChange }: Props) {
 
 	function handleOpenChange(next: boolean) {
 		if (!next) {
-			setDontShow(false);
 			if (dontShow) setOnboardingComplete(true);
+			setDontShow(false);
 		}
 		onOpenChange(next);
 	}

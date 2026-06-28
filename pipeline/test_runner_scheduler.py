@@ -1,10 +1,12 @@
-"""Tests for pipeline.runner — run_daily_pipeline."""
-import pytest
-import tempfile
+"""Tests for pipeline.runner_scheduler — start_pipeline_scheduler."""
 import os
+import time
+import tempfile
 from datetime import datetime, timezone
 
-from db.connection import init_db, get_db
+import pytest
+
+from db.connection import get_db, init_db
 from db.sources import insert_source
 from db.clusters import create_cluster
 from db.articles import insert_article
@@ -14,8 +16,8 @@ from db.snapshots import list_snapshots
 
 
 @pytest.fixture
-def db_path():
-    """Temp file DB with sources, clusters, and claims ready for pipeline."""
+def seeded_db_path():
+    """Temp file DB with sources, clusters, and claims — pipeline-ready."""
     path = tempfile.mktemp(suffix=".db")
     init_db(path)
 
@@ -63,44 +65,30 @@ def db_path():
     os.unlink(path)
 
 
-def test_run_daily_pipeline_processes_all_clusters(db_path):
-    """run_daily_pipeline runs all 4 agents and writes snapshots."""
-    from pipeline.runner import run_daily_pipeline
+def test_pipeline_scheduler_writes_snapshots_on_first_fire(seeded_db_path):
+    """Pipeline scheduler fires immediately and writes snapshots to the DB."""
+    from pipeline.runner_scheduler import start_pipeline_scheduler
 
-    result = run_daily_pipeline(db_path)
+    # No snapshots before scheduler starts
+    conn = get_db(seeded_db_path)
+    before = list_snapshots(conn, vertical="geopolitics")
+    conn.close()
+    assert len(before) == 0, "Expected empty snapshot table before scheduler fires"
 
-    # Agent 1 processed (empty DB with claims already inserted by fixture)
-    assert "agent1" in result
-    # Agent 3 classified claims from fixture
-    assert "agent3" in result
-    assert result["agent3"]["clusters"] >= 1
-    assert result["snapshots_written"] >= 2
+    scheduler = start_pipeline_scheduler(seeded_db_path)
 
-
-def test_run_daily_pipeline_writes_snapshots(db_path):
-    """Snapshots are actually written to the DB."""
-    from pipeline.runner import run_daily_pipeline
-
-    run_daily_pipeline(db_path)
-
-    conn = get_db(db_path)
-    try:
-        snapshots = list_snapshots(conn, vertical="geopolitics")
-        assert len(snapshots) >= 2
-        assert all(s["date"] is not None for s in snapshots)
-    finally:
+    # Wait for the immediate fire (next_run_time=now)
+    deadline = time.monotonic() + 5.0
+    while time.monotonic() < deadline:
+        conn = get_db(seeded_db_path)
+        after = list_snapshots(conn, vertical="geopolitics")
         conn.close()
+        if len(after) >= 2:
+            break
+        time.sleep(0.2)
+    else:
+        scheduler.shutdown(wait=False)
+        raise AssertionError("Scheduler did not write snapshots within 5 seconds")
 
-
-def test_run_daily_pipeline_empty_db():
-    """Pipeline handles empty database gracefully."""
-    path = tempfile.mktemp(suffix=".db")
-    init_db(path)
-    try:
-        from pipeline.runner import run_daily_pipeline
-
-        result = run_daily_pipeline(path)
-        assert result["agent1"]["clusters"] == 0
-        assert result["snapshots_written"] == 0
-    finally:
-        os.unlink(path)
+    scheduler.shutdown(wait=False)
+    assert len(after) >= 2, f"Expected >=2 snapshots, got {len(after)}"

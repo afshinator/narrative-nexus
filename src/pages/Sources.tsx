@@ -33,6 +33,11 @@ export default function SourcesPage({ scores = [] }: Props) {
 	const [vertical, setVertical] = useState<VerticalThresholdKey>("geopolitics");
 
 	const filter = useStore((s) => s.archetypeFilter);
+	const activeSources = useStore((s) => s.activeSources);
+	const visibleSources = useMemo(
+		() => DEFAULT_SOURCES.filter((s) => activeSources.includes(s.id)),
+		[activeSources],
+	);
 
 	const scoreMap = useMemo(
 		() =>
@@ -67,7 +72,7 @@ export default function SourcesPage({ scores = [] }: Props) {
 	// Scatter plot data: enriched sources with scores and archetype for color encoding
 	const scatterData = useMemo(
 		() =>
-			DEFAULT_SOURCES.map((source) => {
+			visibleSources.map((source) => {
 				const score = scoreMap.get(source.id);
 				const archetype = score
 					? getArchetype(
@@ -91,7 +96,7 @@ export default function SourcesPage({ scores = [] }: Props) {
 
 	// Enrich sources with scores + archetype, then filter + sort
 	const rows = useMemo(() => {
-		const enriched = DEFAULT_SOURCES.map((source) => {
+		const enriched = visibleSources.map((source) => {
 			const score = scoreMap.get(source.id);
 			const archetype = score
 				? getArchetype(

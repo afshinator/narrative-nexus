@@ -32,3 +32,11 @@ The worker is deliberately thin — a GPU-accelerated embedding service and noth
 1. **Embeddings in the app container** — simpler architecture but loses the AMD GPU narrative for judges. Also violates REQ-108 implicitly since the app container doesn't need a GPU.
 2. **BERTopic clustering also on the worker** — clustering is CPU-bound and doesn't benefit from GPU. Adds unnecessary complexity to the worker.
 3. **All four agents as separate containers** — over-engineered for hackathon scale. Three services is the right level of granularity.
+
+## Provider-Agnostic Supersession (2026-06-27)
+
+Per `docs/impact-provider-agnostic-architecture.md` and the provider-agnostic update to the design doc:
+
+This ADR describes the **GPU pod scenario** (Scenario A). When no AMD GPU pod is available, the worker container is optional and omitted entirely. Embeddings are served by configurable external APIs (Fireworks, OpenAI, OpenCode Zen) or local CPU via llama.cpp (`embeddinggemma-300M-Q8_0.gguf`, 328MB, already on disk).
+
+The REQs cited here (REQ-103, REQ-107) have been updated to make the worker optional. See `config/providers.json` for the current provider catalog and `docs/design-v1.2.md` §3 for the provider-agnostic compute allocation table.

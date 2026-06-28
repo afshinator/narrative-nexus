@@ -4,6 +4,7 @@ API routes prefixed with /api/. Vite dev server proxies /api/* to localhost:8000
 """
 import os
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -15,6 +16,24 @@ from db.claims import list_claims
 from db.snapshots import list_snapshots
 from db.connection import get_db, init_db
 from pipeline.scheduler import ScraperScheduler
+from pipeline.runner_scheduler import start_pipeline_scheduler
+from pipeline.provider_config import load_provider_config
+
+
+# ── Provider config ──────────────────────────────────────────────────────
+
+_PROVIDERS_CONFIG_PATH = os.path.join(
+    os.path.dirname(__file__), "..", "config", "providers.json"
+)
+
+
+def _init_provider_state(app_state: Any) -> dict[str, Any]:
+    """Load provider config into app state. Returns the config dict."""
+    providers = load_provider_config(_PROVIDERS_CONFIG_PATH)
+    # Runtime overrides: defaults from JSON, overridable via PUT endpoint
+    app_state.providers = dict(providers["defaults"])
+    app_state.provider_catalog = providers["providers"]
+    return providers
 
 
 @asynccontextmanager
@@ -23,10 +42,28 @@ async def lifespan(application: FastAPI):
     os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
     init_db(db_path)
     application.state.db_path = db_path
-    scheduler = ScraperScheduler(db_path=db_path)
-    application.state.scraper = scheduler  # paused on startup
+
+    # Provider config — single source of truth
+    _init_provider_state(application.state)
+
+    # Scraper — paused on startup, controlled via /api/scraper/start|stop
+    scraper_scheduler = ScraperScheduler(db_path=db_path)
+    application.state.scraper = scraper_scheduler  # paused on startup
+
+    # Pipeline runner — daily consensus + snapshot computation
+    pipeline_scheduler = None
+    if not os.environ.get("NN_NO_PIPELINE"):
+        pipeline_scheduler = start_pipeline_scheduler(
+            db_path,
+            provider_overrides=application.state.providers,
+        )
+        application.state.pipeline = pipeline_scheduler
+
     yield
-    scheduler.shutdown()
+
+    scraper_scheduler.shutdown()
+    if pipeline_scheduler is not None:
+        pipeline_scheduler.shutdown(wait=False)
 
 
 app = FastAPI(title="Narrative Nexus", version="0.1.0", lifespan=lifespan)
@@ -112,3 +149,41 @@ def scraper_start(request: Request) -> dict:
 def scraper_stop(request: Request) -> dict:
     request.app.state.scraper.stop()
     return {"status": "stopped"}
+
+
+# ── Provider config endpoints ────────────────────────────────────────────
+
+@app.get("/api/config/providers")
+def get_provider_config(request: Request) -> dict:
+    """Return current provider assignments (defaults + runtime overrides)."""
+    return {
+        "providers": request.app.state.providers,
+    }
+
+
+@app.put("/api/config/providers")
+def update_provider_config(request: Request, body: dict[str, str]) -> dict:
+    """Update one or more provider assignments at runtime.
+
+    Body: {"agent2_llm": "fireworks", "agent1_embedding": "local-cpu"}
+    Only keys matching known agent slots are accepted.
+    """
+    valid_slots = {
+        "agent1_embedding", "agent1_llm",
+        "agent2_llm", "agent4_llm",
+    }
+    updated = 0
+    for key, value in body.items():
+        if key in valid_slots and isinstance(value, str):
+            request.app.state.providers[key] = value
+            updated += 1
+    return {"updated": updated, "providers": request.app.state.providers}
+
+
+@app.get("/api/config/providers/available")
+def get_available_providers(request: Request) -> dict:
+    """Return the full provider catalog from config/providers.json.
+
+    Used by the Pipeline Flow frontend to populate dropdown options.
+    """
+    return {"providers": request.app.state.provider_catalog}

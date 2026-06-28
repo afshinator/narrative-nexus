@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Square } from "lucide-react";
+import { Play, Square, Zap } from "lucide-react";
+
+// ── Types ────────────────────────────────────────────────────────────────
 
 interface ScraperStatus {
 	running: boolean;
@@ -7,13 +9,91 @@ interface ScraperStatus {
 	articles_inserted: number;
 }
 
+interface ProviderInfo {
+	id: string;
+	name: string;
+	model: string;
+	amd: boolean;
+}
+
+interface ProviderCatalog {
+	embeddings: ProviderInfo[];
+	llm: ProviderInfo[];
+}
+
+interface ProviderAssignments {
+	[key: string]: string;
+}
+
+// ── Agent slot → human-readable label ─────────────────────────────────────
+
+const SLOT_LABELS: Record<string, string> = {
+	agent1_embedding: "Stage 1 — Embeddings",
+	agent1_llm: "Stage 1 — Classification",
+	agent2_llm: "Stage 2 — Extraction",
+	agent4_llm: "Stage 4 — Auditor",
+};
+
+// ── Provider badge colours ────────────────────────────────────────────────
+
+const PROVIDER_BADGE: Record<string, { className: string; label: string }> = {
+	fireworks: {
+		className:
+			"border-[var(--nn-red)] bg-[var(--nn-red-dim)] text-[var(--nn-red)]",
+		label: "Fireworks API",
+	},
+	opencode: {
+		className:
+			"border-[var(--nn-teal)] bg-[var(--nn-teal-dim)] text-[var(--nn-teal)]",
+		label: "OpenCode Zen",
+	},
+	deepseek: {
+		className:
+			"border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] text-[var(--nn-navy)]",
+		label: "DeepSeek API",
+	},
+	openai: {
+		className:
+			"border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] text-[var(--nn-slate)]",
+		label: "OpenAI",
+	},
+	"local-cpu": {
+		className:
+			"border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] text-[var(--nn-slate)]",
+		label: "Local CPU",
+	},
+};
+
+// ── Default badge when provider ID is unknown ─────────────────────────────
+
+function badgeFor(providerId: string): {
+	className: string;
+	label: string;
+} {
+	return (
+		PROVIDER_BADGE[providerId] ?? {
+			className:
+				"border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] text-[var(--nn-slate)]",
+			label: providerId,
+		}
+	);
+}
+
+// ── Constants ─────────────────────────────────────────────────────────────
+
 const DEBOUNCE_MS = 500;
 
 export default function PipelineFlowPage() {
 	const [status, setStatus] = useState<ScraperStatus | null>(null);
 	const [error, setError] = useState("");
 	const [pending, setPending] = useState(false);
-	const errorTimer = useRef<ReturnType<typeof setTimeout>>();
+	const errorTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+	// Provider state
+	const [catalog, setCatalog] = useState<ProviderCatalog | null>(null);
+	const [assignments, setAssignments] = useState<ProviderAssignments | null>(
+		null,
+	);
 
 	const showError = (msg: string) => {
 		clearTimeout(errorTimer.current);
@@ -28,9 +108,25 @@ export default function PipelineFlowPage() {
 			.catch(() => setStatus(null));
 	};
 
+	const fetchProviders = () => {
+		// Fetch catalog and assignments in parallel
+		Promise.all([
+			fetch("/api/config/providers/available").then((r) => r.json()),
+			fetch("/api/config/providers").then((r) => r.json()),
+		])
+			.then(([cat, asgn]) => {
+				setCatalog(cat.providers);
+				setAssignments(asgn.providers);
+			})
+			.catch(() => {
+				// Backend not running — leave null, UI shows offline state
+			});
+	};
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: fetch on mount only
 	useEffect(() => {
 		fetchStatus();
+		fetchProviders();
 	}, []);
 
 	const toggle = (action: "start" | "stop") => {
@@ -43,6 +139,36 @@ export default function PipelineFlowPage() {
 			.finally(() => setTimeout(() => setPending(false), DEBOUNCE_MS));
 	};
 
+	// ── Provider helpers ───────────────────────────────────────────────
+
+	const changeProvider = (slot: string, providerId: string) => {
+		fetch("/api/config/providers", {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ [slot]: providerId }),
+		})
+			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("put failed"))))
+			.then((data) => setAssignments(data.providers))
+			.catch(() => showError("Failed to update provider"));
+	};
+
+	const setAllAMD = () => {
+		const amdBody: Record<string, string> = {};
+		for (const slot of Object.keys(SLOT_LABELS)) {
+			amdBody[slot] = "fireworks";
+		}
+		fetch("/api/config/providers", {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(amdBody),
+		})
+			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("put failed"))))
+			.then((data) => setAssignments(data.providers))
+			.catch(() => showError("AMD shortcut failed — Fireworks API key may be missing"));
+	};
+
+	const hasProviders = catalog !== null && assignments !== null;
+
 	return (
 		<div className="mx-auto max-w-[780px] space-y-0">
 			{/* Header */}
@@ -50,12 +176,27 @@ export default function PipelineFlowPage() {
 				className="animate-fade-up"
 				style={{ "--i": 0 } as React.CSSProperties}
 			>
-				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
-					Pipeline Flow
-				</h1>
-				<p className="font-sans text-[0.88rem] text-[var(--nn-text-dim)]">
-					The 4-agent swarm architecture &mdash; what runs where, and why
-				</p>
+				<div className="flex items-center justify-between gap-4">
+					<div>
+						<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
+							Pipeline Flow
+						</h1>
+						<p className="font-sans text-[0.88rem] text-[var(--nn-text-dim)]">
+							The 4-agent swarm architecture &mdash; configurable per-stage
+							providers
+						</p>
+					</div>
+					{/* AMD shortcut button */}
+					<button
+						type="button"
+						onClick={setAllAMD}
+						className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-4 py-2 font-heading text-[0.78rem] font-semibold text-[var(--nn-red)] shadow-sm transition-all hover:bg-[var(--nn-red)] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
+						title="Switch all agents to AMD-backed Fireworks AI"
+					>
+						<Zap size={14} />
+						Use AMD Hardware
+					</button>
+				</div>
 			</div>
 
 			{/* Legend */}
@@ -63,30 +204,51 @@ export default function PipelineFlowPage() {
 				className="animate-fade-up mb-8 mt-7 flex flex-wrap gap-4 rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-[22px] py-4"
 				style={{ "--i": 1 } as React.CSSProperties}
 			>
-				<LegendItem
-					badge={
-						<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
-							AMD GPU
-						</span>
-					}
-					label="ROCm · Embeddings"
-				/>
-				<LegendItem
-					badge={
-						<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
-							Fireworks API
-						</span>
-					}
-					label="LLM Inference on AMD Instinct"
-				/>
-				<LegendItem
-					badge={
-						<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
-							CPU
-						</span>
-					}
-					label="Consensus Math · Snapshots"
-				/>
+				{/* Dynamic legend from actual assignments */}
+				{hasProviders
+					? Object.entries(assignments as Record<string, string>).map(([slot, providerId]) => {
+							const badge = badgeFor(providerId);
+							return (
+								<LegendItem
+									key={slot}
+									badge={
+										<span
+											className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] ${badge.className}`}
+										>
+											{badge.label}
+										</span>
+									}
+									label={SLOT_LABELS[slot] ?? slot}
+								/>
+							);
+						})
+					: // Fallback: static legend when backend not connected
+						<>
+							<LegendItem
+								badge={
+									<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
+										AMD GPU
+									</span>
+								}
+								label="Embeddings"
+							/>
+							<LegendItem
+								badge={
+									<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
+										API
+									</span>
+								}
+								label="LLM Inference"
+							/>
+							<LegendItem
+								badge={
+									<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
+										CPU
+									</span>
+								}
+								label="Consensus Math · Snapshots"
+							/>
+						</>}
 			</div>
 
 			{/* Scraper Controls */}
@@ -150,26 +312,38 @@ export default function PipelineFlowPage() {
 					<StageCard
 						num="1"
 						name="Intake & Clustering"
-						desc="Ingests articles, generates sentence-transformer embeddings, and clusters stories by semantic similarity. Groups related coverage across sources into coherent story clusters for downstream analysis."
+						desc="Generates sentence-transformer embeddings and clusters stories by semantic similarity. Groups related coverage across sources into coherent story clusters."
 						index={1}
 					>
 						<Accordion
-							badge={{
-								text: "AMD GPU",
-								className:
-									"border-[var(--nn-red)] bg-[var(--nn-red-dim)] text-[var(--nn-red)]",
-							}}
+							badge={badgeFor(assignments?.agent1_embedding ?? "local-cpu")}
 							title="Embeddings"
-							body="Sentence transformers run on ROCm via the worker container. BERTopic clusters articles by semantic similarity. VRAM-light (<2GB), fits any Radeon pod."
+							body="Sentence transformers run locally on CPU (384-dim). DBSCAN clusters articles by cosine-similarity. Provider configurable via dropdown — switch to Fireworks or OpenAI when API keys are set."
+							dropdown={
+								hasProviders
+									? {
+											value: assignments!.agent1_embedding,
+											options: catalog!.embeddings,
+											onChange: (id) =>
+												changeProvider("agent1_embedding", id),
+										}
+									: undefined
+							}
 						/>
 						<Accordion
-							badge={{
-								text: "Fireworks API",
-								className:
-									"border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] text-[var(--nn-navy)]",
-							}}
+							badge={badgeFor(assignments?.agent1_llm ?? "opencode")}
 							title="Classification"
-							body="LLM classifies story vertical (geopolitics / economics / technology) and resolves entity disambiguation. Runs on AMD Instinct MI325X/MI355X via Fireworks."
+							body="LLM classifies story vertical and resolves entity disambiguation. Runs on the configured LLM provider — OpenCode Zen (free tier) by default, switchable to Fireworks for AMD Instinct inference."
+							dropdown={
+								hasProviders
+									? {
+											value: assignments!.agent1_llm,
+											options: catalog!.llm,
+											onChange: (id) =>
+												changeProvider("agent1_llm", id),
+										}
+									: undefined
+							}
 						/>
 					</StageCard>
 
@@ -179,17 +353,23 @@ export default function PipelineFlowPage() {
 					<StageCard
 						num="2"
 						name="Forensic Extraction"
-						desc="Strips editorial framing and extracts atomic factual claims from each article. Every claim is a verifiable statement in structured JSON — not a summary, not a paraphrase, not a sentiment score."
+						desc="Strips editorial framing and extracts atomic factual claims from each article. Every claim is a verifiable statement in structured JSON."
 						index={2}
 					>
 						<Accordion
-							badge={{
-								text: "Fireworks API",
-								className:
-									"border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] text-[var(--nn-navy)]",
-							}}
+							badge={badgeFor(assignments?.agent2_llm ?? "opencode")}
 							title="Claim Extraction"
-							body="LLM performs framing neutralization (strips adjectives, hedges, passive-voice attribution) then extracts atomic claims as structured JSON. Each claim includes source article, extracted text, and entity references. Model: Llama 3.3 70B or DeepSeek-V4-Pro (benchmarked at access time)."
+							body="LLM performs framing neutralization then extracts atomic claims as structured JSON. Each claim includes article text and entity references. Provider configurable — defaults to OpenCode Zen, switchable to any configured LLM provider."
+							dropdown={
+								hasProviders
+									? {
+											value: assignments!.agent2_llm,
+											options: catalog!.llm,
+											onChange: (id) =>
+												changeProvider("agent2_llm", id),
+										}
+									: undefined
+							}
 						/>
 					</StageCard>
 
@@ -199,17 +379,17 @@ export default function PipelineFlowPage() {
 					<StageCard
 						num="3"
 						name="Consensus Alignment"
-						desc="Computes cross-source agreement over the Tier 1+2 consensus pool. Classifies claims into the lifecycle state machine and assigns convergence type. Drives the reputation dimensions that power every chart on this dashboard."
+						desc="Computes cross-source agreement over the Tier 1+2 consensus pool. Classifies claims into the lifecycle state machine and assigns convergence type."
 						index={3}
 					>
 						<Accordion
 							badge={{
-								text: "CPU",
 								className:
 									"border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] text-[var(--nn-slate)]",
+								label: "CPU",
 							}}
 							title="Consensus Math"
-							body="Pure Python — no GPU required. Computes source agreement graphs, applies configurable threshold (65–90%), classifies claims as Consensus-Absorbed or Unresolved, assigns convergence type (Cross-Source Convergent / Self-Consistent), and updates all six reputation dimensions per source per vertical per day. Runs on the app server alongside the API."
+							body="Pure Python — no GPU required. Computes source agreement graphs, applies configurable threshold (65–90%), classifies claims, assigns convergence type, and updates all six reputation dimensions per source per vertical per day."
 						/>
 					</StageCard>
 
@@ -219,17 +399,23 @@ export default function PipelineFlowPage() {
 					<StageCard
 						num="4"
 						name="Silent Auditor"
-						desc="Compares historical article snapshots to detect unreported edits. When a source changes an article without issuing a formal correction, the Silent Auditor logs the diff and flags it in the source's reputation profile."
+						desc="Compares historical article snapshots to detect unreported edits. When a source changes an article without issuing a formal correction, the Silent Auditor flags it."
 						index={4}
 					>
 						<Accordion
-							badge={{
-								text: "CPU",
-								className:
-									"border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] text-[var(--nn-slate)]",
-							}}
+							badge={badgeFor(assignments?.agent4_llm ?? "opencode")}
 							title="Diff Engine"
-							body="Re-fetches article bodies on a schedule and diffs against stored snapshots. Detects: text changes, paragraph reordering, headline rewrites, and byline changes. Flags changes not accompanied by a formal correction notice. Runs on the app server; no GPU needed for text diffing."
+							body="Re-fetches article bodies and diffs against stored snapshots using text comparison. Flags changes above 10% threshold. Provider configurable for the LLM-based significance evaluation (future). Currently runs on CPU for text diffing."
+							dropdown={
+								hasProviders
+									? {
+											value: assignments!.agent4_llm,
+											options: catalog!.llm,
+											onChange: (id) =>
+												changeProvider("agent4_llm", id),
+										}
+									: undefined
+							}
 						/>
 					</StageCard>
 
@@ -252,11 +438,13 @@ export default function PipelineFlowPage() {
 			>
 				<div className="h-2.5 w-2.5 shrink-0 rounded-full bg-[var(--nn-slate)] animate-status-breathe" />
 				<p className="font-sans text-[0.82rem] text-[var(--nn-text-dim)]">
-					<strong className="text-[var(--nn-text)]">Pipeline offline</strong>{" "}
-					&mdash; no backend connected. All four agents will activate when the
-					agent swarm runs against live article feeds. This diagram shows the
-					static architecture; live status and replay mode will be available
-					when the pipeline produces data.
+					<strong className="text-[var(--nn-text)]">
+						{hasProviders ? "Pipeline ready" : "Pipeline offline"}
+					</strong>{" "}
+					&mdash;{" "}
+					{hasProviders
+						? "Backend connected. Provider assignments loaded. Start the scraper to begin processing live article feeds."
+						: "No backend connected. All four agents will activate when the agent swarm runs against live article feeds."}
 				</p>
 			</div>
 		</div>
@@ -324,14 +512,12 @@ function Connector({ c, i }: { c: number; i: number }) {
 				} as React.CSSProperties
 			}
 		>
-			{/* stem */}
 			<div
 				className="animate-connector-flow absolute left-1/2 top-0 bottom-0 w-[2px] -translate-x-1/2 bg-[var(--nn-slate)]"
 				style={
 					{ animationDelay: `calc(var(--c, 0) * 350ms)` } as React.CSSProperties
 				}
 			/>
-			{/* chevron arrow */}
 			<div
 				className="animate-connector-flow relative z-10 rounded bg-[var(--nn-bg)] px-1.5 py-0.5"
 				style={
@@ -380,7 +566,6 @@ function StageCard({
 				} as React.CSSProperties
 			}
 		>
-			{/* Stage header */}
 			<div className="mb-2.5 flex items-center gap-3">
 				<span className="font-heading text-[1.5rem] font-bold leading-none text-[var(--nn-navy)]">
 					{num}
@@ -402,10 +587,16 @@ function Accordion({
 	badge,
 	title,
 	body,
+	dropdown,
 }: {
-	badge: { text: string; className: string };
+	badge: { className: string; label: string };
 	title: string;
 	body: string;
+	dropdown?: {
+		value: string;
+		options: ProviderInfo[];
+		onChange: (id: string) => void;
+	};
 }) {
 	return (
 		<details className="group flex-1 min-w-[160px] overflow-hidden rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface2)] transition-colors duration-200 open:border-[var(--nn-navy)]">
@@ -413,9 +604,24 @@ function Accordion({
 				<span
 					className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[0.62rem] font-medium uppercase tracking-[0.03em] ${badge.className}`}
 				>
-					{badge.text}
+					{badge.label}
 				</span>
 				{title}
+				{/* Provider dropdown */}
+				{dropdown && (
+					<select
+						value={dropdown.value}
+						onChange={(e) => dropdown.onChange(e.target.value)}
+						onClick={(e) => e.stopPropagation()}
+						className="ml-2 rounded-md border border-[var(--nn-border)] bg-[var(--nn-surface)] px-2 py-0.5 font-mono text-[0.6rem] text-[var(--nn-text)] outline-none focus:border-[var(--nn-navy)] cursor-pointer"
+					>
+						{dropdown.options.map((p) => (
+							<option key={p.id} value={p.id}>
+								{p.name} — {p.model}
+							</option>
+						))}
+					</select>
+				)}
 				<svg
 					viewBox="0 0 12 12"
 					className="ml-auto h-3 w-3 transition-transform duration-[250ms] group-open:rotate-180"

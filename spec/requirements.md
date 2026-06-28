@@ -19,7 +19,7 @@
 ## SECTION 2: HACKATHON CONSTRAINTS
 
 [desired] [REQ-007] The application must be containerized with a docker-compose.yml at the project root.
-[desired] [REQ-008] The Docker Compose file must define at least three services: app, worker, and db.
+[desired] [REQ-008] The Docker Compose file must define at least two services: app and db. Worker is optional (only when running embeddings on AMD GPU).
 [stack-bound] [REQ-009] Track 3 judging criteria: Creativity, Originality, Product/Market Potential, Business Value, Application of Technology, Presentation.
 [stack-bound] [REQ-010] Track 3 has no model restriction — any open-source models and frameworks are permitted.
 [stack-bound] [REQ-011] No benchmark scoring is required — the demo is the submission.
@@ -33,11 +33,16 @@
 [desired] [REQ-014] The system must implement a ForensicExtractionAgent that strips editorial framing and extracts atomic factual claims as structured JSON.
 [desired] [REQ-015] The system must implement a ConsensusAlignmentAgent that computes cross-source agreement and classifies claims.
 [desired] [REQ-016] The system must implement a SilentAuditorAgent that compares historical article snapshots to detect unreported edits.
-[desired] [REQ-017] Sentence transformer embeddings must run on AMD GPU via ROCm.
-[compromise] [REQ-018] LLM inference for framing neutralization and claim extraction must use the Fireworks API.
+[desired] [REQ-017] Sentence transformer embeddings must be generated via a configurable provider (Fireworks API, OpenCode Zen, OpenAI API, local CPU, or AMD GPU via ROCm).
+[compromise] [REQ-018] LLM inference for framing neutralization and claim extraction must use a configurable provider (Fireworks API, OpenCode Zen, DeepSeek API, or OpenAI API).
 [compromise] [REQ-019] Consensus math and reputation scoring must run on CPU (pure Python, no GPU required).
 [stack-bound] [REQ-020] The pipeline is framed as a coordinated swarm of specialized AI Agents.
-[stack-bound] [REQ-021] Fireworks AI runs on AMD Instinct MI325X and MI355X hardware — calling the API uses AMD hardware.
+[stack-bound] [REQ-021] Fireworks AI runs on AMD Instinct MI325X and MI355X hardware — calling the Fireworks API uses AMD hardware.
+[desired] [REQ-123] Agent provider assignments must be configurable at runtime via API endpoint GET/PUT /api/config/providers.
+[desired] [REQ-124] Available provider definitions and defaults must be defined in config/providers.json.
+[desired] [REQ-125] The Pipeline Flow page must display dropdown selectors for each pipeline stage's compute provider.
+[desired] [REQ-126] The Pipeline Flow page must provide a 1-click AMD hardware shortcut that switches all agents to AMD-backed providers.
+[desired] [REQ-127] If the primary configured provider is unreachable, the agent must log the error and optionally retry with a configured fallback provider.
 
 ---
 
@@ -150,7 +155,7 @@
 [desired] [REQ-086] The Source Profile page must display radar chart with 6 axes archetype badge 30 day sparklines.
 [desired] [REQ-087] The Cluster Report page must display forensic report with consensus summary distortion matrix and analysis.
 [desired] [REQ-088] The Timeline page must show horizontal Day 0 to 90 animation per claim with CONSENSUS_ABSORBED vertical line.
-[desired] [REQ-089] The Pipeline Flow page must show animated pipeline diagram with AMD GPU versus Fireworks API execution labeling.
+[desired] [REQ-089] The Pipeline Flow page must show animated pipeline diagram with per-stage dropdown selectors for compute provider and a 1-click AMD hardware shortcut button.
 [desired] [REQ-090] The Investigate page must show snapshot banner about ad-hoc reports.
 [desired] [REQ-117] The Investigate page must accept article URL or pasted text as ad-hoc query input.
 [desired] [REQ-118] Ad-hoc query results must display extracted atomic claims from pipeline stages 1 through 3.
@@ -174,7 +179,7 @@
 [aspirational] [REQ-096] The demo must use a pre baked historical corpus of 3 to 4 stories.
 [aspirational] [REQ-097] The demo landing state must display scatter plot with four labeled quadrants.
 [aspirational] [REQ-098] The demo must show reputation radar in motion with 90 day scrubbing and polygon morphing.
-[aspirational] [REQ-099] The demo must show pipeline replay with AMD GPU versus Fireworks API labeling.
+[aspirational] [REQ-099] The demo must show pipeline replay with configurable provider labeling.
 [aspirational] [REQ-100] The demo must never imply a source was right or wrong.
 [aspirational] [REQ-101] The demo must never show live network calls mid demo.
 
@@ -183,11 +188,11 @@
 ## SECTION 8: CONTAINERIZATION
 
 [desired] [REQ-102] Docker Compose must define an app service for the FastAPI server.
-[desired] [REQ-103] Docker Compose must define a worker service for the AMD GPU pod.
+[desired] [REQ-103] Docker Compose must define an optional worker service for the AMD GPU pod.
 [desired] [REQ-104] Docker Compose must define a database service or volume with SQLite.
 [desired] [REQ-105] The app and worker containers must communicate over HTTP.
-[desired] [REQ-106] All Fireworks API calls must originate from the app container.
-[desired] [REQ-107] The worker container must use ROCm base image and include sentence transformers.
+[desired] [REQ-106] All external API calls (Fireworks, OpenCode, DeepSeek, OpenAI) must originate from the app container.
+[desired] [REQ-107] The worker container must use ROCm base image and include sentence transformers when running in GPU mode.
 [stack-bound] [REQ-108] No GPU access is needed in the app container.
 
 ---

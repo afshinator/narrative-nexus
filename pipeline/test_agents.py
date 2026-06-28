@@ -15,11 +15,14 @@ class TestAgentImports:
             BasePipelineAgent()  # cannot instantiate ABC
 
     def test_intake_agent_instantiates(self):
-        agent = IntakeClusteringAgent()
+        agent = IntakeClusteringAgent(db_path=":memory:",
+                                      embedding_provider={"id": "local-cpu", "name": "Local CPU", "model": "all-MiniLM-L6-v2", "amd": False})
         assert isinstance(agent, BasePipelineAgent)
 
     def test_forensic_agent_instantiates(self):
-        agent = ForensicExtractionAgent()
+        agent = ForensicExtractionAgent(db_path=":memory:",
+                                        llm_provider={"id": "opencode", "name": "OpenCode Zen", "model": "deepseek-v4-flash-free", "amd": False},
+                                        api_key="test")
         assert isinstance(agent, BasePipelineAgent)
 
     def test_consensus_agent_instantiates(self):
@@ -27,38 +30,45 @@ class TestAgentImports:
         assert isinstance(agent, BasePipelineAgent)
 
     def test_silent_agent_instantiates(self):
-        agent = SilentAuditorAgent()
+        agent = SilentAuditorAgent(db_path=":memory:")
         assert isinstance(agent, BasePipelineAgent)
 
 
 class TestIntakeClusteringAgent:
     @pytest.mark.asyncio
-    async def test_run_returns_list(self):
-        agent = IntakeClusteringAgent()
-        result = await agent.run()
-        assert isinstance(result, list)
-        assert result == []
-
-    @pytest.mark.asyncio
-    async def test_run_accepts_article_texts(self):
-        agent = IntakeClusteringAgent()
-        result = await agent.run(article_texts=["text1", "text2"])
-        assert isinstance(result, list)
+    async def test_run_returns_dict(self):
+        """New Agent 1 returns dict with clusters/article_map, not list."""
+        import tempfile, os
+        from db.connection import init_db
+        path = tempfile.mktemp(suffix=".db")
+        init_db(path)
+        try:
+            agent = IntakeClusteringAgent(db_path=path,
+                                          embedding_provider={"id": "local-cpu", "name": "Local CPU", "model": "all-MiniLM-L6-v2", "amd": False})
+            result = await agent.run()
+            assert isinstance(result, dict)
+            assert result == {"clusters": 0, "articles_clustered": 0, "article_map": {}}
+        finally:
+            os.unlink(path)
 
 
 class TestForensicExtractionAgent:
     @pytest.mark.asyncio
-    async def test_run_returns_list(self):
-        agent = ForensicExtractionAgent()
-        result = await agent.run()
-        assert isinstance(result, list)
-        assert result == []
-
-    @pytest.mark.asyncio
-    async def test_run_accepts_article_texts(self):
-        agent = ForensicExtractionAgent()
-        result = await agent.run(article_texts=["text"])
-        assert isinstance(result, list)
+    async def test_run_returns_dict(self):
+        """New Agent 2 returns dict with counts, not list."""
+        import tempfile, os
+        from db.connection import init_db
+        path = tempfile.mktemp(suffix=".db")
+        init_db(path)
+        try:
+            agent = ForensicExtractionAgent(db_path=path,
+                                            llm_provider={"id": "opencode", "name": "OpenCode Zen", "model": "deepseek-v4-flash-free", "amd": False},
+                                            api_key="test")
+            result = await agent.run(article_map={})
+            assert isinstance(result, dict)
+            assert result == {"claims_extracted": 0, "articles_processed": 0}
+        finally:
+            os.unlink(path)
 
 
 class TestConsensusAlignmentAgent:
@@ -79,17 +89,19 @@ class TestConsensusAlignmentAgent:
 
 class TestSilentAuditorAgent:
     @pytest.mark.asyncio
-    async def test_run_returns_list(self):
-        agent = SilentAuditorAgent()
-        result = await agent.run()
-        assert isinstance(result, list)
-        assert result == []
-
-    @pytest.mark.asyncio
-    async def test_run_accepts_article_ids(self):
-        agent = SilentAuditorAgent()
-        result = await agent.run(article_ids=[1, 2, 3])
-        assert isinstance(result, list)
+    async def test_run_returns_dict(self):
+        """New Agent 4 returns dict with counts, not list."""
+        import tempfile, os
+        from db.connection import init_db
+        path = tempfile.mktemp(suffix=".db")
+        init_db(path)
+        try:
+            agent = SilentAuditorAgent(db_path=path)
+            result = await agent.run()
+            assert isinstance(result, dict)
+            assert result == {"articles_checked": 0, "edits_detected": 0}
+        finally:
+            os.unlink(path)
 
 
 class TestWorkerClient:
