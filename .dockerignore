@@ -7,3 +7,14 @@ venv/
 .pytest_cache/
 .coverage
 htmlcov/
+# Don't send the entire data directory (may contain large SQLite files)
+data/
+# Don't send test files or docs
+pipeline/test_*.py
+app/test_*.py
+src/__tests__/
+docs/
+*.md
+!README.md
+# Don't send QMD models (328MB, only used for local dev)
+qmd/

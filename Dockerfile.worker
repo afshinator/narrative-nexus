@@ -1,20 +1,29 @@
-# Narrative Nexus — Worker Container
+# Narrative Nexus — Worker Container (GPU pod, optional)
 # AMD GPU pod: sentence-transformers via ROCm (REQ-107)
 #
-# Dev/test: minimal placeholder (no heavy ML deps)
-#   FROM python:3.12-slim
+# Only built/started with: docker compose --profile gpu up
 #
-# Production: ROCm base image with sentence-transformers
-#   FROM rocm/pytorch:latest
-#   RUN pip install sentence-transformers
+# Build modes (set via --build-arg WORKER_MODE):
+#   cpu  — python:3.12-slim + sentence-transformers (CPU, no GPU)
+#   gpu  — rocm/pytorch:latest + sentence-transformers (AMD GPU)
+#
+# Default: cpu (works without GPU, heavier but functional).
+# When hackathon GPU pod access arrives, switch to gpu mode.
 
-FROM python:3.12-slim
+ARG WORKER_MODE=cpu
 
+FROM python:3.12-slim AS cpu
 WORKDIR /app
-
-# Placeholder — sentence-transformers installed only in production ROCm image
+RUN pip install --no-cache-dir sentence-transformers fastapi uvicorn
 COPY worker/ ./worker/
-
 EXPOSE 8001
+CMD ["python", "worker/server.py"]
 
-CMD ["python", "-c", "print('Worker ready'); import time; time.sleep(3600)"]
+FROM rocm/pytorch:latest AS gpu
+WORKDIR /app
+RUN pip install --no-cache-dir sentence-transformers fastapi uvicorn
+COPY worker/ ./worker/
+EXPOSE 8001
+CMD ["python", "worker/server.py"]
+
+FROM ${WORKER_MODE}

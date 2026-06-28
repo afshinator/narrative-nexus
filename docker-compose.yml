@@ -1,7 +1,14 @@
 # Narrative Nexus — Docker Compose
-# Hackathon submission format (REQ-007, REQ-008, REQ-102–107)
+# Hackathon submission format (REQ-007, REQ-008, REQ-102–108)
+#
+# Quick start:
+#   docker compose up           # app + db (embeddings run on CPU)
+#   docker compose --profile gpu up  # app + db + worker (AMD GPU pod)
+#
+# The worker is optional — embeddings run locally on CPU by default.
 
 services:
+  # ── App: FastAPI + pipeline + frontend ──────────────────────────────
   app:
     build:
       context: .
@@ -11,16 +18,29 @@ services:
     volumes:
       - nn-data:/data
     environment:
-      - DATABASE_URL=sqlite:///data/narrative-nexus.db
+      - NN_DB_PATH=/data/nn.db
+      # API keys for configured providers (OpenCode Zen required for LLM)
+      - OPENCODE_API_KEY=${OPENCODE_API_KEY:-}
+      # Optional: uncomment when keys are available
+      # - FIREWORKS_API_KEY=${FIREWORKS_API_KEY:-}
+      # - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      # - OPENAI_API_KEY=${OPENAI_API_KEY:-}
     networks:
       - nn-network
-    # All Fireworks API calls originate from app (REQ-106)
+    # External API calls originate from app (REQ-106)
     # No GPU access needed (REQ-108)
+    depends_on:
+      db:
+        condition: service_started
 
+  # ── Worker: AMD GPU pod embeddings (optional) ────────────────────────
+  # Only started with: docker compose --profile gpu up
   worker:
     build:
       context: .
       dockerfile: Dockerfile.worker
+    profiles:
+      - gpu
     networks:
       - nn-network
     expose:
@@ -28,12 +48,15 @@ services:
     # ROCm base image + sentence-transformers (REQ-107)
     # AMD GPU pod — embedding workloads only
     # Communicates with app over HTTP (REQ-105)
+    # ponytail: placeholder until GPU pod access arrives.
+    # When GPU pod is available, switch Dockerfile.worker to ROCm base.
 
+  # ── DB: SQLite volume holder ────────────────────────────────────────
   db:
     image: busybox
     volumes:
       - nn-data:/data
-    command: ["sh", "-c", "touch /data/.ready && tail -f /dev/null"]
+    command: ["sh", "-c", "mkdir -p /data && touch /data/.ready && tail -f /dev/null"]
     networks:
       - nn-network
 

@@ -18,12 +18,49 @@ A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geop
 
 ## Quick start
 
+### Local development
+
 ```bash
 npm install
 npm run dev       # Vite dev server on port 5173, proxies /api to localhost:8000
 ```
 
-For the backend, see Phase 2 slices in `docs/plan/`.
+Backend (separate terminal):
+
+```bash
+pip install -r requirements.txt
+OPENCODE_API_KEY=... uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+### Docker (hackathon submission format)
+
+All submissions must be containerized. Docker Compose is the delivery format.
+
+```bash
+# 1. Build the frontend
+npm install && npm run build
+
+# 2. Build Docker images
+docker compose build
+
+# 3. Run (app + db — embeddings on CPU, LLM via OpenCode Zen)
+OPEN...=sk-... docker compose up
+
+# Optional: run with GPU worker (requires AMD GPU pod)
+docker compose --profile gpu up
+```
+
+**What runs where:**
+
+| Container | What it does | GPU? |
+|-----------|-------------|------|
+| `app` | FastAPI server, all 4 pipeline agents, frontend static files | No |
+| `db` | SQLite volume holder (WAL mode, shared via named volume) | No |
+| `worker` | Sentence-transformer embeddings on AMD GPU via ROCm (optional, `--profile gpu`) | Yes |
+
+**API keys:** Set `OPENCODE_API_KEY` for LLM inference (required). Other keys (`FIREWORKS_API_KEY`, `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`) are optional — set them when switching providers on the Pipeline Flow page. Keys are read from the host environment at `docker compose up` time.
+
+**Data persistence:** The SQLite database lives in the `nn-data` Docker volume. It survives container restarts. To reset: `docker compose down -v`.
 
 ### Provider configuration
 
