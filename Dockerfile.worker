@@ -17,13 +17,13 @@ WORKDIR /app
 RUN pip install --no-cache-dir sentence-transformers fastapi uvicorn
 COPY worker/ ./worker/
 EXPOSE 8001
-CMD ["python", "worker/server.py"]
+CMD ["uvicorn", "worker.server:app", "--host", "0.0.0.0", "--port", "8001"]
 
 FROM rocm/pytorch:latest AS gpu
 WORKDIR /app
 RUN pip install --no-cache-dir sentence-transformers fastapi uvicorn
 COPY worker/ ./worker/
 EXPOSE 8001
-CMD ["python", "worker/server.py"]
+CMD ["uvicorn", "worker.server:app", "--host", "0.0.0.0", "--port", "8001"]
 
 FROM ${WORKER_MODE}
