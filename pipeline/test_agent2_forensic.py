@@ -59,13 +59,15 @@ class TestForensicExtractionAgent:
         """End-to-end: reads articles → calls LLM → inserts claims."""
         db_file, article_id, cluster_id = db_path
 
-        # Mock the LLM to return structured JSON
+        # Mock the LLM to return structured JSON (batched format)
         mock_response = json.dumps({
-            "claims": [
-                {"text": "The president signed a climate bill",
-                 "entities": ["president", "climate bill"]},
-                {"text": "The bill was landmark legislation",
-                 "entities": ["bill"]},
+            "results": [
+                {"article_id": article_id, "claims": [
+                    {"text": "The president signed a climate bill",
+                     "entities": ["president", "climate bill"]},
+                    {"text": "The bill was landmark legislation",
+                     "entities": ["bill"]},
+                ]}
             ]
         })
 
@@ -144,7 +146,7 @@ class TestForensicExtractionAgent:
         """LLM returns valid JSON but with empty claims array."""
         db_file, article_id, cluster_id = db_path
 
-        mock_response = json.dumps({"claims": []})
+        mock_response = json.dumps({"results": [{"article_id": article_id, "claims": []}]})
         with patch("pipeline.agent2_forensic.LLMClient") as mock_llm_cls:
             mock_client = mock_llm_cls.return_value
             mock_client.chat = AsyncMock(return_value=mock_response)

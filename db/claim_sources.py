@@ -7,13 +7,25 @@ def add_claim_source(
     conn: sqlite3.Connection,
     claim_id: int,
     source_id: int,
+    *,
+    first_seen_at: str | None = None,
 ) -> bool:
-    """Link a claim to a source. Returns True if inserted (False if already exists)."""
+    """Link a claim to a source. Returns True if inserted (False if already exists).
+
+    If first_seen_at is provided, it overrides the DEFAULT datetime('now').
+    """
     try:
-        conn.execute(
-            "INSERT INTO claim_sources (claim_id, source_id) VALUES (?, ?)",
-            (claim_id, source_id),
-        )
+        if first_seen_at is not None:
+            conn.execute(
+                "INSERT INTO claim_sources (claim_id, source_id, first_seen_at) "
+                "VALUES (?, ?, ?)",
+                (claim_id, source_id, first_seen_at),
+            )
+        else:
+            conn.execute(
+                "INSERT INTO claim_sources (claim_id, source_id) VALUES (?, ?)",
+                (claim_id, source_id),
+            )
         conn.commit()
         return True
     except sqlite3.IntegrityError:

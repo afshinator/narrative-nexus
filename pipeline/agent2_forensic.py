@@ -19,11 +19,12 @@ from pipeline.llm_client import LLMClient
 from pipeline.base_agent import BasePipelineAgent
 from db.connection import get_db
 from db.claims import insert_claim
+from db.claim_sources import add_claim_source
 
 # ── Extraction prompt ────────────────────────────────────────────────────
 # One system message defining the task, then the article body as user message.
 
-EXTRACTION_SYSTEM_PROMPT = """You are a forensic claim extractor. Your job is to read a news article and extract every atomic, verifiable factual claim it makes.
+EXTRACTION_SYSTEM_PROMPT = """You are a forensic claim extractor. Your job is to read news articles and extract every atomic, verifiable factual claim they make.
 
 Rules:
 1. Strip editorial framing — remove adjectives, hedges, and passive-voice attribution
@@ -33,15 +34,13 @@ Rules:
 5. Do NOT include opinions, predictions, or value judgments
 6. Include named entities (people, organizations, locations) in each claim
 
-Output format: valid JSON with a "claims" array. Each claim object has:
-  - "text": the atomic factual claim (string)
-  - "entities": array of named entity strings mentioned in the claim
+You will receive multiple articles. Return JSON with a "results" array — one object per article. Each object has:
+  - "article_id": the integer ID provided with the article
+  - "claims": array of claim objects, each with "text" (string) and "entities" (array of strings)"""
 
-Example:
-{"claims": [
-  {"text": "The president signed Executive Order 14123", "entities": ["president"]},
-  {"text": "The order allocates 2.3 billion dollars to climate programs", "entities": ["climate programs"]}
-]}"""
+# ponytail: batch size tuned for free-tier rate limits. 5 articles per call
+# keeps response under 8000 tokens and finishes in ~13s on deepseek-v4-flash-free.
+_BATCH_SIZE = 5
 
 
 class ForensicExtractionAgent(BasePipelineAgent):
@@ -78,12 +77,12 @@ class ForensicExtractionAgent(BasePipelineAgent):
         if not article_map:
             return {"claims_extracted": 0, "articles_processed": 0}
 
-        # Fetch articles from DB
+        # Fetch articles from DB with source_id for claim_sources linking
         conn = get_db(self.db_path)
         try:
             placeholders = ",".join("?" * len(article_map))
             rows = conn.execute(
-                f"""SELECT id, title, body
+                f"""SELECT id, title, body, source_id
                     FROM articles
                     WHERE id IN ({placeholders})
                       AND body IS NOT NULL
@@ -102,53 +101,93 @@ class ForensicExtractionAgent(BasePipelineAgent):
         claims_extracted = 0
         articles_processed = 0
 
-        for row in rows:
-            article_id = row["id"]
-            cluster_id = article_map.get(article_id)
-            if cluster_id is None:
-                continue  # safety: article not in map (shouldn't happen)
+        # ponytail: process articles in batches of _BATCH_SIZE per LLM call.
+        # This reduces API calls from N to N/_BATCH_SIZE and avoids rate limits.
+        for batch_start in range(0, len(rows), _BATCH_SIZE):
+            batch = rows[batch_start:batch_start + _BATCH_SIZE]
 
-            text = f"{row['title'] or ''}\n\n{row['body'] or ''}"
+            # Build batched prompt: list each article with its ID
+            articles_text = ""
+            for row in batch:
+                articles_text += (
+                    f"\n--- ARTICLE {row['id']} ---\n"
+                    f"{row['title'] or ''}\n"
+                    f"{row['body'][:400] or ''}\n"
+                )
 
             try:
                 raw = await client.chat(
                     messages=[
                         {"role": "system", "content": EXTRACTION_SYSTEM_PROMPT},
-                        {"role": "user", "content": text},
+                        {"role": "user", "content": f"Articles:{articles_text}"},
                     ],
                     response_format={"type": "json_object"},
                     temperature=0.0,
-                    max_tokens=2000,
+                    max_tokens=8000,
                 )
                 parsed = json.loads(raw)
+                results = parsed.get("results", [])
             except (json.JSONDecodeError, Exception):
-                # ponytail: skip malformed responses silently
                 continue
 
-            claims = parsed.get("claims", [])
-            if not isinstance(claims, list):
+            if not isinstance(results, list):
                 continue
 
-            # Insert claims into DB
+            # Insert claims from each article in the batch
             conn = get_db(self.db_path)
             try:
-                for claim_obj in claims:
-                    if not isinstance(claim_obj, dict):
+                # Build a lookup for article_id → source_id
+                source_map = {row["id"]: row["source_id"] for row in rows}
+                # Also need published_at for first_seen_at backdating
+                date_map = {}
+                pub_rows = conn.execute(
+                    f"SELECT id, published_at FROM articles WHERE id IN ({placeholders})",
+                    list(article_map.keys()),
+                ).fetchall()
+                for pr in pub_rows:
+                    if pr["published_at"]:
+                        date_map[pr["id"]] = pr["published_at"]
+
+                for result in results:
+                    if not isinstance(result, dict):
                         continue
-                    claim_text = claim_obj.get("text", "")
-                    if not claim_text:
+                    article_id = result.get("article_id")
+                    claims = result.get("claims", [])
+                    if article_id is None or not isinstance(claims, list):
                         continue
-                    insert_claim(
-                        conn,
-                        article_id=article_id,
-                        cluster_id=cluster_id,
-                        text=claim_text,
-                    )
-                    claims_extracted += 1
+
+                    cluster_id = article_map.get(article_id)
+                    if cluster_id is None:
+                        continue
+
+                    source_id = source_map.get(article_id)
+                    first_seen = date_map.get(article_id)
+
+                    for claim_obj in claims:
+                        if not isinstance(claim_obj, dict):
+                            continue
+                        claim_text = claim_obj.get("text", "")
+                        if not claim_text:
+                            continue
+                        cid = insert_claim(
+                            conn,
+                            article_id=article_id,
+                            cluster_id=cluster_id,
+                            text=claim_text,
+                            created_at=first_seen,  # backdate to article pub date
+                        )
+                        claims_extracted += 1
+                        # Link claim to the source that published it
+                        if source_id is not None:
+                            add_claim_source(
+                                conn,
+                                claim_id=cid,
+                                source_id=source_id,
+                                first_seen_at=first_seen,
+                            )
+                    articles_processed += 1
             finally:
                 conn.close()
-
-            articles_processed += 1
 
         return {
             "claims_extracted": claims_extracted,

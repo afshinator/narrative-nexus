@@ -149,19 +149,26 @@ def run_daily_pipeline(
 # ── Snapshot computation (unchanged from original runner) ─────────────────
 
 
-def _compute_and_write_snapshots(conn) -> int:
+def _compute_and_write_snapshots(conn, *, date_str: str | None = None, as_of: str | None = None) -> int:
     """Compute reputation dimensions and write one snapshot per source per vertical.
 
     Pure function — no API keys, no external deps.
+
+    Args:
+      conn: SQLite connection.
+      date_str: Override for snapshot date (default: today).
+      as_of: If set, only include claims with created_at <= as_of.
+             Used by seed script for date-filtered snapshots.
     """
-    date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if date_str is None:
+        date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     sources = list_sources(conn)
     active_ids = {s["id"] for s in sources if s.get("active", 1)}
 
-    # Compute raw values
-    r_orig_raw = {k: float(v) for k, v in compute_r_orig_raw(conn).items()}
-    r_val_raw = compute_r_val_raw(conn)
-    r_speed_raw = compute_r_speed_raw(conn)
+    # Compute raw values with optional date filter
+    r_orig_raw = {k: float(v) for k, v in compute_r_orig_raw(conn, as_of=as_of).items()}
+    r_val_raw = compute_r_val_raw(conn, as_of=as_of)
+    r_speed_raw = compute_r_speed_raw(conn, as_of=as_of)
 
     # Percentile rank to 0-100
     r_orig = percentile_rank({k: v for k, v in r_orig_raw.items() if v is not None})

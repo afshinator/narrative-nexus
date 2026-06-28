@@ -12,12 +12,22 @@ from db.snapshots import insert_snapshot
 from pipeline.archetype import get_archetype
 
 
-def compute_r_orig_raw(conn: sqlite3.Connection) -> dict[int, int]:
+def compute_r_orig_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> dict[int, int]:
     """Count claims where each source was the first reporter.
+
+    If as_of is provided (ISO datetime string), only claims with
+    created_at <= as_of are counted.  Used by the seed script to
+    generate date-filtered reputation snapshots.
 
     Returns {source_id: origination_count}.
     """
-    rows = conn.execute("""
+    params: list = []
+    date_filter = ""
+    if as_of is not None:
+        date_filter = "WHERE c.created_at <= ?"
+        params.append(as_of)
+
+    rows = conn.execute(f"""
         SELECT cs.source_id, COUNT(*) as cnt
         FROM claim_sources cs
         INNER JOIN (
@@ -28,21 +38,30 @@ def compute_r_orig_raw(conn: sqlite3.Connection) -> dict[int, int]:
             AND cs.first_seen_at = firsts.first_seen
         INNER JOIN claims c ON cs.claim_id = c.id
         INNER JOIN clusters cl ON c.cluster_id = cl.id
+        {date_filter}
         GROUP BY cs.source_id
-    """).fetchall()
+    """, params).fetchall()
 
     return {row["source_id"]: row["cnt"] for row in rows}
 
 
-def compute_r_val_raw(conn: sqlite3.Connection) -> dict[int, float | None]:
+def compute_r_val_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> dict[int, float | None]:
     """Ratio of absorbed to originated claims per source.
+
+    If as_of is provided, only claims with created_at <= as_of are counted.
 
     Returns {source_id: ratio} where ratio = absorbed_count / originated_count.
     None when a source originated zero claims.
     """
-    originated = compute_r_orig_raw(conn)
+    originated = compute_r_orig_raw(conn, as_of=as_of)
 
-    rows = conn.execute("""
+    params: list = []
+    date_filter = ""
+    if as_of is not None:
+        date_filter = "AND c.created_at <= ?"
+        params.append(as_of)
+
+    rows = conn.execute(f"""
         SELECT cs.source_id, COUNT(*) as cnt
         FROM claim_sources cs
         INNER JOIN (
@@ -53,8 +72,9 @@ def compute_r_val_raw(conn: sqlite3.Connection) -> dict[int, float | None]:
             AND cs.first_seen_at = firsts.first_seen
         INNER JOIN claims c ON cs.claim_id = c.id
         WHERE c.state = 'CONSENSUS_ABSORBED'
+          {date_filter}
         GROUP BY cs.source_id
-    """).fetchall()
+    """, params).fetchall()
 
     absorbed = {row["source_id"]: row["cnt"] for row in rows}
 
@@ -65,12 +85,20 @@ def compute_r_val_raw(conn: sqlite3.Connection) -> dict[int, float | None]:
     return result
 
 
-def compute_r_speed_raw(conn: sqlite3.Connection) -> dict[int, float | None]:
+def compute_r_speed_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> dict[int, float | None]:
     """Median days between origination and absorption for absorbed claims.
+
+    If as_of is provided, only claims with created_at <= as_of are counted.
 
     Returns {source_id: median_days}. None when a source has no absorbed claims.
     """
-    rows = conn.execute("""
+    params: list = []
+    date_filter = ""
+    if as_of is not None:
+        date_filter = "AND c.created_at <= ?"
+        params.append(as_of)
+
+    rows = conn.execute(f"""
         SELECT cs.source_id,
                (julianday(c.absorbed_at) - julianday(c.created_at)) as days
         FROM claim_sources cs
@@ -84,7 +112,8 @@ def compute_r_speed_raw(conn: sqlite3.Connection) -> dict[int, float | None]:
         WHERE c.state = 'CONSENSUS_ABSORBED'
           AND c.absorbed_at IS NOT NULL
           AND c.created_at IS NOT NULL
-    """).fetchall()
+          {date_filter}
+    """, params).fetchall()
 
     by_source: dict[int, list[float]] = {}
     for row in rows:

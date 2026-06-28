@@ -15,13 +15,26 @@ def insert_claim(
     state: str = "PENDING",
     convergence_type: Optional[str] = None,
     absorbed_at: Optional[str] = None,
+    created_at: Optional[str] = None,
 ) -> int:
-    """Insert a new claim. Returns the new row id."""
-    cur = conn.execute(
-        "INSERT INTO claims (article_id, cluster_id, text, state, convergence_type, absorbed_at) "
-        "VALUES (?, ?, ?, ?, ?, ?)",
-        (article_id, cluster_id, text, state, convergence_type, absorbed_at),
-    )
+    """Insert a new claim. Returns the new row id.
+
+    If created_at is provided, it overrides the SQLite DEFAULT datetime('now').
+    This is used by the seed script to backdate claims to article publication dates.
+    """
+    if created_at is not None:
+        cur = conn.execute(
+            "INSERT INTO claims (article_id, cluster_id, text, state, "
+            "convergence_type, absorbed_at, created_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (article_id, cluster_id, text, state, convergence_type, absorbed_at, created_at),
+        )
+    else:
+        cur = conn.execute(
+            "INSERT INTO claims (article_id, cluster_id, text, state, convergence_type, absorbed_at) "
+            "VALUES (?, ?, ?, ?, ?, ?)",
+            (article_id, cluster_id, text, state, convergence_type, absorbed_at),
+        )
     conn.commit()
     return cur.lastrowid
 
