@@ -1,0 +1,15 @@
+			{/* Sparklines */}
+			<SparklineGrid
+				snapshots={filtered}
+				currentDay={Math.round(currentDay)}
+				currentSnapshot={currentSnapshot}
+			/>
+
+			{/* Vf Trend Chart */}
+			<VfTrendChart
+				snapshots={filtered}
+				currentDay={Math.round(currentDay)}
+			/>
+
+			{/* Day scrubber */}
+			<DayScrubber

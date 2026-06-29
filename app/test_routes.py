@@ -123,3 +123,94 @@ class TestScraperRoutes:
         resp = client.post("/api/scraper/stop")
         assert resp.status_code == 200
         assert client.get("/api/scraper/status").json()["running"] is False
+
+
+class TestSourceProfileRoute:
+    def test_returns_404_for_missing_source(self, client):
+        resp = client.get("/api/sources/9999/profile")
+        assert resp.status_code == 404
+
+    def test_returns_profile_with_snapshots(self, tmp_path):
+        """Seed a DB with snapshots, test the profile endpoint."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.snapshots import insert_snapshot
+
+        db_path = str(tmp_path / "profile_test.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src_id = insert_source(conn, "TestSource", "test.com", 1)
+        insert_snapshot(conn, src_id, "geopolitics", "2026-01-01", r_orig=50, r_val=60)
+        insert_snapshot(conn, src_id, "geopolitics", "2026-01-02", r_orig=55, r_val=65)
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get(f"/api/sources/{src_id}/profile?vertical=geopolitics")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert "snapshots" in data
+                assert len(data["snapshots"]) == 2
+                assert data["snapshots"][0]["day"] == 0
+                assert data["snapshots"][0]["R_val"] == 60
+                assert data["snapshots"][1]["day"] == 1
+                assert data["snapshots"][1]["R_val"] == 65
+                assert "tierAvg" in data
+                assert "panelMedian" in data
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+    def test_profile_respects_vertical_filter(self, tmp_path):
+        """Only snapshots for the requested vertical are returned."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.snapshots import insert_snapshot
+
+        db_path = str(tmp_path / "profile_vf.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src_id = insert_source(conn, "TS", "ts.com", 1)
+        insert_snapshot(conn, src_id, "geopolitics", "2026-01-01", r_val=10)
+        insert_snapshot(conn, src_id, "economics", "2026-01-01", r_val=90)
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get(f"/api/sources/{src_id}/profile?vertical=economics")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert len(data["snapshots"]) == 1
+                assert data["snapshots"][0]["R_val"] == 90
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+    def test_profile_empty_snapshots_returns_empty_array(self, tmp_path):
+        """Source with no snapshots returns empty array, not error."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+
+        db_path = str(tmp_path / "profile_empty.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src_id = insert_source(conn, "Empty", "empty.com", 2)
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get(f"/api/sources/{src_id}/profile?vertical=geopolitics")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert data["snapshots"] == []
+                assert data["tierAvg"] is None  # no tier data for this source
+                assert data["panelMedian"] is not None
+        finally:
+            os.environ.pop("NN_DB_PATH", None)

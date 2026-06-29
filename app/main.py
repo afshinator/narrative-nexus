@@ -108,6 +108,83 @@ def api_source_by_id(source_id: int, conn = Depends(get_persistent_db)):
     return {"source": source}
 
 
+@app.get("/api/sources/{source_id}/profile")
+def api_source_profile(
+    source_id: int,
+    vertical: str = "geopolitics",
+    conn = Depends(get_persistent_db),
+):
+    """Return daily snapshots mapped to relative days, tier averages, and panel medians.
+
+    Snapshots are ordered by date and assigned sequential day numbers starting from 0.
+    tierAvg is 6 values (R_orig through R_correct) averaged across sources in the same tier.
+    panelMedian is {orig, val} median across all active sources.
+    """
+    from db.sources import get_source
+    from statistics import median
+
+    source = get_source(conn, source_id)
+    if source is None:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"detail": "Source not found"}, status_code=404)
+
+    # ── Snapshots with day mapping ──────────────────────────────────────
+    rows = conn.execute(
+        """SELECT date, r_orig, r_val, r_speed, r_frame, r_edit, r_correct
+           FROM snapshots
+           WHERE source_id = ? AND vertical = ?
+           ORDER BY date""",
+        (source_id, vertical),
+    ).fetchall()
+
+    snapshots = []
+    for day, row in enumerate(rows):
+        snapshots.append({
+            "day": day,
+            "sourceId": source_id,
+            "vertical": vertical,
+            "R_orig": row["r_orig"],
+            "R_val": row["r_val"],
+            "R_speed": row["r_speed"],
+            "R_frame": row["r_frame"],
+            "R_edit": row["r_edit"],
+            "R_correct": row["r_correct"],
+        })
+
+    # ── Tier averages (6 dimensions) ────────────────────────────────────
+    tier_rows = conn.execute(
+        """SELECT AVG(sn.r_orig), AVG(sn.r_val), AVG(sn.r_speed),
+                  AVG(sn.r_frame), AVG(sn.r_edit), AVG(sn.r_correct)
+           FROM snapshots sn
+           JOIN sources s ON s.id = sn.source_id
+           WHERE s.tier = ? AND sn.vertical = ? AND sn.r_val IS NOT NULL""",
+        (source["tier"], vertical),
+    ).fetchone()
+
+    tier_avg = [tier_rows[i] for i in range(6)]
+    if all(v is None for v in tier_avg):
+        tier_avg = None
+
+    # ── Panel medians ───────────────────────────────────────────────────
+    rows = conn.execute(
+        "SELECT r_orig, r_val FROM snapshots WHERE vertical = ? "
+        "AND r_orig IS NOT NULL AND r_val IS NOT NULL",
+        (vertical,),
+    ).fetchall()
+    orig_vals = [r["r_orig"] for r in rows]
+    val_vals = [r["r_val"] for r in rows]
+    panel_median = {
+        "orig": median(orig_vals) if orig_vals else None,
+        "val": median(val_vals) if val_vals else None,
+    }
+
+    return {
+        "snapshots": snapshots,
+        "tierAvg": tier_avg,
+        "panelMedian": panel_median,
+    }
+
+
 @app.get("/api/articles")
 def api_articles(source_id: int | None = None, limit: int = 50, offset: int = 0, conn = Depends(get_persistent_db)):
     articles = list_articles(conn, source_id=source_id, limit=limit, offset=offset)

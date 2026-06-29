@@ -59,15 +59,14 @@ class TestSilentAuditorAgent:
             os.unlink(path)
 
     @pytest.mark.asyncio
-    async def test_run_detects_text_changes(self, db_path):
-        """When re-fetched body differs from stored body, flag it."""
+    async def test_run_writes_edits_to_db(self, db_path):
+        """Detected edits are persisted to the silent_edits table."""
         from pipeline.agent4_silent import SilentAuditorAgent
 
-        # Mock ArticleExtractor to return a modified body
         with patch("pipeline.agent4_silent.ArticleExtractor") as mock_ext_cls:
             mock_ext = mock_ext_cls.return_value
-            # First article: body changed significantly
-            # Second article: body unchanged
+            # First article: significant change → edit detected
+            # Second article: unchanged → no edit
             mock_ext.extract.side_effect = [
                 ("The president vetoed the bill after heated debate.", "AVAILABLE"),
                 ("Short body.", "AVAILABLE"),
@@ -76,9 +75,18 @@ class TestSilentAuditorAgent:
             agent = SilentAuditorAgent(db_path=db_path)
             result = await agent.run()
 
-            assert result["articles_checked"] >= 1
-            # At least the first article should be flagged as changed
             assert result["edits_detected"] >= 1
+
+            # Verify silent_edits table has a row
+            from db.connection import get_db
+            conn = get_db(db_path)
+            try:
+                rows = conn.execute("SELECT * FROM silent_edits").fetchall()
+                assert len(rows) == 1
+                assert rows[0]["change_ratio"] > 0.10
+                assert rows[0]["stored_body_length"] > 0
+            finally:
+                conn.close()
 
     @pytest.mark.asyncio
     async def test_detect_edit_finds_significant_changes(self):
@@ -86,22 +94,29 @@ class TestSilentAuditorAgent:
         from pipeline.agent4_silent import _detect_edit
 
         # Identical text → no edit
-        assert _detect_edit("hello world", "hello world") is False
+        is_edit, ratio = _detect_edit("hello world", "hello world")
+        assert is_edit is False
+        assert ratio == 0.0
 
         # Minor change (one word) → no edit (below 10%)
-        assert _detect_edit("hello world", "hello world!") is False
+        is_edit, ratio = _detect_edit("hello world", "hello world!")
+        assert is_edit is False
 
         # Major change → edit detected
-        assert _detect_edit(
+        is_edit, ratio = _detect_edit(
             "The president signed the bill.",
             "The president vetoed the bill after a long debate.",
-        ) is True
+        )
+        assert is_edit is True
+        assert ratio > 0.10
 
         # Completely different → edit detected
-        assert _detect_edit(
+        is_edit, ratio = _detect_edit(
             "Original story about climate change legislation.",
             "Updated: Market rally continues as tech stocks surge.",
-        ) is True
+        )
+        assert is_edit is True
+        assert ratio > 0.10
 
     @pytest.mark.asyncio
     async def test_detect_edit_empty_bodies(self):
@@ -109,10 +124,16 @@ class TestSilentAuditorAgent:
         from pipeline.agent4_silent import _detect_edit
 
         # Empty stored, non-empty fetched → edit
-        assert _detect_edit("", "new content") is True
+        is_edit, ratio = _detect_edit("", "new content")
+        assert is_edit is True
+        assert ratio == 1.0
 
         # Non-empty stored, empty fetched → edit (article removed?)
-        assert _detect_edit("old content", "") is True
+        is_edit, ratio = _detect_edit("old content", "")
+        assert is_edit is True
+        assert ratio == 1.0
 
         # Both empty → no edit
-        assert _detect_edit("", "") is False
+        is_edit, ratio = _detect_edit("", "")
+        assert is_edit is False
+        assert ratio == 0.0

@@ -80,3 +80,15 @@ CREATE TABLE IF NOT EXISTS snapshots (
 );
 
 CREATE INDEX IF NOT EXISTS idx_snapshots_source ON snapshots(source_id, vertical, date);
+
+-- Silent edit audit log — one row per detected unreported article edit
+CREATE TABLE IF NOT EXISTS silent_edits (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    article_id          INTEGER NOT NULL REFERENCES articles(id),
+    detected_at         TEXT NOT NULL DEFAULT (datetime('now')),
+    change_ratio        REAL NOT NULL,
+    stored_body_length  INTEGER NOT NULL,
+    fetched_body_length INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_silent_edits_article ON silent_edits(article_id);

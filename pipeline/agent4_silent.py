@@ -26,19 +26,21 @@ from db.connection import get_db
 _EDIT_THRESHOLD = 0.10
 
 
-def _detect_edit(stored_body: str, fetched_body: str) -> bool:
-    """Return True if the fetched body differs from stored by >10%.
+def _detect_edit(stored_body: str, fetched_body: str) -> tuple[bool, float]:
+    """Return (is_edit, change_ratio) for two body texts.
 
-    Uses difflib.SequenceMatcher for ratio comparison.  Returns True for
-    empty→non-empty and non-empty→empty transitions.
+    Uses difflib.SequenceMatcher for ratio comparison.  Returns (True, 1.0)
+    for empty→non-empty and non-empty→empty transitions.
+    change_ratio = 1.0 - similarity ratio (0.0 = identical, 1.0 = completely different).
     """
     if not stored_body and not fetched_body:
-        return False
+        return False, 0.0
     if not stored_body or not fetched_body:
-        return True  # article appeared or disappeared entirely
+        return True, 1.0  # article appeared or disappeared entirely
 
     ratio = SequenceMatcher(None, stored_body, fetched_body).ratio()
-    return ratio < (1.0 - _EDIT_THRESHOLD)
+    change = 1.0 - ratio
+    return change > _EDIT_THRESHOLD, change
 
 
 class SilentAuditorAgent(BasePipelineAgent):
@@ -61,7 +63,8 @@ class SilentAuditorAgent(BasePipelineAgent):
         """Re-fetch article bodies and detect edits.
 
         Reads all articles with body_status='AVAILABLE' from the database,
-        re-fetches each one, and diffs against the stored text.
+        re-fetches each one, diffs against the stored text, and writes
+        detected edits to the silent_edits table.
 
         Returns:
           dict with keys: articles_checked (count), edits_detected (count).
@@ -75,41 +78,42 @@ class SilentAuditorAgent(BasePipelineAgent):
                      AND body IS NOT NULL
                      AND body != ''"""
             ).fetchall()
+
+            if not rows:
+                return {"articles_checked": 0, "edits_detected": 0}
+
+            articles_checked = 0
+            edits_detected = 0
+
+            for row in rows:
+                article_id = row["id"]
+                url = row["url"]
+                stored_body = row["body"] or ""
+
+                # Re-fetch the article
+                fetched_body, body_status = self._extractor.extract(url)
+
+                if body_status != "AVAILABLE" or not fetched_body:
+                    articles_checked += 1
+                    continue
+
+                is_edit, change_ratio = _detect_edit(stored_body, fetched_body)
+                if is_edit:
+                    edits_detected += 1
+                    from db.silent_edits import insert_silent_edit
+                    insert_silent_edit(
+                        conn,
+                        article_id,
+                        change_ratio,
+                        len(stored_body),
+                        len(fetched_body),
+                    )
+
+                articles_checked += 1
+
+            return {
+                "articles_checked": articles_checked,
+                "edits_detected": edits_detected,
+            }
         finally:
             conn.close()
-
-        if not rows:
-            return {"articles_checked": 0, "edits_detected": 0}
-
-        articles_checked = 0
-        edits_detected = 0
-
-        for row in rows:
-            article_id = row["id"]
-            url = row["url"]
-            stored_body = row["body"] or ""
-
-            # Re-fetch the article
-            fetched_body, body_status = self._extractor.extract(url)
-
-            if body_status != "AVAILABLE" or not fetched_body:
-                # Article became unavailable — skip (not an edit, it's a 404)
-                articles_checked += 1
-                continue
-
-            if _detect_edit(stored_body, fetched_body):
-                edits_detected += 1
-                # ponytail: log the edit, don't write to DB yet.
-                # Full edit tracking (correction notice detection, edit log)
-                # is future work — this just counts the flags.
-                print(
-                    f"[SilentAuditor] Edit detected: article={article_id} "
-                    f"url={url}"
-                )
-
-            articles_checked += 1
-
-        return {
-            "articles_checked": articles_checked,
-            "edits_detected": edits_detected,
-        }

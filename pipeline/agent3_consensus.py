@@ -1,4 +1,5 @@
 """Consensus Alignment Agent — classifies claims, computes baseline, resolves states."""
+from datetime import datetime, timezone
 from pipeline.base_agent import BasePipelineAgent
 from pipeline.consensus import compute_baseline_pct, DEFAULT_THRESHOLDS
 from pipeline.resolution import determine_state
@@ -68,7 +69,12 @@ class ConsensusAlignmentAgent(BasePipelineAgent):
 
             new_state = determine_state(pct, threshold=threshold, day=_days_since(claim["created_at"]))
             if new_state != claim["state"]:
-                update_claim_state(conn, claim["id"], new_state)
+                absorbed = (
+                    datetime.now(timezone.utc).isoformat()
+                    if new_state == "CONSENSUS_ABSORBED"
+                    else None
+                )
+                update_claim_state(conn, claim["id"], new_state, absorbed_at=absorbed)
                 classified += 1
 
         baseline = {str(threshold): round(max_pct, 1)}

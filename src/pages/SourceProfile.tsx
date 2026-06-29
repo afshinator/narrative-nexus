@@ -19,6 +19,7 @@ import {
 import { Radar } from "react-chartjs-2";
 import { Link, useParams } from "react-router";
 import VerticalPills from "../components/VerticalPills";
+import VfTrendChart from "../components/VfTrendChart";
 import type { DailySnapshot, ProfileEvent } from "../data/scores";
 import { DIMENSIONS } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
@@ -86,10 +87,10 @@ function nearestSnapshots(snapshots: DailySnapshot[], day: number) {
 }
 
 function SourceProfilePage({
-	snapshots = [],
+	snapshots: _initialSnapshots = [],
 	events = [],
-	tierAvg,
-	panelMedian = { orig: 50, val: 50 },
+	tierAvg: _initialTierAvg,
+	panelMedian: _initialPanelMedian = { orig: 50, val: 50 },
 }: Props) {
 	const { domain } = useParams<{ domain: string }>();
 	const source = useMemo(
@@ -101,6 +102,39 @@ function SourceProfilePage({
 	const [currentDay, setCurrentDay] = useState(0);
 	const [playing, setPlaying] = useState(false);
 	const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+	// Fetch profile data from API
+	const [fetchedSnapshots, setFetchedSnapshots] = useState<DailySnapshot[]>([]);
+	const [tierAvg, setTierAvg] = useState<number[] | undefined>(_initialTierAvg);
+	const [panelMedian, setPanelMedian] = useState(_initialPanelMedian);
+
+	useEffect(() => {
+		let cancelled = false;
+		async function load() {
+			try {
+				const srcResp = await fetch("/api/sources");
+				const srcData = await srcResp.json();
+				const dbSource = (srcData.sources as { id: number; domain: string }[]).find(
+					(s) => s.domain === domain,
+				);
+				if (!dbSource || cancelled) return;
+				const resp = await fetch(
+					`/api/sources/${dbSource.id}/profile?vertical=${vertical}`,
+				);
+				const data = await resp.json();
+				if (cancelled) return;
+				setFetchedSnapshots(data.snapshots ?? []);
+				setTierAvg(data.tierAvg);
+				setPanelMedian(data.panelMedian ?? { orig: 50, val: 50 });
+			} catch {
+				// Keep defaults on error
+			}
+		}
+		load();
+		return () => { cancelled = true; };
+	}, [domain, vertical]);
+
+	const snapshots = fetchedSnapshots.length > 0 ? fetchedSnapshots : _initialSnapshots;
 
 	// Filter snapshots by vertical — memoized, stable across day changes
 	const filtered = useMemo(
@@ -214,6 +248,12 @@ function SourceProfilePage({
 				snapshots={filtered}
 				currentDay={Math.round(currentDay)}
 				currentSnapshot={currentSnapshot}
+			/>
+
+			{/* Vf Trend Chart */}
+			<VfTrendChart
+				snapshots={filtered}
+				currentDay={Math.round(currentDay)}
 			/>
 
 			{/* Day scrubber */}
