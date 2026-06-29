@@ -77,3 +77,17 @@ def delete_article(conn: sqlite3.Connection, article_id: int) -> bool:
     cur = conn.execute("DELETE FROM articles WHERE id = ?", (article_id,))
     conn.commit()
     return cur.rowcount > 0
+
+
+def list_pending_articles(
+    conn: sqlite3.Connection,
+    limit: int = 50,
+) -> list[dict]:
+    """Return articles with body_status='AVAILABLE' and empty body (not yet extracted)."""
+    rows = conn.execute(
+        "SELECT * FROM articles "
+        "WHERE body_status = 'AVAILABLE' AND (body IS NULL OR body = '') "
+        "ORDER BY id LIMIT ?",
+        (limit,),
+    ).fetchall()
+    return [dict(r) for r in rows]

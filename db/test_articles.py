@@ -103,3 +103,38 @@ class TestUrlUniqueness:
         insert_article(db, src, "https://src.com/dup", "First")
         with pytest.raises(Exception):
             insert_article(db, src, "https://src.com/dup", "Second")
+
+
+class TestListPendingArticles:
+    def test_returns_empty_when_none_pending(self, db, src):
+        from db.articles import list_pending_articles
+        # All articles have bodies — nothing pending
+        insert_article(db, src, "https://src.com/a", "A", body="text")
+        insert_article(db, src, "https://src.com/b", "B",
+                       body="", body_status="BODY_UNAVAILABLE")
+        assert list_pending_articles(db) == []
+
+    def test_returns_articles_with_empty_body_and_available_status(self, db, src):
+        from db.articles import list_pending_articles
+        # These should be pending: AVAILABLE status + empty body
+        insert_article(db, src, "https://src.com/p1", "P1",
+                       body="", body_status="AVAILABLE")
+        insert_article(db, src, "https://src.com/p2", "P2",
+                       body=None, body_status="AVAILABLE")
+        # These should NOT be pending
+        insert_article(db, src, "https://src.com/n1", "N1",
+                       body="text", body_status="AVAILABLE")
+        insert_article(db, src, "https://src.com/n2", "N2",
+                       body="", body_status="BODY_UNAVAILABLE")
+        pending = list_pending_articles(db)
+        assert len(pending) == 2
+        urls = {a["url"] for a in pending}
+        assert urls == {"https://src.com/p1", "https://src.com/p2"}
+
+    def test_respects_limit(self, db, src):
+        from db.articles import list_pending_articles
+        for i in range(5):
+            insert_article(db, src, f"https://src.com/{i}", f"T{i}",
+                           body="", body_status="AVAILABLE")
+        pending = list_pending_articles(db, limit=3)
+        assert len(pending) == 3

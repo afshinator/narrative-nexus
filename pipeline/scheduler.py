@@ -6,7 +6,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 from db.connection import get_db, load_schema
 from db.sources import get_source_by_domain, insert_source, list_sources
-from db.articles import insert_article
+from db.articles import insert_article, list_pending_articles, update_article_body
 from pipeline.scraper import RSSPoller, FEED_CONFIG
 from pipeline.extractor import ArticleExtractor
 
@@ -58,35 +58,66 @@ class ScraperScheduler:
         if self._scheduler.running:
             self._scheduler.shutdown(wait=False)
 
-    def run_once(self):
-        """Execute one full poll cycle. Used by scheduler and for manual testing."""
+    def run_once(self, max_sources: int | None = None):
+        """Phase 1: poll RSS feeds + insert articles (no body extraction).
+
+        Polls all feeds and inserts articles with empty body.  Body extraction
+        is deferred to extract_pending() so the poll cycle completes quickly
+        regardless of how slow individual article fetches are.
+
+        Sources must be seeded before calling (via start() or _ensure_sources()).
+
+        max_sources: limit to first N sources (for sample runs / testing).
+        """
         conn = get_db(self.db_path)
         load_schema(conn)
         try:
-            for entry in self._poller.fetch_all():
-                source = get_source_by_domain(conn, entry["source_domain"])
-                if source is None:
-                    continue
-                body = ""
-                body_status = entry["body_status"]
-                if body_status == "AVAILABLE":
-                    body, body_status = self._extractor.extract(entry["url"])
-                try:
-                    insert_article(
-                        conn,
-                        source_id=source["id"],
-                        url=entry["url"],
-                        title=entry["title"],
-                        body=body,
-                        published_at=entry["published_at"],
-                        body_status=body_status,
-                    )
-                    self._articles_inserted += 1
-                except sqlite3.IntegrityError:
-                    pass  # duplicate URL — skip
+            source_count = 0
+            for name, cfg in FEED_CONFIG.items():
+                if max_sources is not None and source_count >= max_sources:
+                    break
+                source_count += 1
+                for entry in self._poller.fetch(name):
+                    source = get_source_by_domain(conn, entry["source_domain"])
+                    if source is None:
+                        continue
+                    try:
+                        insert_article(
+                            conn,
+                            source_id=source["id"],
+                            url=entry["url"],
+                            title=entry["title"],
+                            body="",  # ponytail: deferred extraction
+                            published_at=entry["published_at"],
+                            body_status=entry["body_status"],
+                        )
+                        self._articles_inserted += 1
+                    except sqlite3.IntegrityError:
+                        pass  # duplicate URL — skip
         finally:
             conn.close()
         self._last_run = datetime.now(timezone.utc).isoformat()
+
+    def extract_pending(self, limit: int = 50) -> int:
+        """Phase 2: extract bodies for articles awaiting extraction.
+
+        Picks up articles where body_status='AVAILABLE' and body is empty,
+        fetches + parses each article page, and updates the row.
+
+        Returns the number of articles processed.
+        """
+        conn = get_db(self.db_path)
+        load_schema(conn)
+        try:
+            pending = list_pending_articles(conn, limit=limit)
+            extracted = 0
+            for article in pending:
+                body, body_status = self._extractor.extract(article["url"])
+                update_article_body(conn, article["id"], body, body_status)
+                extracted += 1
+            return extracted
+        finally:
+            conn.close()
 
     # ponytail: sources seeded lazily on first start, no separate seed step
     def _ensure_sources(self):
