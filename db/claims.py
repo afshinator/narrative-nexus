@@ -54,7 +54,10 @@ def list_claims(
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict]:
-    """List claims, optionally filtered by cluster_id and/or state."""
+    """List claims, optionally filtered by cluster_id and/or state.
+
+    Pass limit=0 to return all rows (no LIMIT clause).
+    """
     query = "SELECT * FROM claims"
     params: list = []
     conditions = []
@@ -68,8 +71,11 @@ def list_claims(
 
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
-    query += " ORDER BY created_at DESC LIMIT ? OFFSET ?"
-    params.extend([limit, offset])
+    query += " ORDER BY created_at DESC"
+
+    if limit > 0:
+        query += " LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
 
     rows = conn.execute(query, params).fetchall()
     return [dict(r) for r in rows]
@@ -87,9 +93,6 @@ def update_claim_state(
         raise ValueError(
             f"Invalid claim state: {state!r}. Must be one of {VALID_STATES}."
         )
-    existing = get_claim(conn, claim_id)
-    if existing is None:
-        return False
 
     cur = conn.execute(
         "UPDATE claims SET state = ?, convergence_type = ?, absorbed_at = ? WHERE id = ?",

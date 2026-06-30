@@ -27,7 +27,7 @@ class ConsensusAlignmentAgent(BasePipelineAgent):
     def run_all(self, conn) -> dict:
         """Run consensus alignment on all clusters. Returns summary."""
         from db.clusters import list_clusters
-        clusters = list_clusters(conn)
+        clusters = list_clusters(conn, limit=0)  # 0 = no limit
         total_classified = 0
         for cluster in clusters:
             result = self._run(conn, cluster["id"])
@@ -49,7 +49,7 @@ class ConsensusAlignmentAgent(BasePipelineAgent):
         pool = [s for s in all_sources if s["tier"] in (1, 2) and s.get("active", 1)]
         pool_ids = {s["id"] for s in pool}
 
-        claims = list_claims(conn, cluster_id=cluster_id)
+        claims = list_claims(conn, cluster_id=cluster_id, limit=0)
 
         # Denominator: T1+T2 sources that have at least one claim in this cluster
         # (review-03 H03 — not all T1+T2 sources, only those covering this story)

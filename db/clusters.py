@@ -32,17 +32,24 @@ def list_clusters(
     limit: int = 50,
     offset: int = 0,
 ) -> list[dict]:
-    """List clusters, optionally filtered by vertical."""
+    """List clusters, optionally filtered by vertical.
+
+    Pass limit=0 to return all rows (no LIMIT clause).
+    """
+    query = "SELECT * FROM clusters"
+    params: list = []
+
     if vertical is not None:
-        rows = conn.execute(
-            "SELECT * FROM clusters WHERE vertical = ? ORDER BY created_at DESC LIMIT ? OFFSET ?",
-            (vertical, limit, offset),
-        ).fetchall()
-    else:
-        rows = conn.execute(
-            "SELECT * FROM clusters ORDER BY created_at DESC LIMIT ? OFFSET ?",
-            (limit, offset),
-        ).fetchall()
+        query += " WHERE vertical = ?"
+        params.append(vertical)
+
+    query += " ORDER BY created_at DESC"
+
+    if limit > 0:
+        query += " LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+    rows = conn.execute(query, params).fetchall()
     return [dict(r) for r in rows]
 
 

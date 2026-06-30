@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS silent_edits (
     id                  INTEGER PRIMARY KEY AUTOINCREMENT,
     article_id          INTEGER NOT NULL REFERENCES articles(id),
     detected_at         TEXT NOT NULL DEFAULT (datetime('now')),
-    change_ratio        REAL NOT NULL,
+    change_ratio        REAL NOT NULL CHECK (change_ratio >= 0.0 AND change_ratio <= 1.0),
     stored_body_length  INTEGER NOT NULL,
     fetched_body_length INTEGER NOT NULL
 );

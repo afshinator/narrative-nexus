@@ -37,17 +37,24 @@ def list_articles(
     limit: int = 50,
     offset: int = 0,
 ) -> list[dict]:
-    """List articles, optionally filtered by source_id."""
+    """List articles, optionally filtered by source_id.
+
+    Pass limit=0 to return all rows (no LIMIT clause).
+    """
+    query = "SELECT * FROM articles"
+    params: list = []
+
     if source_id is not None:
-        rows = conn.execute(
-            "SELECT * FROM articles WHERE source_id = ? ORDER BY published_at DESC LIMIT ? OFFSET ?",
-            (source_id, limit, offset),
-        ).fetchall()
-    else:
-        rows = conn.execute(
-            "SELECT * FROM articles ORDER BY published_at DESC LIMIT ? OFFSET ?",
-            (limit, offset),
-        ).fetchall()
+        query += " WHERE source_id = ?"
+        params.append(source_id)
+
+    query += " ORDER BY published_at DESC"
+
+    if limit > 0:
+        query += " LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+
+    rows = conn.execute(query, params).fetchall()
     return [dict(r) for r in rows]
 
 

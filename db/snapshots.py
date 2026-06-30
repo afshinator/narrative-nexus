@@ -43,7 +43,10 @@ def list_snapshots(
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict]:
-    """List snapshots, optionally filtered by source_id and/or vertical."""
+    """List snapshots, optionally filtered by source_id and/or vertical.
+
+    Pass limit=0 to return all rows (no LIMIT clause).
+    """
     query = "SELECT * FROM snapshots"
     params: list = []
     conditions = []
@@ -57,8 +60,11 @@ def list_snapshots(
 
     if conditions:
         query += " WHERE " + " AND ".join(conditions)
-    query += " ORDER BY date DESC LIMIT ? OFFSET ?"
-    params.extend([limit, offset])
+    query += " ORDER BY date DESC"
+
+    if limit > 0:
+        query += " LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
 
     rows = conn.execute(query, params).fetchall()
     return [dict(r) for r in rows]
