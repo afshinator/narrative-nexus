@@ -56,23 +56,24 @@ Each item includes the evidence trail: what exists, what's missing, and why.
 
 **Blocked on:** Architecture decision. No REQ defines the detection mechanism — only REQ-037 says "must track R_correct" as `[desired]`.
 
-### 4. Multi-vertical classification (Economics, Technology)
+### 4. Multi-vertical classification (Economics, Technology) ✅ DONE (2026-06-30)
 
-**Status:** Agent 1 hardcodes `vertical="geopolitics"` at `pipeline/agent1_intake.py:116,126`. Agent 2 also only processes geopolitics. All 4,499 clusters and all 44,363 snapshots are geopolitics-only.
+Implemented embedding-proximity vertical classifier in `pipeline/vertical_classifier.py`. Agent 1 now classifies each cluster by majority vote of article embeddings against rich prototype descriptions. Runner snapshot loop uses `get_vertical_list()` instead of hardcoded `["geopolitics"]`. All classification logic in one place — edit `VERTICAL_PROTOTYPES` to tune.
 
-**What exists:**
-- REQ-055 (ECONOMICS) and REQ-056 (TECHNOLOGY) — tagged `[desired]`
-- Design doc §5 defines three verticals
-- Frontend `VerticalPills` component exists and renders multi-vertical pills
-- `cluster.vertical` column supports any string
-- Snapshots are written per-vertical (loop at `runner.py:193-194` only iterates `["geopolitics"]`)
+**What was done:**
+- `pipeline/vertical_classifier.py` (120 lines) — single module with prototypes + `classify_text()` + `classify_cluster()` + `get_vertical_list()`
+- Agent 1: `classify_cluster()` replaces hardcoded `"geopolitics"` for both noise and non-noise clusters
+- Runner: `get_vertical_list()` replaces `["geopolitics"]` in snapshot loop
+- +13 unit tests, 9/10 accuracy on benchmark articles
+- See `docs/plan/slice-020-multi-vertical.md` (plan doc, if created)
 
-**What's missing:** No vertical classification logic exists. Agent 1 would need to:
-1. Classify article content into vertical(s) — keyword, embedding, or LLM-based
-2. Assign clusters to appropriate verticals instead of always "geopolitics"
-3. Snapshot loop needs the full vertical list
-
-**Blocked on:** Classification approach decision + Agent 1/2 enhancement.
+**Evidence trail:**
+| Layer | Status | File |
+|---|---|---|
+| Classifier module | Embedding proximity to prototypes | `pipeline/vertical_classifier.py` |
+| Agent 1 integration | classify_cluster + classify_text | `pipeline/agent1_intake.py:110-138` |
+| Runner integration | get_vertical_list() | `pipeline/runner.py:196` |
+| Tests | 13 unit tests | `pipeline/test_vertical_classifier.py` |
 
 ---
 
@@ -107,7 +108,7 @@ Deleted `pipeline/reputation.py` and `pipeline/test_reputation.py` (114 lines to
 | 1 | Wire R_edit into snapshot computation | ✅ Done | High — 4th radar dimension live | ~30 lines |
 | 2 | R_frame — build framing consistency agent | Yes — needs design | Medium | Unknown |
 | 3 | R_correct — build correction detection | Yes — needs design | Medium | Unknown |
-| 4 | Multi-vertical classification | Yes — needs design | High — 2 of 3 verticals dead | Unknown |
+| 4 | Multi-vertical classification | ✅ Done | High — embedding-proximity classifier | 120 lines |
 | 5 | Fix CLAUDE.md page count | ✅ Done | Trivial | 1 line |
 | 6 | Add ClusterReport + Timeline tests | ✅ Done | Low | +20 tests |
 | 7 | Radar hexagon completeness | Depends on 2+3 | Visual only | Inherited |

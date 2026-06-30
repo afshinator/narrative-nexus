@@ -27,26 +27,21 @@ class TestClassifyText:
             "The United States conducted retaliatory airstrikes against Iranian "
             "military positions following an attack on American forces."
         )
-        result = classify_text(text)
-        assert result in get_vertical_list()
-        # ponytail: only assert it returns a valid vertical — exact match
-        # depends on embedding model version
+        assert classify_text(text) == "geopolitics"
 
     def test_economics_article(self):
         text = (
             "The Federal Reserve raised interest rates by 0.25 percentage points "
             "citing persistent inflation and strong labor market data."
         )
-        result = classify_text(text)
-        assert result in get_vertical_list()
+        assert classify_text(text) == "economics"
 
     def test_technology_article(self):
         text = (
             "An artificial intelligence startup raised 500 million dollars in "
             "venture capital funding to develop next-generation language models."
         )
-        result = classify_text(text)
-        assert result in get_vertical_list()
+        assert classify_text(text) == "technology"
 
     def test_geopolitics_clearly_wins_over_economics(self):
         """Military conflict should score higher on geopolitics than economics."""

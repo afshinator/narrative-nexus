@@ -51,8 +51,9 @@ class IntakeClusteringAgent(BasePipelineAgent):
           1. Read articles with body_status='AVAILABLE' and no existing claims
           2. Generate embeddings via EmbeddingClient
           3. Cluster with DBSCAN (cosine distance, normalized vectors)
-          4. Insert clusters into the database (geopolitics vertical)
-          5. Return {article_id: cluster_id} mapping
+          4. Classify clusters by embedding proximity to vertical prototypes
+          5. Insert clusters into the database with classified verticals
+          6. Return {article_id: cluster_id} mapping
 
         Returns:
           dict with keys: clusters (count), articles_clustered (count),
