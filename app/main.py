@@ -185,6 +185,35 @@ def api_source_profile(
     }
 
 
+@app.get("/api/scores")
+def api_scores(vertical: str = "geopolitics", conn = Depends(get_persistent_db)):
+    """Return latest ReputationScore per source for the given vertical."""
+    rows = conn.execute(
+        """SELECT s.domain, sn.vertical, sn.r_orig, sn.r_val, sn.r_speed,
+                  sn.r_frame, sn.r_edit, sn.r_correct
+           FROM sources s
+           JOIN snapshots sn ON sn.source_id = s.id
+           WHERE sn.vertical = ?
+             AND sn.date = (SELECT MAX(date) FROM snapshots
+                            WHERE source_id = s.id AND vertical = ?)""",
+        (vertical, vertical),
+    ).fetchall()
+    scores = [
+        {
+            "sourceId": r["domain"],
+            "vertical": r["vertical"],
+            "R_orig": r["r_orig"],
+            "R_val": r["r_val"],
+            "R_speed": r["r_speed"],
+            "R_frame": r["r_frame"],
+            "R_edit": r["r_edit"],
+            "R_correct": r["r_correct"],
+        }
+        for r in rows
+    ]
+    return {"scores": scores}
+
+
 @app.get("/api/articles")
 def api_articles(source_id: int | None = None, limit: int = 50, offset: int = 0, conn = Depends(get_persistent_db)):
     articles = list_articles(conn, source_id=source_id, limit=limit, offset=offset)
@@ -207,6 +236,48 @@ def api_claims(cluster_id: int | None = None, state: str | None = None, limit: i
 def api_snapshots(source_id: int | None = None, vertical: str | None = None, limit: int = 100, offset: int = 0, conn = Depends(get_persistent_db)):
     snapshots = list_snapshots(conn, source_id=source_id, vertical=vertical, limit=limit, offset=offset)
     return {"snapshots": snapshots}
+
+
+@app.get("/api/timeline/{cluster_id}")
+def api_timeline(cluster_id: int, conn = Depends(get_persistent_db)):
+    """Return claims in a cluster grouped by source, sorted by first_seen_at."""
+    from db.clusters import get_cluster
+
+    cluster = get_cluster(conn, cluster_id)
+    if cluster is None:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"detail": "Cluster not found"}, status_code=404)
+
+    rows = conn.execute(
+        """SELECT cs.first_seen_at, s.domain, s.tier,
+                  cl.id, cl.text, cl.state, cl.absorbed_at, cl.created_at
+           FROM claims cl
+           JOIN claim_sources cs ON cs.claim_id = cl.id
+           JOIN sources s ON s.id = cs.source_id
+           WHERE cl.cluster_id = ?
+           ORDER BY cs.first_seen_at""",
+        (cluster_id,),
+    ).fetchall()
+
+    # ponytail: group by source domain, preserving first_seen order
+    sources: dict[str, dict] = {}
+    for r in rows:
+        domain = r["domain"]
+        if domain not in sources:
+            sources[domain] = {"domain": domain, "tier": r["tier"], "claims": []}
+        sources[domain]["claims"].append({
+            "id": r["id"],
+            "text": r["text"],
+            "state": r["state"],
+            "absorbed_at": r["absorbed_at"],
+            "first_seen_at": r["first_seen_at"],
+            "created_at": r["created_at"],
+        })
+
+    return {
+        "cluster": {"id": cluster["id"], "title": cluster["title"]},
+        "sources": list(sources.values()),
+    }
 
 
 # ── Scraper control endpoints ──────────────────────────────────────────

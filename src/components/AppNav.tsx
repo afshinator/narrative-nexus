@@ -8,7 +8,7 @@ const navItems = [
 	{ to: "/", label: "Sources" },
 	{ to: "/source/reuters.com", label: "Source Profile" },
 	{ to: "/cluster/abc123", label: "Cluster Report" },
-	{ to: "/timeline/abc123", label: "Timeline" },
+	{ to: "/timeline/880", label: "Timeline" },
 	{ to: "/pipeline", label: "Pipeline" },
 	{ to: "/investigate", label: "Investigate" },
 	{ to: "/panel", label: "Panel" },

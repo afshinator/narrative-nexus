@@ -119,6 +119,50 @@ class ScraperScheduler:
         finally:
             conn.close()
 
+    def extract_google_news(self, limit: int = 50) -> int:
+        """Phase 2b: extract bodies for Google News articles (opaque redirect URLs).
+
+        Uses CloakBrowser to resolve the Google News redirect to the canonical
+        article URL, then tries newspaper4k for extraction.  Falls back to
+        CloakBrowser's visible-text extraction for paywalled sources.
+
+        Returns the number of articles successfully converted from
+        BODY_UNAVAILABLE to AVAILABLE.
+        """
+        from pipeline.cloakbrowser_extractor import extract as cb_extract
+
+        conn = get_db(self.db_path)
+        load_schema(conn)
+        converted = 0
+        try:
+            rows = conn.execute(
+                """SELECT a.id, a.url
+                   FROM articles a
+                   WHERE a.body_status = 'BODY_UNAVAILABLE'
+                     AND (a.body IS NULL OR a.body = '')
+                   ORDER BY a.id LIMIT ?""",
+                (limit,),
+            ).fetchall()
+
+            for row in rows:
+                article_id = row["id"]
+                url = row["url"]
+
+                # Try newspaper4k first (fast, works for non-paywalled)
+                body, status = self._extractor.extract(url)
+
+                # If newspaper4k fails (paywalled or Google News URL), try CloakBrowser
+                if not body:
+                    body, status = cb_extract(url)
+
+                if body:
+                    update_article_body(conn, article_id, body, "AVAILABLE")
+                    converted += 1
+
+            return converted
+        finally:
+            conn.close()
+
     # ponytail: sources seeded lazily on first start, no separate seed step
     def _ensure_sources(self):
         conn = get_db(self.db_path)

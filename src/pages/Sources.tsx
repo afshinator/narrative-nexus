@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
 import ScatterPlot from "../components/ScatterPlot";
@@ -9,6 +9,12 @@ import type { VerticalThresholdKey } from "../data/thresholds";
 import { VERTICAL_LABELS } from "../data/thresholds";
 import { useStore } from "../store";
 import { getArchetype } from "../utils/archetype";
+
+// ponytail: domain→slug map for API score lookups. API returns domains
+// ("reuters.com") but DEFAULT_SOURCES uses slugs ("reuters").
+const _domainToSlug = new Map(
+	DEFAULT_SOURCES.map((s) => [s.domain, s.id] as const),
+);
 
 interface Props {
 	scores?: ReputationScore[];
@@ -25,12 +31,13 @@ const SCORE_COLUMNS = [
 
 type SortKey = "name" | (typeof SCORE_COLUMNS)[number]["key"];
 
-export default function SourcesPage({ scores = [] }: Props) {
+export default function SourcesPage({ scores: propScores }: Props) {
 	const navigate = useNavigate();
 	const [hoveredSource, setHoveredSource] = useState<string | null>(null);
 	const [sortKey, setSortKey] = useState<SortKey>("name");
 	const [sortDir, setSortDir] = useState<1 | -1>(1);
 	const [vertical, setVertical] = useState<VerticalThresholdKey>("geopolitics");
+	const [fetchedScores, setFetchedScores] = useState<ReputationScore[]>([]);
 
 	const filter = useStore((s) => s.archetypeFilter);
 	const activeSources = useStore((s) => s.activeSources);
@@ -38,6 +45,32 @@ export default function SourcesPage({ scores = [] }: Props) {
 		() => DEFAULT_SOURCES.filter((s) => activeSources.includes(s.id)),
 		[activeSources],
 	);
+
+	// Fetch scores from API — prefers fetchedScores, falls back to propScores
+	// ponytail: guard against missing fetch (jsdom test env)
+	useEffect(() => {
+		if (typeof window !== "undefined" && !window.fetch) return;
+		let cancelled = false;
+		fetch(`/api/scores?vertical=${vertical}`)
+			.then((r) => r.json())
+			.then((data) => {
+				if (cancelled) return;
+				const raw: ReputationScore[] = data.scores ?? [];
+				// Map domain sourceId → slug for DEFAULT_SOURCES lookup
+				const mapped = raw.map((s) => ({
+					...s,
+					sourceId: _domainToSlug.get(s.sourceId) ?? s.sourceId,
+				}));
+				setFetchedScores(mapped);
+			})
+			.catch(() => {}); // ponytail: keep default empty state
+		return () => {
+			cancelled = true;
+		};
+	}, [vertical]);
+
+	// ponytail: use fetched scores when available, otherwise props
+	const scores = fetchedScores.length > 0 ? fetchedScores : (propScores ?? []);
 
 	const scoreMap = useMemo(
 		() =>

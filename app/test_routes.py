@@ -214,3 +214,142 @@ class TestSourceProfileRoute:
                 assert data["panelMedian"] is not None
         finally:
             os.environ.pop("NN_DB_PATH", None)
+
+
+class TestScoresRoute:
+    def test_returns_scores(self, tmp_path):
+        """Seed two sources with snapshots, verify scores endpoint."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.snapshots import insert_snapshot
+
+        db_path = str(tmp_path / "scores_test.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src1 = insert_source(conn, "SrcA", "srca.com", 1)
+        src2 = insert_source(conn, "SrcB", "srcb.com", 2)
+        insert_snapshot(conn, src1, "geopolitics", "2026-01-01", r_orig=50, r_val=60, r_speed=30)
+        insert_snapshot(conn, src2, "geopolitics", "2026-01-01", r_orig=80, r_val=90, r_speed=70)
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get("/api/scores?vertical=geopolitics")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert "scores" in data
+                assert len(data["scores"]) == 2
+                by_domain = {s["sourceId"]: s for s in data["scores"]}
+                assert by_domain["srca.com"]["R_orig"] == 50.0
+                assert by_domain["srca.com"]["R_val"] == 60.0
+                assert by_domain["srcb.com"]["R_orig"] == 80.0
+                assert all(s["vertical"] == "geopolitics" for s in data["scores"])
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+    def test_returns_empty_when_no_snapshots(self, tmp_path):
+        """No snapshots means empty scores array, not error."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+
+        db_path = str(tmp_path / "scores_empty.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        insert_source(conn, "Empty", "empty.com", 1)
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get("/api/scores?vertical=geopolitics")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert data["scores"] == []
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+    def test_vertical_filter(self, tmp_path):
+        """Only snapshots for the requested vertical are returned."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.snapshots import insert_snapshot
+
+        db_path = str(tmp_path / "scores_vf.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src_id = insert_source(conn, "TS", "ts.com", 1)
+        insert_snapshot(conn, src_id, "geopolitics", "2026-01-01", r_val=10)
+        insert_snapshot(conn, src_id, "economics", "2026-01-01", r_val=90)
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get("/api/scores?vertical=economics")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert len(data["scores"]) == 1
+                assert data["scores"][0]["R_val"] == 90.0
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+
+class TestTimelineRoute:
+    def test_returns_grouped_claims(self, tmp_path):
+        """Seed a cluster with claims from multiple sources, verify grouping."""
+        import sqlite3
+        import datetime
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.articles import insert_article
+        from db.clusters import create_cluster
+        from db.claims import insert_claim
+        from db.claim_sources import add_claim_source
+
+        db_path = str(tmp_path / "timeline_test.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src1 = insert_source(conn, "SrcA", "srca.com", 1)
+        src2 = insert_source(conn, "SrcB", "srcb.com", 2)
+        art1 = insert_article(conn, src1, "http://a.com/1")
+        art2 = insert_article(conn, src2, "http://b.com/1")
+        cid = create_cluster(conn, "geopolitics", "Test Cluster")
+        claim1 = insert_claim(conn, art1, cid, "Claim from A first",
+                              state="CONSENSUS_ABSORBED",
+                              absorbed_at="2026-06-30T00:00:00")
+        claim2 = insert_claim(conn, art2, cid, "Claim from B second",
+                              state="PENDING")
+        add_claim_source(conn, claim1, src1, first_seen_at="2026-06-27T15:00:00")
+        add_claim_source(conn, claim2, src2, first_seen_at="2026-06-28T10:00:00")
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get(f"/api/timeline/{cid}")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert data["cluster"]["id"] == cid
+                assert data["cluster"]["title"] == "Test Cluster"
+                assert len(data["sources"]) == 2
+                # Source groups should be in first_seen_at order
+                assert data["sources"][0]["domain"] == "srca.com"
+                assert len(data["sources"][0]["claims"]) == 1
+                assert data["sources"][0]["claims"][0]["state"] == "CONSENSUS_ABSORBED"
+                assert data["sources"][1]["domain"] == "srcb.com"
+                assert data["sources"][1]["claims"][0]["state"] == "PENDING"
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+    def test_returns_404_for_missing_cluster(self, client):
+        """Nonexistent cluster returns 404."""
+        resp = client.get("/api/timeline/99999")
+        assert resp.status_code == 404
