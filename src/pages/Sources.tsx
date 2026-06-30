@@ -52,7 +52,10 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		if (typeof window !== "undefined" && !window.fetch) return;
 		let cancelled = false;
 		fetch(`/api/scores?vertical=${vertical}`)
-			.then((r) => r.json())
+			.then((r) => {
+				if (!r.ok) throw new Error("Failed to load scores");
+				return r.json();
+			})
 			.then((data) => {
 				if (cancelled) return;
 				const raw: ReputationScore[] = data.scores ?? [];

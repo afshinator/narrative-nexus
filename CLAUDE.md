@@ -5,7 +5,7 @@
 1. Read `/vault/Context/narrative-nexus.md` — recent history, session status, project knowledge pointer
 2. Read `/vault/Knowledge/narrative-nexus.md` — durable reference: architecture, conventions, design decisions, gotchas
 3. Cross-check key facts against actual project files (`package.json`, `git log --oneline -5`, `git status --short`)
-4. Before creating a new plan slice: read `docs/deferred.md`
+4. Before creating a new plan slice: check `docs/` for any active plan or deferred documents
 5. Project follows dev-workflow gates in strict order. Each gate must be explicitly completed before the next begins:
 
    **Spec → Plan → Assumption Validation → Implement (TDD) → Verify**
@@ -16,6 +16,6 @@
    - **Implement (TDD):** load ponytail first (full intensity). Red-green-refactor: write failing tests first, then make them pass. Prefer stdlib, fewest files, shortest working diff. No unrequested abstractions. Mark deliberate shortcuts with `# ponytail:` comments.
    - **Verify:** before running the full test suite, start the application with production configuration (persistent SQLite file, real env vars) and verify at least one primary user flow end-to-end. Then sanity-check the implementation (does the thing actually work as intended?). For adversarial review: trace primary user flows step-by-step first, then read source code to verify each step is actually implemented — never start by reading files. Run adversarial review for algorithmic code (scraping, consensus math, claim lifecycle, agents — per vault Knowledge), skip for plumbing/UI binding. Run `ponytail-review` against the diff. For visual changes: load the page with representative data and confirm colors match dimension polarity, chart scales are consistent, and empty states look intentional. Then run `npm run build`, `vitest run`, `biome check src/`, `pytest`. Confirm no regressions. Provide a commit message (user handles the actual commit/push). If all clean, proceed to Plan for the next slice.
 
-6. Current slice status: Slices 7 frontend + 8a/8b/8c backend + 9 scraper controls + 10 agent3/snapshots + 11 source expansion + 12 provider layer + 13 demo seed + 011 scraper rewrite + 012 Vf trend/tier radar + 013 agent hardening completed. DB: 2,356 articles (1,175 bodies), 656 clusters, 2,347 claims (202 absorbed, 11 with absorbed_at), 41 silent_edits, 37 sources. Pipeline agents 1-4 operational. All 5 deferred UI items unblocked, data population in progress. DB list_* functions fixed (limit=0 for no-limit, was silently truncating). Next: re-run Agent 3 with limit fix → UI build (silent edit log, outlier waterfall, timeline page).
+6. Current slice status: All 17 slices completed (frontend 1-7, backend 8a-8c, 9-10, 11-13, 014-017). DB: 2,568 articles (2,028 bodies), 4,499 clusters, 8,097 claims (2,625 absorbed, 4,907 pending, 565 unresolved), 89 silent_edits, 44,363 snapshots (1,199 days, 3.8% R-score populated — 83% claims in June 2026), 37 sources. All 7 design-doc pages implemented. Build passes, 356 tests (217 pytest + 139 vitest). Claim absorption verified 2026-06-30. Next: commit dirty files (CLAUDE.md, data/nn.db, SourceProfile.tsx, Sources.tsx, Timeline.tsx).
 
-7. Before creating a new plan slice: read `docs/deferred.md`. After gated plan approval, update CLAUDE.md line 6.
+7. After gated plan approval, update CLAUDE.md line 6.

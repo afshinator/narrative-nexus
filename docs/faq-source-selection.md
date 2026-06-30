@@ -1,9 +1,9 @@
 # FAQ: How and why did you choose the news sources?
 
 *Audience: hackathon users, judges, and observers*
-*Last updated: 2026-06-27*
+*Last updated: 2026-06-30 (verified against live DB)*
 
-**TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls killed 3 of our Tier 2 sources (NYT, Economist, Politico — 0% body extraction), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued Politico/WaPo with Firecrawl. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents. Every source earned its seat through verified RSS and extraction tests.
+**TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls initially blocked 3 Tier 2 sources (NYT, Economist, Politico — 0% body extraction at first), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued paywalled sources with Firecrawl + CloakBrowser. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents. All 37 now produce claims (8,097 total); 12 have absorbed claims with reputation scores. Every source earned its seat through verified RSS and extraction tests.
 
 ---
 
@@ -14,7 +14,7 @@ Each source is assigned to one of five tiers that determines its role in the sys
 | Tier | Sources | Role |
 |------|---------|------|
 | **1 — Wire / Consensus Anchor** | Reuters, AP, BBC, NPR, The Guardian | Wire services and public broadcasters that form the consensus baseline — if a majority report a claim, it enters consensus reality |
-| **2 — Mainstream Editorial** | Fox News, CNN, CBS News, ABC News, Politico, The Economist, NYT, Washington Post | Major editorial outlets — the volume backbone, though some are paywalled so their RSS metadata counts toward consensus but they produce no article bodies for claim extraction |
+| **2 — Mainstream Editorial** | Fox News, CNN, CBS News, ABC News, Politico, The Economist, NYT, Washington Post | Major editorial outlets — the volume backbone. Previously paywalled sources (NYT, Economist, Politico) now produce claims via Firecrawl/CloakBrowser extraction |
 | **3 — International** | Al Jazeera, Deutsche Welle, NHK World, Global Times, France24, Buenos Aires Times, Straits Times, The Hindu, Premium Times, Times of Israel, Vanguard, The Reporter, Namibian, Punch, Jamaica Observer, MercoPress, Tehran Times | Regional outlets covering all 7 geographic regions — tracked for reputation scoring but not part of the consensus pool |
 | **4 — Independent / Investigative** | The Intercept, ProPublica, Bellingcat, African Arguments | Investigative and long-form outlets — lower volume but deeper analysis |
 | **5 — Contrarian** | ZeroHedge, The Gray Zone, Sputnik | Sources outside the mainstream — included to detect whether consensus excludes valid alternative narratives |
@@ -36,7 +36,7 @@ Three things that forced us to change the panel:
 
 ### 1. Paywalls are pervasive
 
-Sources like the NYT, The Economist, and Politico are fully paywalled — newspaper4k (our open-source extraction library) gets 0% body text from them. Fox News is mostly paywalled (20% extraction). These are major outlets with editorial weight, but they contribute **zero usable article text** to the pipeline. Their RSS metadata (headlines, timestamps) still informs consensus voting, but they can't produce claims.
+Sources like the NYT, The Economist, and Politico were fully paywalled — newspaper4k (our open-source extraction library) got 0% body text from them. Fox News was mostly paywalled (20% extraction). These are major outlets with editorial weight, but initially contributed **zero usable article text** to the pipeline. Their RSS metadata (headlines, timestamps) still informed consensus voting, but they couldn't produce claims. *(Resolved: Firecrawl and CloakBrowser now extract from all four. See below.)*
 
 PoC 2 — Body Extraction Yield: `poc-extraction-yield-results.md`
 
@@ -87,24 +87,28 @@ Firecrawl (cloud scraping) rescues two Tier 2 paywalled sources:
 | Politico | 0% (paywall) | 39,564 chars — full articles |
 | Washington Post | 438-char RSS summaries | 5,856 chars — real body text |
 
-Firecrawl is registered and operational in keyless mode. The Economist gets 1 paragraph (better than 0, but not rich). NYT and Fox remain blocked.
+Firecrawl is registered and operational in keyless mode. The Economist gets 1 paragraph (better than 0, but not rich). NYT and Fox are now extractable via CloakBrowser (stealth Chromium).
 
 PoC 4 — Firecrawl Results: `poc-firecrawl-results.md`
 
 ### Round 4 — Full pipeline proof (June 27)
 
-We ran all 37 sources through the full pipeline (scrape → extract → cluster → claims → consensus → snapshots). 1,820 articles polled, 1,004 working bodies confirmed, pipeline end-to-end verified.
+We ran all 37 sources through the full pipeline (scrape → extract → cluster → claims → consensus → snapshots). As of June 30: 2,568 articles (2,028 with bodies), 4,499 clusters, 8,097 claims (2,625 absorbed), 44,363 daily snapshots, 89 silent edits detected. Pipeline end-to-end verified.
 
 PoC 9 — Backfill: `poc-backfill.md`
 
-## Why keep paywalled sources at all?
+## Why did paywalled sources stay in the panel?
 
-Because **headlines and publication timing are themselves signal**. Consensus math uses RSS metadata (who published what, when) as well as article bodies. A paywalled source still contributes to:
-- **Speed calculation**: Was this source first or last to report a story?
-- **Consensus baseline**: Did they report on this topic at all?
-- **Outlier detection**: Is their headline framing unusual?
+Paywalled sources were initially a problem (0% body extraction). Now, Firecrawl and CloakBrowser (stealth Chromium) resolve paywalls for most of them:
 
-They just can't contribute to claim-level forensic extraction. That's a known limitation, not a design flaw.
+| Source | Claims extracted | Method |
+|--------|-----------------|--------|
+| The Economist | 1,196 | Firecrawl (partial — gets lede paragraphs) |
+| NYT | 206 | CloakBrowser (resolves paywall redirect) |
+| Politico | 100 | Firecrawl (full article bodies) |
+| Fox News | 187 | CloakBrowser (partial, ~20% extraction) |
+
+Even for sources that produce fewer claims, RSS metadata (headlines, publication timing) still contributes to consensus math: speed calculation, consensus baseline, and outlier detection. No source is purely decorative — every one contributes either claims or timing signal.
 
 ## What about bias? Are you only picking sources you agree with?
 

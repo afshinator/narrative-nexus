@@ -132,6 +132,7 @@ function SourceProfilePage({
 		async function load() {
 			try {
 				const srcResp = await fetch("/api/sources");
+				if (!srcResp.ok) return;
 				const srcData = await srcResp.json();
 				const dbSource = (srcData.sources as { id: number; domain: string }[]).find(
 					(s) => s.domain === domain,
@@ -140,6 +141,7 @@ function SourceProfilePage({
 				const resp = await fetch(
 					`/api/sources/${dbSource.id}/profile?vertical=${vertical}`,
 				);
+				if (!resp.ok) return;
 				const data = await resp.json();
 				if (cancelled) return;
 				setFetchedSnapshots(data.snapshots ?? []);

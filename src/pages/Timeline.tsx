@@ -73,6 +73,27 @@ export default function TimelinePage() {
 	const allTimes = data.sources.flatMap((s) =>
 		s.claims.map((c) => new Date(c.first_seen_at).getTime()),
 	);
+
+	// ponytail: cluster with no claims — show empty state
+	if (allTimes.length === 0) {
+		return (
+			<div className="mx-auto max-w-[1340px] space-y-6">
+				{/* Header */}
+				<div className="flex items-center gap-3 mb-1.5">
+					<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
+						Timeline
+					</h1>
+					<span className="font-mono text-[0.8rem] text-[var(--nn-text-dim)]">
+						{data.cluster.title}
+					</span>
+				</div>
+				<p className="text-[var(--nn-text-dim)] text-[0.85rem]">
+					No claims in this cluster.
+				</p>
+			</div>
+		);
+	}
+
 	const rangeStart = Math.min(...allTimes);
 	const rangeEnd = Math.max(...allTimes);
 	const rangeMs = rangeEnd - rangeStart || 1;
