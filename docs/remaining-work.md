@@ -7,33 +7,28 @@ Each item includes the evidence trail: what exists, what's missing, and why.
 
 ## TIER 1 — Unblocked, High Impact
 
-### 1. Wire R_edit into snapshot computation
+### 1. Wire R_edit into snapshot computation ✅ DONE (2026-06-30)
 
-**Impact:** The Silent Editor dimension (R_edit) on the Source Profile radar chart shows "—" for every source even though Agent 4 runs and produces real data. This is a live demo feature that's wired end-to-end except for one missing function call.
+**Impact:** The Silent Editor dimension (R_edit) on the Source Profile radar chart now shows live values for all 37 sources. Agent 4 runs and produces real data — this was the last missing link in the chain.
+
+**What was done:**
+- Added `compute_r_edit_raw()` to `pipeline/snapshots.py` (edits/articles ratio per source, as_of filter)
+- Wired into `_compute_and_write_snapshots` in `pipeline/runner.py` (compute → percentile rank → write)
+- Fixed zero-article edge case: iterate `list_sources()` not `article_counts`
+- +3 tests: zero-article, as_of filter, end-to-end (30 pytest total for snapshots/reputation/archetype)
+- Live DB: 37/37 non-NULL r_edit, 0–100 range, values match edit counts
+- Radar: 3→4 live dimensions (triangle → quadrilateral)
 
 **Evidence trail:**
 | Layer | Status | File |
 |---|---|---|
 | Agent 4 Silent Auditor | Runs, writes 89 rows | `pipeline/agent4_silent.py` |
-| `compute_r_edit()` function | Exists, tested | `pipeline/reputation.py:39` |
+| `compute_r_edit_raw()` | Computes edit rate | `pipeline/snapshots.py:159` |
+| Snapshot computation | Wires r_edit → percentile → write | `pipeline/runner.py:173,181,206` |
 | `silent_edits` table | 89 rows, live data | `data/nn.db` |
 | API endpoint serves per-source edits | `/api/source/{id}` returns edits array | `app/main.py:182-192` |
 | Frontend renders silent edit log | Table in SourceProfile | `src/pages/SourceProfile.tsx:344-366` |
-| **Snapshot computation** | **Never passes r_edit — all NULL** | `pipeline/runner.py:194-203` |
-
-**Root cause:** `_compute_and_write_snapshots` at `pipeline/runner.py:194-203` calls `write_daily_snapshots()` without passing `r_edit` (or `r_frame`, `r_correct`). The params default to `None`, which become `{}`, so `.get(sid)` returns `None` → stored as NULL.
-
-**Fix:** Add an `r_edit` computation in `_compute_and_write_snapshots` that JOINs `silent_edits` → `articles` → `source_id`, counts edits per source, divides by article count, percentile-ranks it, and passes to `write_daily_snapshots`. Same pattern as `r_orig`/`r_val`/`r_speed`.
-
-**Estimated effort:** ~20 lines of SQL + plumbing. One function, no new files.
-
-**DB query needed:**
-```sql
-SELECT a.source_id, COUNT(se.id) as edit_count
-FROM silent_edits se
-JOIN articles a ON a.id = se.article_id
-GROUP BY a.source_id
-```
+| Snapshot r_edit | 37/37 non-NULL (was all NULL) | `data/nn.db` snapshots |
 
 ---
 
@@ -83,9 +78,9 @@ GROUP BY a.source_id
 
 ## TIER 3 — Low Priority / Cleanup
 
-### 5. CLAUDE.md says "7 design-doc pages" — should be 8
+### 5. CLAUDE.md says "7 design-doc pages" — should be 8 ✅ DONE
 
-`CLAUDE.md:19`: "All 7 design-doc pages implemented." Actually 8 pages: Sources, SourceProfile, ClusterReport, Timeline, PipelineFlow, Investigate, Panel, Settings. All are routed in `src/App.tsx`.
+`CLAUDE.md` updated to "All 8 design-doc pages implemented" in Slice 018 commit.
 
 ### 6. Missing test files for ClusterReport and Timeline pages
 
@@ -104,7 +99,7 @@ No `cluster-report.test.tsx` or `timeline.test.tsx` exist. Both pages were Slice
 
 ### 7. Frontend handles NULL dimensions correctly but radar looks incomplete
 
-`src/pages/SourceProfile.tsx` renders "—" for null dimensions and skips them in the radar chart. This is correct per design doc ("Nullable fields handled gracefully"). However, with only 3 of 6 dimensions live, the radar chart shows a triangle instead of a hexagon. R_edit wiring (item 1) would make it a quadrilateral. Full hexagon needs R_frame + R_correct (items 2+3).
+`src/pages/SourceProfile.tsx` renders "—" for null dimensions and skips them in the radar chart. This is correct per design doc ("Nullable fields handled gracefully"). With 4 of 6 dimensions live (R_orig, R_val, R_speed, R_edit), the radar shows a quadrilateral. Full hexagon needs R_frame + R_correct (items 2+3).
 
 ---
 
@@ -112,10 +107,10 @@ No `cluster-report.test.tsx` or `timeline.test.tsx` exist. Both pages were Slice
 
 | # | Task | Blocked? | Impact | Est. Effort |
 |---|---|---|---|---|
-| 1 | Wire R_edit into snapshot computation | No | High — 4th radar dimension goes live | ~20 lines |
+| 1 | Wire R_edit into snapshot computation | ✅ Done | High — 4th radar dimension live | ~30 lines |
 | 2 | R_frame — build framing consistency agent | Yes — needs design | Medium | Unknown |
 | 3 | R_correct — build correction detection | Yes — needs design | Medium | Unknown |
 | 4 | Multi-vertical classification | Yes — needs design | High — 2 of 3 verticals dead | Unknown |
-| 5 | Fix CLAUDE.md page count | No | Trivial | 1 line |
+| 5 | Fix CLAUDE.md page count | ✅ Done | Trivial | 1 line |
 | 6 | Add ClusterReport + Timeline tests | No | Low | ~100 lines each |
-| 7 | Radar hexagon completeness | Depends on 1-3 | Visual only | Inherited |
+| 7 | Radar hexagon completeness | Depends on 2+3 | Visual only | Inherited |

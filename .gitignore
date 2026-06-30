@@ -29,6 +29,7 @@ design-extract-output/
 __pycache__/
 *.pyc
 venv/
+.venv/
 .coverage
 htmlcov/
 .pytest_cache/
