@@ -178,10 +178,63 @@ def api_source_profile(
         "val": median(val_vals) if val_vals else None,
     }
 
+    # ── Silent edits ────────────────────────────────────────────────────
+    edit_rows = conn.execute(
+        """SELECT se.id, se.change_ratio, se.stored_body_length,
+                  se.fetched_body_length, se.detected_at,
+                  a.url AS article_url, a.title AS article_title
+           FROM silent_edits se
+           JOIN articles a ON a.id = se.article_id
+           WHERE a.source_id = ?
+           ORDER BY se.detected_at DESC""",
+        (source_id,),
+    ).fetchall()
+    edits = [dict(r) for r in edit_rows]
+
+    # ── Claim summary ───────────────────────────────────────────────────
+    claim_rows = conn.execute(
+        """SELECT cl.state, COUNT(DISTINCT cl.id) AS cnt
+           FROM claims cl
+           JOIN claim_sources cs ON cs.claim_id = cl.id
+           WHERE cs.source_id = ?
+           GROUP BY cl.state""",
+        (source_id,),
+    ).fetchall()
+    claim_summary = {"total": 0, "absorbed": 0, "pending": 0}
+    for r in claim_rows:
+        claim_summary["total"] += r["cnt"]
+        if r["state"] == "CONSENSUS_ABSORBED":
+            claim_summary["absorbed"] = r["cnt"]
+        elif r["state"] == "PENDING":
+            claim_summary["pending"] = r["cnt"]
+
+    # ── Events (aggregated) ─────────────────────────────────────────────
+    # ponytail: all edits/absorptions on 2026-06-30, after snapshots end at 2026-06-28
+    # Map to day 90 (the DayScrubber max)
+    events = []
+    event_day = 90
+    if claim_summary["absorbed"] > 0:
+        events.append({
+            "day": event_day,
+            "type": "CLAIM_ABSORBED",
+            "title": f"{claim_summary['absorbed']} claims absorbed",
+            "detail": "",
+        })
+    if len(edits) > 0:
+        events.append({
+            "day": event_day,
+            "type": "SILENT_EDIT",
+            "title": f"{len(edits)} edits detected",
+            "detail": "",
+        })
+
     return {
         "snapshots": snapshots,
         "tierAvg": tier_avg,
         "panelMedian": panel_median,
+        "events": events,
+        "edits": edits,
+        "claimSummary": claim_summary,
     }
 
 
@@ -277,6 +330,63 @@ def api_timeline(cluster_id: int, conn = Depends(get_persistent_db)):
     return {
         "cluster": {"id": cluster["id"], "title": cluster["title"]},
         "sources": list(sources.values()),
+    }
+
+
+@app.get("/api/clusters/{cluster_id}/report")
+def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
+    """Return aggregate stats + claims with source domain for one cluster."""
+    from db.clusters import get_cluster
+
+    cluster = get_cluster(conn, cluster_id)
+    if cluster is None:
+        from fastapi.responses import JSONResponse
+        return JSONResponse({"detail": "Cluster not found"}, status_code=404)
+
+    # Source breakdown
+    src_rows = conn.execute(
+        """SELECT s.domain, s.tier, COUNT(DISTINCT cl.id) AS claims,
+                  SUM(CASE WHEN cl.state = 'CONSENSUS_ABSORBED' THEN 1 ELSE 0 END) AS absorbed,
+                  SUM(CASE WHEN cl.state = 'PENDING' THEN 1 ELSE 0 END) AS pending
+           FROM claims cl
+           JOIN claim_sources cs ON cs.claim_id = cl.id
+           JOIN sources s ON s.id = cs.source_id
+           WHERE cl.cluster_id = ?
+           GROUP BY s.id
+           ORDER BY MIN(cs.first_seen_at)""",
+        (cluster_id,),
+    ).fetchall()
+
+    sources = [dict(r) for r in src_rows]
+    total_claims = sum(s["claims"] for s in sources)
+    total_absorbed = sum(s["absorbed"] for s in sources)
+    total_pending = sum(s["pending"] for s in sources)
+
+    # Flat claim list with source domain
+    claim_rows = conn.execute(
+        """SELECT cl.id, cl.text, cl.state, cl.absorbed_at, cl.created_at,
+                  s.domain
+           FROM claims cl
+           JOIN claim_sources cs ON cs.claim_id = cl.id
+           JOIN sources s ON s.id = cs.source_id
+           WHERE cl.cluster_id = ?
+           ORDER BY cl.created_at DESC""",
+        (cluster_id,),
+    ).fetchall()
+
+    claims = [dict(r) for r in claim_rows]
+
+    return {
+        "cluster": {"id": cluster["id"], "title": cluster["title"],
+                     "vertical": cluster["vertical"]},
+        "summary": {
+            "totalClaims": total_claims,
+            "absorbed": total_absorbed,
+            "pending": total_pending,
+            "sourceCount": len(sources),
+        },
+        "sources": sources,
+        "claims": claims,
     }
 
 

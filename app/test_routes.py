@@ -215,6 +215,67 @@ class TestSourceProfileRoute:
         finally:
             os.environ.pop("NN_DB_PATH", None)
 
+    def test_returns_events_edits_and_claim_summary(self, tmp_path):
+        """Profile endpoint includes events, edits, and claimSummary fields."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.snapshots import insert_snapshot
+        from db.articles import insert_article
+        from db.claims import insert_claim
+        from db.clusters import create_cluster
+        from db.claim_sources import add_claim_source
+
+        db_path = str(tmp_path / "profile_full.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src_id = insert_source(conn, "TS", "ts.com", 1)
+        insert_snapshot(conn, src_id, "geopolitics", "2026-01-01", r_orig=50, r_val=60)
+        art_id = insert_article(conn, src_id, "http://ts.com/1", "Test Article")
+        # Add a silent edit
+        conn.execute(
+            "INSERT INTO silent_edits (article_id, change_ratio, stored_body_length, fetched_body_length) VALUES (?, 0.33, 1000, 670)",
+            [art_id],
+        )
+        # Add a cluster + claim
+        cid = create_cluster(conn, "geopolitics", "Test Cluster")
+        claim_id = insert_claim(conn, art_id, cid, "Test claim",
+                                state="CONSENSUS_ABSORBED",
+                                absorbed_at="2026-06-30T00:00:00")
+        add_claim_source(conn, claim_id, src_id, first_seen_at="2026-06-27T00:00:00")
+        conn.commit()
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get(f"/api/sources/{src_id}/profile?vertical=geopolitics")
+                assert resp.status_code == 200
+                data = resp.json()
+                # New fields
+                assert "events" in data
+                assert len(data["events"]) == 2  # ABSORBED + SILENT_EDIT
+                types = {e["type"] for e in data["events"]}
+                assert types == {"CLAIM_ABSORBED", "SILENT_EDIT"}
+
+                assert "edits" in data
+                assert len(data["edits"]) == 1
+                assert data["edits"][0]["change_ratio"] == 0.33
+                assert data["edits"][0]["article_title"] == "Test Article"
+
+                assert "claimSummary" in data
+                assert data["claimSummary"]["total"] == 1
+                assert data["claimSummary"]["absorbed"] == 1
+                assert data["claimSummary"]["pending"] == 0
+
+                # Existing fields still present
+                assert "snapshots" in data
+                assert "tierAvg" in data
+                assert "panelMedian" in data
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
 
 class TestScoresRoute:
     def test_returns_scores(self, tmp_path):
@@ -352,4 +413,59 @@ class TestTimelineRoute:
     def test_returns_404_for_missing_cluster(self, client):
         """Nonexistent cluster returns 404."""
         resp = client.get("/api/timeline/99999")
+        assert resp.status_code == 404
+
+
+class TestClusterReportRoute:
+    def test_returns_report(self, tmp_path):
+        """Seed a cluster with claims, verify report endpoint."""
+        import sqlite3
+        from db.connection import init_db
+        from db.sources import insert_source
+        from db.articles import insert_article
+        from db.clusters import create_cluster
+        from db.claims import insert_claim
+        from db.claim_sources import add_claim_source
+
+        db_path = str(tmp_path / "report_test.db")
+        init_db(db_path)
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        src = insert_source(conn, "Src", "src.com", 1)
+        art = insert_article(conn, src, "http://s.com/1")
+        cid = create_cluster(conn, "geopolitics", "Test")
+        c1 = insert_claim(conn, art, cid, "Claim A", state="CONSENSUS_ABSORBED",
+                          absorbed_at="2026-06-30T00:00:00")
+        c2 = insert_claim(conn, art, cid, "Claim B", state="PENDING")
+        add_claim_source(conn, c1, src, first_seen_at="2026-06-27T00:00:00")
+        add_claim_source(conn, c2, src, first_seen_at="2026-06-27T00:00:00")
+        conn.close()
+
+        os.environ["NN_DB_PATH"] = db_path
+        try:
+            with TestClient(app) as c:
+                resp = c.get(f"/api/clusters/{cid}/report")
+                assert resp.status_code == 200
+                data = resp.json()
+                assert data["cluster"]["id"] == cid
+                assert data["cluster"]["title"] == "Test"
+
+                assert data["summary"]["totalClaims"] == 2
+                assert data["summary"]["absorbed"] == 1
+                assert data["summary"]["pending"] == 1
+                assert data["summary"]["sourceCount"] == 1
+
+                assert len(data["sources"]) == 1
+                assert data["sources"][0]["domain"] == "src.com"
+                assert data["sources"][0]["claims"] == 2
+                assert data["sources"][0]["absorbed"] == 1
+                assert data["sources"][0]["pending"] == 1
+
+                assert len(data["claims"]) == 2
+                assert data["claims"][0]["domain"] == "src.com"
+        finally:
+            os.environ.pop("NN_DB_PATH", None)
+
+    def test_returns_404_for_missing_cluster(self, client):
+        resp = client.get("/api/clusters/99999/report")
         assert resp.status_code == 404

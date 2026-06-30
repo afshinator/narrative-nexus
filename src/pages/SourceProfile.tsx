@@ -21,6 +21,24 @@ import { Link, useParams } from "react-router";
 import VerticalPills from "../components/VerticalPills";
 import VfTrendChart from "../components/VfTrendChart";
 import type { DailySnapshot, ProfileEvent } from "../data/scores";
+
+// ── Inline types for new profile sections ──
+// ponytail: defined here, not in a separate file
+interface SilentEdit {
+	id: number;
+	change_ratio: number;
+	stored_body_length: number;
+	fetched_body_length: number;
+	detected_at: string;
+	article_url: string;
+	article_title: string | null;
+}
+
+interface ClaimSummary {
+	total: number;
+	absorbed: number;
+	pending: number;
+}
 import { DIMENSIONS } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
 import type { VerticalThresholdKey } from "../data/thresholds";
@@ -46,7 +64,6 @@ const STAT_DELTA_THRESHOLD = 1; // delta < 1pt = · (flat)
 
 interface Props {
 	snapshots?: DailySnapshot[];
-	events?: ProfileEvent[];
 	tierAvg?: number[];
 	panelMedian?: { orig: number; val: number };
 }
@@ -88,7 +105,6 @@ function nearestSnapshots(snapshots: DailySnapshot[], day: number) {
 
 function SourceProfilePage({
 	snapshots: _initialSnapshots = [],
-	events = [],
 	tierAvg: _initialTierAvg,
 	panelMedian: _initialPanelMedian = { orig: 50, val: 50 },
 }: Props) {
@@ -107,6 +123,9 @@ function SourceProfilePage({
 	const [fetchedSnapshots, setFetchedSnapshots] = useState<DailySnapshot[]>([]);
 	const [tierAvg, setTierAvg] = useState<number[] | undefined>(_initialTierAvg);
 	const [panelMedian, setPanelMedian] = useState(_initialPanelMedian);
+	const [fetchedEvents, setFetchedEvents] = useState<ProfileEvent[]>([]);
+	const [fetchedEdits, setFetchedEdits] = useState<SilentEdit[]>([]);
+	const [claimSummary, setClaimSummary] = useState<ClaimSummary>({ total: 0, absorbed: 0, pending: 0 });
 
 	useEffect(() => {
 		let cancelled = false;
@@ -126,6 +145,9 @@ function SourceProfilePage({
 				setFetchedSnapshots(data.snapshots ?? []);
 				setTierAvg(data.tierAvg);
 				setPanelMedian(data.panelMedian ?? { orig: 50, val: 50 });
+				setFetchedEvents((data.events as ProfileEvent[]) ?? []);
+				setFetchedEdits((data.edits as SilentEdit[]) ?? []);
+				setClaimSummary((data.claimSummary as ClaimSummary) ?? { total: 0, absorbed: 0, pending: 0 });
 			} catch {
 				// Keep defaults on error
 			}
@@ -256,14 +278,92 @@ function SourceProfilePage({
 				currentDay={Math.round(currentDay)}
 			/>
 
+			{/* Outlier waterfall */}
+			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
+				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">Claim Flow</h2>
+				{claimSummary.total > 0 ? (
+					<div className="space-y-2">
+						<div className="flex items-center gap-3">
+							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">Absorbed</span>
+							<div className="flex-1 h-5 rounded-sm bg-[var(--nn-surface2)] overflow-hidden">
+								<div
+									className="h-full rounded-sm bg-[var(--nn-teal)]"
+									style={{ width: `${(claimSummary.absorbed / claimSummary.total) * 100}%` }}
+								/>
+							</div>
+							<span className="w-20 text-right font-mono text-[0.78rem] tabular-nums text-[var(--nn-text)]">
+								{claimSummary.absorbed} ({Math.round((claimSummary.absorbed / claimSummary.total) * 100)}%)
+							</span>
+						</div>
+						<div className="flex items-center gap-3">
+							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">Pending</span>
+							<div className="flex-1 h-5 rounded-sm bg-[var(--nn-surface2)] overflow-hidden">
+								<div
+									className="h-full rounded-sm bg-[var(--nn-navy)]"
+									style={{ width: `${(claimSummary.pending / claimSummary.total) * 100}%` }}
+								/>
+							</div>
+							<span className="w-20 text-right font-mono text-[0.78rem] tabular-nums text-[var(--nn-text)]">
+								{claimSummary.pending} ({Math.round((claimSummary.pending / claimSummary.total) * 100)}%)
+							</span>
+						</div>
+						<p className="font-mono text-[0.72rem] text-[var(--nn-text-dim)] pt-1">
+							{claimSummary.total} claims originated by this source
+						</p>
+					</div>
+				) : (
+					<p className="text-[var(--nn-text-dim)] text-[0.85rem]">No claims attributed.</p>
+				)}
+			</div>
+
 			{/* Day scrubber */}
 			<DayScrubber
 				currentDay={currentDay}
 				playing={playing}
-				events={events}
+				events={fetchedEvents}
 				onSlider={handleSlider}
 				onTogglePlay={togglePlay}
 			/>
+
+			{/* Silent Edit Log */}
+			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
+				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">Silent Edit Log</h2>
+				{fetchedEdits.length > 0 ? (
+					<div className="overflow-x-auto">
+						<table className="w-full border-collapse text-[0.82rem]">
+							<thead>
+								<tr>
+									<th className="px-2 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">Article</th>
+									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">Change</th>
+									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">Stored → Fetched</th>
+								</tr>
+							</thead>
+							<tbody>
+								{fetchedEdits.map((edit) => {
+									const pct = Math.round(edit.change_ratio * 100);
+									const severityClass =
+										pct > 30 ? "text-[var(--nn-red)]" : pct > 10 ? "text-[var(--nn-amber)]" : "text-[var(--nn-teal)]";
+									return (
+										<tr key={edit.id} className="border-b border-[var(--nn-border)] last:border-b-0">
+											<td className="px-2 py-2 max-w-[400px] truncate">
+												<a href={edit.article_url} target="_blank" rel="noopener noreferrer" className="text-[var(--nn-text)] hover:text-[var(--nn-teal)] transition-colors">
+													{edit.article_title ?? edit.article_url}
+												</a>
+											</td>
+											<td className={`px-2 py-2 text-right font-mono tabular-nums ${severityClass}`}>{pct}%</td>
+											<td className="px-2 py-2 text-right font-mono text-[0.75rem] tabular-nums text-[var(--nn-text-dim)]">
+												{edit.stored_body_length.toLocaleString()} → {edit.fetched_body_length.toLocaleString()}
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
+				) : (
+					<p className="text-[var(--nn-text-dim)] text-[0.85rem]">No silent edits detected.</p>
+				)}
+			</div>
 		</div>
 	);
 }
