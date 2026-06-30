@@ -5,8 +5,8 @@ Reads articles from the database, generates sentence-transformer embeddings
 clusters into the database, and returns an article→cluster mapping for
 downstream agents.
 
-ponytail: All clusters assigned to "geopolitics" vertical.
 ponytail: DBSCAN with eps=0.5, min_samples=2, metric='cosine'.
+ponytail: Vertical classification via embedding proximity to prototypes.
 ponytail: Articles with body_status='BODY_UNAVAILABLE' are skipped.
 """
 
@@ -19,6 +19,7 @@ from sklearn.preprocessing import normalize
 
 from pipeline.base_agent import BasePipelineAgent
 from pipeline.embedding_client import EmbeddingClient
+from pipeline.vertical_classifier import classify_cluster, classify_text, get_vertical_list
 from db.connection import get_db
 from db.clusters import create_cluster
 
@@ -103,27 +104,39 @@ class IntakeClusteringAgent(BasePipelineAgent):
 
         labels = clustering.labels_
 
-        # 4. Insert clusters into DB
+        # 4. Classify each cluster's vertical via majority vote.
+        # Classify non-noise clusters by their article texts.
+        # ponytail: classify before creating DB records so vertical is known.
+        label_to_vertical: dict[int, str] = {}
+        for label in set(labels):
+            if label == -1:
+                continue
+            cluster_texts = [
+                texts[idx] for idx, l in enumerate(labels) if l == label
+            ]
+            label_to_vertical[label] = classify_cluster(cluster_texts)
+
+        # 5. Insert clusters into DB.
         # Each unique label (except -1 = noise) gets a cluster.
-        # Noise articles (-1) get their own singleton clusters so Agent 2
-        # has a cluster_id to reference.
+        # Noise articles (-1) get their own singleton clusters classified
+        # individually so Agent 2 has a cluster_id to reference.
         conn = get_db(self.db_path)
         try:
             label_to_cluster_id: dict[int, int] = {}
             for label in set(labels):
                 if label == -1:
                     continue  # noise handled below
-                cid = create_cluster(conn, vertical="geopolitics",
+                vertical = label_to_vertical.get(label, "geopolitics")
+                cid = create_cluster(conn, vertical=vertical,
                                      title=f"Cluster {label}")
                 label_to_cluster_id[label] = cid
 
-            # Map each article to its cluster.  Noise articles get individual
-            # clusters so every article has a cluster for Agent 2.
             article_map: dict[int, int] = {}
             for idx, label in enumerate(labels):
                 aid = article_ids[idx]
                 if label == -1:
-                    cid = create_cluster(conn, vertical="geopolitics",
+                    vertical = classify_text(texts[idx])
+                    cid = create_cluster(conn, vertical=vertical,
                                          title=f"Article {aid}")
                 else:
                     cid = label_to_cluster_id[label]

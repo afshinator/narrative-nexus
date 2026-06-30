@@ -92,7 +92,10 @@ class TestIntakeClusteringAgent:
         try:
             clusters = list_clusters(conn)
             assert len(clusters) >= 1
-            assert all(c["vertical"] == "geopolitics" for c in clusters)
+            # ponytail: vertical is now classifier-driven, not hardcoded
+            from pipeline.vertical_classifier import get_vertical_list
+            valid_verticals = set(get_vertical_list())
+            assert all(c["vertical"] in valid_verticals for c in clusters)
         finally:
             conn.close()
 
@@ -143,6 +146,10 @@ class TestIntakeClusteringAgent:
         conn = get_db(db_path)
         try:
             clusters = list_clusters(conn)
-            assert all(c["vertical"] == "geopolitics" for c in clusters)
+            assert len(clusters) >= 1
+            # ponytail: vertical is now classifier-driven, not hardcoded
+            from pipeline.vertical_classifier import get_vertical_list
+            valid_verticals = set(get_vertical_list())
+            assert all(c["vertical"] in valid_verticals for c in clusters)
         finally:
             conn.close()

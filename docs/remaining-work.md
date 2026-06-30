@@ -82,41 +82,21 @@ Each item includes the evidence trail: what exists, what's missing, and why.
 
 `CLAUDE.md` updated to "All 8 design-doc pages implemented" in Slice 018 commit.
 
-### 6. Missing test files for ClusterReport and Timeline pages
+### 6. Missing test files for ClusterReport and Timeline pages ✅ DONE (2026-06-30)
 
-All other pages have test files under `src/__tests__/`:
-- `sources-page.test.tsx`
-- `source-profile.test.tsx`
-- `pipeline-flow.test.tsx`
-- `investigate.test.tsx`
-- `settings-page.test.tsx`
-- `panel-page.test.tsx`
-- `router-shell.test.tsx`
-- `onboarding.test.tsx`
-- `not-found.test.tsx`
-
-No `cluster-report.test.tsx` or `timeline.test.tsx` exist. Both pages were Slice 016 and 017 — last two slices, possibly rushed for hackathon demo readiness.
+Added `src/__tests__/cluster-report.test.tsx` (8 tests) and `src/__tests__/timeline.test.tsx` (12 tests). All 11 pages now have frontend tests. See `docs/plan/slice-019-frontend-tests.md`.
 
 ### 7. Frontend handles NULL dimensions correctly but radar looks incomplete
 
 `src/pages/SourceProfile.tsx` renders "—" for null dimensions and skips them in the radar chart. This is correct per design doc ("Nullable fields handled gracefully"). With 4 of 6 dimensions live (R_orig, R_val, R_speed, R_edit), the radar shows a quadrilateral. Full hexagon needs R_frame + R_correct (items 2+3).
 
-### 8. `openai` import blocks ~30 pytest — make lazy
+### 8. `openai` import blocks ~30 pytest — make lazy ❌ STALE (2026-06-30)
 
-`pipeline/llm_client.py:19` and `pipeline/embedding_client.py:18` unconditionally `import openai` at module level. The package is in `requirements.txt` but not installed in `.venv/`. This blocks 6 test files from even being collected:
+`openai` IS installed system-wide at `/usr/local/lib/python3.11/dist-packages/openai/`. All 6 "blocked" test files collect and pass (51 tests). No `.venv/` exists — system python3 is used directly. No action needed. Doc was wrong.
 
-- `pipeline/test_runner.py`
-- `pipeline/test_agents.py`
-- `pipeline/test_agent1_intake.py`
-- `pipeline/test_agent2_forensic.py`
-- `pipeline/test_agent4_silent.py`
-- `pipeline/test_embedding_client.py`
+### 9. `pipeline/reputation.py` — 6 pure functions, zero production callers ✅ DONE (2026-06-30)
 
-**Fix:** Make the import lazy (inside the function that needs it) or gate behind the provider check — only import when the selected provider actually uses the OpenAI SDK. The `opencode` and `local-cpu` providers don't need it.
-
-### 9. `pipeline/reputation.py` — 6 pure functions, zero production callers
-
-All 6 functions (`compute_r_orig`, `compute_r_val`, `compute_r_speed`, `compute_r_frame`, `compute_r_edit`, `compute_r_correct`) are imported only by `test_reputation.py`. The actual snapshot computation uses the `*_raw()` variants in `pipeline/snapshots.py`. These are dead code unless there's a planned ad-hoc query use case.
+Deleted `pipeline/reputation.py` and `pipeline/test_reputation.py` (114 lines total). The actual snapshot computation uses `*_raw()` variants in `pipeline/snapshots.py`. No production callers lost. No test coverage gap — snapshots.py functions are tested via `test_snapshots.py`.
 
 ---
 
@@ -129,7 +109,7 @@ All 6 functions (`compute_r_orig`, `compute_r_val`, `compute_r_speed`, `compute_
 | 3 | R_correct — build correction detection | Yes — needs design | Medium | Unknown |
 | 4 | Multi-vertical classification | Yes — needs design | High — 2 of 3 verticals dead | Unknown |
 | 5 | Fix CLAUDE.md page count | ✅ Done | Trivial | 1 line |
-| 6 | Add ClusterReport + Timeline tests | No | Low | ~100 lines each |
+| 6 | Add ClusterReport + Timeline tests | ✅ Done | Low | +20 tests |
 | 7 | Radar hexagon completeness | Depends on 2+3 | Visual only | Inherited |
-| 8 | Lazy-load openai import | No | Blocks ~30 tests | 2 lines |
-| 9 | reputation.py dead code | No | Low | Delete 50 lines |
+| 8 | Lazy-load openai import | ❌ Stale — openai already installed | N/A | N/A |
+| 9 | reputation.py dead code | ✅ Done | Low | Delete 114 lines |

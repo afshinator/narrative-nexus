@@ -2,7 +2,7 @@
 
 ponytail: Sequential execution, single-threaded.  Each agent reads from and
 writes to the DB, so the next agent has fresh data.
-ponytail: geopolitics hardcoded until agent 1/2 support multi-vertical.
+ponytail: Multi-vertical via embedding-based vertical classifier.
 """
 
 import os
@@ -25,6 +25,7 @@ from pipeline.snapshots import (
     percentile_rank,
     write_daily_snapshots,
 )
+from pipeline.vertical_classifier import get_vertical_list
 from pipeline.archetype import get_archetype
 
 
@@ -191,10 +192,10 @@ def _compute_and_write_snapshots(conn, *, date_str: str | None = None, as_of: st
         if orig is not None and val is not None:
             archetypes[sid] = get_archetype(orig, val, median_orig, median_val)
 
-    # Write snapshots for each vertical (ponytail: geopolitics hardcoded
-    # until agent 1/2 can classify other verticals)
+    # Write snapshots for each vertical
+    verticals = get_vertical_list()
     total = 0
-    for vertical in ["geopolitics"]:
+    for vertical in verticals:
         total += write_daily_snapshots(
             conn,
             date_str=date_str,
