@@ -24,25 +24,36 @@ function mockFetch(...scraperResponses: Array<unknown>) {
 		if (url === "/api/config/providers/available") {
 			return Promise.resolve({
 				ok: true,
-				json: () => Promise.resolve({
-					providers: {
-						embeddings: [{ id: "local-cpu", name: "Local CPU", model: "m", amd: false }],
-						llm: [{ id: "opencode", name: "OpenCode Zen", model: "m", amd: false }],
-					},
-				}),
+				json: () =>
+					Promise.resolve({
+						providers: {
+							embeddings: [
+								{ id: "local-cpu", name: "Local CPU", model: "m", amd: false },
+							],
+							llm: [
+								{
+									id: "opencode",
+									name: "OpenCode Zen",
+									model: "m",
+									amd: false,
+								},
+							],
+						},
+					}),
 			});
 		}
 		if (url === "/api/config/providers") {
 			return Promise.resolve({
 				ok: true,
-				json: () => Promise.resolve({
-					providers: {
-						agent1_embedding: "local-cpu",
-						agent1_llm: "opencode",
-						agent2_llm: "opencode",
-						agent4_llm: "opencode",
-					},
-				}),
+				json: () =>
+					Promise.resolve({
+						providers: {
+							agent1_embedding: "local-cpu",
+							agent1_llm: "opencode",
+							agent2_llm: "opencode",
+							agent4_llm: "opencode",
+						},
+					}),
 			});
 		}
 		// Scraper calls
@@ -50,7 +61,10 @@ function mockFetch(...scraperResponses: Array<unknown>) {
 		if (resp instanceof Error) return Promise.reject(resp);
 		return Promise.resolve({
 			ok: true,
-			json: () => Promise.resolve(resp ?? { running: false, last_run: null, articles_inserted: 0 }),
+			json: () =>
+				Promise.resolve(
+					resp ?? { running: false, last_run: null, articles_inserted: 0 },
+				),
 		});
 	});
 	vi.stubGlobal("fetch", fn);
@@ -79,8 +93,15 @@ describe("PipelineFlow Page", () => {
 	describe("Stage nodes", () => {
 		it("renders 4 stage headings", () => {
 			renderPage();
-			for (const name of ["Intake & Clustering", "Forensic Extraction", "Consensus Alignment", "Silent Auditor"]) {
-				expect(screen.getByRole("heading", { name: new RegExp(name, "i") })).toBeInTheDocument();
+			for (const name of [
+				"Intake & Clustering",
+				"Forensic Extraction",
+				"Consensus Alignment",
+				"Silent Auditor",
+			]) {
+				expect(
+					screen.getByRole("heading", { name: new RegExp(name, "i") }),
+				).toBeInTheDocument();
 			}
 		});
 
@@ -97,15 +118,23 @@ describe("PipelineFlow Page", () => {
 			mockFetch({ running: false, last_run: null, articles_inserted: 0 });
 			renderPage();
 			await waitFor(() => {
-				expect(screen.getByRole("button", { name: /start/i })).toBeInTheDocument();
+				expect(
+					screen.getByRole("button", { name: /start/i }),
+				).toBeInTheDocument();
 			});
 		});
 
 		it("shows Stop button and article count when running", async () => {
-			mockFetch({ running: true, last_run: "2026-06-26T14:30:00Z", articles_inserted: 142 });
+			mockFetch({
+				running: true,
+				last_run: "2026-06-26T14:30:00Z",
+				articles_inserted: 142,
+			});
 			renderPage();
 			await waitFor(() => {
-				expect(screen.getByRole("button", { name: /stop/i })).toBeInTheDocument();
+				expect(
+					screen.getByRole("button", { name: /stop/i }),
+				).toBeInTheDocument();
 			});
 			expect(screen.getByText(/142 articles/i)).toBeInTheDocument();
 		});
@@ -136,14 +165,16 @@ describe("PipelineFlow Page", () => {
 		});
 
 		it("shows and auto-clears error on failed POST", async () => {
-			const fn = mockFetch(
+			const _fn = mockFetch(
 				{ running: false, last_run: null, articles_inserted: 0 },
 				new Error("Network error"),
 			);
 			const { user } = renderPage();
 			await waitFor(() => screen.getByRole("button", { name: /start/i }));
 			await user.click(screen.getByRole("button", { name: /start/i }));
-			await waitFor(() => expect(screen.getByText(/failed/i)).toBeInTheDocument());
+			await waitFor(() =>
+				expect(screen.getByText(/failed/i)).toBeInTheDocument(),
+			);
 			await waitFor(
 				() => expect(screen.queryByText(/failed/i)).not.toBeInTheDocument(),
 				{ timeout: 5000 },

@@ -20,7 +20,12 @@ interface ClaimRow {
 
 interface ReportData {
 	cluster: { id: number; title: string; vertical: string };
-	summary: { totalClaims: number; absorbed: number; pending: number; sourceCount: number };
+	summary: {
+		totalClaims: number;
+		absorbed: number;
+		pending: number;
+		sourceCount: number;
+	};
 	sources: SourceRow[];
 	claims: ClaimRow[];
 }
@@ -34,7 +39,10 @@ export default function ClusterReportPage() {
 		let cancelled = false;
 		fetch(`/api/clusters/${clusterId}/report`)
 			.then((r) => {
-				if (!r.ok) throw new Error(r.status === 404 ? "Cluster not found" : "Failed to load");
+				if (!r.ok)
+					throw new Error(
+						r.status === 404 ? "Cluster not found" : "Failed to load",
+					);
 				return r.json();
 			})
 			.then((d: ReportData) => {
@@ -43,13 +51,17 @@ export default function ClusterReportPage() {
 			.catch((e: Error) => {
 				if (!cancelled) setError(e.message);
 			});
-		return () => { cancelled = true; };
+		return () => {
+			cancelled = true;
+		};
 	}, [clusterId]);
 
 	if (error) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
-				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">Cluster Report</h1>
+				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
+					Cluster Report
+				</h1>
 				<p className="text-[var(--nn-text-dim)]">{error}</p>
 			</div>
 		);
@@ -58,7 +70,9 @@ export default function ClusterReportPage() {
 	if (!data) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
-				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">Cluster Report</h1>
+				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
+					Cluster Report
+				</h1>
 				<p className="text-[var(--nn-text-dim)]">Loading…</p>
 			</div>
 		);
@@ -83,19 +97,27 @@ export default function ClusterReportPage() {
 				</h2>
 				<div className="flex flex-wrap gap-x-8 gap-y-1 font-mono text-[0.85rem]">
 					<span>
-						<span className="text-[var(--nn-text)]">{data.summary.totalClaims}</span>{" "}
+						<span className="text-[var(--nn-text)]">
+							{data.summary.totalClaims}
+						</span>{" "}
 						<span className="text-[var(--nn-text-dim)]">claims</span>
 					</span>
 					<span>
-						<span className="text-[var(--nn-text)]">{data.summary.sourceCount}</span>{" "}
+						<span className="text-[var(--nn-text)]">
+							{data.summary.sourceCount}
+						</span>{" "}
 						<span className="text-[var(--nn-text-dim)]">sources</span>
 					</span>
 					<span>
-						<span className="text-[var(--nn-teal)]">{data.summary.absorbed}</span>{" "}
+						<span className="text-[var(--nn-teal)]">
+							{data.summary.absorbed}
+						</span>{" "}
 						<span className="text-[var(--nn-text-dim)]">absorbed</span>
 					</span>
 					<span>
-						<span className="text-[var(--nn-navy)]">{data.summary.pending}</span>{" "}
+						<span className="text-[var(--nn-navy)]">
+							{data.summary.pending}
+						</span>{" "}
 						<span className="text-[var(--nn-text-dim)]">pending</span>
 					</span>
 				</div>
@@ -112,16 +134,25 @@ export default function ClusterReportPage() {
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
 								<tr>
-									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">Source</th>
-									<th className="px-1.5 py-1.5 text-right font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">Claims</th>
+									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+										Source
+									</th>
+									<th className="px-1.5 py-1.5 text-right font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+										Claims
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{data.sources.map((s) => (
-									<tr key={s.domain} className="border-b border-[var(--nn-border)] last:border-b-0">
+									<tr
+										key={s.domain}
+										className="border-b border-[var(--nn-border)] last:border-b-0"
+									>
 										<td className="px-1.5 py-1.5">
 											<span className="text-[var(--nn-text)]">{s.domain}</span>
-											<span className="ml-1.5 font-mono text-[0.7rem] text-[var(--nn-text-dim)]">T{s.tier}</span>
+											<span className="ml-1.5 font-mono text-[0.7rem] text-[var(--nn-text-dim)]">
+												T{s.tier}
+											</span>
 										</td>
 										<td className="px-1.5 py-1.5 text-right font-mono tabular-nums text-[var(--nn-text)]">
 											{s.claims}
@@ -146,27 +177,43 @@ export default function ClusterReportPage() {
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
 								<tr>
-									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">Source</th>
-									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">Claim</th>
-									<th className="px-1.5 py-1.5 text-right font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">State</th>
+									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+										Source
+									</th>
+									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+										Claim
+									</th>
+									<th className="px-1.5 py-1.5 text-right font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+										State
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{data.claims.map((c) => (
-									<tr key={c.id} className="border-b border-[var(--nn-border)] last:border-b-0">
+									<tr
+										key={c.id}
+										className="border-b border-[var(--nn-border)] last:border-b-0"
+									>
 										<td className="px-1.5 py-1.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)] whitespace-nowrap">
 											{c.domain}
 										</td>
-										<td className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate" title={c.text}>
+										<td
+											className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate"
+											title={c.text}
+										>
 											{c.text}
 										</td>
 										<td className="px-1.5 py-1.5 text-right">
-											<span className={`font-mono text-[0.72rem] ${
-												c.state === "CONSENSUS_ABSORBED"
-													? "text-[var(--nn-teal)]"
-													: "text-[var(--nn-navy)]"
-											}`}>
-												{c.state === "CONSENSUS_ABSORBED" ? "absorbed" : "pending"}
+											<span
+												className={`font-mono text-[0.72rem] ${
+													c.state === "CONSENSUS_ABSORBED"
+														? "text-[var(--nn-teal)]"
+														: "text-[var(--nn-navy)]"
+												}`}
+											>
+												{c.state === "CONSENSUS_ABSORBED"
+													? "absorbed"
+													: "pending"}
 											</span>
 										</td>
 									</tr>
@@ -183,9 +230,9 @@ export default function ClusterReportPage() {
 					Forensic Analysis
 				</h2>
 				<p className="text-[var(--nn-text-dim)] text-[0.85rem]">
-					Convergence-type data is not yet computed by Agent 3 (consensus alignment).
-					Cross-source convergent and self-consistent classifications will appear here
-					when available.
+					Convergence-type data is not yet computed by Agent 3 (consensus
+					alignment). Cross-source convergent and self-consistent
+					classifications will appear here when available.
 				</p>
 			</div>
 		</div>

@@ -22,7 +22,11 @@ interface TimelineData {
 }
 
 // ponytail: compute left% for claim card based on first_seen_at
-function positionPercent(firstSeenAt: string, rangeStart: number, rangeMs: number): number {
+function positionPercent(
+	firstSeenAt: string,
+	rangeStart: number,
+	rangeMs: number,
+): number {
 	if (rangeMs === 0) return 0;
 	const ts = new Date(firstSeenAt).getTime();
 	return ((ts - rangeStart) / rangeMs) * 100;
@@ -37,7 +41,10 @@ export default function TimelinePage() {
 		let cancelled = false;
 		fetch(`/api/timeline/${clusterId}`)
 			.then((r) => {
-				if (!r.ok) throw new Error(r.status === 404 ? "Cluster not found" : "Failed to load");
+				if (!r.ok)
+					throw new Error(
+						r.status === 404 ? "Cluster not found" : "Failed to load",
+					);
 				return r.json();
 			})
 			.then((d: TimelineData) => {
@@ -54,7 +61,9 @@ export default function TimelinePage() {
 	if (error) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
-				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">Timeline</h1>
+				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
+					Timeline
+				</h1>
 				<p className="text-[var(--nn-text-dim)]">{error}</p>
 			</div>
 		);
@@ -63,7 +72,9 @@ export default function TimelinePage() {
 	if (!data) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
-				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">Timeline</h1>
+				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
+					Timeline
+				</h1>
 				<p className="text-[var(--nn-text-dim)]">Loading…</p>
 			</div>
 		);
@@ -101,7 +112,11 @@ export default function TimelinePage() {
 	const startDay = new Date(rangeStart);
 	startDay.setHours(0, 0, 0, 0);
 	const days: Date[] = [];
-	for (let d = new Date(startDay); d.getTime() <= rangeEnd; d.setDate(d.getDate() + 1)) {
+	for (
+		let d = new Date(startDay);
+		d.getTime() <= rangeEnd;
+		d.setDate(d.getDate() + 1)
+	) {
 		days.push(new Date(d));
 	}
 
@@ -118,8 +133,8 @@ export default function TimelinePage() {
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
 				{data.sources.length} sources &middot;{" "}
-				{data.sources.reduce((sum, s) => sum + s.claims.length, 0)} claims &middot;{" "}
-				{days.length} day{days.length !== 1 ? "s" : ""}
+				{data.sources.reduce((sum, s) => sum + s.claims.length, 0)} claims
+				&middot; {days.length} day{days.length !== 1 ? "s" : ""}
 			</p>
 
 			{/* Day header bar */}
@@ -133,9 +148,15 @@ export default function TimelinePage() {
 						<span
 							key={d.toISOString()}
 							className="absolute font-mono text-[0.7rem] text-[var(--nn-text-dim)]"
-							style={{ left: `${Math.max(0, pct)}%`, transform: "translateX(-50%)" }}
+							style={{
+								left: `${Math.max(0, pct)}%`,
+								transform: "translateX(-50%)",
+							}}
 						>
-							{d.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+							{d.toLocaleDateString("en-US", {
+								month: "short",
+								day: "numeric",
+							})}
 						</span>
 					);
 				})}
@@ -158,7 +179,10 @@ export default function TimelinePage() {
 					</div>
 
 					{/* Claim cards — positioned horizontally */}
-					<div className="relative flex-1 overflow-x-auto" style={{ height: 48 }}>
+					<div
+						className="relative flex-1 overflow-x-auto"
+						style={{ height: 48 }}
+					>
 						<div className="relative" style={{ width: "100%", height: 40 }}>
 							{source.claims.map((claim) => {
 								const pct = positionPercent(
@@ -188,7 +212,9 @@ export default function TimelinePage() {
 			))}
 
 			{/* Day marker lines */}
-			<div className="hidden">{/* ponytail: visual check first, add lines later */}</div>
+			<div className="hidden">
+				{/* ponytail: visual check first, add lines later */}
+			</div>
 		</div>
 	);
 }

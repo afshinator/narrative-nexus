@@ -240,7 +240,7 @@ html {
 	.animate-fade-up-card,
 	.animate-connector-flow,
 	.animate-status-breathe {
-		animation-duration: 0.01ms !important;
-		animation-iteration-count: 1 !important;
+		animation-duration: 0.01ms;
+		animation-iteration-count: 1;
 	}
 }

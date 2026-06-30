@@ -9,6 +9,7 @@ from db.clusters import create_cluster
 from db.articles import insert_article
 from db.claims import insert_claim, update_claim_state
 from db.claim_sources import add_claim_source
+from db.silent_edits import insert_silent_edit
 
 
 @pytest.fixture
@@ -72,6 +73,10 @@ def db():
     # Absorb claim1 and claim3
     update_claim_state(conn, cl1, "CONSENSUS_ABSORBED", absorbed_at=t1.isoformat())
     update_claim_state(conn, cl3, "CONSENSUS_ABSORBED", absorbed_at=t0.isoformat())
+
+    # Silent edits: a1 (s1) has 1 edit, a2 (s1) has 0, a3 (s2) has 0, a4 (s3) has 0
+    insert_silent_edit(conn, article_id=a1, change_ratio=0.5,
+                       stored_body_length=1000, fetched_body_length=1500)
 
     # Override created_at to past dates so julianday subtraction works
     # (insert_claim uses datetime('now') as default)
@@ -169,6 +174,21 @@ def test_archetype_assignment(db):
     assert get_archetype(30, 30, median_orig, median_val) == "CONSENSUS_FOLLOWER"
 
 
+def test_redit_raw_counts_edits_per_source(db):
+    """R_edit raw = edit_count / article_count per source.
+    s1: 1 edit / 2 articles = 0.5
+    s2: 0 edits / 1 article = 0.0
+    s3: 0 edits / 1 article = 0.0
+    """
+    from pipeline.snapshots import compute_r_edit_raw
+
+    result = compute_r_edit_raw(db)
+
+    assert result[1] == pytest.approx(0.5)
+    assert result[2] == pytest.approx(0.0)
+    assert result[3] == pytest.approx(0.0)
+
+
 def test_write_daily_snapshots(db):
     """write_daily_snapshots inserts one row per source per vertical."""
     from pipeline.snapshots import write_daily_snapshots
@@ -177,6 +197,7 @@ def test_write_daily_snapshots(db):
     r_val = {1: 60.0, 2: 40.0, 3: 20.0}
     r_speed = {1: 25.0, 2: None, 3: None}
     archetypes = {1: "EARLY_BREAKER", 2: "CONSENSUS_FOLLOWER", 3: "CONSENSUS_FOLLOWER"}
+    r_edit = {1: 50.0, 2: 20.0, 3: None}
 
     date_str = "2026-06-26"
     write_daily_snapshots(
@@ -188,7 +209,7 @@ def test_write_daily_snapshots(db):
         r_speed=r_speed,
         archetypes=archetypes,
         r_frame={},
-        r_edit={},
+        r_edit=r_edit,
         r_correct={},
     )
 
@@ -204,9 +225,136 @@ def test_write_daily_snapshots(db):
     assert rows[0]["r_speed"] == 25.0
     assert rows[0]["archetype"] == "EARLY_BREAKER"
     assert rows[0]["r_frame"] is None
-    assert rows[0]["r_edit"] is None
+    assert rows[0]["r_edit"] == 50.0
     assert rows[0]["r_correct"] is None
 
     assert rows[1]["source_id"] == 2
-    assert rows[1]["r_speed"] is None  # NULL when no absorbed claims
+    assert rows[1]["r_edit"] == 20.0
+
     assert rows[2]["source_id"] == 3
+    assert rows[2]["r_speed"] is None
+    assert rows[2]["r_edit"] is None
+
+
+def test_redit_raw_zero_articles_source():
+    """Source with zero articles gets None edit rate."""
+    from pipeline.snapshots import compute_r_edit_raw
+    from db.sources import insert_source
+    from db.connection import get_db, load_schema
+
+    conn = get_db()
+    load_schema(conn)
+    try:
+        s1 = insert_source(conn, name="Has Articles", domain="has.com", tier=1)
+        s2 = insert_source(conn, name="No Articles", domain="no.com", tier=2)
+        # Give s1 one article and one edit, s2 gets nothing
+        from db.articles import insert_article
+        a1 = insert_article(conn, source_id=s1, url="http://has.com/1", title="A1")
+        from db.silent_edits import insert_silent_edit
+        insert_silent_edit(conn, article_id=a1, change_ratio=0.3,
+                           stored_body_length=100, fetched_body_length=130)
+
+        result = compute_r_edit_raw(conn)
+
+        assert result[s1] == pytest.approx(1.0)  # 1 edit / 1 article
+        assert result[s2] is None  # 0 articles → None
+    finally:
+        conn.close()
+
+
+def test_redit_raw_as_of_filter():
+    """as_of filters silent_edits by detected_at."""
+    from pipeline.snapshots import compute_r_edit_raw
+    from db.sources import insert_source
+    from db.connection import get_db, load_schema
+    from db.articles import insert_article
+    from db.silent_edits import insert_silent_edit
+
+    conn = get_db()
+    load_schema(conn)
+    try:
+        s1 = insert_source(conn, name="TestSrc", domain="test.com", tier=1)
+        a1 = insert_article(conn, source_id=s1, url="http://test.com/1", title="A1")
+        a2 = insert_article(conn, source_id=s1, url="http://test.com/2", title="A2")
+
+        # Two edits: one old, one recent
+        e1 = insert_silent_edit(conn, article_id=a1, change_ratio=0.1,
+                                stored_body_length=100, fetched_body_length=110)
+        e2 = insert_silent_edit(conn, article_id=a2, change_ratio=0.2,
+                                stored_body_length=200, fetched_body_length=240)
+
+        conn.execute(
+            "UPDATE silent_edits SET detected_at = ? WHERE id = ?",
+            ("2026-01-15 12:00:00", e1),
+        )
+        conn.execute(
+            "UPDATE silent_edits SET detected_at = ? WHERE id = ?",
+            ("2026-06-15 12:00:00", e2),
+        )
+        conn.commit()
+
+        # as_of mid-point: only the January edit should count
+        result = compute_r_edit_raw(conn, as_of="2026-03-01T00:00:00")
+        # 1 edit / 2 articles = 0.5
+        assert result[s1] == pytest.approx(0.5)
+
+        # as_of after both edits: both count
+        result2 = compute_r_edit_raw(conn, as_of="2026-07-01T00:00:00")
+        # 2 edits / 2 articles = 1.0
+        assert result2[s1] == pytest.approx(1.0)
+
+        # as_of before both edits: none count
+        result3 = compute_r_edit_raw(conn, as_of="2025-12-01T00:00:00")
+        # 0 edits / 2 articles = 0.0
+        assert result3[s1] == pytest.approx(0.0)
+    finally:
+        conn.close()
+
+
+def test_redit_end_to_end(db):
+    """Full pipeline: raw → percentile → write → query yields correct r_edit values."""
+    from pipeline.snapshots import (
+        compute_r_edit_raw,
+        percentile_rank,
+        write_daily_snapshots,
+    )
+
+    # Compute raw edit rates from fixture
+    r_edit_raw = compute_r_edit_raw(db)
+    # s1: 1 edit / 2 articles = 0.5
+    # s2: 0 edits / 1 article = 0.0
+    # s3: 0 edits / 1 article = 0.0
+    assert r_edit_raw[1] == pytest.approx(0.5)
+    assert r_edit_raw[2] == pytest.approx(0.0)
+    assert r_edit_raw[3] == pytest.approx(0.0)
+
+    # Percentile rank (lower edit rate = better, so 0.0 ranks 0, 0.5 ranks 100)
+    r_edit = percentile_rank(
+        {k: v for k, v in r_edit_raw.items() if v is not None}
+    )
+    assert r_edit[1] == pytest.approx(100.0)  # highest = worst (most edits)
+    assert r_edit[2] == pytest.approx(0.0)    # tied lowest = best
+    assert r_edit[3] == pytest.approx(0.0)    # tied lowest = best
+
+    # Write to snapshots and verify stored values
+    date_str = "2026-06-30"
+    write_daily_snapshots(
+        db,
+        date_str=date_str,
+        vertical="geopolitics",
+        r_orig={1: 50.0, 2: 30.0, 3: 10.0},
+        r_val={1: 60.0, 2: 40.0, 3: 20.0},
+        r_speed={1: 25.0, 2: None, 3: None},
+        archetypes={1: "EARLY_BREAKER", 2: "CONSENSUS_FOLLOWER", 3: "CONSENSUS_FOLLOWER"},
+        r_edit=r_edit,
+    )
+
+    rows = db.execute(
+        "SELECT source_id, r_edit FROM snapshots WHERE vertical = ? AND date = ? ORDER BY source_id",
+        ("geopolitics", date_str),
+    ).fetchall()
+
+    assert len(rows) == 3
+    assert rows[0]["r_edit"] == pytest.approx(100.0)  # s1: 0.5 → 100th percentile
+    assert rows[1]["r_edit"] == pytest.approx(0.0)    # s2: 0.0 → 0th percentile
+    assert rows[2]["r_edit"] == pytest.approx(0.0)    # s3: 0.0 → 0th percentile

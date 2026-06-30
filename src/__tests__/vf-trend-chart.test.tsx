@@ -5,7 +5,9 @@ import type { DailySnapshot } from "../data/scores";
 
 // chart.js needs Canvas — jsdom doesn't have it
 vi.mock("react-chartjs-2", () => ({
-	Line: () => <canvas data-testid="vf-trend-chart" aria-label="Vf trend chart" />,
+	Line: () => (
+		<canvas data-testid="vf-trend-chart" aria-label="Vf trend chart" />
+	),
 }));
 
 function makeSnapshot(day: number, r_val: number): DailySnapshot {
@@ -33,7 +35,11 @@ describe("VfTrendChart", () => {
 	});
 
 	it("renders with snapshots data", () => {
-		const snapshots = [makeSnapshot(0, 50), makeSnapshot(1, 55), makeSnapshot(2, 60)];
+		const snapshots = [
+			makeSnapshot(0, 50),
+			makeSnapshot(1, 55),
+			makeSnapshot(2, 60),
+		];
 		render(<VfTrendChart snapshots={snapshots} currentDay={1} />);
 		expect(screen.getByTestId("vf-trend-chart")).toBeInTheDocument();
 	});

@@ -26,7 +26,9 @@ export default function AppNav() {
 	const [scraperRunning, setScraperRunning] = useState<boolean | null>(null);
 	useEffect(() => {
 		fetch("/api/scraper/status")
-			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad response"))))
+			.then((r) =>
+				r.ok ? r.json() : Promise.reject(new Error("bad response")),
+			)
 			.then((s) => setScraperRunning(s.running))
 			.catch(() => setScraperRunning(null));
 	}, []);
@@ -102,21 +104,21 @@ export default function AppNav() {
 							: "Scraper is paused — click Start on Pipeline page to resume"
 				}
 			>
-					<span
-						data-testid="scraper-status-dot"
-						className={`inline-block h-2 w-2 rounded-full ${
-							scraperRunning === true ? "animate-pulse" : ""
-						}`}
-						style={{
-							backgroundColor:
-								scraperRunning === null
-									? "var(--nn-text-dim)"
-									: scraperRunning
-										? "var(--nn-teal)"
-										: "var(--nn-slate)",
-						}}
-					/>
-					Scraper
+				<span
+					data-testid="scraper-status-dot"
+					className={`inline-block h-2 w-2 rounded-full ${
+						scraperRunning === true ? "animate-pulse" : ""
+					}`}
+					style={{
+						backgroundColor:
+							scraperRunning === null
+								? "var(--nn-text-dim)"
+								: scraperRunning
+									? "var(--nn-teal)"
+									: "var(--nn-slate)",
+					}}
+				/>
+				Scraper
 			</span>
 			<span className="my-[13px] w-px bg-[var(--nn-border)]" />
 			<NavLink

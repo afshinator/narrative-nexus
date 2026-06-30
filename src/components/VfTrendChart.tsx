@@ -96,7 +96,11 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 				Verifiability Trend
 			</h2>
 			<div className="h-[200px]">
-				<Line data={data} options={options} aria-label="Verifiability trend chart" />
+				<Line
+					data={data}
+					options={options}
+					aria-label="Verifiability trend chart"
+				/>
 			</div>
 		</div>
 	);

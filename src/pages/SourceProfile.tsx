@@ -39,6 +39,7 @@ interface ClaimSummary {
 	absorbed: number;
 	pending: number;
 }
+
 import { DIMENSIONS } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
 import type { VerticalThresholdKey } from "../data/thresholds";
@@ -125,7 +126,11 @@ function SourceProfilePage({
 	const [panelMedian, setPanelMedian] = useState(_initialPanelMedian);
 	const [fetchedEvents, setFetchedEvents] = useState<ProfileEvent[]>([]);
 	const [fetchedEdits, setFetchedEdits] = useState<SilentEdit[]>([]);
-	const [claimSummary, setClaimSummary] = useState<ClaimSummary>({ total: 0, absorbed: 0, pending: 0 });
+	const [claimSummary, setClaimSummary] = useState<ClaimSummary>({
+		total: 0,
+		absorbed: 0,
+		pending: 0,
+	});
 
 	useEffect(() => {
 		let cancelled = false;
@@ -134,9 +139,9 @@ function SourceProfilePage({
 				const srcResp = await fetch("/api/sources");
 				if (!srcResp.ok) return;
 				const srcData = await srcResp.json();
-				const dbSource = (srcData.sources as { id: number; domain: string }[]).find(
-					(s) => s.domain === domain,
-				);
+				const dbSource = (
+					srcData.sources as { id: number; domain: string }[]
+				).find((s) => s.domain === domain);
 				if (!dbSource || cancelled) return;
 				const resp = await fetch(
 					`/api/sources/${dbSource.id}/profile?vertical=${vertical}`,
@@ -149,16 +154,25 @@ function SourceProfilePage({
 				setPanelMedian(data.panelMedian ?? { orig: 50, val: 50 });
 				setFetchedEvents((data.events as ProfileEvent[]) ?? []);
 				setFetchedEdits((data.edits as SilentEdit[]) ?? []);
-				setClaimSummary((data.claimSummary as ClaimSummary) ?? { total: 0, absorbed: 0, pending: 0 });
+				setClaimSummary(
+					(data.claimSummary as ClaimSummary) ?? {
+						total: 0,
+						absorbed: 0,
+						pending: 0,
+					},
+				);
 			} catch {
 				// Keep defaults on error
 			}
 		}
 		load();
-		return () => { cancelled = true; };
+		return () => {
+			cancelled = true;
+		};
 	}, [domain, vertical]);
 
-	const snapshots = fetchedSnapshots.length > 0 ? fetchedSnapshots : _initialSnapshots;
+	const snapshots =
+		fetchedSnapshots.length > 0 ? fetchedSnapshots : _initialSnapshots;
 
 	// Filter snapshots by vertical — memoized, stable across day changes
 	const filtered = useMemo(
@@ -275,38 +289,49 @@ function SourceProfilePage({
 			/>
 
 			{/* Vf Trend Chart */}
-			<VfTrendChart
-				snapshots={filtered}
-				currentDay={Math.round(currentDay)}
-			/>
+			<VfTrendChart snapshots={filtered} currentDay={Math.round(currentDay)} />
 
 			{/* Outlier waterfall */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
-				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">Claim Flow</h2>
+				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">
+					Claim Flow
+				</h2>
 				{claimSummary.total > 0 ? (
 					<div className="space-y-2">
 						<div className="flex items-center gap-3">
-							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">Absorbed</span>
+							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">
+								Absorbed
+							</span>
 							<div className="flex-1 h-5 rounded-sm bg-[var(--nn-surface2)] overflow-hidden">
 								<div
 									className="h-full rounded-sm bg-[var(--nn-teal)]"
-									style={{ width: `${(claimSummary.absorbed / claimSummary.total) * 100}%` }}
+									style={{
+										width: `${(claimSummary.absorbed / claimSummary.total) * 100}%`,
+									}}
 								/>
 							</div>
 							<span className="w-20 text-right font-mono text-[0.78rem] tabular-nums text-[var(--nn-text)]">
-								{claimSummary.absorbed} ({Math.round((claimSummary.absorbed / claimSummary.total) * 100)}%)
+								{claimSummary.absorbed} (
+								{Math.round((claimSummary.absorbed / claimSummary.total) * 100)}
+								%)
 							</span>
 						</div>
 						<div className="flex items-center gap-3">
-							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">Pending</span>
+							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">
+								Pending
+							</span>
 							<div className="flex-1 h-5 rounded-sm bg-[var(--nn-surface2)] overflow-hidden">
 								<div
 									className="h-full rounded-sm bg-[var(--nn-navy)]"
-									style={{ width: `${(claimSummary.pending / claimSummary.total) * 100}%` }}
+									style={{
+										width: `${(claimSummary.pending / claimSummary.total) * 100}%`,
+									}}
 								/>
 							</div>
 							<span className="w-20 text-right font-mono text-[0.78rem] tabular-nums text-[var(--nn-text)]">
-								{claimSummary.pending} ({Math.round((claimSummary.pending / claimSummary.total) * 100)}%)
+								{claimSummary.pending} (
+								{Math.round((claimSummary.pending / claimSummary.total) * 100)}
+								%)
 							</span>
 						</div>
 						<p className="font-mono text-[0.72rem] text-[var(--nn-text-dim)] pt-1">
@@ -314,7 +339,9 @@ function SourceProfilePage({
 						</p>
 					</div>
 				) : (
-					<p className="text-[var(--nn-text-dim)] text-[0.85rem]">No claims attributed.</p>
+					<p className="text-[var(--nn-text-dim)] text-[0.85rem]">
+						No claims attributed.
+					</p>
 				)}
 			</div>
 
@@ -329,32 +356,57 @@ function SourceProfilePage({
 
 			{/* Silent Edit Log */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
-				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">Silent Edit Log</h2>
+				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">
+					Silent Edit Log
+				</h2>
 				{fetchedEdits.length > 0 ? (
 					<div className="overflow-x-auto">
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
 								<tr>
-									<th className="px-2 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">Article</th>
-									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">Change</th>
-									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">Stored → Fetched</th>
+									<th className="px-2 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
+										Article
+									</th>
+									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
+										Change
+									</th>
+									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
+										Stored → Fetched
+									</th>
 								</tr>
 							</thead>
 							<tbody>
 								{fetchedEdits.map((edit) => {
 									const pct = Math.round(edit.change_ratio * 100);
 									const severityClass =
-										pct > 30 ? "text-[var(--nn-red)]" : pct > 10 ? "text-[var(--nn-amber)]" : "text-[var(--nn-teal)]";
+										pct > 30
+											? "text-[var(--nn-red)]"
+											: pct > 10
+												? "text-[var(--nn-amber)]"
+												: "text-[var(--nn-teal)]";
 									return (
-										<tr key={edit.id} className="border-b border-[var(--nn-border)] last:border-b-0">
+										<tr
+											key={edit.id}
+											className="border-b border-[var(--nn-border)] last:border-b-0"
+										>
 											<td className="px-2 py-2 max-w-[400px] truncate">
-												<a href={edit.article_url} target="_blank" rel="noopener noreferrer" className="text-[var(--nn-text)] hover:text-[var(--nn-teal)] transition-colors">
+												<a
+													href={edit.article_url}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-[var(--nn-text)] hover:text-[var(--nn-teal)] transition-colors"
+												>
 													{edit.article_title ?? edit.article_url}
 												</a>
 											</td>
-											<td className={`px-2 py-2 text-right font-mono tabular-nums ${severityClass}`}>{pct}%</td>
+											<td
+												className={`px-2 py-2 text-right font-mono tabular-nums ${severityClass}`}
+											>
+												{pct}%
+											</td>
 											<td className="px-2 py-2 text-right font-mono text-[0.75rem] tabular-nums text-[var(--nn-text-dim)]">
-												{edit.stored_body_length.toLocaleString()} → {edit.fetched_body_length.toLocaleString()}
+												{edit.stored_body_length.toLocaleString()} →{" "}
+												{edit.fetched_body_length.toLocaleString()}
 											</td>
 										</tr>
 									);
@@ -363,7 +415,9 @@ function SourceProfilePage({
 						</table>
 					</div>
 				) : (
-					<p className="text-[var(--nn-text-dim)] text-[0.85rem]">No silent edits detected.</p>
+					<p className="text-[var(--nn-text-dim)] text-[0.85rem]">
+						No silent edits detected.
+					</p>
 				)}
 			</div>
 		</div>

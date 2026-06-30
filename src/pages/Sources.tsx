@@ -127,7 +127,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 					archetype,
 				};
 			}),
-		[scoreMap, panelMedian],
+		[scoreMap, panelMedian, visibleSources.map],
 	);
 
 	// Enrich sources with scores + archetype, then filter + sort
@@ -167,7 +167,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		});
 
 		return allRows;
-	}, [scoreMap, panelMedian, filter, sortKey, sortDir]);
+	}, [scoreMap, panelMedian, filter, sortKey, sortDir, visibleSources.map]);
 
 	function handleSort(key: SortKey) {
 		if (sortKey === key) {

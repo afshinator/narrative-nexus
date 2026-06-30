@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "../App";
@@ -163,7 +163,9 @@ describe("Router Shell — Slice 0", () => {
 		});
 
 		it("shows a dim dot when status fetch fails", async () => {
-			const fetchMock = vi.fn().mockRejectedValueOnce(new Error("Network error"));
+			const fetchMock = vi
+				.fn()
+				.mockRejectedValueOnce(new Error("Network error"));
 			vi.stubGlobal("fetch", fetchMock);
 
 			render(<App />);

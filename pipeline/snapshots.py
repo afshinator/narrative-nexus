@@ -156,6 +156,49 @@ def percentile_rank(raw: dict[int, float]) -> dict[int, float]:
     return result
 
 
+def compute_r_edit_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> dict[int, float | None]:
+    """Silent edit rate per source — edits / articles ratio.
+
+    If as_of is provided, only silent_edits with detected_at <= as_of
+    are counted.  Used by the seed script for date-filtered snapshots.
+
+    Returns {source_id: ratio} where ratio = edit_count / article_count.
+    None when a source has zero articles.
+    """
+    # Article count per source (all time — no date filter)
+    art_rows = conn.execute(
+        "SELECT source_id, COUNT(*) as cnt FROM articles GROUP BY source_id"
+    ).fetchall()
+    article_counts = {row["source_id"]: row["cnt"] for row in art_rows}
+
+    # Edit count per source, with optional as_of filter
+    params: list = []
+    date_filter = ""
+    if as_of is not None:
+        date_filter = "AND se.detected_at <= ?"
+        params.append(as_of)
+
+    edit_rows = conn.execute(f"""
+        SELECT a.source_id, COUNT(se.id) as cnt
+        FROM silent_edits se
+        JOIN articles a ON a.id = se.article_id
+        WHERE 1=1 {date_filter}
+        GROUP BY a.source_id
+    """, params).fetchall()
+    edit_counts = {row["source_id"]: row["cnt"] for row in edit_rows}
+
+    result: dict[int, float | None] = {}
+    all_sources = {s["id"] for s in list_sources(conn)}
+    for sid in all_sources:
+        art_cnt = article_counts.get(sid, 0)
+        if art_cnt == 0:
+            result[sid] = None
+        else:
+            edit_cnt = edit_counts.get(sid, 0)
+            result[sid] = edit_cnt / art_cnt
+    return result
+
+
 def compute_panel_medians(
     r_orig: dict[int, float],
     r_val: dict[int, float],

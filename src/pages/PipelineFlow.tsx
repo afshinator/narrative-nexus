@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
 import { Play, Square, Zap } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -87,7 +87,9 @@ export default function PipelineFlowPage() {
 	const [status, setStatus] = useState<ScraperStatus | null>(null);
 	const [error, setError] = useState("");
 	const [pending, setPending] = useState(false);
-	const errorTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	const errorTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined,
+	);
 
 	// Provider state
 	const [catalog, setCatalog] = useState<ProviderCatalog | null>(null);
@@ -103,7 +105,9 @@ export default function PipelineFlowPage() {
 
 	const fetchStatus = () => {
 		fetch("/api/scraper/status")
-			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad response"))))
+			.then((r) =>
+				r.ok ? r.json() : Promise.reject(new Error("bad response")),
+			)
 			.then(setStatus)
 			.catch(() => setStatus(null));
 	};
@@ -164,7 +168,9 @@ export default function PipelineFlowPage() {
 		})
 			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("put failed"))))
 			.then((data) => setAssignments(data.providers))
-			.catch(() => showError("AMD shortcut failed — Fireworks API key may be missing"));
+			.catch(() =>
+				showError("AMD shortcut failed — Fireworks API key may be missing"),
+			);
 	};
 
 	const hasProviders = catalog !== null && assignments !== null;
@@ -205,8 +211,9 @@ export default function PipelineFlowPage() {
 				style={{ "--i": 1 } as React.CSSProperties}
 			>
 				{/* Dynamic legend from actual assignments */}
-				{hasProviders
-					? Object.entries(assignments as Record<string, string>).map(([slot, providerId]) => {
+				{hasProviders ? (
+					Object.entries(assignments as Record<string, string>).map(
+						([slot, providerId]) => {
 							const badge = badgeFor(providerId);
 							return (
 								<LegendItem
@@ -221,34 +228,37 @@ export default function PipelineFlowPage() {
 									label={SLOT_LABELS[slot] ?? slot}
 								/>
 							);
-						})
-					: // Fallback: static legend when backend not connected
-						<>
-							<LegendItem
-								badge={
-									<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
-										AMD GPU
-									</span>
-								}
-								label="Embeddings"
-							/>
-							<LegendItem
-								badge={
-									<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
-										API
-									</span>
-								}
-								label="LLM Inference"
-							/>
-							<LegendItem
-								badge={
-									<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
-										CPU
-									</span>
-								}
-								label="Consensus Math · Snapshots"
-							/>
-						</>}
+						},
+					)
+				) : (
+					// Fallback: static legend when backend not connected
+					<>
+						<LegendItem
+							badge={
+								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
+									AMD GPU
+								</span>
+							}
+							label="Embeddings"
+						/>
+						<LegendItem
+							badge={
+								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
+									API
+								</span>
+							}
+							label="LLM Inference"
+						/>
+						<LegendItem
+							badge={
+								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
+									CPU
+								</span>
+							}
+							label="Consensus Math · Snapshots"
+						/>
+					</>
+				)}
 			</div>
 
 			{/* Scraper Controls */}
@@ -322,10 +332,9 @@ export default function PipelineFlowPage() {
 							dropdown={
 								hasProviders
 									? {
-											value: assignments!.agent1_embedding,
-											options: catalog!.embeddings,
-											onChange: (id) =>
-												changeProvider("agent1_embedding", id),
+											value: assignments?.agent1_embedding,
+											options: catalog?.embeddings,
+											onChange: (id) => changeProvider("agent1_embedding", id),
 										}
 									: undefined
 							}
@@ -337,10 +346,9 @@ export default function PipelineFlowPage() {
 							dropdown={
 								hasProviders
 									? {
-											value: assignments!.agent1_llm,
-											options: catalog!.llm,
-											onChange: (id) =>
-												changeProvider("agent1_llm", id),
+											value: assignments?.agent1_llm,
+											options: catalog?.llm,
+											onChange: (id) => changeProvider("agent1_llm", id),
 										}
 									: undefined
 							}
@@ -363,10 +371,9 @@ export default function PipelineFlowPage() {
 							dropdown={
 								hasProviders
 									? {
-											value: assignments!.agent2_llm,
-											options: catalog!.llm,
-											onChange: (id) =>
-												changeProvider("agent2_llm", id),
+											value: assignments?.agent2_llm,
+											options: catalog?.llm,
+											onChange: (id) => changeProvider("agent2_llm", id),
 										}
 									: undefined
 							}
@@ -409,10 +416,9 @@ export default function PipelineFlowPage() {
 							dropdown={
 								hasProviders
 									? {
-											value: assignments!.agent4_llm,
-											options: catalog!.llm,
-											onChange: (id) =>
-												changeProvider("agent4_llm", id),
+											value: assignments?.agent4_llm,
+											options: catalog?.llm,
+											onChange: (id) => changeProvider("agent4_llm", id),
 										}
 									: undefined
 							}
