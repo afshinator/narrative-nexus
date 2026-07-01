@@ -34,27 +34,48 @@ Each item includes the evidence trail: what exists, what's missing, and why.
 
 ## TIER 2 — Blocked, Needs Design Decision
 
-### 2. R_frame — Framing Consistency (no data source)
+### 2. R_frame — Framing Consistency (data collected, wiring pending)
 
-**Status:** `compute_r_frame()` exists in `pipeline/reputation.py:31` and is tested. But no agent produces framing scores per article. Design doc §3 defines 4 agents — none compute cross-article framing consistency. This needs a new computation or agent definition before any code can be written.
+**Status:** Three framing scorers built (LLM, lexical, sentiment). Lexical + sentiment scored for all 2,028 articles. LLM backfill partial — 433/2028 (21%) scored before OpenCode Zen free-tier rate limits. Remaining 1,595 need retry with paid provider or rate-limit reset.
 
-**What's needed:** A way to measure how consistently a source frames stories. Could be:
-- Sentiment variance across articles from same source
-- Lexical diversity / framing similarity metric
-- LLM-based framing classification per article then compute stddev
+**What exists:**
+- `pipeline/framing.py` — 3 scorers: `score_llm_prompt()`, `score_lexical()`, `score_sentiment()`
+- `article_framing` table with llm_score, lexical_score, sentiment_score columns
+- Agent 2 integrated: framing scores computed alongside claim extraction (zero extra API calls)
+- Backfill: `scripts/backfill_framing.py --llm-only` for remaining articles
+- Snapshot wiring NOT YET DONE — needs `compute_r_frame_raw()` to compute variance per source
 
-**Blocked on:** Architecture decision. No REQ for how framing is measured — only REQ-035 says "must track R_frame" as `[desired]`.
+**Evidence trail:**
+| Layer | Status | File |
+|---|---|---|
+| Lexical scorer | 2,028/2,028 scored | `pipeline/framing.py:score_lexical()` |
+| Sentiment scorer | 2,028/2,028 scored | `pipeline/framing.py:score_sentiment()` |
+| LLM scorer | 433/2,028 scored | `pipeline/framing.py:score_llm_prompt()` |
+| Agent 2 integration | Combined prompt | `pipeline/agent2_forensic.py:27-56` |
+| DB storage | article_framing table | `db/framing.py` |
+| Backfill script | With retry logic | `scripts/backfill_framing.py` |
 
-### 3. R_correct — Formal Correction Rate (no mechanism)
+### 3. R_correct — Formal Correction Rate ✅ DONE (2026-06-30)
 
-**Status:** `compute_r_correct()` exists in `pipeline/reputation.py:46` and is tested. But nothing detects formal corrections. No table, no scraper logic, no agent.
+Implemented inline marker detection for formal corrections. 16 corrections detected across 2,028 articles (AP, CNN, NYT patterns). Wired into daily snapshot computation alongside existing dimensions.
 
-**What's needed:** A way to detect when a source publishes a formal correction. Options:
-- Parse RSS `<corrections>` or `<update>` tags
-- Scrape source-specific corrections pages
-- Detect "CORRECTION:" or "UPDATE:" inline markers in article body
+**What was done:**
+- `pipeline/corrections.py` — 5 regex patterns + false positive guard
+- `corrections` table with detected_pattern and matched_text
+- `compute_r_correct_raw()` in `pipeline/snapshots.py`
+- Wired into `runner.py` snapshot computation
+- Backfill: `scripts/backfill_corrections.py`
+- +15 tests
+- Future C+D options in README
 
-**Blocked on:** Architecture decision. No REQ defines the detection mechanism — only REQ-037 says "must track R_correct" as `[desired]`.
+**Evidence trail:**
+| Layer | Status | File |
+|---|---|---|
+| Detection patterns | 5 patterns (AP, CNN, NYT) | `pipeline/corrections.py` |
+| DB storage | corrections table | `db/corrections.py` |
+| Snapshot computation | corr/articles ratio | `pipeline/snapshots.py:compute_r_correct_raw()` |
+| Runner wiring | percentile rank + write | `pipeline/runner.py:174,183,209` |
+| Backfill script | 16 detected | `scripts/backfill_corrections.py` |
 
 ### 4. Multi-vertical classification (Economics, Technology) ✅ DONE (2026-06-30)
 
@@ -106,11 +127,11 @@ Deleted `pipeline/reputation.py` and `pipeline/test_reputation.py` (114 lines to
 | # | Task | Blocked? | Impact | Est. Effort |
 |---|---|---|---|---|
 | 1 | Wire R_edit into snapshot computation | ✅ Done | High — 4th radar dimension live | ~30 lines |
-| 2 | R_frame — build framing consistency agent | Yes — needs design | Medium | Unknown |
-| 3 | R_correct — build correction detection | Yes — needs design | Medium | Unknown |
+| 2 | R_frame — build framing consistency agent | Partially done | Medium | Scorers built, LLM backfill rate-limited |
+| 3 | R_correct — build correction detection | ✅ Done | Medium | 16 detected, wired into snapshots |
 | 4 | Multi-vertical classification | ✅ Done | High — embedding-proximity classifier | 120 lines |
 | 5 | Fix CLAUDE.md page count | ✅ Done | Trivial | 1 line |
 | 6 | Add ClusterReport + Timeline tests | ✅ Done | Low | +20 tests |
-| 7 | Radar hexagon completeness | Depends on 2+3 | Visual only | Inherited |
+| 7 | Radar hexagon completeness | R_frame wiring pending | Visual only | 1 dimension left |
 | 8 | Lazy-load openai import | ❌ Stale — openai already installed | N/A | N/A |
 | 9 | reputation.py dead code | ✅ Done | Low | Delete 114 lines |

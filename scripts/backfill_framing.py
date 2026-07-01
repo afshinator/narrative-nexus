@@ -97,23 +97,35 @@ def main():
 
             if llm_client is not None and body.strip():
                 prompt = score_llm_prompt(body)
-                try:
-                    raw = asyncio.run(
-                        llm_client.chat(
-                            messages=[
-                                {"role": "user", "content": prompt},
-                            ],
-                            response_format={"type": "json_object"},
-                            temperature=0.0,
-                            max_tokens=2000,
+                llm_score = None
+                # Retry with exponential backoff on rate limits
+                max_retries = 3
+                for attempt in range(max_retries):
+                    try:
+                        raw = asyncio.run(
+                            llm_client.chat(
+                                messages=[
+                                    {"role": "user", "content": prompt},
+                                ],
+                                response_format={"type": "json_object"},
+                                temperature=0.0,
+                                max_tokens=2000,
+                            )
                         )
-                    )
-                    parsed = json.loads(raw)
-                    score_val = parsed.get("score")
-                    if score_val is not None:
-                        llm_score = float(score_val)
-                except Exception as e:
-                    print(f"  LLM error for article {art['id']}: {e}")
+                        parsed = json.loads(raw)
+                        score_val = parsed.get("score")
+                        if score_val is not None:
+                            llm_score = float(score_val)
+                        break  # success
+                    except Exception as e:
+                        err_str = str(e)
+                        if "429" in err_str and attempt < max_retries - 1:
+                            wait = (2 ** attempt) * 5  # 5, 10, 20 seconds
+                            print(f"  Rate limited, retrying in {wait}s (attempt {attempt + 1}/{max_retries})...")
+                            time.sleep(wait)
+                        else:
+                            print(f"  LLM error for article {art['id']}: {e}")
+                            break
 
             batch.append({
                 "article_id": art["id"],
