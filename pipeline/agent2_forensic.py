@@ -7,7 +7,8 @@ claims into the database.
 Uses response_format={"type": "json_object"} for guaranteed valid JSON.
 Temperature 0.0 for deterministic extraction.
 
-ponytail: Single-pass extraction (neutralization + claims in one call).
+ponytail: Single-pass extraction (bias rating + neutralization + claims in one call).
+ponytail: Lexical and sentiment scores computed locally (no API) per article.
 ponytail: Claims from malformed JSON are silently skipped.
 """
 
@@ -17,25 +18,43 @@ from typing import Any
 
 from pipeline.llm_client import LLMClient
 from pipeline.base_agent import BasePipelineAgent
+from pipeline.framing import score_lexical, score_sentiment
 from db.connection import get_db
 from db.claims import insert_claim
 from db.claim_sources import add_claim_source
+from db.framing import insert_framing_scores
 
 # ── Extraction prompt ────────────────────────────────────────────────────
 # One system message defining the task, then the article body as user message.
 
-EXTRACTION_SYSTEM_PROMPT = """You are a forensic claim extractor. Your job is to read news articles and extract every atomic, verifiable factual claim they make.
+EXTRACTION_SYSTEM_PROMPT = """You are a forensic claim extractor. For each article you receive:
 
-Rules:
-1. Strip editorial framing — remove adjectives, hedges, and passive-voice attribution
-2. Each claim must be a single self-contained statement that CAN be verified or falsified
-3. Claims must be atomic — one fact per claim, not compound statements
-4. Do NOT summarize, paraphrase, or add commentary
-5. Do NOT include opinions, predictions, or value judgments
-6. Include named entities (people, organizations, locations) in each claim
+STEP 1 — Rate editorial framing bias on a scale of 1-10:
+  1 = Pure wire-service style. Just the facts, no adjectives, no opinion.
+      Example: "The president signed the bill into law Tuesday afternoon."
+  3 = Mostly neutral with occasional loaded language.
+      Example: "The controversial legislation, debated for months, was signed Tuesday."
+  5 = Moderate editorial framing. Clear word choices that steer interpretation.
+      Example: "The embattled president reluctantly signed the deeply divisive bill into law."
+  7 = Heavy editorializing. Strong adjectives, clear author opinion, dramatic framing.
+      Example: "In a stunning capitulation, the president caved to pressure and signed the disastrous bill."
+  10 = Pure opinion piece. Every sentence carries judgment.
+      Example: "The corrupt administration rammed through yet another catastrophic policy Tuesday, proving once again that they answer only to their billionaire donors."
 
-You will receive multiple articles. Return JSON with a "results" array — one object per article. Each object has:
+STEP 2 — Strip editorial framing (remove adjectives, hedges, passive-voice attribution).
+
+STEP 3 — Extract every atomic, verifiable factual claim from the neutralized text.
+
+Rules for claims:
+1. Each claim must be a single self-contained statement that CAN be verified or falsified
+2. Claims must be atomic — one fact per claim, not compound statements
+3. Do NOT summarize, paraphrase, or add commentary
+4. Do NOT include opinions, predictions, or value judgments
+5. Include named entities (people, organizations, locations) in each claim
+
+Return JSON with a "results" array — one object per article:
   - "article_id": the integer ID provided with the article
+  - "framing_score": integer 1-10 from STEP 1
   - "claims": array of claim objects, each with "text" (string) and "entities" (array of strings)"""
 
 # ponytail: batch size tuned for free-tier rate limits. 5 articles per call
@@ -108,12 +127,14 @@ class ForensicExtractionAgent(BasePipelineAgent):
 
             # Build batched prompt: list each article with its ID
             articles_text = ""
+            body_map: dict[int, str] = {}  # article_id → full body for lexical/sentiment
             for row in batch:
                 articles_text += (
                     f"\n--- ARTICLE {row['id']} ---\n"
                     f"{row['title'] or ''}\n"
                     f"{row['body'][:400] or ''}\n"
                 )
+                body_map[row["id"]] = (row["body"] or "")[:2000]
 
             try:
                 raw = await client.chat(
@@ -156,6 +177,15 @@ class ForensicExtractionAgent(BasePipelineAgent):
                     if article_id is None or not isinstance(claims, list):
                         continue
 
+                    # Store LLM framing score if present
+                    framing_raw = result.get("framing_score")
+                    llm_score = None
+                    if framing_raw is not None:
+                        try:
+                            llm_score = float(framing_raw)
+                        except (ValueError, TypeError):
+                            pass
+
                     cluster_id = article_map.get(article_id)
                     if cluster_id is None:
                         continue
@@ -186,6 +216,15 @@ class ForensicExtractionAgent(BasePipelineAgent):
                                 first_seen_at=first_seen,
                             )
                     articles_processed += 1
+                    # Compute + store lexical and sentiment scores (no API)
+                    body = body_map.get(article_id, "")
+                    insert_framing_scores(
+                        conn,
+                        article_id=article_id,
+                        llm_score=llm_score,
+                        lexical_score=score_lexical(body),
+                        sentiment_score=score_sentiment(body),
+                    )
             finally:
                 conn.close()
 

@@ -199,6 +199,37 @@ def compute_r_edit_raw(conn: sqlite3.Connection, *, as_of: str | None = None) ->
     return result
 
 
+def compute_r_correct_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> dict[int, float | None]:
+    """Formal correction rate per source — corrections / articles ratio.
+
+    If as_of is provided, only corrections with detected_at <= as_of
+    are counted.  Returns {source_id: ratio} where values are 0-100.
+    None when a source has zero articles.
+    """
+    from db.sources import list_sources
+    from db.corrections import count_corrections_per_source
+
+    # Article count per source
+    art_rows = conn.execute(
+        "SELECT source_id, COUNT(*) as cnt FROM articles GROUP BY source_id"
+    ).fetchall()
+    article_counts = {row["source_id"]: row["cnt"] for row in art_rows}
+
+    # Correction count per source
+    correction_counts = count_corrections_per_source(conn, as_of=as_of)
+
+    result: dict[int, float | None] = {}
+    for source in list_sources(conn):
+        sid = source["id"]
+        art_cnt = article_counts.get(sid, 0)
+        if art_cnt == 0:
+            result[sid] = None
+        else:
+            corr_cnt = correction_counts.get(sid, 0)
+            result[sid] = (corr_cnt / art_cnt) * 100
+    return result
+
+
 def compute_panel_medians(
     r_orig: dict[int, float],
     r_val: dict[int, float],

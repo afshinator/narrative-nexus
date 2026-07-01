@@ -92,3 +92,24 @@ CREATE TABLE IF NOT EXISTS silent_edits (
 );
 
 CREATE INDEX IF NOT EXISTS idx_silent_edits_article ON silent_edits(article_id);
+
+-- Article framing scores — per-article editorial bias ratings
+-- llm_score: 1-10 from LLM, lexical_score: 0-1 word-list density, sentiment_score: -1 to +1 VADER compound
+CREATE TABLE IF NOT EXISTS article_framing (
+    article_id      INTEGER PRIMARY KEY REFERENCES articles(id),
+    llm_score       REAL,
+    lexical_score   REAL,
+    sentiment_score REAL,
+    computed_at     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Detected formal corrections in article bodies
+CREATE TABLE IF NOT EXISTS corrections (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    article_id        INTEGER NOT NULL REFERENCES articles(id),
+    detected_pattern  TEXT NOT NULL,
+    matched_text      TEXT,
+    detected_at       TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_corrections_article ON corrections(article_id);

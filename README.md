@@ -103,6 +103,21 @@ The project is in implementation. All 17 slices completed. Build passes, 356 tes
 
 ---
 
+## Future work
+
+### R_correct — Formal Correction Detection
+
+Current implementation detects corrections via inline body markers (AP, CNN, NYT patterns). Future enhancements:
+
+- **Option C — Scrape corrections pages:** Some outlets publish corrections on dedicated URLs (e.g., nytimes.com/corrections, apnews.com/about/ap-news-corrections). Requires per-site scraping rules and periodic polling.
+- **Option D — Wayback/archive diffing:** Periodically re-fetch old article URLs, diff against stored body text. Detects both silent edits and formal corrections. Heavy on bandwidth and computation; needs a rate-limited polling schedule.
+
+### R_frame — Framing Consistency
+
+Current implementation collects 3 framing scores (LLM, lexical, sentiment) per article. R_frame snapshot wiring (variance computation + percentile rank) deferred to user's scorer selection.
+
+---
+
 ## Pre-submission cleanup
 
 Items to address before finalizing the project:
