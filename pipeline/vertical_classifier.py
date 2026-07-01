@@ -6,10 +6,10 @@ edit VERTICAL_PROTOTYPES below — richer descriptions improve accuracy.
 Uses sentence-transformers (all-MiniLM-L6-v2, same as Agent 1 embeddings).
 Prototype embeddings are computed once and cached in memory.
 """
+from __future__ import annotations
 from collections import Counter
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 # ── Vertical prototypes ─────────────────────────────────────────────────
 # Richer = better separation. These paragraphs define what each vertical
@@ -57,6 +57,7 @@ def _get_model() -> SentenceTransformer:
     """Lazy-load the embedding model (shared with Agent 1's local-cpu path)."""
     global _model
     if _model is None:
+        from sentence_transformers import SentenceTransformer  # lazy import — server doesn't need it
         _model = SentenceTransformer("all-MiniLM-L6-v2")
     return _model
 

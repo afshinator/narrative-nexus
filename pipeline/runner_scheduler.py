@@ -4,7 +4,6 @@ the scraper scheduler for clean shutdown/isolation in app/main.py lifespan."""
 from datetime import datetime, timezone
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from pipeline.runner import run_daily_pipeline
 
 
 def start_pipeline_scheduler(
@@ -31,6 +30,7 @@ def start_pipeline_scheduler(
         """Thin wrapper: run the pipeline and swallow/log errors so one bad
         run doesn't stop the scheduler from retrying on the next tick."""
         try:
+            from pipeline.runner import run_daily_pipeline  # lazy import — server doesn't need pipeline deps
             result = run_daily_pipeline(
                 db_path,
                 provider_overrides=provider_overrides,

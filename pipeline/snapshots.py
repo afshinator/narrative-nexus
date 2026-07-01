@@ -148,7 +148,7 @@ def percentile_rank(raw: dict[int, float]) -> dict[int, float]:
         j = i
         while j < n and sorted_items[j][1] == sorted_items[i][1]:
             j += 1
-        pct = (i / (n - 1)) * 100 if n > 1 else 100.0
+        pct = round((i / (n - 1)) * 100) if n > 1 else 100.0
         for k in range(i, j):
             result[sorted_items[k][0]] = pct
         i = j

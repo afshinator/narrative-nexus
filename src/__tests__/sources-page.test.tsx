@@ -76,6 +76,15 @@ describe("Sources Page", () => {
 			expect(svg.textContent).toContain("CONSENSUS FOLLOWERS");
 		});
 
+		it("renders axis explanations", () => {
+			renderSources();
+			// ponytail: check for the explanatory paragraphs directly
+			const xLabel = screen.getByText(/how often this source is first to report/i);
+			expect(xLabel).toBeInTheDocument();
+			const yLabel = screen.getByText(/how often this source.*outlier claims become/i);
+			expect(yLabel).toBeInTheDocument();
+		});
+
 		it("renders scatter markers when scores are provided", () => {
 			const testScores = [
 				{

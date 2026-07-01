@@ -118,6 +118,10 @@ Added `src/__tests__/cluster-report.test.tsx` (8 tests) and `src/__tests__/timel
 
 ### 9. `pipeline/reputation.py` — 6 pure functions, zero production callers ✅ DONE (2026-06-30)
 
+### 10. Onboarding/startup modal fontsize too small
+
+Source Profile page startup modal text is too small. Needs larger font size for readability. Check `src/pages/SourceProfile.tsx` startup modal styles.
+
 Deleted `pipeline/reputation.py` and `pipeline/test_reputation.py` (114 lines total). The actual snapshot computation uses `*_raw()` variants in `pipeline/snapshots.py`. No production callers lost. No test coverage gap — snapshots.py functions are tested via `test_snapshots.py`.
 
 ---
@@ -135,3 +139,4 @@ Deleted `pipeline/reputation.py` and `pipeline/test_reputation.py` (114 lines to
 | 7 | Radar hexagon completeness | R_frame wiring pending | Visual only | 1 dimension left |
 | 8 | Lazy-load openai import | ❌ Stale — openai already installed | N/A | N/A |
 | 9 | reputation.py dead code | ✅ Done | Low | Delete 114 lines |
+| 10 | Startup modal fontsize too small | UI fix — font size in SourceProfile.tsx | Low | CSS tweak |

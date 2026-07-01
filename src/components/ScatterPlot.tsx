@@ -23,22 +23,21 @@ interface Props {
 	data: EnrichedSource[];
 	hoveredId: string | null;
 	onHover: (id: string | null) => void;
+	onHoverPosition?: (id: string | null, x: number, y: number) => void;
 	onSelect: (id: string) => void;
 }
-
-// Tier-based shape encoding — centralized in src/utils/shapes.ts (review-03 M07)
 
 export default function ScatterPlot({
 	data,
 	hoveredId,
 	onHover,
+	onHoverPosition,
 	onSelect,
 }: Props) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [size, setSize] = useState(0);
 
-	// Re-render when container resizes
 	useEffect(() => {
 		const el = containerRef.current;
 		if (!el) return;
@@ -63,7 +62,7 @@ export default function ScatterPlot({
 		const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
 		const yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d"));
 
-		// Top-right quadrant — EARLY BREAKERS (navy)
+		// Quadrant backgrounds
 		svg
 			.append("rect")
 			.attr("x", xScale(50))
@@ -73,7 +72,6 @@ export default function ScatterPlot({
 			.attr("fill", "var(--nn-navy)")
 			.attr("opacity", 0.09);
 
-		// Bottom-right quadrant — NOISE GENERATORS (red)
 		svg
 			.append("rect")
 			.attr("x", xScale(50))
@@ -83,7 +81,6 @@ export default function ScatterPlot({
 			.attr("fill", "var(--nn-red)")
 			.attr("opacity", 0.09);
 
-		// Top-left quadrant — SELECTIVE BUT ACCURATE (teal)
 		svg
 			.append("rect")
 			.attr("x", 0)
@@ -93,7 +90,6 @@ export default function ScatterPlot({
 			.attr("fill", "var(--nn-teal)")
 			.attr("opacity", 0.09);
 
-		// Bottom-left quadrant — CONSENSUS FOLLOWERS (slate)
 		svg
 			.append("rect")
 			.attr("x", 0)
@@ -181,17 +177,31 @@ export default function ScatterPlot({
 				.attr("stroke", "var(--nn-bg)")
 				.attr("stroke-width", 1)
 				.attr("opacity", 1)
+				.attr("role", "button")
+				.attr("tabindex", 0)
+				.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${Math.round(d.R_val)}`)
 				.style("cursor", "pointer")
-				.on("mouseenter", (_e, d) => onHover(d.sourceId))
-				.on("mouseleave", () => onHover(null))
-				.on("click", (_e, d) => onSelect(d.sourceId));
+				.on("mouseenter", (event, d) => {
+					onHover(d.sourceId);
+					onHoverPosition?.(d.sourceId, event.pageX, event.pageY);
+				})
+				.on("mouseleave", () => {
+					onHover(null);
+					onHoverPosition?.(null, 0, 0);
+				})
+				.on("click", (_e, d) => onSelect(d.sourceId))
+				.on("keydown", (event, d) => {
+					if (event.key === "Enter" || event.key === " ") {
+						event.preventDefault();
+						onSelect(d.sourceId);
+					}
+				});
 
-			// Dim non-hovered markers when hover is active (dim-mode)
 			if (hoveredId) {
 				markers.attr("opacity", (d) => (d.sourceId === hoveredId ? 1 : 0.15));
 			}
 		}
-	}, [data, hoveredId, onHover, onSelect, size]);
+	}, [data, hoveredId, onHover, onHoverPosition, onSelect, size]);
 
 	return (
 		<div ref={containerRef} className="relative h-[380px] w-full">
