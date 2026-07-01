@@ -34,7 +34,9 @@ type SortKey = "name" | (typeof SCORE_COLUMNS)[number]["key"];
 export default function SourcesPage({ scores: propScores }: Props) {
 	const navigate = useNavigate();
 	const [hoveredSource, setHoveredSource] = useState<string | null>(null);
-	const [tooltipPos, setTooltipPos] = useState<{x: number; y: number} | null>(null);
+	const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
+		null,
+	);
 	const [sortKey, setSortKey] = useState<SortKey>("name");
 	const [sortDir, setSortDir] = useState<1 | -1>(1);
 	const [vertical, setVertical] = useState<VerticalThresholdKey>("geopolitics");
@@ -233,18 +235,36 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</div>
 				<div className="mb-3 space-y-2 font-sans text-[0.78rem] text-[var(--nn-text)]">
 					<p>
-						<strong>X-axis:</strong> Origination (0–100) — how often this source is first to report a story that becomes consensus-absorbed.
+						<strong>X-axis:</strong> Origination (0–100) — how often this source
+						is first to report a story that becomes consensus-absorbed.
 					</p>
 					<p>
-						<strong>Y-axis:</strong> Validation (0–100) — how often this source's outlier claims become consensus-absorbed.
+						<strong>Y-axis:</strong> Validation (0–100) — how often this
+						source's outlier claims become consensus-absorbed.
 					</p>
 				</div>
 				<div className="mb-3 space-y-1 font-sans text-[0.75rem] text-[var(--nn-text)]">
 					{[
-						{ color: "var(--nn-navy)", label: "Early Breaker", desc: "high origination + high validation — consistently breaks stories that become consensus-absorbed" },
-						{ color: "var(--nn-red)", label: "Noise Generator", desc: "high origination, low validation — frequently first, rarely becomes consensus-absorbed" },
-						{ color: "var(--nn-teal)", label: "Selective but Accurate", desc: "low origination, high validation — late to stories but reliable" },
-						{ color: "var(--nn-slate)", label: "Consensus Follower", desc: "low origination, low validation — safe but uninformative" },
+						{
+							color: "var(--nn-navy)",
+							label: "Early Breaker",
+							desc: "high origination + high validation — consistently breaks stories that become consensus-absorbed",
+						},
+						{
+							color: "var(--nn-red)",
+							label: "Noise Generator",
+							desc: "high origination, low validation — frequently first, rarely becomes consensus-absorbed",
+						},
+						{
+							color: "var(--nn-teal)",
+							label: "Selective but Accurate",
+							desc: "low origination, high validation — late to stories but reliable",
+						},
+						{
+							color: "var(--nn-slate)",
+							label: "Consensus Follower",
+							desc: "low origination, low validation — safe but uninformative",
+						},
 					].map((item) => (
 						<div key={item.label} className="flex items-baseline gap-1.5">
 							<span
@@ -253,7 +273,10 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							/>
 							<span>
 								<span style={{ color: item.color }}>{item.label}</span>
-								<span className="text-[var(--nn-text-dim)]"> — {item.desc}</span>
+								<span className="text-[var(--nn-text-dim)]">
+									{" "}
+									— {item.desc}
+								</span>
 							</span>
 						</div>
 					))}
@@ -265,26 +288,31 @@ export default function SourcesPage({ scores: propScores }: Props) {
 					onHoverPosition={handleHoverPosition}
 					onSelect={handleSelect}
 				/>
-				{tooltipPos && hoveredSource && (() => {
-					const source = scatterData.find((s) => s.sourceId === hoveredSource);
-					if (!source) return null;
-					return (
-						<div
-							className="pointer-events-none fixed z-50 rounded-[8px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-3 py-2 shadow-lg transition-opacity duration-150"
-							style={{
-								left: tooltipPos.x + 12,
-								top: tooltipPos.y - 10,
-							}}
-						>
-							<div className="font-sans text-[0.82rem] font-semibold text-[var(--nn-text)]">
-								{source.name}
+				{tooltipPos &&
+					hoveredSource &&
+					(() => {
+						const source = scatterData.find(
+							(s) => s.sourceId === hoveredSource,
+						);
+						if (!source) return null;
+						return (
+							<div
+								className="pointer-events-none fixed z-50 rounded-[8px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-3 py-2 shadow-lg transition-opacity duration-150"
+								style={{
+									left: tooltipPos.x + 12,
+									top: tooltipPos.y - 10,
+								}}
+							>
+								<div className="font-sans text-[0.82rem] font-semibold text-[var(--nn-text)]">
+									{source.name}
+								</div>
+								<div className="font-mono text-[0.72rem] tabular-nums text-[var(--nn-text-dim)]">
+									Origination {Math.round(source.R_orig)} · Validation{" "}
+									{Math.round(source.R_val)}
+								</div>
 							</div>
-							<div className="font-mono text-[0.72rem] tabular-nums text-[var(--nn-text-dim)]">
-								Origination {Math.round(source.R_orig)} · Validation {Math.round(source.R_val)}
-							</div>
-						</div>
-					);
-				})()}
+						);
+					})()}
 			</div>
 
 			{/* Ledger card */}
@@ -295,24 +323,43 @@ export default function SourcesPage({ scores: propScores }: Props) {
 					</h2>
 				</div>
 				<div className="mb-3 space-y-1.5 font-sans text-[0.72rem] text-[var(--nn-text)]">
-					<p>Each source scored 0–100 across six reputation dimensions. Click column headers to sort.</p>
+					<p>
+						Each source scored 0–100 across six reputation dimensions. Click
+						column headers to sort.
+					</p>
 					<div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
 						<span className="font-semibold">Origination</span>
-						<span className="text-[var(--nn-text-dim)]">first to report a story that becomes consensus-absorbed</span>
+						<span className="text-[var(--nn-text-dim)]">
+							first to report a story that becomes consensus-absorbed
+						</span>
 						<span className="font-semibold">Validation</span>
-						<span className="text-[var(--nn-text-dim)]">claims absorbed by the panel consensus</span>
+						<span className="text-[var(--nn-text-dim)]">
+							claims absorbed by the panel consensus
+						</span>
 						<span className="font-semibold">Speed</span>
-						<span className="text-[var(--nn-text-dim)]">how quickly claims spread (lower is faster)</span>
-						<span className="font-semibold">Framing<span className="text-[var(--nn-text-dim)]">*</span></span>
-						<span className="text-[var(--nn-text-dim)]">editorial consistency — pending</span>
+						<span className="text-[var(--nn-text-dim)]">
+							how quickly claims spread (lower is faster)
+						</span>
+						<span className="font-semibold">
+							Framing<span className="text-[var(--nn-text-dim)]">*</span>
+						</span>
+						<span className="text-[var(--nn-text-dim)]">
+							editorial consistency — pending
+						</span>
 						<span className="font-semibold">Silent Edits</span>
-						<span className="text-[var(--nn-text-dim)]">rate of unreported article changes</span>
-						<span className="font-semibold">Corrections<span className="text-[var(--nn-text-dim)]">*</span></span>
-						<span className="text-[var(--nn-text-dim)]">formal correction rate — pending</span>
+						<span className="text-[var(--nn-text-dim)]">
+							rate of unreported article changes
+						</span>
+						<span className="font-semibold">
+							Corrections<span className="text-[var(--nn-text-dim)]">*</span>
+						</span>
+						<span className="text-[var(--nn-text-dim)]">
+							formal correction rate — pending
+						</span>
 					</div>
 					<p className="text-[var(--nn-text-dim)]">
-						* Not yet computed — shows "—" for all sources.
-						Sources with 0 Validation have no consensus-absorbed claims yet.
+						* Not yet computed — shows "—" for all sources. Sources with 0
+						Validation have no consensus-absorbed claims yet.
 					</p>
 				</div>
 				<p className="mb-2 font-sans text-[0.72rem] text-[var(--nn-text-dim)]">
@@ -324,10 +371,21 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							<tr>
 								<th
 									scope="col"
-									aria-sort={sortKey === "name" ? (sortDir === 1 ? "ascending" : "descending") : "none"}
+									aria-sort={
+										sortKey === "name"
+											? sortDir === 1
+												? "ascending"
+												: "descending"
+											: "none"
+									}
 									className="px-2.5 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)] cursor-pointer select-none hover:text-[var(--nn-text)]"
 									onClick={() => handleSort("name")}
-									onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort("name"); } }}
+									onKeyDown={(e) => {
+										if (e.key === "Enter" || e.key === " ") {
+											e.preventDefault();
+											handleSort("name");
+										}
+									}}
 									tabIndex={0}
 								>
 									Source{sortArrow("name")}
@@ -336,15 +394,36 @@ export default function SourcesPage({ scores: propScores }: Props) {
 									<th
 										key={col.key}
 										scope="col"
-										aria-sort={sortKey === col.key ? (sortDir === 1 ? "ascending" : "descending") : "none"}
-										title={col.direction === "higher" ? "Higher is better" : col.direction === "lower" ? "Lower is better" : ""}
+										aria-sort={
+											sortKey === col.key
+												? sortDir === 1
+													? "ascending"
+													: "descending"
+												: "none"
+										}
+										title={
+											col.direction === "higher"
+												? "Higher is better"
+												: col.direction === "lower"
+													? "Lower is better"
+													: ""
+										}
 										className="px-2.5 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)] cursor-pointer select-none hover:text-[var(--nn-text)]"
 										onClick={() => handleSort(col.key)}
-										onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleSort(col.key); } }}
+										onKeyDown={(e) => {
+											if (e.key === "Enter" || e.key === " ") {
+												e.preventDefault();
+												handleSort(col.key);
+											}
+										}}
 										tabIndex={0}
 									>
 										{col.label}
-										{col.direction === "higher" ? " ↑" : col.direction === "lower" ? " ↓" : ""}
+										{col.direction === "higher"
+											? " ↑"
+											: col.direction === "lower"
+												? " ↓"
+												: ""}
 										{sortArrow(col.key)}
 									</th>
 								))}

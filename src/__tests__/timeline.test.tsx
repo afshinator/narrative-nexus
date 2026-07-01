@@ -166,9 +166,7 @@ describe("Timeline Page", () => {
 		mockFetch(singleClaimData);
 		renderPage();
 		await waitFor(() =>
-			expect(
-				screen.getByText("Single Claim Cluster"),
-			).toBeInTheDocument(),
+			expect(screen.getByText("Single Claim Cluster")).toBeInTheDocument(),
 		);
 		// No crash = test passes
 		expect(screen.getByText("Only claim")).toBeInTheDocument();
@@ -197,17 +195,13 @@ describe("positionPercent", () => {
 	it("returns 100% at range end", () => {
 		const start = new Date("2026-06-01T00:00:00Z").getTime();
 		const ms = 24 * 60 * 60 * 1000;
-		expect(
-			positionPercent("2026-06-02T00:00:00Z", start, ms),
-		).toBe(100);
+		expect(positionPercent("2026-06-02T00:00:00Z", start, ms)).toBe(100);
 	});
 
 	it("returns 50% at midpoint", () => {
 		const start = new Date("2026-06-01T00:00:00Z").getTime();
 		const ms = 24 * 60 * 60 * 1000;
-		expect(
-			positionPercent("2026-06-01T12:00:00Z", start, ms),
-		).toBe(50);
+		expect(positionPercent("2026-06-01T12:00:00Z", start, ms)).toBe(50);
 	});
 
 	it("returns 0% when rangeMs is 0", () => {

@@ -179,7 +179,11 @@ export default function ScatterPlot({
 				.attr("opacity", 1)
 				.attr("role", "button")
 				.attr("tabindex", 0)
-				.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${Math.round(d.R_val)}`)
+				.attr(
+					"aria-label",
+					(d) =>
+						`${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${Math.round(d.R_val)}`,
+				)
 				.style("cursor", "pointer")
 				.on("mouseenter", (event, d) => {
 					onHover(d.sourceId);

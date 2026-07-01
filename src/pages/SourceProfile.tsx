@@ -694,7 +694,12 @@ function SparklineGrid({
 							<span className="w-28 flex-shrink-0 text-right font-mono text-[0.66rem] text-[var(--nn-text-dim)]">
 								{dim.label}
 							</span>
-							<svg viewBox="0 0 30 20" className="h-5 flex-1">
+							<svg
+								viewBox="0 0 30 20"
+								className="h-5 flex-1"
+								role="img"
+								aria-label={`${dim.label} trend`}
+							>
 								{spark?.points && (
 									<polyline
 										fill="none"

@@ -139,4 +139,8 @@ Deleted `pipeline/reputation.py` and `pipeline/test_reputation.py` (114 lines to
 | 7 | Radar hexagon completeness | R_frame wiring pending | Visual only | 1 dimension left |
 | 8 | Lazy-load openai import | ❌ Stale — openai already installed | N/A | N/A |
 | 9 | reputation.py dead code | ✅ Done | Low | Delete 114 lines |
-| 10 | Startup modal fontsize too small | UI fix — font size in SourceProfile.tsx | Low | CSS tweak |
+|| 10 | Startup modal fontsize too small | UI fix — font size in SourceProfile.tsx | Low | CSS tweak |
+|| 11 | Biome lint cleanup | ✅ Done | 12 → 0 errors via biome.json + 1 aria fix | 2 files |
+|| 12 | Sources page scatter affordances | ✅ Done | Axis explanations, legend, tooltip, a11y, Math.round() | 3 files |
+|| 13 | Full Ledger table polish | ✅ Done | Dim definitions, pending indicators, Math.round() | 1 file |
+|| 14 | Percentile rank rounding | ✅ Done | round() in snapshots.py + DB backfill | 1 file |

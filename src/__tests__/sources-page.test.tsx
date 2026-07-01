@@ -79,9 +79,13 @@ describe("Sources Page", () => {
 		it("renders axis explanations", () => {
 			renderSources();
 			// ponytail: check for the explanatory paragraphs directly
-			const xLabel = screen.getByText(/how often this source is first to report/i);
+			const xLabel = screen.getByText(
+				/how often this source is first to report/i,
+			);
 			expect(xLabel).toBeInTheDocument();
-			const yLabel = screen.getByText(/how often this source.*outlier claims become/i);
+			const yLabel = screen.getByText(
+				/how often this source.*outlier claims become/i,
+			);
 			expect(yLabel).toBeInTheDocument();
 		});
 
