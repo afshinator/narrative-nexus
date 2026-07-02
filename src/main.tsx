@@ -41,3 +41,12 @@ if (import.meta.hot) {
 		unsub();
 	});
 }
+
+// Catch unhandled errors outside React's error boundary (event handlers,
+// Zustand subscribe, Chart.js callbacks). Log to console for debugging.
+window.onerror = (msg, _source, _lineno, _colno, error) => {
+	console.error("[window.onerror]", msg, error?.stack?.slice(0, 300));
+};
+window.onunhandledrejection = (event) => {
+	console.error("[unhandledrejection]", event.reason);
+};

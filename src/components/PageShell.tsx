@@ -11,7 +11,7 @@ export default function PageShell() {
 					<Outlet />
 				</ErrorBoundary>
 			</main>
-			<footer className="py-9 text-center font-mono text-[0.7rem] tracking-[0.04em] text-[var(--nn-text-dim)]">
+			<footer className="py-9 text-center font-mono text-[1.1rem] tracking-[0.04em] text-[var(--nn-text)]">
 				Narrative Nexus tracks consensus reality, not truth
 			</footer>
 		</div>

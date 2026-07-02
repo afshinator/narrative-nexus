@@ -75,8 +75,12 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		};
 	}, [vertical]);
 
-	// ponytail: use fetched scores when available, otherwise props
-	const scores = fetchedScores.length > 0 ? fetchedScores : (propScores ?? []);
+	// ponytail: useMemo prevents new [] reference on every render before fetch completes.
+	// An unstable scores ref cascades into scoreMap → scatterData → D3 rebuild.
+	const scores = useMemo(
+		() => fetchedScores.length > 0 ? fetchedScores : (propScores ?? []),
+		[fetchedScores, propScores],
+	);
 
 	const scoreMap = useMemo(
 		() =>
@@ -284,7 +288,6 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				<ScatterPlot
 					data={scatterData}
 					hoveredId={hoveredSource}
-					onHover={setHoveredSource}
 					onHoverPosition={handleHoverPosition}
 					onSelect={handleSelect}
 				/>
@@ -306,13 +309,36 @@ export default function SourcesPage({ scores: propScores }: Props) {
 								<div className="font-sans text-[0.82rem] font-semibold text-[var(--nn-text)]">
 									{source.name}
 								</div>
-								<div className="font-mono text-[0.72rem] tabular-nums text-[var(--nn-text-dim)]">
-									Origination {Math.round(source.R_orig)} · Validation{" "}
+								<div className="font-mono text-[0.82rem] tabular-nums text-[var(--nn-text)]">
+									Tier {source.tier} · Origination {Math.round(source.R_orig)} · Validation{" "}
 									{Math.round(source.R_val)}
 								</div>
 							</div>
 						);
 					})()}
+			</div>
+
+			{/* Shape legend + R_val=0 explanation */}
+			<div className="mt-4 flex flex-wrap items-start gap-6 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+				<div>
+					<span className="font-semibold text-[var(--nn-text)]">Shapes = Source Tier</span>
+					<div>● Circle — Tier 1: Major Wire Services</div>
+					<div>■ Square — Tier 2: National Outlets</div>
+					<div>◆ Diamond — Tier 3: Regional / Specialized</div>
+					<div>▲ Triangle — Tier 4: Investigative / Alternative</div>
+					<div>✚ Cross — Tier 5: Propaganda / Fringe</div>
+				</div>
+				<div className="min-w-0 flex-1 border-l border-[var(--nn-border)] pl-4">
+					<span className="font-semibold text-[var(--nn-amber)]">Why are shapes at the bottom?</span>
+					<p>
+						Validation (Y-axis) measures how often a source's claims become
+						consensus-absorbed. Consensus is defined by agreement among Tier
+						1–2 sources (major wire services and national outlets). Sources
+						in Tiers 3–5 whose claims are not corroborated by mainstream
+						outlets will show Validation = 0 — this is not a bug, it reflects
+						their isolation from the mainstream consensus ecosystem.
+					</p>
+				</div>
 			</div>
 
 			{/* Ledger card */}
@@ -322,7 +348,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 						Full Ledger
 					</h2>
 				</div>
-				<div className="mb-3 space-y-1.5 font-sans text-[0.72rem] text-[var(--nn-text)]">
+				<div className="mb-3 space-y-1.5 font-sans text-[0.85rem] text-[var(--nn-text)]">
 					<p>
 						Each source scored 0–100 across six reputation dimensions. Click
 						column headers to sort.
@@ -341,20 +367,20 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							how quickly claims spread (lower is faster)
 						</span>
 						<span className="font-semibold">
-							Framing<span className="text-[var(--nn-text-dim)]">*</span>
+							Framing
 						</span>
 						<span className="text-[var(--nn-text-dim)]">
-							editorial consistency — pending
+							consistency of editorial framing across stories
 						</span>
 						<span className="font-semibold">Silent Edits</span>
 						<span className="text-[var(--nn-text-dim)]">
 							rate of unreported article changes
 						</span>
 						<span className="font-semibold">
-							Corrections<span className="text-[var(--nn-text-dim)]">*</span>
+							Corrections
 						</span>
 						<span className="text-[var(--nn-text-dim)]">
-							formal correction rate — pending
+							rate of formal published corrections
 						</span>
 					</div>
 					<p className="text-[var(--nn-text-dim)]">
@@ -450,7 +476,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 									{SCORE_COLUMNS.map((col) => (
 										<td
 											key={col.key}
-											className="px-2.5 py-2.5 font-mono text-[0.8rem] tabular-nums text-[var(--nn-text-dim)]"
+											className="px-2.5 py-2.5 font-mono text-[0.8rem] tabular-nums text-[var(--nn-text)]"
 										>
 											{score != null
 												? Math.round(score[col.key] as number)

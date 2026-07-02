@@ -18,19 +18,44 @@ A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geop
 
 ## Quick start
 
-### Local development
+### Local development (outside Docker)
 
 ```bash
+# 1. Install deps
 npm install
-npm run dev       # Vite dev server on port 5173, proxies /api to localhost:8000
+pip install -r requirements.txt
+
+# 2. Create .env with API keys (gitignored, survives crashes)
+cat > .env << 'EOF'
+DEEPSEEK_API_KEY=sk-...
+FIREWORKS_API_KEY=...
+EOF
+
+# 3. Start backend (port 3006)
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 3006
+
+# 4. Start frontend — dev mode with HMR (port 3015)
+npm run dev -- --host 0.0.0.0 --port 3015
+
+# Or: production build (no HMR, faster, more stable)
+npm run build
+npx vite preview --host 0.0.0.0 --port 3015
 ```
 
-Backend (separate terminal):
+**Verify everything works:**
 
 ```bash
-pip install -r requirements.txt
-OPENCODE_API_KEY=... uvicorn app.main:app --host 0.0.0.0 --port 8000
+python3 scripts/sanity_check.py    # 17 checks — backend, proxy, data integrity, build
 ```
+
+Open http://localhost:3015 in your browser.
+
+**Port conventions (dev-servers.md):**
+
+| Port | Service |
+|------|---------|
+| 3006 | Backend API (FastAPI/uvicorn) |
+| 3015 | Frontend (Vite dev or preview) |
 
 ### Docker (hackathon submission format)
 

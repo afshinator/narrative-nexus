@@ -1,4 +1,5 @@
 import { RotateCcw } from "lucide-react";
+import { startTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -67,7 +68,7 @@ export default function SettingsPage() {
 					<span className="text-sm text-muted-foreground">Dark mode</span>
 					<Switch
 						checked={theme === "dark"}
-						onCheckedChange={(v) => setTheme(v ? "dark" : "light")}
+						onCheckedChange={(v) => startTransition(() => setTheme(v ? "dark" : "light"))}
 						aria-label="Toggle dark mode"
 					/>
 				</div>

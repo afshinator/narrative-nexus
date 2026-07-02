@@ -4,7 +4,6 @@ import { DEFAULT_SOURCES } from "./data/sources";
 import type { Thresholds, VerticalThresholdKey } from "./data/thresholds";
 import { DEFAULT_THRESHOLDS } from "./data/thresholds";
 
-// Use string literal unions — NOT enums (banned by erasableSyntaxOnly in TS6)
 export type Theme = "dark" | "light";
 export type Archetype =
 	| "EARLY_BREAKER"
@@ -88,6 +87,17 @@ export const useStore = create<StoreState>()(
 					adHocResults: state.adHocResults.filter((r) => r.id !== id),
 				})),
 		}),
-		{ name: "nn-store" },
+		{
+			name: "nn-store",
+			// Only persist appearance preferences + thresholds + active sources.
+			// adHocResults grows unboundedly and should never be persisted.
+			partialize: (state) => ({
+				theme: state.theme,
+				fontScale: state.fontScale,
+				onboardingComplete: state.onboardingComplete,
+				consensusThresholds: state.consensusThresholds,
+				activeSources: state.activeSources,
+			}),
+		},
 	),
 );

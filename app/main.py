@@ -129,12 +129,20 @@ def api_source_profile(
         return JSONResponse({"detail": "Source not found"}, status_code=404)
 
     # ── Snapshots with day mapping ──────────────────────────────────────
+    # ponytail: limit to last 180 days to avoid 166KB payloads (1200+ snapshots).
+    # The frontend only shows the last 90 days (DAY_MAX).
+    row_count = conn.execute(
+        "SELECT COUNT(*) FROM snapshots WHERE source_id = ? AND vertical = ?",
+        (source_id, vertical),
+    ).fetchone()[0]
+    skip = max(0, row_count - 180)
     rows = conn.execute(
         """SELECT date, r_orig, r_val, r_speed, r_frame, r_edit, r_correct
            FROM snapshots
            WHERE source_id = ? AND vertical = ?
-           ORDER BY date""",
-        (source_id, vertical),
+           ORDER BY date
+           LIMIT 180 OFFSET ?""",
+        (source_id, vertical, skip),
     ).fetchall()
 
     snapshots = []
