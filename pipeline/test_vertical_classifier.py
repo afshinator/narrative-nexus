@@ -7,6 +7,13 @@ from pipeline.vertical_classifier import (
     get_vertical_list,
 )
 
+# ── Check sentence-transformers availability ──
+_sent_trans_available = True
+try:
+    from sentence_transformers import SentenceTransformer  # noqa: F401
+except ImportError:
+    _sent_trans_available = False
+
 
 class TestGetVerticalList:
     def test_returns_all_three_verticals(self):
@@ -22,6 +29,7 @@ class TestClassifyText:
         assert classify_text("") == "geopolitics"
         assert classify_text("   ") == "geopolitics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_geopolitics_article(self):
         text = (
             "The United States conducted retaliatory airstrikes against Iranian "
@@ -29,6 +37,7 @@ class TestClassifyText:
         )
         assert classify_text(text) == "geopolitics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_economics_article(self):
         text = (
             "The Federal Reserve raised interest rates by 0.25 percentage points "
@@ -36,6 +45,7 @@ class TestClassifyText:
         )
         assert classify_text(text) == "economics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_technology_article(self):
         text = (
             "An artificial intelligence startup raised 500 million dollars in "
@@ -43,6 +53,7 @@ class TestClassifyText:
         )
         assert classify_text(text) == "technology"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_geopolitics_clearly_wins_over_economics(self):
         """Military conflict should score higher on geopolitics than economics."""
         text = (
@@ -51,6 +62,7 @@ class TestClassifyText:
         )
         assert classify_text(text) == "geopolitics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_economics_clearly_wins_over_technology(self):
         """Central bank policy should score higher on economics."""
         text = (
@@ -64,6 +76,7 @@ class TestClassifyCluster:
     def test_empty_list_returns_geopolitics(self):
         assert classify_cluster([]) == "geopolitics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_majority_vote(self):
         texts = [
             "Military conflict escalates in the region.",
@@ -74,6 +87,7 @@ class TestClassifyCluster:
         ]
         assert classify_cluster(texts) == "geopolitics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_split_vote_goes_to_first_majority(self):
         texts = [
             "Interest rates rise as inflation persists.",
@@ -83,6 +97,7 @@ class TestClassifyCluster:
         ]
         assert classify_cluster(texts) == "economics"
 
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     def test_single_article(self):
         texts = ["Federal Reserve raises interest rates amid inflation concerns."]
         result = classify_cluster(texts)

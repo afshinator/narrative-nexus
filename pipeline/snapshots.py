@@ -49,6 +49,9 @@ def compute_r_val_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> 
     """Ratio of absorbed to originated claims per source.
 
     If as_of is provided, only claims with created_at <= as_of are counted.
+    D2: Denominator excludes claims created within 7 days of as_of (claims
+    that haven't reached their first checkpoint should not count against a
+    source).  Numerator excludes the same window.
 
     Returns {source_id: ratio} where ratio = absorbed_count / originated_count.
     None when a source originated zero claims.
@@ -56,10 +59,12 @@ def compute_r_val_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> 
     originated = compute_r_orig_raw(conn, as_of=as_of)
 
     params: list = []
-    date_filter = ""
+    window_filter = ""
     if as_of is not None:
-        date_filter = "AND c.created_at <= ?"
-        params.append(as_of)
+        # D2: Exclude claims within 7 days of as_of from both numerator
+        # and denominator. R_orig (compute_r_orig_raw) is NOT filtered.
+        window_filter = "AND c.created_at <= ? AND c.created_at <= date(?, '-7 days')"
+        params.extend([as_of, as_of])
 
     rows = conn.execute(f"""
         SELECT cs.source_id, COUNT(*) as cnt
@@ -72,14 +77,34 @@ def compute_r_val_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> 
             AND cs.first_seen_at = firsts.first_seen
         INNER JOIN claims c ON cs.claim_id = c.id
         WHERE c.state = 'CONSENSUS_ABSORBED'
-          {date_filter}
+          {window_filter}
         GROUP BY cs.source_id
     """, params).fetchall()
 
     absorbed = {row["source_id"]: row["cnt"] for row in rows}
 
+    # Also compute windowed originated count for denominator
+    window_originated: dict[int, int] = {}
+    if as_of is not None:
+        orig_rows = conn.execute(f"""
+            SELECT cs.source_id, COUNT(*) as cnt
+            FROM claim_sources cs
+            INNER JOIN (
+                SELECT claim_id, MIN(first_seen_at) as first_seen
+                FROM claim_sources
+                GROUP BY claim_id
+            ) firsts ON cs.claim_id = firsts.claim_id
+                AND cs.first_seen_at = firsts.first_seen
+            INNER JOIN claims c ON cs.claim_id = c.id
+            WHERE 1=1 {window_filter}
+            GROUP BY cs.source_id
+        """, params).fetchall()
+        window_originated = {row["source_id"]: row["cnt"] for row in orig_rows}
+    else:
+        window_originated = originated
+
     result: dict[int, float | None] = {}
-    for sid, orig in originated.items():
+    for sid, orig in window_originated.items():
         abs_count = absorbed.get(sid, 0)
         result[sid] = abs_count / orig if orig > 0 else None
     return result

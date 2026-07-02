@@ -1,9 +1,9 @@
 # FAQ: How and why did you choose the news sources?
 
 *Audience: hackathon users, judges, and observers*
-*Last updated: 2026-06-30 (verified against live DB)*
+*Last updated: 2026-07-02 (verified against live DB)*
 
-**TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls initially blocked 3 Tier 2 sources (NYT, Economist, Politico — 0% body extraction at first), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued paywalled sources with Firecrawl + CloakBrowser. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents. All 37 now produce claims (8,097 total); 12 have absorbed claims with reputation scores. Every source earned its seat through verified RSS and extraction tests.
+**TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls initially blocked 3 Tier 2 sources (NYT, Economist, Politico — 0% body extraction at first), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued paywalled sources with Firecrawl + CloakBrowser. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents. All 37 now produce claims (8,567 total); 12 have absorbed claims with reputation scores. Every source earned its seat through verified RSS and extraction tests. **See `faq-pipeline-data.md` for why 25 sources sit at y=0 on the scatter plot — they produce claims but lack cross-source absorption.**
 
 ---
 
@@ -93,7 +93,7 @@ PoC 4 — Firecrawl Results: `poc-firecrawl-results.md`
 
 ### Round 4 — Full pipeline proof (June 27)
 
-We ran all 37 sources through the full pipeline (scrape → extract → cluster → claims → consensus → snapshots). As of June 30: 2,568 articles (2,028 with bodies), 4,499 clusters, 8,097 claims (2,625 absorbed), 44,363 daily snapshots, 89 silent edits detected. Pipeline end-to-end verified.
+We ran all 37 sources through the full pipeline (scrape → extract → cluster → claims → consensus → snapshots). As of July 2: 3,548 articles (2,028 with bodies), 4,640 clusters, 8,567 claims (2,625 absorbed), 106,673 daily snapshots across 3 verticals, 89 silent edits detected, 16 corrections detected. Pipeline end-to-end verified.
 
 PoC 9 — Backfill: `poc-backfill.md`
 

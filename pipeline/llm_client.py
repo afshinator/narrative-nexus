@@ -14,9 +14,12 @@ Usage:
 """
 
 import os
+import logging
 from typing import Any
 
 import openai
+
+logger = logging.getLogger("narrative_nexus.llm")
 
 # ── Provider → base URL mapping ─────────────────────────────────────────
 # Every provider speaks the OpenAI chat/completions protocol.
@@ -103,4 +106,14 @@ class LLMClient:
 
         completion = await self._openai.chat.completions.create(**kwargs)
         content = completion.choices[0].message.content
+
+        # T3: log token usage for credit budgeting
+        if completion.usage:
+            logger.info(
+                "llm_call provider=%s model=%s prompt_tokens=%d completion_tokens=%d",
+                self.provider_id, self.model,
+                completion.usage.prompt_tokens,
+                completion.usage.completion_tokens,
+            )
+
         return content if content is not None else ""

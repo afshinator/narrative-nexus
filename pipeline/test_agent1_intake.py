@@ -9,6 +9,13 @@ from db.sources import insert_source
 from db.articles import insert_article
 from db.clusters import list_clusters
 
+# ── Check sentence-transformers availability ──
+_sent_trans_available = True
+try:
+    from sentence_transformers import SentenceTransformer  # noqa: F401
+except ImportError:
+    _sent_trans_available = False
+
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 
@@ -63,6 +70,7 @@ class TestIntakeClusteringAgent:
         assert agent._embedding_provider["id"] == "local-cpu"
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_run_returns_clusters_and_mapping(self, db_path):
         """End-to-end: embeddings → DBSCAN → DB insert."""
         from pipeline.agent1_intake import IntakeClusteringAgent
@@ -78,6 +86,7 @@ class TestIntakeClusteringAgent:
         assert "article_map" in result
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_run_creates_clusters_in_db(self, db_path):
         """Clusters are actually persisted."""
         from pipeline.agent1_intake import IntakeClusteringAgent
@@ -100,6 +109,7 @@ class TestIntakeClusteringAgent:
             conn.close()
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_run_skips_body_unavailable_articles(self, db_path):
         """Articles with body_status='BODY_UNAVAILABLE' are skipped."""
         from pipeline.agent1_intake import IntakeClusteringAgent
@@ -133,6 +143,7 @@ class TestIntakeClusteringAgent:
             os.unlink(path)
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_run_assigns_geopolitics_vertical(self, db_path):
         """All clusters are geopolitics (ponytail: hardcoded until vertical classifier)."""
         from pipeline.agent1_intake import IntakeClusteringAgent

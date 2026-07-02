@@ -6,7 +6,7 @@ newspaper4k>=0.9.5
 httpx>=0.28.0
 openai>=2.0.0
 scikit-learn>=1.9.0
-sentence-transformers>=5.0.0
+sentence-transformers>=5.0.0  # optional — only needed when agent1_embedding="local-cpu"
 pytest>=9.1.0
 pytest-asyncio>=0.25.0
 vaderSentiment>=3.3.0

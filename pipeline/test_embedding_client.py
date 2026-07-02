@@ -4,6 +4,12 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from pipeline.embedding_client import EmbeddingClient, EmbeddingError
 
+# ── Check sentence-transformers availability (lazy-imported inside _embed_local) ──
+_sent_trans_available = True
+try:
+    from sentence_transformers import SentenceTransformer  # noqa: F401
+except ImportError:
+    _sent_trans_available = False
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 
@@ -56,6 +62,7 @@ class TestEmbeddingClientInit:
 
 class TestEmbeddingClientLocalCPU:
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_embed_returns_384d_vectors(self):
         """Integration: local sentence-transformers produces 384-dim vectors."""
         client = EmbeddingClient(LOCAL_CPU_PROVIDER)
@@ -65,12 +72,14 @@ class TestEmbeddingClientLocalCPU:
         assert len(result[1]) == 384
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_embed_returns_floats(self):
         client = EmbeddingClient(LOCAL_CPU_PROVIDER)
         result = await client.embed(["text"])
         assert all(isinstance(v, float) for v in result[0])
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(not _sent_trans_available, reason="sentence-transformers not installed")
     async def test_embed_single_text(self):
         client = EmbeddingClient(LOCAL_CPU_PROVIDER)
         result = await client.embed(["single"])

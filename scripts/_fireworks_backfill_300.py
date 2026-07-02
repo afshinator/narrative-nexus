@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Fireworks AI LLM backfill — 300 articles, no pause (credit-backed)."""
 import os, asyncio, json, sqlite3, sys, time
-sys.path.insert(0, '/project/narrative-nexus')
+from pathlib import Path
+_PROJ = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(_PROJ))
 from dotenv import load_dotenv
-load_dotenv('/project/narrative-nexus/.env')
+load_dotenv(_PROJ / ".env")
 import openai
 from pipeline.framing import score_llm_prompt
 
@@ -12,7 +14,7 @@ if not API_KEY:
     print("FATAL: FIREWORKS_API_KEY not set in environment/.env")
     sys.exit(1)
 
-DB = "/project/narrative-nexus/data/nn.db"
+DB = str(_PROJ / "data" / "nn.db")
 BATCH = 300
 DELAY = 3  # seconds between calls to stay under Fireworks rate limit
 MODEL = "accounts/fireworks/models/deepseek-v4-flash"

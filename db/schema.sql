@@ -113,3 +113,24 @@ CREATE TABLE IF NOT EXISTS corrections (
 );
 
 CREATE INDEX IF NOT EXISTS idx_corrections_article ON corrections(article_id);
+
+-- Article-level embeddings for cached reuse (Phase 1 — T5a)
+CREATE TABLE IF NOT EXISTS embeddings (
+    article_id  INTEGER PRIMARY KEY REFERENCES articles(id),
+    model       TEXT NOT NULL,
+    dim         INTEGER NOT NULL,
+    vector      BLOB NOT NULL,
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Preserves original wording when duplicate claims are merged (Phase 1 — T1b)
+CREATE TABLE IF NOT EXISTS claim_variants (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    canonical_claim_id  INTEGER NOT NULL REFERENCES claims(id),
+    source_id           INTEGER NOT NULL REFERENCES sources(id),
+    article_id          INTEGER NOT NULL REFERENCES articles(id),
+    text                TEXT NOT NULL,
+    first_seen_at       TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_claim_variants_canonical ON claim_variants(canonical_claim_id);

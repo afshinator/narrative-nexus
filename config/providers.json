@@ -48,7 +48,7 @@
     ]
   },
   "defaults": {
-    "agent1_embedding": "local-cpu",
+    "agent1_embedding": "fireworks",
     "agent1_llm": "fireworks",
     "agent2_llm": "fireworks",
     "agent4_llm": "fireworks"

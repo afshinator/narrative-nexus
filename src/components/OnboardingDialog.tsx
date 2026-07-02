@@ -85,20 +85,20 @@ export function OnboardingDialog({ open, onOpenChange }: Props) {
 				<div className="space-y-4 max-h-[60vh] overflow-y-auto">
 					{TERMS.map(({ term, definition, Icon }) => (
 						<div key={term}>
-							<h3 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+							<h3 className="flex items-center gap-2 text-base font-semibold text-foreground">
 								<Icon
 									className="size-4 shrink-0 text-[var(--nn-navy)]"
 									aria-hidden="true"
 								/>
 								{term}
 							</h3>
-							<p className="text-sm text-muted-foreground">{definition}</p>
+							<p className="text-base text-muted-foreground">{definition}</p>
 						</div>
 					))}
 				</div>
 
 				<div className="flex items-center justify-between pt-2">
-					<label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+					<label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
 						<input
 							type="checkbox"
 							checked={dontShow}

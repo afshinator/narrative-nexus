@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Quick DeepSeek LLM backfill — 300 articles with 10s pause."""
 import os, asyncio, json, sqlite3, sys, time
-sys.path.insert(0, '/project/narrative-nexus')
+from pathlib import Path
+_PROJ = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(_PROJ))
 from dotenv import load_dotenv
-load_dotenv('/project/narrative-nexus/.env')
+load_dotenv(_PROJ / ".env")
 import openai
 from pipeline.framing import score_llm_prompt
 
@@ -12,7 +14,7 @@ if not API_KEY:
     print("FATAL: DEEPSEEK_API_KEY not set in environment")
     sys.exit(1)
 
-DB = "/project/narrative-nexus/data/nn.db"
+DB = str(_PROJ / "data" / "nn.db")
 BATCH = 300
 DELAY = 2  # seconds between calls (was 10 — DeepSeek has no rate limit issue)
 MODEL = "deepseek-chat"

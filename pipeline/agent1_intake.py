@@ -8,9 +8,12 @@ downstream agents.
 ponytail: DBSCAN with eps=0.5, min_samples=2, metric='cosine'.
 ponytail: Vertical classification via embedding proximity to prototypes.
 ponytail: Articles with body_status='BODY_UNAVAILABLE' are skipped.
+Phase 1 T5a: Embeddings persisted to DB for reuse across runs.
+Phase 1 T5b: Time-windowing — articles bucketed into 14-day windows.
 """
 
 import sqlite3
+from datetime import datetime, timezone, timedelta
 from typing import Any
 
 import numpy as np
@@ -25,45 +28,18 @@ from db.clusters import create_cluster
 
 
 class IntakeClusteringAgent(BasePipelineAgent):
-    """Generates embeddings, clusters articles by semantic similarity.
-
-    Wire to embedding_client for provider-agnostic embedding generation.
-    Uses DBSCAN for clustering — no hyperparameter tuning needed at
-    hackathon scale (~50-100 articles per run).
-    """
+    """Generates embeddings, clusters articles by semantic similarity."""
 
     def __init__(self, *, db_path: str, embedding_provider: dict[str, Any]):
-        """Create the intake agent.
-
-        Args:
-          db_path: Path to the SQLite database.
-          embedding_provider: Dict with id, name, model, amd fields
-                              (from config/providers.json, resolved via
-                              provider_config.get_provider_for_agent).
-        """
         self.db_path = db_path
         self._embedding_provider = embedding_provider
 
     async def run(self) -> dict[str, Any]:
-        """Execute intake + clustering.
-
-        Steps:
-          1. Read articles with body_status='AVAILABLE' and no existing claims
-          2. Generate embeddings via EmbeddingClient
-          3. Cluster with DBSCAN (cosine distance, normalized vectors)
-          4. Classify clusters by embedding proximity to vertical prototypes
-          5. Insert clusters into the database with classified verticals
-          6. Return {article_id: cluster_id} mapping
-
-        Returns:
-          dict with keys: clusters (count), articles_clustered (count),
-          article_map (dict[int, int] of article_id → cluster_id).
-        """
-        # 1. Read articles needing clustering
+        """Execute intake + clustering with persisted embeddings and time-windowing."""
         conn = get_db(self.db_path)
         try:
             rows = conn.execute(
-                """SELECT a.id, a.title, a.body
+                """SELECT a.id, a.title, a.body, a.published_at, a.created_at
                    FROM articles a
                    WHERE a.body_status = 'AVAILABLE'
                      AND a.body IS NOT NULL
@@ -81,73 +57,129 @@ class IntakeClusteringAgent(BasePipelineAgent):
             return {"clusters": 0, "articles_clustered": 0, "article_map": {}}
 
         article_ids = [r["id"] for r in rows]
-        # ponytail: embed title + first 200 chars of body to save tokens
         texts = [
             f"{r['title'] or ''} {r['body'][:200] if r['body'] else ''}"
             for r in rows
         ]
 
-        # 2. Generate embeddings
-        embed_client = EmbeddingClient(self._embedding_provider)
-        embeddings = await embed_client.embed(texts)
-        if not embeddings or len(embeddings) != len(rows):
-            return {"clusters": 0, "articles_clustered": 0, "article_map": {}}
-
-        # 3. Cluster with DBSCAN
-        matrix = np.array(embeddings, dtype=np.float64)
-        matrix_norm = normalize(matrix)  # unit vectors for cosine distance
-
-        clustering = DBSCAN(
-            eps=0.5,
-            min_samples=2,
-            metric="cosine",
-        ).fit(matrix_norm)
-
-        labels = clustering.labels_
-
-        # 4. Classify each cluster's vertical via majority vote.
-        # Classify non-noise clusters by their article texts.
-        # ponytail: classify before creating DB records so vertical is known.
-        label_to_vertical: dict[int, str] = {}
-        for label in set(labels):
-            if label == -1:
-                continue
-            cluster_texts = [
-                texts[idx] for idx, l in enumerate(labels) if l == label
-            ]
-            label_to_vertical[label] = classify_cluster(cluster_texts)
-
-        # 5. Insert clusters into DB.
-        # Each unique label (except -1 = noise) gets a cluster.
-        # Noise articles (-1) get their own singleton clusters classified
-        # individually so Agent 2 has a cluster_id to reference.
+        # ── T5a: Check embedding cache ──────────────────────────────────
         conn = get_db(self.db_path)
         try:
-            label_to_cluster_id: dict[int, int] = {}
-            for label in set(labels):
-                if label == -1:
-                    continue  # noise handled below
-                vertical = label_to_vertical.get(label, "geopolitics")
-                cid = create_cluster(conn, vertical=vertical,
-                                     title=f"Cluster {label}")
-                label_to_cluster_id[label] = cid
-
-            article_map: dict[int, int] = {}
-            for idx, label in enumerate(labels):
-                aid = article_ids[idx]
-                if label == -1:
-                    vertical = classify_text(texts[idx])
-                    cid = create_cluster(conn, vertical=vertical,
-                                         title=f"Article {aid}")
-                else:
-                    cid = label_to_cluster_id[label]
-                article_map[aid] = cid
+            model = self._embedding_provider["model"]
+            cached = {
+                row["article_id"]: np.frombuffer(row["vector"], dtype=np.float64)
+                for row in conn.execute(
+                    "SELECT article_id, vector FROM embeddings WHERE model = ? AND article_id IN ({})".format(
+                        ",".join("?" * len(article_ids))
+                    ),
+                    [model] + article_ids,
+                ).fetchall()
+            }
         finally:
             conn.close()
 
-        n_clusters = len(label_to_cluster_id) + list(labels).count(-1)
-        return {
-            "clusters": n_clusters,
-            "articles_clustered": len(article_ids),
-            "article_map": article_map,
-        }
+        # Determine which articles need new embeddings
+        uncached_indices = [i for i, aid in enumerate(article_ids) if aid not in cached]
+        need_embedding = [texts[i] for i in uncached_indices]
+
+        # ── Generate embeddings for uncached articles ───────────────────
+        if need_embedding:
+            embed_client = EmbeddingClient(self._embedding_provider)
+            new_embeddings = await embed_client.embed(need_embedding)
+            if not new_embeddings or len(new_embeddings) != len(need_embedding):
+                return {"clusters": 0, "articles_clustered": 0, "article_map": {}}
+
+            # T5a: persist new embeddings
+            conn = get_db(self.db_path)
+            try:
+                for j, vec in enumerate(new_embeddings):
+                    aid = article_ids[uncached_indices[j]]
+                    blob = np.array(vec, dtype=np.float64).tobytes()
+                    conn.execute(
+                        "INSERT OR REPLACE INTO embeddings (article_id, model, dim, vector) VALUES (?, ?, ?, ?)",
+                        (aid, model, len(vec), blob),
+                    )
+                    cached[aid] = np.array(vec, dtype=np.float64)
+                conn.commit()
+            finally:
+                conn.close()
+
+        # Build full embedding matrix in article_ids order
+        all_embeddings = [cached[aid] for aid in article_ids]
+        matrix = np.array(all_embeddings, dtype=np.float64)
+
+        # ── T5b: Time-windowing — 14-day buckets ─────────────────────────
+        window_days = 14
+        buckets: dict[int, list[int]] = {}  # window_key -> [indices]
+
+        for i, row in enumerate(rows):
+            ts_str = row["published_at"] or row["created_at"]
+            try:
+                ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            except (ValueError, TypeError):
+                ts = datetime(2020, 1, 1, tzinfo=timezone.utc)
+            # Floor to 14-day window
+            epoch = datetime(2020, 1, 1, tzinfo=timezone.utc)
+            window_key = int((ts - epoch).total_seconds() / (86400 * window_days))
+            buckets.setdefault(window_key, []).append(i)
+
+        # ── Cluster per window ──────────────────────────────────────────
+        conn = get_db(self.db_path)
+        try:
+            label_to_cluster_id: dict[int, int] = {}
+            article_map: dict[int, int] = {}
+
+            for window_key, indices in sorted(buckets.items()):
+                if len(indices) < 2:
+                    # Single-article windows → each gets a singleton cluster
+                    for idx in indices:
+                        aid = article_ids[idx]
+                        vertical = classify_text(texts[idx])
+                        cid = create_cluster(conn, vertical=vertical, title=f"Article {aid}")
+                        article_map[aid] = cid
+                    continue
+
+                # Extract embeddings for this window
+                window_matrix = np.array([all_embeddings[i] for i in indices], dtype=np.float64)
+                window_norm = normalize(window_matrix)
+
+                clustering = DBSCAN(
+                    eps=0.5, min_samples=2, metric="cosine",
+                ).fit(window_norm)
+                labels = clustering.labels_
+
+                # Classify verticals for non-noise clusters
+                window_label_to_vertical: dict[int, str] = {}
+                for label in set(labels):
+                    if label == -1:
+                        continue
+                    cluster_texts = [texts[indices[j]] for j, l in enumerate(labels) if l == label]
+                    window_label_to_vertical[label] = classify_cluster(cluster_texts)
+
+                # Create clusters
+                window_label_to_cid: dict[int, int] = {}
+                for label in set(labels):
+                    if label == -1:
+                        continue
+                    vertical = window_label_to_vertical.get(label, "geopolitics")
+                    cid = create_cluster(conn, vertical=vertical, title=f"Cluster W{window_key} L{label}")
+                    window_label_to_cid[label] = cid
+
+                # Map articles to clusters
+                for j, label in enumerate(labels):
+                    aid = article_ids[indices[j]]
+                    if label == -1:
+                        vertical = classify_text(texts[indices[j]])
+                        cid = create_cluster(conn, vertical=vertical, title=f"Article {aid}")
+                    else:
+                        cid = window_label_to_cid[label]
+                    article_map[aid] = cid
+
+            n_clusters = len(set(article_map.values()))
+            return {
+                "clusters": n_clusters,
+                "articles_clustered": len(article_ids),
+                "article_map": article_map,
+            }
+        finally:
+            conn.close()

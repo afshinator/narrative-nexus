@@ -12,10 +12,13 @@ Usage:
   # vectors: [[float, ...], [float, ...]] — 384-dim per text
 """
 import os
+import logging
 from typing import Any
 
 import numpy as np
 import openai
+
+logger = logging.getLogger("narrative_nexus.embeddings")
 
 # ── Provider categories ──────────────────────────────────────────────────
 
@@ -148,5 +151,10 @@ class EmbeddingClient:
         response = await self._openai_client.embeddings.create(
             model=self.model,
             input=texts,
+        )
+        # T3: log embedding usage (input count; API may not return token counts)
+        logger.info(
+            "embedding_call provider=%s model=%s input_count=%d",
+            self.provider_id, self.model, len(texts),
         )
         return [d.embedding for d in response.data]
