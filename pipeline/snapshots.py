@@ -230,6 +230,39 @@ def compute_r_correct_raw(conn: sqlite3.Connection, *, as_of: str | None = None)
     return result
 
 
+def compute_r_frame_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> dict[int, float | None]:
+    """Stddev of LLM framing scores per source. Lower = more consistent.
+
+    If as_of is provided, only articles with published_at <= as_of are counted.
+    Returns {source_id: stddev}. None when a source has <2 scored articles.
+    """
+    params: list = []
+    date_filter = ""
+    if as_of is not None:
+        date_filter = "AND a.published_at <= ?"
+        params.append(as_of)
+
+    rows = conn.execute(f"""
+        SELECT a.source_id,
+               COUNT(*) as n,
+               SQRT(AVG(af.llm_score * af.llm_score) - AVG(af.llm_score) * AVG(af.llm_score)) as stddev
+        FROM article_framing af
+        JOIN articles a ON a.id = af.article_id
+        WHERE af.llm_score IS NOT NULL
+          {date_filter}
+        GROUP BY a.source_id
+        HAVING n >= 2
+    """, params).fetchall()
+
+    scored = {row["source_id"]: row["stddev"] for row in rows}
+
+    result: dict[int, float | None] = {}
+    for source in list_sources(conn):
+        sid = source["id"]
+        result[sid] = scored.get(sid)  # None if <2 scored articles
+    return result
+
+
 def compute_panel_medians(
     r_orig: dict[int, float],
     r_val: dict[int, float],

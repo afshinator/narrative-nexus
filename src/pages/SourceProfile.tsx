@@ -529,10 +529,14 @@ function RadarChart({
 	// Apply polarity inversion to the three "lower is better" dimensions
 	const toRadarValues = (s: DailySnapshot | null): number[] | undefined => {
 		if (!s) return undefined;
-		return DIMENSIONS.map((d) => {
-			const v = s[d.key] as number;
+		const vals = DIMENSIONS.map((d) => {
+			const v = s[d.key] as number | null;
+			if (v == null) return null;
 			return INVERTED_DIMS.has(d.key) ? 100 - v : v;
 		});
+		// ponytail: skip if any dimension is null (old snapshots pre-wiring)
+		if (vals.some((v) => v == null)) return undefined;
+		return vals as number[];
 	};
 
 	const curVal = toRadarValues(snapshot);

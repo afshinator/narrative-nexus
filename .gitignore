@@ -33,3 +33,6 @@ venv/
 .coverage
 htmlcov/
 .pytest_cache/
+.env
+backfill.log
+fireworks_backfill.log

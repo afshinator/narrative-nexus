@@ -358,3 +358,118 @@ def test_redit_end_to_end(db):
     assert rows[0]["r_edit"] == pytest.approx(100.0)  # s1: 0.5 → 100th percentile
     assert rows[1]["r_edit"] == pytest.approx(0.0)    # s2: 0.0 → 0th percentile
     assert rows[2]["r_edit"] == pytest.approx(0.0)    # s3: 0.0 → 0th percentile
+
+
+def test_r_frame_raw_stddev(db):
+    """Stddev of LLM scores per source. s1: [2,8] → 3.0, s3: 1 article → None."""
+    from pipeline.snapshots import compute_r_frame_raw
+
+    # Add framing scores: s1 articles get 2 and 8, s3 gets single score
+    db.execute(
+        "INSERT INTO article_framing (article_id, llm_score) VALUES (?, ?)",
+        (1, 2.0),
+    )
+    db.execute(
+        "INSERT INTO article_framing (article_id, llm_score) VALUES (?, ?)",
+        (2, 8.0),
+    )
+    db.execute(
+        "INSERT INTO article_framing (article_id, llm_score) VALUES (?, ?)",
+        (4, 5.0),  # s3: only 1 article → not enough for stddev
+    )
+    db.commit()
+
+    result = compute_r_frame_raw(db)
+
+    # s1: scores [2, 8] → mean=5, variance=(9+9)/2=9, stddev=3.0
+    assert result[1] == pytest.approx(3.0)
+    # s2: no framing scores → None
+    assert result[2] is None
+    # s3: 1 article → None (< 2 minimum)
+    assert result[3] is None
+
+
+def test_r_frame_raw_as_of_filter(db):
+    """as_of filters by articles.published_at."""
+    from pipeline.snapshots import compute_r_frame_raw
+
+    # Add framing for all articles
+    for aid in (1, 2, 3, 4):
+        db.execute(
+            "INSERT OR IGNORE INTO article_framing (article_id, llm_score) VALUES (?, 3.0)",
+            (aid,),
+        )
+    # Set different published_at dates
+    db.execute(
+        "UPDATE articles SET published_at = ? WHERE id = ?",
+        ("2025-01-01T00:00:00", 1),
+    )
+    db.execute(
+        "UPDATE articles SET published_at = ? WHERE id = ?",
+        ("2026-01-01T00:00:00", 2),
+    )
+    db.commit()
+
+    # as_of mid-2025: only article 1 counts (s1: 1 article → None since <2)
+    result = compute_r_frame_raw(db, as_of="2025-06-01T00:00:00")
+    assert result[1] is None  # only 1 article before cutoff
+
+    # as_of after both: both articles count (s1: 2 articles → stddev)
+    result2 = compute_r_frame_raw(db, as_of="2026-06-01T00:00:00")
+    assert result2[1] == pytest.approx(0.0)  # both score 3.0 → stddev=0
+
+
+def test_r_frame_end_to_end(db):
+    """Full pipeline: raw → percentile → write → query yields correct r_frame."""
+    from pipeline.snapshots import (
+        compute_r_frame_raw,
+        percentile_rank,
+        write_daily_snapshots,
+    )
+
+    # Add framing scores so all 3 sources get stddev values
+    # s1: [1, 5] → stddev=2.0, s2: [10] → None (<2), s3: [3, 3] → stddev=0.0
+    db.execute("INSERT INTO article_framing (article_id, llm_score) VALUES (1, 1.0)")
+    db.execute("INSERT INTO article_framing (article_id, llm_score) VALUES (2, 5.0)")
+    db.execute("INSERT INTO article_framing (article_id, llm_score) VALUES (3, 10.0)")  # s2 single
+    db.execute("INSERT INTO article_framing (article_id, llm_score) VALUES (4, 3.0)")   # s3 single
+    # Add second article for s3 so it gets a stddev
+    from db.articles import insert_article
+    a5 = insert_article(db, source_id=3, url="http://f.com/2", title="F2")
+    db.execute("INSERT INTO article_framing (article_id, llm_score) VALUES (?, 3.0)", (a5,))
+    db.commit()
+
+    # Compute raw stddev
+    r_frame_raw = compute_r_frame_raw(db)
+    assert r_frame_raw[1] == pytest.approx(2.0)  # s1: [1,5] → stddev=2.0
+    assert r_frame_raw[2] is None                 # s2: 1 article
+    assert r_frame_raw[3] == pytest.approx(0.0)   # s3: [3,3] → stddev=0.0
+
+    # Percentile rank (higher stddev = higher percentile = worse)
+    r_frame = percentile_rank(
+        {k: v for k, v in r_frame_raw.items() if v is not None}
+    )
+    assert r_frame[1] == pytest.approx(100.0)  # s1: highest stddev
+    assert r_frame[3] == pytest.approx(0.0)    # s3: lowest stddev
+    # s2 not in r_frame (excluded by None filter)
+
+    # Write to snapshots and verify stored values
+    date_str = "2026-07-01"
+    write_daily_snapshots(
+        db, date_str=date_str, vertical="geopolitics",
+        r_orig={1: 50.0, 2: 30.0, 3: 10.0},
+        r_val={1: 60.0, 2: 40.0, 3: 20.0},
+        r_speed={1: 25.0, 2: None, 3: None},
+        archetypes={1: "EARLY_BREAKER", 2: "CONSENSUS_FOLLOWER", 3: "CONSENSUS_FOLLOWER"},
+        r_frame=r_frame,
+    )
+
+    rows = db.execute(
+        "SELECT source_id, r_frame FROM snapshots WHERE vertical=? AND date=? ORDER BY source_id",
+        ("geopolitics", date_str),
+    ).fetchall()
+
+    assert len(rows) == 3
+    assert rows[0]["r_frame"] == pytest.approx(100.0)  # s1: high stddev
+    assert rows[1]["r_frame"] is None                   # s2: no data
+    assert rows[2]["r_frame"] == pytest.approx(0.0)     # s3: low stddev

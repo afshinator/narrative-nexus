@@ -19,6 +19,7 @@ from pipeline.agent4_silent import SilentAuditorAgent
 from pipeline.snapshots import (
     compute_panel_medians,
     compute_r_correct_raw,
+    compute_r_frame_raw,
     compute_r_orig_raw,
     compute_r_edit_raw,
     compute_r_speed_raw,
@@ -174,6 +175,7 @@ def _compute_and_write_snapshots(conn, *, date_str: str | None = None, as_of: st
     r_speed_raw = compute_r_speed_raw(conn, as_of=as_of)
     r_edit_raw = compute_r_edit_raw(conn, as_of=as_of)
     r_correct_raw = compute_r_correct_raw(conn, as_of=as_of)
+    r_frame_raw = compute_r_frame_raw(conn, as_of=as_of)
 
     # Percentile rank to 0-100
     r_orig = percentile_rank({k: v for k, v in r_orig_raw.items() if v is not None})
@@ -183,6 +185,9 @@ def _compute_and_write_snapshots(conn, *, date_str: str | None = None, as_of: st
     )
     r_edit = percentile_rank({k: v for k, v in r_edit_raw.items() if v is not None})
     r_correct = percentile_rank({k: v for k, v in r_correct_raw.items() if v is not None})
+    r_frame = percentile_rank({k: v for k, v in r_frame_raw.items() if v is not None})
+    # Frontend handles inversion (src/utils/polarity.ts INVERTED_DIMS includes R_frame).
+    # DB stores raw percentiles — high stddev = high percentile = inconsistent.
 
     # Panel medians for archetype assignment
     median_orig, median_val = compute_panel_medians(r_orig, r_val, active_ids)
@@ -209,6 +214,7 @@ def _compute_and_write_snapshots(conn, *, date_str: str | None = None, as_of: st
             archetypes=archetypes,
             r_edit=r_edit,
             r_correct=r_correct,
+            r_frame=r_frame,
         )
 
     return total

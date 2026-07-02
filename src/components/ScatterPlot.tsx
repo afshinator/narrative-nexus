@@ -38,12 +38,23 @@ export default function ScatterPlot({
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [size, setSize] = useState(0);
 
+	// ponytail: debounce ResizeObserver to break layout-shift → D3-redraw loop.
+	// The D3 useEffect at line 50 triggers SVG rebuild on every size change;
+	// if SVG rebuild changes container dimensions (axis labels, etc.), it
+	// creates a feedback loop that fires at frame rate, causing memory pressure.
 	useEffect(() => {
 		const el = containerRef.current;
 		if (!el) return;
-		const obs = new ResizeObserver(() => setSize((n) => n + 1));
+		let timer: ReturnType<typeof setTimeout>;
+		const obs = new ResizeObserver(() => {
+			clearTimeout(timer);
+			timer = setTimeout(() => setSize((n) => n + 1), 100);
+		});
 		obs.observe(el);
-		return () => obs.disconnect();
+		return () => {
+			obs.disconnect();
+			clearTimeout(timer);
+		};
 	}, []);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: size triggers D3 redraw on container resize (review-03 M04)
