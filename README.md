@@ -143,6 +143,20 @@ Current implementation detects corrections via inline body markers (AP, CNN, NYT
 
 Current implementation collects 3 framing scores (LLM, lexical, sentiment) per article. R_frame snapshot wiring (variance computation + percentile rank) deferred to user's scorer selection.
 
+### Hackathon Docker requirements
+
+| Req | Detail | Status |
+|-----|--------|--------|
+| REQ-007 | Docker Compose with ≥2 services | Done — app + db + optional worker |
+| REQ-017 | GPU worker on AMD ROCm via sentence-transformers | Done — worker profile optional |
+| REQ-019 | Consensus math + scoring on CPU only | Done — all pipeline agents in app container |
+| REQ-106 | Fireworks API calls from app container only | Done |
+| REQ-126 | 1-click AMD shortcut on Pipeline Flow page | Done |
+| REQ-096 | Pre-baked 90-day corpus, 30+ sources | Done — 37 sources, 90+ days of snapshots |
+| REQ-097–099 | Demo landing: scatter plot + radar in motion | Done |
+| — | Python 3.11 (Ubuntu 24.04 base image) | ⚠ Currently on Python 3.12 — downgrade to 3.11 for submission |
+| — | Vite proxy port | ⚠ `vite.config.ts` points to 8000 (host dev) — change to 3006 for Docker |
+
 ---
 
 ## Pre-submission cleanup
@@ -151,12 +165,14 @@ Items to address before finalizing the project:
 
 | Item | Location | Notes |
 |------|----------|-------|
-| `.commandcode/` | Project root | Personal Codex taste config — doesn't belong in project. Move to `~/.codex/` or delete. |
-| `.libretto/` | Project root | Personal Libretto sessions — doesn't belong in project. Move to `~/.libretto/` or delete. |
+| Python version | `Dockerfile` | Must be 3.11, not 3.12 (hackathon requirement) |
+| Vite proxy port | `vite.config.ts` | Change 8000 → 3006 for Docker submission |
+| `.commandcode/` | Project root | Personal Codex taste config — move to `~/.codex/` or delete. |
+| `.libretto/` | Project root | Personal Libretto sessions — move to `~/.libretto/` or delete. |
 | `__pycache__/` | Project root | Auto-generated Python bytecode. Delete (already gitignored). |
-| Uncommitted DB changes | `data/nn.db` | Modified but uncommitted — likely from recent pipeline runs. Commit or reset. |
+| Uncommitted DB changes | `data/nn.db` | Modified but uncommitted — commit or reset. |
 | `docs/plan/` | Empty directory | All plan docs deleted (slices complete). Remove directory. |
-| `docs/older/TODO-pre-workflow.md` | Reference | Consider archiving or deleting if stale. |
+| `docs/older/TODO-pre-workflow.md` | Reference | Archive or delete if stale. |
 
 ---
 
