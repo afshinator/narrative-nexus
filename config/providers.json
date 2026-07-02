@@ -24,7 +24,7 @@
       {
         "id": "fireworks",
         "name": "Fireworks AI",
-        "model": "accounts/fireworks/models/deepseek-v3p1",
+        "model": "accounts/fireworks/models/deepseek-v4-pro",
         "amd": true
       },
       {
@@ -49,8 +49,8 @@
   },
   "defaults": {
     "agent1_embedding": "local-cpu",
-    "agent1_llm": "opencode",
-    "agent2_llm": "opencode",
-    "agent4_llm": "opencode"
+    "agent1_llm": "fireworks",
+    "agent2_llm": "fireworks",
+    "agent4_llm": "fireworks"
   }
 }

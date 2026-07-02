@@ -9,10 +9,14 @@ Usage:
 """
 
 import json
+import os
 import sys
 import urllib.request
 import urllib.error
 from typing import Any
+
+# Add project root for imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 PASS = 0
 FAIL = 0
@@ -29,8 +33,14 @@ def check(name: str, ok: bool, detail: str = "") -> None:
 
 # ── Config ───────────────────────────────────────────────────────────────
 
-BACKEND = "http://localhost:3006"
-FRONTEND = "http://localhost:3015"
+BACKEND = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "--backend" else "http://localhost:3006"
+FRONTEND = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "--frontend" else "http://localhost:3015"
+# Handle both --backend and --frontend in either order
+for i, arg in enumerate(sys.argv):
+    if arg == "--backend" and i + 1 < len(sys.argv):
+        BACKEND = sys.argv[i + 1]
+    if arg == "--frontend" and i + 1 < len(sys.argv):
+        FRONTEND = sys.argv[i + 1]
 
 
 def fetch_json(url: str) -> Any:
@@ -49,6 +59,45 @@ def fetch_text(url: str) -> tuple[int, str]:
     except urllib.error.URLError:
         return 0, ""
 
+
+# ══════════════════════════════════════════════════════════════════════════
+# PHASE 0 — Environment & config (no server needed)
+# ══════════════════════════════════════════════════════════════════════════
+
+print("\n── Phase 0: Environment & Config ──")
+
+# 0a. .env file exists and loads
+try:
+    from dotenv import load_dotenv
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    env_path = os.path.join(project_root, ".env")
+    check(".env file exists", os.path.isfile(env_path), f"Expected at {env_path}")
+    if os.path.isfile(env_path):
+        load_dotenv(env_path)
+        check(".env loads without error", True)
+    else:
+        check(".env loads without error", False, ".env missing")
+except ImportError:
+    check("python-dotenv installed", False, "pip install python-dotenv")
+
+# 0b. Required API keys are set
+for key in ("FIREWORKS_API_KEY", "DEEPSEEK_API_KEY"):
+    val = os.environ.get(key, "")
+    check(f"{key} is set", bool(val), f"Missing — add to .env or export")
+
+# 0c. config/providers.json is valid
+try:
+    config_path = os.path.join(project_root, "config", "providers.json")
+    with open(config_path) as f:
+        cfg = json.load(f)
+    defaults = cfg.get("defaults", {})
+    for slot in ("agent1_llm", "agent2_llm", "agent4_llm"):
+        provider_id = defaults.get(slot, "")
+        check(f"config: {slot} defaults to '{provider_id}'",
+              provider_id == "fireworks",
+              f"Expected 'fireworks', got '{provider_id}'")
+except Exception as e:
+    check("config/providers.json loads", False, str(e)[:80])
 
 # ══════════════════════════════════════════════════════════════════════════
 # PHASE 1 — Backend API health

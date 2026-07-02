@@ -18,48 +18,50 @@ A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geop
 
 ## Quick start
 
-### Local development (outside Docker)
+### Host development (outside Docker)
+
+If Docker is running, stop it first — ports 3000–3019 are published from the container:
+```bash
+docker compose down
+```
 
 ```bash
 # 1. Install deps
 npm install
-pip install -r requirements.txt
+pip install --break-system-packages -r requirements.txt
 
-# 2. Create .env with API keys (gitignored, survives crashes)
+# 2. Create .env with API keys (gitignored)
 cat > .env << 'EOF'
 DEEPSEEK_API_KEY=sk-...
-FIREWORKS_API_KEY=...
+FIREWORKS_API_KEY=fw-...
 EOF
 
-# 3. Start backend (port 3006)
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 3006
+# 3. Start backend (port 8000)
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-# 4. Start frontend — dev mode with HMR (port 3015)
-npm run dev -- --host 0.0.0.0 --port 3015
-
-# Or: production build (no HMR, faster, more stable)
+# 4. Start frontend — production build only (no HMR, fastest, most stable)
 npm run build
-npx vite preview --host 0.0.0.0 --port 3015
+npx vite preview --host 0.0.0.0 --port 5173
 ```
 
 **Verify everything works:**
 
 ```bash
-python3 scripts/sanity_check.py    # 17 checks — backend, proxy, data integrity, build
+python3 scripts/sanity_check.py --backend http://localhost:8000 --frontend http://localhost:5173
 ```
 
-Open http://localhost:3015 in your browser.
-
-**Port conventions (dev-servers.md):**
+Open http://localhost:5173 in your browser.
 
 | Port | Service |
 |------|---------|
-| 3006 | Backend API (FastAPI/uvicorn) |
-| 3015 | Frontend (Vite dev or preview) |
+| 8000 | Backend API (FastAPI/uvicorn) |
+| 5173 | Frontend (Vite preview) |
 
 ### Docker (hackathon submission format)
 
 All submissions must be containerized. Docker Compose is the delivery format.
+
+Ports 3000–3019 are published to the host from inside the container. If you switch to host development, run `docker compose down` first.
 
 ```bash
 # 1. Build the frontend

@@ -3,6 +3,8 @@
 API routes prefixed with /api/. Vite dev server proxies /api/* to localhost:8000.
 """
 import os
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 from contextlib import asynccontextmanager
 from typing import Any
 

@@ -28,11 +28,16 @@ design-extract-output/
 # Python
 __pycache__/
 *.pyc
+*.pyo
 venv/
 .venv/
 .coverage
 htmlcov/
 .pytest_cache/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+# Project env + logs
 .env
 backfill.log
 fireworks_backfill.log
