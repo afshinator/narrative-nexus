@@ -1,9 +1,26 @@
 # Narrative Nexus — Remaining Work
 
-Verified against actual code, database, and pipeline paths as of 2026-06-30.
-Each item includes the evidence trail: what exists, what's missing, and why.
+Verified against actual code, database, and pipeline paths as of 2026-07-03.
 
-**Note (2026-07-03):** Phase 2, Track A, and Track B recon complete. See docs/06- through docs/22- for full history. Track B Recon-5 identified Kimi-K2P5 as the best extraction model (1.8s per call vs 36s for DeepSeek-V4-Pro). If live Investigate is built, `providers.json` agent2_llm model may need switching from `accounts/fireworks/models/deepseek-v4-pro` to `accounts/fireworks/models/kimi-k2p5` — but hold pending build decision. Do NOT change without testing extraction quality on the actual pipeline path first.
+## Project Status Summary
+
+**Phase 2 (Pipeline):** COMPLETE. BGE embeddings, MIN_CORROBORATION=2, zombie fix, body cleaner, 13 absorbed claims. DB: 2,568 articles, 1,138 clusters, 44,955 snapshots.
+
+**Track A (Sources Two-Lens):** COMPLETE. Consensus + Coverage lenses, custom axis labels, labeled regions, dynamic copy. docs/16-, docs/17-.
+
+**Track B Recon (1-6):** COMPLETE. Docs 18-23. Key findings: Fireworks concurrency 6 safe, Kimi-K2P5 20x faster than DeepSeek-V4-Pro (1.8s vs 36s), SSE plumbing verified.
+
+**Track B Phase 1 (SSE):** COMPLETE. sse-starlette installed, SSE streams through vite proxy without buffering. doc/24-.
+
+**Track B Phase 2 (Backend):** COMPLETE. Read-only wrappers, Firecrawl search replaces Google News RSS, POST /api/investigate/stream with E3 disconnect + E4 timeout. Pipeline runs end-to-end in 5.5s. docs/25-28.
+
+**Track B Phase 3A (Frontend SSE):** COMPLETE. Investigate page consumes live SSE stream, stage stepper, article grid, consensus panel, error states. 8/8 vitest. doc/29-.
+
+**Track B Phase 3B (Slider + Persistence):** COMPLETE. Radix slider 40-90 with live recomputation, localStorage persistence with recent analyses, skeleton placeholders. 6/6 vitest. doc/30-.
+
+**Next:** Phase 4 (packaging).
+
+**Config note:** Agent 2 uses DeepSeek-V4-Pro in production. Kimi-K2P5 used as override in Investigate endpoint only. No config change needed.
 
 ---
 

@@ -20,6 +20,7 @@ from db.connection import get_db, init_db
 from pipeline.scheduler import ScraperScheduler
 from pipeline.runner_scheduler import start_pipeline_scheduler
 from pipeline.provider_config import load_provider_config
+from app.investigate_endpoint import investigate_stream_endpoint
 
 
 # ── Provider config ──────────────────────────────────────────────────────
@@ -493,3 +494,7 @@ def get_available_providers(request: Request) -> dict:
     Used by the Pipeline Flow frontend to populate dropdown options.
     """
     return {"providers": request.app.state.provider_catalog}
+
+
+# ── Investigate SSE endpoint (Track B Phase 2) ──────────────────────────
+app.post("/api/investigate/stream")(investigate_stream_endpoint)
