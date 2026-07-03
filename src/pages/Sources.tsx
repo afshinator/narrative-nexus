@@ -126,18 +126,28 @@ export default function SourcesPage({ scores: propScores }: Props) {
 						)
 					: null;
 				return {
-					sourceId: source.id,
-					name: source.name,
-					tier: source.tier,
-					R_orig: score?.R_orig ?? 0,
-					R_val: score?.R_val ?? 0,
-					archetype,
+				sourceId: source.id,
+				name: source.name,
+				tier: source.tier,
+				R_orig: score?.R_orig ?? 0,
+				R_val: score?.R_val ?? null,
+				archetype,
 				};
-			}),
-		[scoreMap, panelMedian, visibleSources],
-	);
+				}),
+				[scoreMap, panelMedian, visibleSources],
+				);
 
-	// Enrich sources with scores + archetype, then filter + sort
+				// F2c: Split scatter data into graded (has R_val) and ungraded (no R_val yet)
+				const gradedData = useMemo(
+				() => scatterData.filter((s): s is typeof s & { R_val: number } => s.R_val != null),
+				[scatterData],
+				);
+				const ungradedSources = useMemo(
+				() => scatterData.filter((s) => s.R_val == null),
+				[scatterData],
+				);
+
+			// Enrich sources with scores + archetype, then filter + sort
 	const rows = useMemo(() => {
 		const enriched = visibleSources.map((source) => {
 			const score = scoreMap.get(source.id);
@@ -286,7 +296,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 					))}
 				</div>
 				<ScatterPlot
-					data={scatterData}
+					data={gradedData}
 					hoveredId={hoveredSource}
 					onHoverPosition={handleHoverPosition}
 					onSelect={handleSelect}
@@ -310,15 +320,29 @@ export default function SourcesPage({ scores: propScores }: Props) {
 									{source.name}
 								</div>
 								<div className="font-mono text-[0.82rem] tabular-nums text-[var(--nn-text)]">
-									Tier {source.tier} · Origination {Math.round(source.R_orig)} · Validation{" "}
-									{Math.round(source.R_val)}
+								Tier {source.tier} · Origination {Math.round(source.R_orig)} · Validation{" "}
+								{source.R_val != null ? Math.round(source.R_val) : "—"}
 								</div>
 							</div>
 						);
 					})()}
 			</div>
 
-			{/* Shape legend + R_val=0 explanation */}
+			{/* Ungraded sources callout (F2c) */}
+		{ungradedSources.length > 0 && (
+			<div className="mt-3 rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-4 py-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+				<span className="font-semibold text-[var(--nn-text)]">{ungradedSources.length} source{ungradedSources.length !== 1 ? "s" : ""} not yet graded</span>
+				{" "}in this vertical — need at least one absorbed claim to compute a Validation score.{" "}
+				{ungradedSources.map((s, i) => (
+					<span key={s.sourceId}>
+						<span className="text-[var(--nn-text)]">{s.name}</span>
+						{i < ungradedSources.length - 1 ? ", " : ""}
+					</span>
+				))}
+			</div>
+		)}
+
+		{/* Shape legend + R_val=0 explanation */}
 			<div className="mt-4 flex flex-wrap items-start gap-6 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
 				<div>
 					<span className="font-semibold text-[var(--nn-text)]">Shapes = Source Tier</span>
@@ -329,15 +353,15 @@ export default function SourcesPage({ scores: propScores }: Props) {
 					<div>✚ Cross — Tier 5: Propaganda / Fringe</div>
 				</div>
 				<div className="min-w-0 flex-1 border-l border-[var(--nn-border)] pl-4">
-					<span className="font-semibold text-[var(--nn-amber)]">Why are shapes at the bottom?</span>
-					<p>
-						Validation (Y-axis) measures how often a source's claims become
-						consensus-absorbed. Consensus is defined by agreement among Tier
-						1–2 sources (major wire services and national outlets). Sources
-						in Tiers 3–5 whose claims are not corroborated by mainstream
-						outlets will show Validation = 0 — this is not a bug, it reflects
-						their isolation from the mainstream consensus ecosystem.
-					</p>
+				<span className="font-semibold text-[var(--nn-text)]">About Validation scoring</span>
+				<p>
+				Validation measures how often a source's claims clear cross-source
+				corroboration: at least 2 independent Tier 1–2 sources must report
+				the same claim above the vertical's consensus threshold. Sources
+				without any absorbed claims in this vertical are ungraded and listed
+				separately — this includes mainstream outlets whose claims haven't
+				yet cleared cross-source corroboration.
+				</p>
 				</div>
 			</div>
 

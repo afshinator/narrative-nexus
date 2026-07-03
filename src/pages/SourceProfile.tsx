@@ -302,19 +302,27 @@ function SourceProfilePage({
 							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">
 								Absorbed
 							</span>
-							<div className="flex-1 h-5 rounded-sm bg-[var(--nn-surface2)] overflow-hidden">
-								<div
-									className="h-full rounded-sm bg-[var(--nn-teal)]"
-									style={{
-										width: `${(claimSummary.absorbed / claimSummary.total) * 100}%`,
-									}}
-								/>
-							</div>
-							<span className="w-20 text-right font-mono text-[0.78rem] tabular-nums text-[var(--nn-text)]">
-								{claimSummary.absorbed} (
-								{Math.round((claimSummary.absorbed / claimSummary.total) * 100)}
-								%)
-							</span>
+							{claimSummary.absorbed === 0 ? (
+								<span className="flex-1 text-[0.8rem] text-[var(--nn-text-dim)]">
+									0 of {claimSummary.total} claims have crossed corroboration threshold
+								</span>
+							) : (
+								<>
+									<div className="flex-1 h-5 rounded-sm bg-[var(--nn-surface2)] overflow-hidden">
+										<div
+											className="h-full rounded-sm bg-[var(--nn-teal)]"
+											style={{
+												width: `${(claimSummary.absorbed / claimSummary.total) * 100}%`,
+											}}
+										/>
+									</div>
+									<span className="w-20 text-right font-mono text-[0.78rem] tabular-nums text-[var(--nn-text)]">
+										{claimSummary.absorbed} (
+										{Math.round((claimSummary.absorbed / claimSummary.total) * 100)}
+										%)
+									</span>
+								</>
+							)}
 						</div>
 						<div className="flex items-center gap-3">
 							<span className="w-24 font-mono text-[0.78rem] text-[var(--nn-text-dim)]">
@@ -641,9 +649,19 @@ function RadarChart({
 			<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
 				Reputation Radar
 			</h2>
-			<div className="h-[340px]">
-				<Radar data={data} options={options} />
-			</div>
+			{hasData ? (
+				<div className="h-[340px]">
+					<Radar data={data} options={options} />
+				</div>
+			) : (
+				<div className="flex h-[340px] items-center justify-center">
+					<p className="max-w-[320px] text-center text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]">
+						This source hasn&apos;t crossed the ≥2-source corroboration
+						threshold on any claim yet, so its reputation dimensions
+						aren&apos;t graded. The radar appears once absorbed claims exist.
+					</p>
+				</div>
+			)}
 		</div>
 	);
 }

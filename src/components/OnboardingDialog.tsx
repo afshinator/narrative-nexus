@@ -20,7 +20,7 @@ const TERMS = [
 	{
 		term: "Consensus Reality",
 		definition:
-			'The version of events agreed upon by the majority of the panel at a given threshold. Not "the truth."',
+			'Claims that have cleared cross-source corroboration: at least 2 independent consensus-pool sources (Tier 1–2) report the same claim AND together cross the vertical\'s percentage threshold. Not "the truth."',
 		Icon: Users,
 	},
 	{
@@ -38,7 +38,7 @@ const TERMS = [
 	{
 		term: "Self-Consistent",
 		definition:
-			"A consensus-absorbed claim where only the origin source published consistent follow-up; no independent corroboration, but the panel eventually agreed.",
+			"A consensus-absorbed claim that reached the corroboration threshold largely on the strength of a single outlet's consistent follow-up reporting.",
 		Icon: RefreshCw,
 	},
 	{

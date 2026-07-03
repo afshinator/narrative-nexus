@@ -93,9 +93,13 @@ describe("SourceProfile Page", () => {
 		expect(screen.getByText(/unclassified/i)).toBeInTheDocument();
 	});
 
-	it("renders radar chart canvas", () => {
+	it("renders radar empty state when dimensions are null", () => {
 		renderPage();
-		expect(screen.getByTestId("radar-chart")).toBeInTheDocument();
+		// F3a: When no snapshot data has all 6 dimensions populated,
+		// radar shows empty state message instead of a collapsed polygon
+		expect(
+			screen.getByText(/hasn.*t crossed the.*2-source corroboration/i),
+		).toBeInTheDocument();
 	});
 
 	it("renders 6 sparkline SVGs", () => {

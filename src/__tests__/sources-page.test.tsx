@@ -119,9 +119,10 @@ describe("Sources Page", () => {
 			);
 			const svg = document.querySelector("svg");
 			expect(svg).toBeInTheDocument();
-			// All 37 sources render — scored ones at their R_orig/R_val, unscored at origin
+			// F2c: Only graded sources (R_val != null) render in scatter.
+			// 2 test scores have R_val → 2 markers. Ungraded sources show in callout, not scatter.
 			const markers = svg?.querySelectorAll("path.marker");
-			expect(markers?.length).toBe(37);
+			expect(markers?.length).toBe(2);
 		});
 
 		it("colors scatter markers by archetype", () => {
@@ -197,9 +198,10 @@ describe("Sources Page", () => {
 			renderSources();
 			const table = document.querySelector("table");
 			expect(table).toBeInTheDocument();
-			expect(screen.getByText("Reuters")).toBeInTheDocument();
-			expect(screen.getByText("AP")).toBeInTheDocument();
-			expect(screen.getByText("ZeroHedge")).toBeInTheDocument();
+			// F2c: Ungraded callout also lists source names — use getAllByText
+			expect(screen.getAllByText("Reuters").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("AP").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("ZeroHedge").length).toBeGreaterThanOrEqual(1);
 		});
 
 		it("renders column headers", () => {

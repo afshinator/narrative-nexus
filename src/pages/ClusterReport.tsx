@@ -123,6 +123,20 @@ export default function ClusterReportPage() {
 				</div>
 			</div>
 
+			{/* F4c: Honest framing when no claims absorbed yet */}
+			{data.summary.absorbed === 0 && (
+				<div className="rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-4 py-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+					<span className="font-semibold text-[var(--nn-text)]">Why 0 absorbed?</span>
+					{" "}
+					This cluster contains {data.summary.totalClaims} claims from{" "}
+					{data.summary.sourceCount} sources. None have cleared cross-source
+					corroboration yet (≥2 Tier 1–2 sources at the vertical&apos;s percentage
+					threshold). Claims remain pending while the system waits for additional
+					reporting. The Timeline and source table show which outlets have
+					reported each claim.
+				</div>
+			)}
+
 			{/* ── Source Breakdown + Claim List ── */}
 			<div className="grid gap-6 lg:grid-cols-[280px_1fr]">
 				{/* Source breakdown (was: distortion matrix) */}

@@ -41,6 +41,23 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 		);
 	}
 
+	// F3b: Check if all R_val values are null or zero — show empty state
+	const allNull = snapshots.every((s) => s.R_val == null || s.R_val === 0);
+	if (allNull) {
+		return (
+			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
+				<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
+					Verifiability Trend
+				</h2>
+				<div className="flex h-[200px] items-center justify-center">
+					<p className="text-[0.85rem] text-[var(--nn-text-dim)]">
+						No validation events recorded yet.
+					</p>
+				</div>
+			</div>
+		);
+	}
+
 	const labels = snapshots.map((s) => String(s.day));
 	const values = snapshots.map((s) => s.R_val);
 

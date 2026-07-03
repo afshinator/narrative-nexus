@@ -137,6 +137,17 @@ export default function TimelinePage() {
 				&middot; {days.length} day{days.length !== 1 ? "s" : ""}
 			</p>
 
+			{/* F5: Single-source cluster banner */}
+			{data.sources.length === 1 && (
+				<div className="rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-4 py-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+					<span className="font-semibold text-[var(--nn-text)]">Single-source cluster</span>
+					{" "}
+					— no cross-source propagation to visualize. This source&apos;s
+					claims are shown alone. When other outlets report the same claim,
+					propagation lines will appear connecting sources across time.
+				</div>
+			)}
+
 			{/* Day header bar */}
 			<div
 				className="relative mb-2 ml-[180px] h-6"

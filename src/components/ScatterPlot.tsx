@@ -8,7 +8,7 @@ interface EnrichedSource {
 	name: string;
 	tier: number;
 	R_orig: number;
-	R_val: number;
+	R_val: number | null;
 	archetype: Archetype;
 }
 
@@ -117,11 +117,11 @@ export default function ScatterPlot({
 			svg.selectAll("path.marker").data(data).enter().append("path")
 				.attr("class", "marker")
 				.attr("d", (d) => symbol.type(TIER_D3_SYMBOL[d.tier] ?? d3.symbolCircle)() ?? "")
-				.attr("transform", (d) => `translate(${xScale(d.R_orig)},${yScale(d.R_val)})`)
+								.attr("transform", (d) => `translate(${xScale(d.R_orig)},${yScale(d.R_val ?? 0)})`)
 				.attr("fill", (d) => ARCHETYPE_FILL[d.archetype ?? "CONSENSUS_FOLLOWER"] ?? "var(--nn-slate)")
 				.attr("stroke", "var(--nn-bg)").attr("stroke-width", 1).attr("opacity", 1)
 				.attr("role", "button").attr("tabindex", 0)
-				.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${Math.round(d.R_val)}`)
+								.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${d.R_val != null ? Math.round(d.R_val) : "ungraded"}`)
 				.style("cursor", "pointer")
 				.on("mouseenter", (_event, d) => {
 					// ponytail: only call onHoverPosition — it sets both hover ID and position.
