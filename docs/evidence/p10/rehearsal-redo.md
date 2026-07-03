@@ -271,3 +271,122 @@ SOURCES WITH >=1 ABSORBED CLAIM (claim-source links):
   aljazeera (T3): 1 link (1 distinct claim)
   france24 (T3): 1 link (1 distinct claim)
 ```
+
+---
+
+## Step 7: backfill_snapshots --since 2026-04-01
+
+```
+Dates: 54 (2026-04-01 to 2026-07-03)
+Total rows: 5994 (54 × 37 sources × 3 verticals)
+Wall-clock: 9.0s
+Speed: 663 rows/s
+Total snapshots in DB: 44955
+```
+
+### FULL latest-date (2026-07-03) R_val AND R_orig for all 37 sources
+
+```
+ ID Source                    Tier R_orig  R_val
+--------------------------------------------------
+  1 reuters                   T  1   67.0    0.0
+  2 apnews                    T  1   97.0   96.0
+  3 bbc                       T  1   92.0    0.0
+  4 npr                       T  1   53.0    0.0
+  5 theguardian               T  1   89.0    0.0
+  6 foxnews                   T  2   61.0  100.0
+  7 politico                  T  2   39.0    0.0
+  8 economist                 T  2  100.0    0.0
+  9 nytimes                   T  2   64.0    0.0
+ 10 washingtonpost            T  2    0.0   NULL
+ 11 aljazeera                 T  3   44.0    0.0
+ 12 dw                        T  3   94.0    0.0
+ 13 NHK World                 T  3   86.0    0.0
+ 14 globaltimes               T  3   78.0    0.0
+ 15 france24                  T  3   33.0   NULL
+ 16 theintercept              T  4   31.0    0.0
+ 17 propublica                T  4   19.0    0.0
+ 18 bellingcat                T  4    8.0    0.0
+ 19 zerohedge                 T  5   42.0   NULL
+ 20 thegrayzone               T  5   14.0    0.0
+ 21 cnn                       T  2   75.0    0.0
+ 22 cbsnews                   T  2   50.0   NULL
+ 23 abcnews                   T  2   36.0    0.0
+ 24 batimes                   T  3   83.0    0.0
+ 25 straitstimes              T  3   69.0   NULL
+ 26 thehindu                  T  3   72.0   NULL
+ 27 premiumtimesng            T  3   22.0   NULL
+ 28 timesofisrael             T  3   22.0   NULL
+ 29 vanguardngr               T  3   28.0   NULL
+ 30 thereporterethiopia       T  3    3.0   NULL
+ 31 namibian                  T  3   14.0   NULL
+ 32 punchng                   T  3   56.0    0.0
+ 33 jamaicaobserver           T  3   58.0    0.0
+ 34 MercoPress                T  3    6.0    0.0
+ 35 tehrantimes               T  3   47.0   NULL
+ 36 africanarguments          T  4    8.0    0.0
+ 37 sputnikglobe              T  5   81.0    0.0
+```
+
+12 sources have NULL R_val (originated zero claims or all within D2 7-day window).
+Only apnews (96.0) and foxnews (100.0) have non-zero R_val — consistent with only 4 absorbed claims total.
+
+---
+
+## Step 8: T6 a/b checks
+
+```sql
+-- T6a: Every absorbed claim in >=2-source cluster
+SELECT COUNT(*) FROM claims c
+WHERE c.state = 'CONSENSUS_ABSORBED'
+  AND (SELECT COUNT(DISTINCT cs.source_id) FROM claim_sources cs WHERE cs.claim_id = c.id) < 2;
+-- Result: 0
+
+-- T6b: Every absorbed claim has convergence_type
+SELECT COUNT(*) FROM claims c
+WHERE c.state = 'CONSENSUS_ABSORBED'
+  AND (c.convergence_type IS NULL OR c.convergence_type = '');
+-- Result: 0
+```
+
+T6a: 0 violations → PASS
+T6b: 0 violations → PASS
+
+### Absorbed claims detail:
+```
+1683 | Girls were found in an unventilated trailer Samuel Bateman was hauling through Arizona. | cluster 7906 | 2 sources | CROSS_SOURCE_CONVERGENT
+2863 | A grizzly bear in Canada threatened a woman and a dog. | cluster 7907 | 2 sources | CROSS_SOURCE_CONVERGENT
+3720 | Iran announced that its negotiators are going to Switzerland for talks. | cluster 7491 | 2 sources | CROSS_SOURCE_CONVERGENT
+9886 | 700 people were injured. | cluster 7968 | 6 sources | CROSS_SOURCE_CONVERGENT
+```
+
+Note: None of the 4 absorbed claims are from the seed corpus's target stories (Venezuela, Heatwave, Anthropic). Only claim 3720 is Hormuz-adjacent (Iran/Switzerland talks).
+
+---
+
+## Step 9: VERDICT
+
+**NO — NOT JUDGE-READY.**
+
+**Single limiting factor:** Multi-story contamination in cluster 7512 (809 articles, 31 sources). All 4 seed stories (Venezuela, Hormuz, Heatwave, Anthropic) are in one cluster. The blob guard cannot split it — even at EPS_FLOOR=0.25, nomic embeddings produce very high cosine similarity for news articles in the same time window.
+
+**Evidence:**
+- Max cluster size: 809 (target: <= ~94)
+- Absorbed TOTAL: 4 (previous F5: 14)
+- Absorbed from seed stories: 1 (Hormuz only) — Venezuela 0, Heatwave 0, Anthropic 0
+- Cluster count: 772 (improved from 338 with prefix, but mega-cluster dominates)
+- T6 checks: both PASS (0 violations)
+
+**Root cause chain:**
+1. providers.json had BGE instead of nomic → FIXED (commit 2b3b1df)
+2. embedding_client.py applied "clustering:" prefix proven to make clustering worse → FIXED (commit 435edfe)
+3. recluster_all.py used body[:200] instead of get_embedding_input(1000 chars) → FIXED (commit 435edfe)
+4. recluster_all.py lacked blob guard → FIXED (commit 2b3b1df)
+5. Nomic embeddings without prefix at eps=0.35 still produce mega-clusters (809 articles) — blob guard floor-limited at eps=0.25. This is consistent with nomic-prefix-disaster.md findings (mega=930 at eps=0.30 without prefix).
+
+**What worked:**
+- Hygiene guard: PASS (zero non-nomic vectors, 2055 re-embedded)
+- Blob guard: running (772 vs 338 clusters with prefix) but floor-limited
+- Pipeline mechanics: all steps completed without errors
+- T6 checks: both PASS
+- Firecrawl: 3x faster than web_extract for article fetching
