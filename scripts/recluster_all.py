@@ -36,6 +36,7 @@ from sklearn.preprocessing import normalize
 from pipeline.embedding_client import EmbeddingClient, MODEL_DIMS
 from pipeline.vertical_classifier import classify_cluster, classify_text
 from pipeline.agent1_intake import _split_oversized, MAX_CLUSTER_SIZE
+from pipeline.cleaner import get_embedding_input
 
 
 def load_provider_config(path: str = "config/providers.json") -> dict:
@@ -165,7 +166,7 @@ def cluster_all(
 
     article_ids = [r["id"] for r in rows]
     texts = [
-        f"{r['title'] or ''} {r['body'][:200] if r['body'] else ''}"
+        get_embedding_input(r["title"], r["body"] or "", max_body_chars=1000)
         for r in rows
     ]
 

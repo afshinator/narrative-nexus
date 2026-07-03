@@ -122,10 +122,6 @@ class EmbeddingClient:
         if not texts:
             return []
 
-        # D1b: nomic models need "clustering: " prefix for topic separation
-        if "nomic" in self.model.lower():
-            texts = [f"clustering: {t}" for t in texts]
-
         if self.provider_id in _LOCAL_PROVIDERS:
             return await self._embed_local(texts)
 
