@@ -3,6 +3,8 @@
 Verified against actual code, database, and pipeline paths as of 2026-06-30.
 Each item includes the evidence trail: what exists, what's missing, and why.
 
+**Note (2026-07-03):** Phase 2, Track A, and Track B recon complete. See docs/06- through docs/22- for full history. Track B Recon-5 identified Kimi-K2P5 as the best extraction model (1.8s per call vs 36s for DeepSeek-V4-Pro). If live Investigate is built, `providers.json` agent2_llm model may need switching from `accounts/fireworks/models/deepseek-v4-pro` to `accounts/fireworks/models/kimi-k2p5` — but hold pending build decision. Do NOT change without testing extraction quality on the actual pipeline path first.
+
 ---
 
 ## TIER 1 — Unblocked, High Impact
