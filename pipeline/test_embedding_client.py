@@ -119,4 +119,4 @@ class TestEmbeddingClientAPI:
             # Verify correct model was passed
             call_kwargs = mock_embeddings.call_args.kwargs
             assert call_kwargs["model"] == "nomic-ai/nomic-embed-text-v1.5"
-            assert call_kwargs["input"] == ["hello", "world"]
+            assert call_kwargs["input"] == ["clustering: hello", "clustering: world"]

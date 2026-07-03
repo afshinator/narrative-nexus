@@ -1,0 +1,47 @@
+## Page Status: 404 Error — Content Not Found
+
+The requested article at `https://sputnikglobe.com/20260626/iran-hormuz-strait-1123456789.html` is **not available**. The page displays Sputnik International's standard **404 error**, indicating the article is missing or the link is incorrect.
+
+Instead of the intended article, the page presents a newsfeed sidebar, a note about chat access being blocked, and a list of other recent stories. No text, quotes, or data about the Hormuz Strait or Iran is present.
+
+---
+
+## Key Components of the 404 Page
+
+### 1. 404 Error Display
+- Large "404" icon and text.
+- No main article content.
+
+### 2. Newsfeed Headlines
+A sidebar lists recent stories. The headlines (without article bodies) include:
+
+- **"Germany's Deindustrialization Began With Attack on Nord Stream Pipelines - Russia's Special Envoy"** – 2 hours ago
+- **"IAEA Believes Enriched Uranium Stockpiles Stored at Iran's Nuclear Facilities - Grossi"** – 13 hours ago
+- **"Trump Claims Iran Agreed During Negotiations on Almost Everything US Wanted"** – 15 hours ago
+- **"US Coast Guard to Purchase Six State-of-Art Icebreakers for $3.3Bln - Authorities"** – 32 minutes ago
+- **"Moscow's SEZ Pharma Players Pour 1.7× More Investments Into City's Economy"** – 11 hours ago
+- **"EU Reshapes Itself Into Military-Political-Economic Bloc With Military Identity - Kremlin"** – 9 hours ago
+- **"Russian Defense Head Calls Strengthening Coastal Detection System Black Sea Fleet Priority"** – 9 hours ago
+- **"Ukraine's Attacks on Civilians Shows Absence of Any Moral Principles - Russian Ombudswoman"** – 3 hours ago
+- **"Russia's Game-Changing Anti-Drone Cartridge Crushes Thick Wood & Steel in Combat Tests"** – 7 hours ago
+- **"Russia Strongly Condemns Ukraine's Strike on Tokmak Market - Foreign Ministry"** – 7 hours ago
+- **"Solidarity Beyond Borders: Pakistan Stands with Iran in Moment of Transition"** – 2 hours ago
+- **"Iranian People Will Prevail Over US - Medvedev"** – 35 minutes ago
+
+A longer "Newsfeed" list is also present at the bottom, containing additional stories (e.g., liberation of Konstantinovka, court sentencing, etc.), all dated July 3, 2026.
+
+### 3. Chat Access Restrictions
+- **Message:** "Access to the chat has been blocked for violating the rules."
+- Link to rules: `https://sputniknews.com/docs/comments.html`
+- Block duration: "You will be able to participate again through: ∞." (indefinite)
+- Appeal option: feedback form at `https://sputniknews.com/?modal=feedback`
+- "The discussion is closed. You can participate in the discussion within 24 hours after the publication of the article."
+
+### 4. Loader Indicators
+Multiple inline loaders (`loader.svg`) are present, suggesting dynamic content that failed to load.
+
+---
+
+## Summary
+
+The page is a 404 error; the intended article on Iran and the Strait of Hormuz is not available. No specific information, quotes, or analysis about the topic is present. The surrounding content is a generic Sputnik International newsfeed listing other unrelated articles, along with a notice that the user's chat access is permanently blocked and that the discussion for this (missing) article is closed.

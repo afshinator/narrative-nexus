@@ -10,8 +10,6 @@ import logging
 from typing import Any
 from urllib.parse import urlparse
 
-from firecrawl import AsyncFirecrawl
-
 # 37 panel domains (same set as news_search.py)
 _PANEL_DOMAINS: set[str] = {
     "reuters.com", "apnews.com", "bbc.com", "bbc.co.uk",
@@ -43,6 +41,9 @@ async def search_news(query: str, limit: int = 6) -> list[dict[str, Any]]:
     from dotenv import load_dotenv
     from pathlib import Path
     load_dotenv(Path(__file__).parent.parent / ".env")
+
+    # Lazy import — firecrawl may not be installed in dev/test
+    from firecrawl import AsyncFirecrawl
 
     api_key = os.environ.get("FIRECRAWL_API_KEY", "")
     if not api_key:

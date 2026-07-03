@@ -10,6 +10,8 @@ ponytail: Vertical classification via embedding proximity to prototypes.
 ponytail: Articles with body_status='BODY_UNAVAILABLE' are skipped.
 Phase 1 T5a: Embeddings persisted to DB for reuse across runs.
 Phase 1 T5b: Time-windowing — articles bucketed into 14-day windows.
+Phase 2 P4: Recursive blob-split guard — clusters >60 articles
+  re-clustered at eps-0.05 down to floor 0.25.
 """
 
 import sqlite3
@@ -27,13 +29,21 @@ from pipeline.vertical_classifier import classify_cluster, classify_text, get_ve
 from db.connection import get_db
 from db.clusters import create_cluster
 
+# Phase 2 P4: recursive over-merge guard — maximum articles per cluster
+MAX_CLUSTER_SIZE = 60
+# Phase 2 P4: floor for recursive eps reduction
+EPS_FLOOR = 0.25
+
 
 class IntakeClusteringAgent(BasePipelineAgent):
     """Generates embeddings, clusters articles by semantic similarity."""
 
-    def __init__(self, *, db_path: str, embedding_provider: dict[str, Any]):
+    def __init__(self, *, db_path: str, embedding_provider: dict[str, Any],
+                 eps: float = 0.35, min_samples: int = 2):
         self.db_path = db_path
         self._embedding_provider = embedding_provider
+        self._eps = eps
+        self._min_samples = min_samples
 
     async def run(self) -> dict[str, Any]:
         """Execute intake + clustering with persisted embeddings and time-windowing."""
@@ -58,13 +68,12 @@ class IntakeClusteringAgent(BasePipelineAgent):
             return {"clusters": 0, "articles_clustered": 0, "article_map": {}}
 
         article_ids = [r["id"] for r in rows]
-        # Phase 2 Y2: use cleaner + 1000-char body window (was 200 chars, un-cleaned)
         texts = [
             get_embedding_input(r["title"], r["body"] or "", max_body_chars=1000)
             for r in rows
         ]
 
-        # ── T5a: Check embedding cache (Phase 2 T2: dim-filtered) ──────
+        # ── Check embedding cache (dim-filtered) ──────────────────────
         conn = get_db(self.db_path)
         try:
             model = self._embedding_provider["model"]
@@ -81,7 +90,6 @@ class IntakeClusteringAgent(BasePipelineAgent):
             skipped_dim = 0
             for row in raw_cache:
                 if expected_dim is not None and row["dim"] != expected_dim:
-                    # Phase 2 T2c: cached vector has wrong dimension — skip
                     skipped_dim += 1
                     continue
                 cached[row["article_id"]] = np.frombuffer(row["vector"], dtype=np.float64)
@@ -107,7 +115,6 @@ class IntakeClusteringAgent(BasePipelineAgent):
             if not new_embeddings or len(new_embeddings) != len(need_embedding):
                 return {"clusters": 0, "articles_clustered": 0, "article_map": {}}
 
-            # T5a: persist new embeddings
             conn = get_db(self.db_path)
             try:
                 for j, vec in enumerate(new_embeddings):
@@ -126,9 +133,9 @@ class IntakeClusteringAgent(BasePipelineAgent):
         all_embeddings = [cached[aid] for aid in article_ids]
         matrix = np.array(all_embeddings, dtype=np.float64)
 
-        # ── T5b: Time-windowing — 14-day buckets ─────────────────────────
+        # ── Time-windowing — 14-day buckets ─────────────────────────────
         window_days = 14
-        buckets: dict[int, list[int]] = {}  # window_key -> [indices]
+        buckets: dict[int, list[int]] = {}
 
         for i, row in enumerate(rows):
             ts_str = row["published_at"] or row["created_at"]
@@ -136,7 +143,6 @@ class IntakeClusteringAgent(BasePipelineAgent):
                 ts = datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
             except (ValueError, TypeError):
                 ts = datetime(2020, 1, 1, tzinfo=timezone.utc)
-            # Floor to 14-day window
             epoch = datetime(2020, 1, 1, tzinfo=timezone.utc)
             window_key = int((ts - epoch).total_seconds() / (86400 * window_days))
             buckets.setdefault(window_key, []).append(i)
@@ -144,12 +150,10 @@ class IntakeClusteringAgent(BasePipelineAgent):
         # ── Cluster per window ──────────────────────────────────────────
         conn = get_db(self.db_path)
         try:
-            label_to_cluster_id: dict[int, int] = {}
             article_map: dict[int, int] = {}
 
             for window_key, indices in sorted(buckets.items()):
-                if len(indices) < 2:
-                    # Single-article windows → each gets a singleton cluster
+                if len(indices) < self._min_samples:
                     for idx in indices:
                         aid = article_ids[idx]
                         vertical = classify_text(texts[idx])
@@ -157,14 +161,19 @@ class IntakeClusteringAgent(BasePipelineAgent):
                         article_map[aid] = cid
                     continue
 
-                # Extract embeddings for this window
                 window_matrix = np.array([all_embeddings[i] for i in indices], dtype=np.float64)
                 window_norm = normalize(window_matrix)
 
                 clustering = DBSCAN(
-                    eps=0.30, min_samples=2, metric="cosine",
+                    eps=self._eps, min_samples=self._min_samples, metric="cosine",
                 ).fit(window_norm)
                 labels = clustering.labels_
+
+                # ── P4: Recursive blob-split guard ──────────────────────
+                labels = _split_oversized(
+                    window_norm, labels, indices, texts,
+                    eps=self._eps, min_samples=self._min_samples,
+                )
 
                 # Classify verticals for non-noise clusters
                 window_label_to_vertical: dict[int, str] = {}
@@ -201,3 +210,75 @@ class IntakeClusteringAgent(BasePipelineAgent):
             }
         finally:
             conn.close()
+
+
+# ── P4: Recursive blob-split guard ────────────────────────────────────────
+
+def _split_oversized(
+    matrix: np.ndarray,
+    labels: np.ndarray,
+    indices: list[int],
+    texts: list[str],
+    *,
+    eps: float,
+    min_samples: int,
+    depth: int = 0,
+) -> np.ndarray:
+    """Recursively split clusters larger than MAX_CLUSTER_SIZE.
+
+    For each non-noise cluster with > MAX_CLUSTER_SIZE articles:
+      1. Extract the subset embedding matrix.
+      2. Re-run DBSCAN at eps - 0.05 (floor EPS_FLOOR).
+      3. Replace the original label with sub-labels (negative offset to
+         avoid collision with existing labels).
+      4. Recurse if any sub-cluster is still oversized.
+
+    Returns modified labels array.
+    """
+    if depth > 10:
+        return labels
+
+    unique_labels = sorted(set(int(l) for l in labels))
+    new_labels = labels.copy()
+    next_sub_label = -1000 - (depth * 1000)
+
+    for label in unique_labels:
+        if label == -1:
+            continue
+        member_mask = labels == label
+        n_members = int(member_mask.sum())
+
+        if n_members <= MAX_CLUSTER_SIZE:
+            continue
+
+        member_positions = [j for j, m in enumerate(member_mask) if m]
+        subset_matrix = matrix[member_positions]
+        subset_norm = normalize(subset_matrix)
+
+        new_eps = max(eps - 0.05, EPS_FLOOR)
+        if new_eps >= eps:
+            continue
+
+        sub_clustering = DBSCAN(
+            eps=new_eps, min_samples=min_samples, metric="cosine",
+        ).fit(subset_norm)
+        sub_labels = sub_clustering.labels_
+
+        # Recurse
+        sub_labels = _split_oversized(
+            subset_matrix, sub_labels,
+            [indices[j] for j in member_positions],
+            [texts[j] for j in member_positions],
+            eps=new_eps, min_samples=min_samples, depth=depth + 1,
+        )
+
+        for pos, sub_lbl in enumerate(sub_labels):
+            global_pos = member_positions[pos]
+            if sub_lbl == -1:
+                new_labels[global_pos] = -1
+            else:
+                new_labels[global_pos] = next_sub_label + int(sub_lbl)
+
+        next_sub_label -= 1000
+
+    return new_labels
