@@ -5,7 +5,7 @@ Reads articles from the database, generates sentence-transformer embeddings
 clusters into the database, and returns an article→cluster mapping for
 downstream agents.
 
-ponytail: DBSCAN with eps=0.5, min_samples=2, metric='cosine'.
+ponytail: DBSCAN with eps=0.30, min_samples=2, metric='cosine'.
 ponytail: Vertical classification via embedding proximity to prototypes.
 ponytail: Articles with body_status='BODY_UNAVAILABLE' are skipped.
 Phase 1 T5a: Embeddings persisted to DB for reuse across runs.
@@ -21,7 +21,8 @@ from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import normalize
 
 from pipeline.base_agent import BasePipelineAgent
-from pipeline.embedding_client import EmbeddingClient
+from pipeline.cleaner import get_embedding_input
+from pipeline.embedding_client import EmbeddingClient, MODEL_DIMS
 from pipeline.vertical_classifier import classify_cluster, classify_text, get_vertical_list
 from db.connection import get_db
 from db.clusters import create_cluster
@@ -57,24 +58,41 @@ class IntakeClusteringAgent(BasePipelineAgent):
             return {"clusters": 0, "articles_clustered": 0, "article_map": {}}
 
         article_ids = [r["id"] for r in rows]
+        # Phase 2 Y2: use cleaner + 1000-char body window (was 200 chars, un-cleaned)
         texts = [
-            f"{r['title'] or ''} {r['body'][:200] if r['body'] else ''}"
+            get_embedding_input(r["title"], r["body"] or "", max_body_chars=1000)
             for r in rows
         ]
 
-        # ── T5a: Check embedding cache ──────────────────────────────────
+        # ── T5a: Check embedding cache (Phase 2 T2: dim-filtered) ──────
         conn = get_db(self.db_path)
         try:
             model = self._embedding_provider["model"]
-            cached = {
-                row["article_id"]: np.frombuffer(row["vector"], dtype=np.float64)
-                for row in conn.execute(
-                    "SELECT article_id, vector FROM embeddings WHERE model = ? AND article_id IN ({})".format(
-                        ",".join("?" * len(article_ids))
-                    ),
-                    [model] + article_ids,
-                ).fetchall()
-            }
+            expected_dim = MODEL_DIMS.get(model)
+
+            raw_cache = conn.execute(
+                "SELECT article_id, vector, dim FROM embeddings WHERE model = ? AND article_id IN ({})".format(
+                    ",".join("?" * len(article_ids))
+                ),
+                [model] + article_ids,
+            ).fetchall()
+
+            cached: dict[int, np.ndarray] = {}
+            skipped_dim = 0
+            for row in raw_cache:
+                if expected_dim is not None and row["dim"] != expected_dim:
+                    # Phase 2 T2c: cached vector has wrong dimension — skip
+                    skipped_dim += 1
+                    continue
+                cached[row["article_id"]] = np.frombuffer(row["vector"], dtype=np.float64)
+
+            if skipped_dim:
+                import logging
+                logger = logging.getLogger("narrative_nexus.agent1")
+                logger.warning(
+                    "skipped %d cached embeddings with dim != expected %d for model %s",
+                    skipped_dim, expected_dim, model,
+                )
         finally:
             conn.close()
 
@@ -144,7 +162,7 @@ class IntakeClusteringAgent(BasePipelineAgent):
                 window_norm = normalize(window_matrix)
 
                 clustering = DBSCAN(
-                    eps=0.5, min_samples=2, metric="cosine",
+                    eps=0.30, min_samples=2, metric="cosine",
                 ).fit(window_norm)
                 labels = clustering.labels_
 

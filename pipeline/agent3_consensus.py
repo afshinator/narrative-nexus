@@ -1,7 +1,7 @@
 """Consensus Alignment Agent — classifies claims, computes baseline, resolves states."""
 from datetime import datetime, timezone
 from pipeline.base_agent import BasePipelineAgent
-from pipeline.consensus import compute_baseline_pct, DEFAULT_THRESHOLDS, MIN_CORROBORATION
+from pipeline.consensus import compute_baseline_pct, DEFAULT_THRESHOLDS
 from pipeline.resolution import determine_state
 from db.connection import get_db, load_schema
 from db.clusters import get_cluster
@@ -67,10 +67,10 @@ class ConsensusAlignmentAgent(BasePipelineAgent):
             pct = compute_baseline_pct(reporting, pool_size)
             max_pct = max(max_pct, pct)
 
-            new_state = determine_state(pct, threshold=threshold, day=_days_since(claim["created_at"]))
-            # D1: absorption requires >= MIN_CORROBORATION distinct sources
-            if new_state == "CONSENSUS_ABSORBED" and reporting < MIN_CORROBORATION:
-                new_state = "PENDING"
+            new_state = determine_state(
+                pct, threshold=threshold, day=_days_since(claim["created_at"]),
+                reporting=reporting,
+            )
             if new_state != claim["state"]:
                 absorbed = (
                     datetime.now(timezone.utc).isoformat()

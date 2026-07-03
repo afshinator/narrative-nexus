@@ -31,6 +31,20 @@ _API_PROVIDERS = {"fireworks", "openai"}
 # Providers that are known NOT to support embeddings
 _UNSUPPORTED_EMBEDDING_PROVIDERS = {"opencode", "deepseek"}
 
+# ── Model dimension lookup (Phase 2 — T2c) ──────────────────────────────
+
+# Known dimensions for embedding models. Used to validate cached embeddings
+# and prevent cross-model dimension mismatch.
+MODEL_DIMS: dict[str, int] = {
+    "all-MiniLM-L6-v2": 384,
+    "nomic-ai/nomic-embed-text-v1.5": 768,
+    "BAAI/bge-base-en-v1.5": 768,
+    "BAAI/bge-small-en-v1.5": 384,
+    "thenlper/gte-large": 1024,
+    "thenlper/gte-base": 768,
+}
+
+
 # ── Base URLs for API providers ──────────────────────────────────────────
 
 _EMBEDDING_BASE_URLS: dict[str, str] = {
@@ -99,9 +113,18 @@ class EmbeddingClient:
 
         Returns a list of float vectors, one per input text.  Empty input
         returns an empty list.  All vectors have the same dimension.
+
+        Phase 2 D1b: prepends "clustering: " for nomic models per
+        nomic-embed-text-v1 training spec. Without this task disambiguator,
+        vectors encode generic news-article style rather than topic-specific
+        similarity — causing all articles to merge into one mega-cluster.
         """
         if not texts:
             return []
+
+        # D1b: nomic models need "clustering: " prefix for topic separation
+        if "nomic" in self.model.lower():
+            texts = [f"clustering: {t}" for t in texts]
 
         if self.provider_id in _LOCAL_PROVIDERS:
             return await self._embed_local(texts)
