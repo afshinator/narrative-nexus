@@ -187,3 +187,87 @@ Largest cluster: 809 articles
 - Multi-source clusters (>=2): 68
 
 ### Checkpoint commit: (after Step 3)
+
+---
+
+## Step 4: Per-story cluster membership
+
+| Story | Mega-cluster 7512 | Other clusters | Sources in 7512 |
+|-------|-------------------|----------------|-----------------|
+| Venezuela | 84 articles, 21 sources | 4 singletons (7396, 7390, 7221, 7214) | 21 |
+| Hormuz | 22 articles, 10 sources | 7491(2), 7408(1) | 10 |
+| Heatwave | 47 articles, 13 sources | 7542(1), 7493(1) | 13 |
+| Anthropic | 3 articles, 3 sources | 7427(1) | 3 |
+
+Mega-cluster 7512: 782 articles (from claims), 31 distinct sources.
+Orphaned claims: 0.
+
+**FRAGMENTED:** Venezuela split across 5 clusters (84 in mega + 4 singletons).
+**MIXED:** All 4 seed stories in cluster 7512 — multi-story contamination.
+
+---
+
+## Agent 2 (pipeline requirement): Forensic extraction on 27 new articles
+
+Agent 1 (incremental): 27 new articles embedded + clustered (1 new cluster, 773 total).
+Agent 2: 76 claims extracted from 27 articles.
+Total claims: 7,823 (was 7,747 + 76 new).
+
+---
+
+## Step 5: reset_claim_state + match_all_clusters sim=0.85
+
+```
+reset_claim_state:
+  Before: claims=7823, claim_sources=8190, claim_variants=932
+  Reset 7823 claims to PENDING
+  Deleted 932 claim_variant rows
+  Deleted 8190 claim_sources rows
+  Inserted 7823 claim_sources rows
+  After: claims=7823, claim_sources=7823, claim_variants=0
+  VERIFIED: claim_sources count (7823) == claims count (7823)
+
+match_all_clusters sim=0.85:
+  Clusters with claims: 740
+  Clusters processed: 145
+  Total merges: 521
+  Total sources linked: 221
+  Elapsed: 227.5s
+
+Claims after matching: 7302
+Claims with >=2 distinct sources: 158
+Claims with >=2 T1/T2 pool sources: 47
+```
+
+---
+
+## Step 6: Agent 3 all clusters
+
+```
+Agent 3: 773 clusters, 1445 claims classified
+
+CLAIMS BY STATE:
+  PENDING: 5857
+  UNRESOLVED: 1441
+  CONSENSUS_ABSORBED: 4
+
+ABSORBED TOTAL: 4
+
+ABSORBED PER STORY:
+  Venezuela: 0 absorbed / 239 total claims
+  Hormuz: 1 absorbed / 93 total claims
+  Heatwave: 0 absorbed / 153 total claims
+  Anthropic: 0 absorbed / 13 total claims
+
+SOURCES WITH >=1 ABSORBED CLAIM (claim-source links):
+  apnews (T1): 3 links (3 distinct claims)
+  reuters (T1): 1 link (1 distinct claim)
+  npr (T1): 1 link (1 distinct claim)
+  theguardian (T1): 1 link (1 distinct claim)
+  foxnews (T2): 1 link (1 distinct claim)
+  nytimes (T2): 1 link (1 distinct claim)
+  cnn (T2): 1 link (1 distinct claim)
+  abcnews (T2): 1 link (1 distinct claim)
+  aljazeera (T3): 1 link (1 distinct claim)
+  france24 (T3): 1 link (1 distinct claim)
+```
