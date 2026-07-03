@@ -35,6 +35,7 @@ from sklearn.preprocessing import normalize
 
 from pipeline.embedding_client import EmbeddingClient, MODEL_DIMS
 from pipeline.vertical_classifier import classify_cluster, classify_text
+from pipeline.agent1_intake import _split_oversized, MAX_CLUSTER_SIZE
 
 
 def load_provider_config(path: str = "config/providers.json") -> dict:
@@ -103,6 +104,25 @@ def build_embeddings(
             cached[aid] = arr
         conn.commit()
         print(f"  Persisted {len(uncached_pairs)} new embeddings.", file=sys.stderr)
+
+    # ── Hygiene guard ──────────────────────────────────────────────────
+    total_vectors = len(cached)
+    cached_nomic = len(cached) - len(uncached_pairs)
+    re_embedded = len(uncached_pairs)
+    # Verify no non-nomic vectors were loaded
+    non_nomic = conn.execute(
+        "SELECT COUNT(*) FROM embeddings WHERE model != ? AND article_id IN ({})".format(
+            ",".join("?" * len(article_ids))
+        ),
+        [model] + article_ids,
+    ).fetchone()[0]
+    print(f"\n  HYGIENE GUARD:", file=sys.stderr)
+    print(f"    Cached nomic hits: {cached_nomic}", file=sys.stderr)
+    print(f"    Re-embedded (new): {re_embedded}", file=sys.stderr)
+    print(f"    Non-nomic vectors in DB for these articles: {non_nomic}", file=sys.stderr)
+    print(f"    Total vectors used: {total_vectors}", file=sys.stderr)
+    assert non_nomic == 0, f"HYGIENE GUARD FAILED: {non_nomic} non-nomic vectors found"
+    print(f"    PASS: zero non-nomic vectors used", file=sys.stderr)
 
     # Build in article_ids order
     return {aid: cached[aid] for aid in article_ids}
@@ -199,6 +219,12 @@ def cluster_all(
             eps=eps, min_samples=2, metric="cosine",
         ).fit(win_norm)
         labels = clustering.labels_
+
+        # ── P4: Recursive blob-split guard ──────────────────────────
+        labels = _split_oversized(
+            win_norm, labels, indices, texts,
+            eps=eps, min_samples=2,
+        )
 
         # Group indices by label
         label_to_indices: dict[int, list[int]] = {}
