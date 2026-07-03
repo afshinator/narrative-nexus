@@ -19,11 +19,22 @@ const ARCHETYPE_FILL: Record<string, string> = {
 	CONSENSUS_FOLLOWER: "var(--nn-slate)",
 };
 
+interface Region {
+	yMin: number;
+	yMax: number;
+	label: string;
+	sublabel?: string;
+}
+
 interface Props {
 	data: EnrichedSource[];
 	hoveredId: string | null;
 	onHoverPosition?: (id: string | null, x: number, y: number) => void;
 	onSelect: (id: string) => void;
+	xScale?: "linear" | "log";
+	xLabel?: string;
+	yLabel?: string;
+	regions?: Region[];
 }
 
 export default function ScatterPlot({
@@ -31,6 +42,10 @@ export default function ScatterPlot({
 	hoveredId,
 	onHoverPosition,
 	onSelect,
+	xScale: xScaleType = "linear",
+	xLabel = "Origination",
+	yLabel = "Validation",
+	regions,
 }: Props) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -69,11 +84,38 @@ export default function ScatterPlot({
 		if (!node) return;
 		const { width, height } = node.getBoundingClientRect();
 
-		const xScale = d3.scaleLinear().domain([0, 100]).range([0, width]);
+				const xScale = xScaleType === "log"
+					? d3.scaleLog().domain([1, d3.max(data, (d) => d.R_orig) || 100]).range([0, width])
+					: d3.scaleLinear().domain([0, 100]).range([0, width]);
 		const yScale = d3.scaleLinear().domain([0, 100]).range([height, 0]);
 
 		const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
 		const yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d"));
+
+		// U2: Region backgrounds (rendered before markers for z-order)
+		if (regions) {
+			for (const r of regions) {
+				const ry = yScale(r.yMax);
+				const rh = yScale(r.yMin) - yScale(r.yMax);
+				svg.append("rect")
+					.attr("x", 0).attr("y", ry)
+					.attr("width", width).attr("height", Math.max(0, rh))
+					.attr("fill", "var(--nn-surface2)").attr("opacity", 0.4);
+				svg.append("text")
+					.attr("x", 8).attr("y", ry + 16)
+					.attr("fill", "var(--nn-text-dim)")
+					.style("font-family", "IBM Plex Sans").style("font-size", "12px")
+					.style("font-weight", "600")
+					.text(r.label);
+				if (r.sublabel) {
+					svg.append("text")
+						.attr("x", 8).attr("y", ry + 32)
+						.attr("fill", "var(--nn-text-dim)")
+						.style("font-family", "IBM Plex Sans").style("font-size", "11px")
+						.text(r.sublabel);
+				}
+			}
+		}
 
 		// Quadrant backgrounds
 		svg.append("rect").attr("x", xScale(50)).attr("y", yScale(100))
@@ -107,9 +149,24 @@ export default function ScatterPlot({
 			.style("font-weight", "600").style("font-size", "11.5px")
 			.text("CONSENSUS FOLLOWERS");
 
-		// Axes
-		svg.append("g").call(xAxis).attr("transform", `translate(0,${yScale(0)})`);
-		svg.append("g").call(yAxis).attr("transform", `translate(${xScale(0)},0)`);
+				// Axes
+				svg.append("g").call(xAxis).attr("transform", `translate(0,${yScale(0)})`);
+				svg.append("g").call(yAxis).attr("transform", `translate(${xScale(0)},0)`);
+
+				// U1: Axis labels
+				svg.append("text")
+					.attr("x", width / 2).attr("y", height - 2)
+					.attr("text-anchor", "middle")
+					.attr("fill", "var(--nn-text-dim)")
+					.style("font-family", "IBM Plex Sans").style("font-size", "11px")
+					.text(xLabel);
+				svg.append("text")
+					.attr("x", -height / 2).attr("y", 8)
+					.attr("text-anchor", "middle")
+					.attr("transform", "rotate(-90)")
+					.attr("fill", "var(--nn-text-dim)")
+					.style("font-family", "IBM Plex Sans").style("font-size", "11px")
+					.text(yLabel);
 
 		// Data markers
 		if (data.length > 0) {

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
+import LensToggle from "../components/LensToggle";
 import ScatterPlot from "../components/ScatterPlot";
 import VerticalPills from "../components/VerticalPills";
 import type { ReputationScore } from "../data/scores";
@@ -41,6 +42,60 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	const [sortDir, setSortDir] = useState<1 | -1>(1);
 	const [vertical, setVertical] = useState<VerticalThresholdKey>("geopolitics");
 	const [fetchedScores, setFetchedScores] = useState<ReputationScore[]>([]);
+
+	// T2b: Lens toggle — persisted in URL search params for deep-linking
+	const [searchParams, setSearchParams] = useSearchParams();
+	const lensParam = searchParams.get("lens");
+	const lens: "consensus" | "coverage" =
+		lensParam === "coverage" ? "coverage" : "consensus";
+	const setLens = useCallback(
+		(l: "consensus" | "coverage") => {
+			setSearchParams(l === "coverage" ? { lens: "coverage" } : {});
+		},
+		[setSearchParams],
+	);
+
+	// Coverage landscape data (fetched once, pan-vertical)
+	interface CoverageSource {
+		source_id: number;
+		name: string;
+		tier: number;
+		total_claims: number;
+		solo_claims: number;
+		solo_share_pct: number;
+		has_absorbed_claims: number;
+	}
+	const [coverageData, setCoverageData] = useState<CoverageSource[]>([]);
+	useEffect(() => {
+		if (typeof window !== "undefined" && !window.fetch) return;
+		fetch("/api/coverage-landscape")
+			.then((r) => r.json())
+			.then((data) => setCoverageData(data.sources ?? []))
+			.catch(() => {});
+	}, []);
+
+		// T3: Transform coverage data for ScatterPlot (x=log10(claims), y=solo_share)
+		// Build name→slug map once so coverage source IDs match DEFAULT_SOURCES slugs
+		const nameToSlug = useMemo(() => {
+			const map = new Map<string, string>();
+			for (const src of DEFAULT_SOURCES) {
+				map.set(src.name.toLowerCase(), src.id);
+			}
+			return map;
+		}, []);
+
+		const coverageScatter = useMemo(() => {
+			return coverageData
+				.filter((s) => s.total_claims > 0)
+				.map((s) => ({
+					sourceId: nameToSlug.get(s.name.toLowerCase()) ?? String(s.source_id),
+					name: s.name,
+					tier: s.tier,
+					R_orig: Math.max(1, s.total_claims),
+					R_val: s.solo_share_pct,
+					archetype: null,
+				}));
+		}, [coverageData, nameToSlug]);
 
 	const filter = useStore((s) => s.archetypeFilter);
 	const activeSources = useStore((s) => s.activeSources);
@@ -229,9 +284,19 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</h1>
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-				Behavioral reputation across 20 monitored outlets —{" "}
-				{VERTICAL_LABELS[vertical]} vertical
+			Behavioral reputation across 20 monitored outlets —{" "}
+			{VERTICAL_LABELS[vertical]} vertical
 			</p>
+
+		{/* T4a: Landing copy with live DB counts — U3: derived from scores */}
+		<p className="-mt-1 font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]">
+			{coverageData.filter((s) => s.has_absorbed_claims).length} of{" "}
+			{coverageData.length} panel sources have crossed cross-source
+			corroboration on at least one claim. The remaining sources produce
+			coverage that either overlaps only partially with the panel
+			(Consensus lens) or covers stories no other panel source touches
+			(Coverage lens).
+		</p>
 
 			{/* Vertical picker + Archetype filter */}
 			<div className="flex flex-wrap items-center gap-4">
@@ -240,7 +305,19 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				<ArchetypePills />
 			</div>
 
-			{/* Scatter plot card */}
+			{/* T2a: Lens toggle */}
+		<div className="mt-4 flex items-center gap-3">
+			<LensToggle lens={lens} onChange={setLens} />
+		</div>
+		<p className="mt-1 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+			{lens === "consensus"
+				? "R_orig vs R_val — how often each source breaks stories vs how often those stories become consensus. Only graded sources shown."
+				: "Claim volume vs Solo Coverage Share — every source plotted. High-solo sources cover stories no one else in the panel does; low-solo sources report the shared news cycle."}
+		</p>
+
+		{lens === "consensus" ? (
+			<>
+				{/* Scatter plot card */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">
 				<div className="mb-3 flex items-baseline justify-between gap-2">
 					<h2 className="font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
@@ -364,8 +441,34 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</p>
 				</div>
 			</div>
+			</>
+			) : (
+			<>
+				{/* T3: Coverage Landscape scatter */}
+				<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">
+					<h2 className="font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
+						Coverage Landscape
+					</h2>
+					<div className="h-[420px]">
+						<ScatterPlot
+							data={coverageScatter}
+							hoveredId={hoveredSource}
+							onHoverPosition={handleHoverPosition}
+													onSelect={handleSelect}
+													xScale="log"
+													xLabel="Claim volume (log)"
+													yLabel="Solo coverage share %"
+													regions={[
+														{ yMin: 60, yMax: 100, label: "Sole voices", sublabel: "uncorroborated coverage" },
+														{ yMin: 0, yMax: 30, label: "Consensus arena", sublabel: "cross-source overlap" },
+													]}
+												/>
+					</div>
+				</div>
+			</>
+		)}
 
-			{/* Ledger card */}
+		{/* Ledger card */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">
 				<div className="mb-3 flex items-baseline justify-between gap-2">
 					<h2 className="font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">

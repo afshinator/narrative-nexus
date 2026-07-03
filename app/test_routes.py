@@ -469,3 +469,49 @@ class TestClusterReportRoute:
     def test_returns_404_for_missing_cluster(self, client):
         resp = client.get("/api/clusters/99999/report")
         assert resp.status_code == 404
+
+
+class TestCoverageLandscapeRoute:
+    """T1b: /api/coverage-landscape endpoint tests."""
+
+    def test_returns_all_sources(self, client):
+        """37 sources returned, each with required fields."""
+        resp = client.get("/api/coverage-landscape")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["totalSources"] == 37
+        assert len(data["sources"]) == 37
+        for src in data["sources"]:
+            assert "source_id" in src
+            assert "name" in src
+            assert "tier" in src
+            assert "total_claims" in src
+            assert "solo_claims" in src
+            assert "solo_share_pct" in src
+            assert "has_absorbed_claims" in src
+
+    def test_solo_share_is_number(self, client):
+        """solo_share_pct is a number."""
+        resp = client.get("/api/coverage-landscape")
+        data = resp.json()
+        for src in data["sources"]:
+            assert isinstance(src["solo_share_pct"], (int, float))
+
+    def test_has_absorbed_flag_is_int(self, client):
+        """has_absorbed_claims is 0 or 1."""
+        resp = client.get("/api/coverage-landscape")
+        data = resp.json()
+        for src in data["sources"]:
+            assert src["has_absorbed_claims"] in (0, 1)
+
+    def test_sources_sorted_by_solo_share(self, client):
+        """Results sorted by solo_share_pct DESC, then total_claims DESC."""
+        resp = client.get("/api/coverage-landscape")
+        data = resp.json()
+        sources = data["sources"]
+        for i in range(len(sources) - 1):
+            a, b = sources[i], sources[i + 1]
+            if a["solo_share_pct"] == b["solo_share_pct"]:
+                assert a["total_claims"] >= b["total_claims"]
+            else:
+                assert a["solo_share_pct"] >= b["solo_share_pct"]

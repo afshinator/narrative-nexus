@@ -400,6 +400,44 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
     }
 
 
+# ── Coverage Landscape endpoint (Track A — T1) ─────────────────────────
+
+@app.get("/api/coverage-landscape")
+def api_coverage_landscape(conn=Depends(get_persistent_db)):
+    """Per-source coverage stats: total claims, solo claims, solo share.
+
+    Returns one row per source with solo_claims = claims in clusters where
+    that source is the only distinct source. No vertical filter — pan-vertical.
+    """
+    rows = conn.execute("""
+        SELECT s.id as source_id, s.name, s.tier,
+               COUNT(cl.id) as total_claims,
+               SUM(CASE WHEN cluster_srcs.src_count = 1 THEN 1 ELSE 0 END) as solo_claims,
+               ROUND(CASE WHEN COUNT(cl.id) > 0
+                     THEN 100.0 * SUM(CASE WHEN cluster_srcs.src_count = 1 THEN 1 ELSE 0 END) / COUNT(cl.id)
+                     ELSE 0 END, 1) as solo_share_pct,
+               CASE WHEN SUM(CASE WHEN cl.state = 'CONSENSUS_ABSORBED' THEN 1 ELSE 0 END) > 0
+                    THEN 1 ELSE 0 END as has_absorbed_claims
+        FROM sources s
+        LEFT JOIN articles a ON a.source_id = s.id
+        LEFT JOIN claims cl ON cl.article_id = a.id
+        LEFT JOIN (
+            SELECT c2.cluster_id,
+                   COUNT(DISTINCT a3.source_id) as src_count
+            FROM claims c2
+            JOIN articles a3 ON a3.id = c2.article_id
+            GROUP BY c2.cluster_id
+        ) cluster_srcs ON cluster_srcs.cluster_id = cl.cluster_id
+        GROUP BY s.id
+        ORDER BY solo_share_pct DESC, total_claims DESC
+    """).fetchall()
+
+    return {
+        "sources": [dict(r) for r in rows],
+        "totalSources": len(rows),
+    }
+
+
 # ── Scraper control endpoints ──────────────────────────────────────────
 
 @app.get("/api/scraper/status")
