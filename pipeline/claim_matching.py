@@ -25,8 +25,26 @@ from typing import Any
 import numpy as np
 
 from db.claim_sources import add_claim_source
+from pipeline.provider_config import load_provider_config, get_provider_for_agent
+from pipeline.embedding_client import EmbeddingClient
 
 logger = logging.getLogger("narrative_nexus.claim_matching")
+
+
+def get_claim_matching_embed_client(cfg_path: str = "config/providers.json") -> EmbeddingClient:
+    """Create an EmbeddingClient configured for claim matching.
+
+    Resolves the 'claim_matching_embedding' slot from providers.json, which
+    may differ from the article-clustering embedding ('agent1_embedding').
+    Article clustering uses BGE; claim matching uses nomic for better
+    semantic similarity on short factual sentences.
+    """
+    import os
+    cfg = load_provider_config(cfg_path)
+    provider = get_provider_for_agent(cfg, "claim_matching_embedding")
+    # fireworks-nomic uses the same Fireworks API key as fireworks
+    api_key = os.environ.get("FIREWORKS_API_KEY", "")
+    return EmbeddingClient(provider, api_key=api_key)
 
 
 # ── Cosine similarity ────────────────────────────────────────────────────

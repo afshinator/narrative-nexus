@@ -1,62 +1,54 @@
-"""Backfill r_frame column for all historical snapshots — targeted UPDATE only.
+"""Backfill daily snapshots for a date range — all 6 R-dimensions.
 
-Recomputes only r_frame (not all 6 dimensions). Same percentile rank
-logic as _compute_and_write_snapshots, but UPDATEs in-place.
+Iterates the FULL calendar range (--since to --until/today), writing one
+row per source/vertical/day unconditionally (REQ-046). Days with no articles
+still get snapshots — R values carry forward as None/0.
 
-Usage: python3 scripts/backfill_snapshots.py [--db data/nn.db]
+Usage: python3 scripts/backfill_snapshots.py --db data/nn.db --since 2026-04-01 [--until 2026-07-04]
 """
 
+import argparse
 import sys
+from datetime import datetime, timedelta
+
 sys.path.insert(0, ".")
 import sqlite3
-from pipeline.snapshots import compute_r_frame_raw, percentile_rank
+from pipeline.runner import _compute_and_write_snapshots
 
 
 def main():
-    db_path = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "--db" else "data/nn.db"
-    conn = sqlite3.connect(db_path)
+    parser = argparse.ArgumentParser(description="Backfill snapshots over full calendar range")
+    parser.add_argument("--db", default="data/nn.db", help="Database path")
+    parser.add_argument("--since", required=True, help="Start date (YYYY-MM-DD)")
+    parser.add_argument("--until", default=None, help="End date (YYYY-MM-DD, default: today)")
+    args = parser.parse_args()
+
+    start = datetime.strptime(args.since, "%Y-%m-%d").date()
+    end = datetime.strptime(args.until, "%Y-%m-%d").date() if args.until else datetime.now().date()
+
+    conn = sqlite3.connect(args.db)
     conn.row_factory = sqlite3.Row
 
-    dates = [
-        row["date"]
-        for row in conn.execute(
-            "SELECT DISTINCT date FROM snapshots ORDER BY date"
-        ).fetchall()
-    ]
+    # Delete existing snapshots in range for clean recompute
+    deleted = conn.execute("DELETE FROM snapshots WHERE date >= ? AND date <= ?", (args.since, end.isoformat())).rowcount
+    conn.commit()
+    print(f"Deleted {deleted} existing snapshots in range", file=sys.stderr)
 
-    total_updated = 0
-
-    for i, date in enumerate(dates):
-        # Skip if this date already has r_frame populated
-        done = conn.execute(
-            "SELECT COUNT(*) FROM snapshots WHERE date = ? AND r_frame IS NOT NULL",
-            (date,),
-        ).fetchone()[0]
-        if done > 0:
-            if (i + 1) % 100 == 0:
-                print(f"[{i+1}/{len(dates)}] {date} — skipping (already has r_frame)")
-            continue
-
-        # Compute r_frame for this date
-        r_frame_raw = compute_r_frame_raw(conn, as_of=date)
-        r_frame = percentile_rank(
-            {k: v for k, v in r_frame_raw.items() if v is not None}
-        )
-
-        # UPDATE in place — same r_frame value for all verticals
-        for sid, val in r_frame.items():
-            conn.execute(
-                "UPDATE snapshots SET r_frame = ? WHERE source_id = ? AND date = ?",
-                (round(val), sid, date),
-            )
+    total_rows = 0
+    current = start
+    dates_done = 0
+    while current <= end:
+        date_str = current.isoformat()
+        rows = _compute_and_write_snapshots(conn, date_str=date_str, as_of=date_str + "T23:59:59+00:00")
         conn.commit()
-        total_updated += len(r_frame)
-
-        if (i + 1) % 100 == 0:
-            print(f"[{i+1}/{len(dates)}] {date} — updated {len(r_frame)} sources")
+        total_rows += rows
+        dates_done += 1
+        if dates_done % 20 == 0:
+            print(f"  [{dates_done}] {date_str} — {total_rows} rows so far", file=sys.stderr)
+        current += timedelta(days=1)
 
     conn.close()
-    print(f"Done. {total_updated} rows updated across {len(dates)} dates.")
+    print(f"Done. {dates_done} dates, {total_rows} rows.")
 
 
 if __name__ == "__main__":

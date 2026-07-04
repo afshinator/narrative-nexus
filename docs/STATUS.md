@@ -49,9 +49,14 @@ Configurations actually run:
 
 CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0 absorption drop cannot be attributed to either variable alone. P4 with sim=0.85 had far fewer merges (65 vs 1,626), reducing cross-source claims and thus absorption candidates.
 
+## RESOLVED
+
+- recluster_all vs P4 cluster-count discrepancy: RESOLVED. P1 sweep and P4 (max 94) ran on cached BGE vectors (F5-REDO baseline: embeddings table = 2,028 BGE). All true-nomic runs produced floor-limited mega-clusters (809 / 1,329 / 154). Locked params (eps=0.35, floor=0.25, sim=0.85) were calibrated in BGE space. Embedding model hereby locked to BAAI/bge-base-en-v1.5 on empirical grounds, superseding the nomic intent. "clustering:" prefix is nomic-specific and moot under BGE.
+- O7 claim-less articles: CORRECTED. 28 articles without claims = 27 merge artifacts (all claims merged into canonicals) + 1 real extraction failure (article 290, now resolved). The 27 were NOT extraction failures.
+
 ## Next Action
 
-F1-F5: Seed corpus for real — autopsy the 3, rebuild URL corpus from scratch, build ingestion script, full copy rehearsal.
+O9: Reset, Full Rematch, Consensus, Verdict — COMPLETE. 4/5 stories absorbed. Anthropic-vuln (cluster 923) gap: pool=2, needs 75% tech threshold, max claim has 1/2=50%. No threshold changes authorized. Ready for P10 time-depth parade or production decisions.
 
 ## BANNED
 
@@ -75,3 +80,9 @@ F1-F5: Seed corpus for real — autopsy the 3, rebuild URL corpus from scratch, 
 | 6 | Causal claim without controlled comparison | "Blob split causes fewer multi-source clusters" — disproven by data |
 | 7 | Fabricating numbers from memory | "Copy B had 0 absorbed" — it had 3 |
 | 8 | Fabricating a table column | STATUS.md had "With split Copy B" column for a configuration never run |
+| 9 | Chunk double-counting / phantom completion claims | Doc 43 reported 1,023 claims from overlapping run logs; DB said 827 |
+| 10 | Marking failed bounds as YES in compliance tables | Max cluster 80 > 60 marked YES/CANNOT COMPLY inconsistently |
+| 11 | Memory-based numbers instead of query output | "1 remaining" article; DB query showed 28 body-bearing articles without claims |
+| 12 | Unverified assumptions about which date field code uses | Assumed created_at = extraction date; actual code backdates to article published_at |
+| 13 | Misattributing merge artifacts to extraction failure | Doc 44 O7.2: 27 claim-less articles were merge artifacts, not extraction failures |
+| 14 | Post-verdict DB mutation left unreconciled | Cluster 900 "Temp 290" created by O7.2 retry, never cleaned up |

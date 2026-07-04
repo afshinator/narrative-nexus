@@ -4,6 +4,12 @@
       {
         "id": "fireworks",
         "name": "Fireworks AI",
+        "model": "BAAI/bge-base-en-v1.5",
+        "amd": true
+      },
+      {
+        "id": "fireworks-nomic",
+        "name": "Fireworks AI (nomic)",
         "model": "nomic-ai/nomic-embed-text-v1.5",
         "amd": true
       },
@@ -49,6 +55,7 @@
   },
   "defaults": {
     "agent1_embedding": "fireworks",
+    "claim_matching_embedding": "fireworks-nomic",
     "agent1_llm": "fireworks",
     "agent2_llm": "fireworks",
     "agent4_llm": "fireworks"

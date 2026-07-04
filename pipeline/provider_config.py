@@ -15,6 +15,7 @@ from typing import Any
 # Each slot name determines which provider category to search.
 _SLOT_CATEGORY: dict[str, str] = {
     "agent1_embedding": "embeddings",
+    "claim_matching_embedding": "embeddings",
     "agent1_llm": "llm",
     "agent2_llm": "llm",
     "agent4_llm": "llm",

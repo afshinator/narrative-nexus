@@ -26,7 +26,7 @@ logger = logging.getLogger("narrative_nexus.embeddings")
 _LOCAL_PROVIDERS = {"local-cpu"}
 
 # Providers that use openai.AsyncOpenAI.embeddings
-_API_PROVIDERS = {"fireworks", "openai"}
+_API_PROVIDERS = {"fireworks", "fireworks-nomic", "openai"}
 
 # Providers that are known NOT to support embeddings
 _UNSUPPORTED_EMBEDDING_PROVIDERS = {"opencode", "deepseek"}
@@ -49,6 +49,7 @@ MODEL_DIMS: dict[str, int] = {
 
 _EMBEDDING_BASE_URLS: dict[str, str] = {
     "fireworks": "https://api.fireworks.ai/inference/v1",
+    "fireworks-nomic": "https://api.fireworks.ai/inference/v1",
     "openai": "https://api.openai.com/v1",
 }
 
@@ -121,6 +122,10 @@ class EmbeddingClient:
         """
         if not texts:
             return []
+
+        # D1b: nomic models need "clustering: " prefix for topic separation
+        if "nomic" in self.model.lower():
+            texts = [f"clustering: {t}" for t in texts]
 
         if self.provider_id in _LOCAL_PROVIDERS:
             return await self._embed_local(texts)

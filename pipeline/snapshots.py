@@ -63,8 +63,8 @@ def compute_r_val_raw(conn: sqlite3.Connection, *, as_of: str | None = None) -> 
     if as_of is not None:
         # D2: Exclude claims within 7 days of as_of from both numerator
         # and denominator. R_orig (compute_r_orig_raw) is NOT filtered.
-        window_filter = "AND c.created_at <= ? AND c.created_at <= date(?, '-7 days')"
-        params.extend([as_of, as_of])
+        window_filter = "AND date(c.created_at) <= date(?, '-7 days')"
+        params.append(as_of)
 
     rows = conn.execute(f"""
         SELECT cs.source_id, COUNT(*) as cnt

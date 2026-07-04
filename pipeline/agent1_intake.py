@@ -15,6 +15,7 @@ Phase 2 P4: Recursive blob-split guard — clusters >60 articles
 """
 
 import sqlite3
+import sys
 from datetime import datetime, timezone, timedelta
 from typing import Any
 
@@ -257,12 +258,20 @@ def _split_oversized(
 
         new_eps = max(eps - 0.05, EPS_FLOOR)
         if new_eps >= eps:
+            print(f"  [BLOB GUARD] depth={depth} label={label} size={n_members} — at floor eps={eps}, cannot split further", file=sys.stderr)
             continue
 
         sub_clustering = DBSCAN(
             eps=new_eps, min_samples=min_samples, metric="cosine",
         ).fit(subset_norm)
         sub_labels = sub_clustering.labels_
+
+        # Log the split attempt
+        sub_sizes = {}
+        for sl in sub_labels:
+            sl_int = int(sl)
+            sub_sizes[sl_int] = sub_sizes.get(sl_int, 0) + 1
+        print(f"  [BLOB GUARD] depth={depth} label={label} size={n_members} eps={new_eps} → sub-clusters: {sub_sizes}", file=sys.stderr)
 
         # Recurse
         sub_labels = _split_oversized(
