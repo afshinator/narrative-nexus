@@ -3,6 +3,7 @@
 **Last updated:** 2026-07-04
 **Phase:** Gate reconnaissance. Live-DB run NOT yet authorized.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
+**Fingerprint:** 327 claims / 8 absorbed / 352 articles / 15 clusters / 10,545 snapshots, span 2026-04-01 → 2026-07-04 (corrected — prior 79-day claim was internally inconsistent; 10,545 = 111 × 95)
 **Backups:** `data/demo/backups/` (git-ignored)
 
 ## Locked Parameters
@@ -17,6 +18,9 @@
 | MIN_CORROBORATION | 2 | Single-source claims must NOT self-validate | Phase 2 T1 |
 | D1 (absorption rule) | >=2 distinct T1/T2 pool sources AND pct >= vertical threshold | resolution.py:27-33, agent3_consensus.py:70-73 | Phase 2 T3 |
 | D2 (R_val window) | Exclude claims within 7 days of as_of | snapshots.py:63-66 | Phase 2 T4 |
+| time_window (DBSCAN) | 14 days | Time-bounded clustering window | agent1_intake.py |
+| vertical thresholds | geo 65%, econ 75%, tech 75% | DEFAULT_THRESHOLDS in consensus.py | Phase 2 T5 |
+| freeze file | nn-frozen-2026-07-05.db | ALL harvest reads from this frozen copy | R1.5 |
 
 ## Source Tier Reference
 
@@ -58,7 +62,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-R1: Time Depth Candidates — STOPPED for review. Presenting: A1 (Iran War, 4 outlets Mar 2026), A2 (Ceasefire+Hormuz, 2 outlets Apr 2026), B1 (May Inflation — NOT COVERED, 1 outlet), B2 (May Tech — NOT COVERED, all June-published). Awaiting human approval before R2 ingestion. Skeleton harvest: 13 articles from nn.db but ~5 false positives.
+R1.5 review complete — see `docs/implementation-rounds/50-r1.5-review-results.md`. Skeleton triage: 9 KEEP / 4 EXCLUDE, 8 ingested into demo.db (1 already present), demo.db now 352 articles. Liveblog replacement: AP static FOUND (`apnews.com/article/us-military-iran-war-82nd-airborne-4b4c30ebc807b323fbf35c4435a739f1`), BBC NOT COVERED (no static equivalent exists). A1 source pool: Reuters (T2), Guardian (T1), AP static (T1) — 3 pool sources, meets >=2. R2 (Firecrawl extraction of approved URLs + ingestion + recluster) pending human authorization.
 
 ## BANNED
 
@@ -88,3 +92,4 @@ R1: Time Depth Candidates — STOPPED for review. Presenting: A1 (Iran War, 4 ou
 | 12 | Unverified assumptions about which date field code uses | Assumed created_at = extraction date; actual code backdates to article published_at |
 | 13 | Misattributing merge artifacts to extraction failure | Doc 44 O7.2: 27 claim-less articles were merge artifacts, not extraction failures |
 | 14 | Post-verdict DB mutation left unreconciled | Cluster 900 "Temp 290" created by O7.2 retry, never cleaned up |
+| 15 | Marking defective harvest as YES in compliance table | R1.2 (doc 49) marked YES with parenthetical "(defective skeleton)" — 5/13 articles were false positives, zero T1 after excluding 2457. The evidence describes failure; YES verdict is inconsistent. |
