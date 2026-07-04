@@ -58,7 +58,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-O9: Reset, Full Rematch, Consensus, Verdict — COMPLETE. 4/5 stories absorbed. Anthropic-vuln (cluster 923) gap: pool=2, needs 75% tech threshold, max claim has 1/2=50%. No threshold changes authorized. Ready for P10 time-depth parade or production decisions.
+S2: Sanity Follow-Up — COMPLETE. Key: S1.7 no fabrication (all FAQ numbers in files), nn.db has 7,747 not FAQ's 7,635 (112-claim gap UNKNOWN), Iran arc thin (13 articles, 2 sources — needs Firecrawl shopping), Agent 4 + corrections feasible on demo. Ready for next.
 
 ## BANNED
 
