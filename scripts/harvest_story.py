@@ -2,7 +2,7 @@
 """Harvest story articles from source DB into demo DB with remapped IDs.
 
 Usage:
-  python3 scripts/harvest_story.py --source data/nn.db --db /tmp/demo.db \
+  python3 scripts/harvest_story.py --source data/nn.db --db data/demo/demo.db \\
     --story Venezuela --ids 3,21,26,90,...
 
 Copies article rows from source DB, remapping IDs to sequential auto-increment

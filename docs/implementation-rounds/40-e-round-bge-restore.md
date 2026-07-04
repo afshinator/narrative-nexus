@@ -1,7 +1,7 @@
 # 40 — E-Round: Restore BGE Embedding Space + Demo Rebuild
 
 **Date:** 2026-07-03
-**Target DB:** /tmp/demo.db
+**Target DB:** data/demo/demo.db
 **Source DB:** data/nn.db (READ-ONLY)
 **No commits made.**
 

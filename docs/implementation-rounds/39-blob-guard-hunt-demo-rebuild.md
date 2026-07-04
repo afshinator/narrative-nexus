@@ -1,7 +1,7 @@
 # 39 — Blob Guard Hunt + Demo Rebuild Results
 
 **Date:** 2026-07-03
-**Target DB:** /tmp/demo.db
+**Target DB:** data/demo/demo.db
 **Source DB:** data/nn.db (READ-ONLY)
 **No commits made.**
 
@@ -48,7 +48,7 @@ pytest pipeline/test_blob_split.py: 4 passed
 
 ## B1: GUARD SMOKE TEST
 
-Recluster on /tmp/demo.db (196 articles, nomic + prefix, eps=0.35, ms=2):
+Recluster on data/demo/demo.db (196 articles, nomic + prefix, eps=0.35, ms=2):
 
 ```
 [BLOB GUARD] depth=0 label=0 size=187 eps=0.3 → sub-clusters: {0: 187}

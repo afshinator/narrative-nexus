@@ -1,7 +1,7 @@
 # 43 — O-Round: Rebuild Consumed Claim Layer
 
 **Date:** 2026-07-03
-**Target DB:** /tmp/demo.db
+**Target DB:** data/demo/demo.db
 **No commits made.**
 
 ---
@@ -33,8 +33,8 @@ Code: `/project/narrative-nexus/scripts/reset_claim_state.py` (full rewrite with
 ## O2: BACKUP
 
 ```
-/tmp/demo-pre-rebuild.db  3.8M
-/tmp/demo.db              3.8M
+data/demo/backups/demo-pre-rebuild.db  3.8M
+data/demo/demo.db              3.8M
 ```
 
 ---

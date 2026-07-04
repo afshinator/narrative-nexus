@@ -1,7 +1,9 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-03
-**Phase:** Gate reconnaissance (F1-F5). Live-DB run NOT yet authorized.
+**Last updated:** 2026-07-04
+**Phase:** Gate reconnaissance. Live-DB run NOT yet authorized.
+**Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
+**Backups:** `data/demo/backups/` (git-ignored)
 
 ## Locked Parameters
 

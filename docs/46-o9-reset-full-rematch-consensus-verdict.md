@@ -1,7 +1,7 @@
 # O9 — Reset, Full Rematch, Consensus, Verdict
 
 **Date:** 2026-07-04
-**Target DB:** /tmp/demo.db
+**Target DB:** data/demo/demo.db
 **No commits made.**
 
 ---
@@ -9,8 +9,8 @@
 ## O9.0 — BACKUP
 
 ```
-644  /tmp/demo-pre-o9.db  3.9M
-644  /tmp/demo.db  3.9M
+644  data/demo/backups/demo-pre-o9.db  3.9M
+644  data/demo/demo.db  3.9M
 ```
 
 ---
@@ -18,14 +18,14 @@
 ## O9.1 — RECONCILE 335 vs 328
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT COUNT(*) FROM claims;"
+$ sqlite3 data/demo/demo.db "SELECT COUNT(*) FROM claims;"
 335
 
-$ sqlite3 /tmp/demo.db "SELECT COUNT(*) FROM claim_variants;"
+$ sqlite3 data/demo/demo.db "SELECT COUNT(*) FROM claim_variants;"
 507
 ```
 
-**Explanation:** The backup (`/tmp/demo-pre-o8.db`) confirms 327 claims existed before O8.3, not 320. The 7 claims from the O7.2 retry (cluster 900) were present. Correct math: 327 (pre-O8) - 7 (cluster 900 removed) + 6 (art 290 re-extracted) + 6 (art 373 foxnews) + 3 (art 374 reuters) = 335. Doc 45 incorrectly used 320 as baseline, missing the 7 O7.2 claims.
+**Explanation:** The backup (`data/demo/backups/demo-pre-o8.db`) confirms 327 claims existed before O8.3, not 320. The 7 claims from the O7.2 retry (cluster 900) were present. Correct math: 327 (pre-O8) - 7 (cluster 900 removed) + 6 (art 290 re-extracted) + 6 (art 373 foxnews) + 3 (art 374 reuters) = 335. Doc 45 incorrectly used 320 as baseline, missing the 7 O7.2 claims.
 
 ---
 
@@ -163,7 +163,7 @@ Pool size = 2 (apnews + reuters). Every claim has only 1 T1/T2 supporter. 1/2 = 
 
 | Step | Requirement | Met EXACTLY? | Evidence |
 |------|-------------|--------------|----------|
-| O9.0 | Backup | YES | /tmp/demo-pre-o9.db 3.9M |
+| O9.0 | Backup | YES | data/demo/backups/demo-pre-o9.db 3.9M |
 | O9.1 | Reconcile 335 vs 328 | YES | 327 baseline in backup, not 320 |
 | O9.2a | Foxnews articles in Hormuz | YES | 199 + 373 both in cluster |
 | O9.2b | Claim 1504 supporters | YES | Foxnews NOT a supporter; needed rematch |

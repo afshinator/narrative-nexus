@@ -1,7 +1,7 @@
 # 41 — M-Round: Matcher Processed Zero Clusters
 
 **Date:** 2026-07-03
-**Target DB:** /tmp/demo.db
+**Target DB:** data/demo/demo.db
 **No commits made.**
 
 ---

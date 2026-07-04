@@ -5,13 +5,13 @@
 ### (a) Current pre/post state
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT COUNT(*), COUNT(DISTINCT article_id) FROM claims;"
+$ sqlite3 data/demo/demo.db "SELECT COUNT(*), COUNT(DISTINCT article_id) FROM claims;"
 320|137
 
-$ sqlite3 /tmp/demo.db "SELECT COUNT(*) FROM claim_variants;"
+$ sqlite3 data/demo/demo.db "SELECT COUNT(*) FROM claim_variants;"
 507
 
-$ sqlite3 /tmp/demo.db "SELECT COUNT(*) FROM claim_sources;"
+$ sqlite3 data/demo/demo.db "SELECT COUNT(*) FROM claim_sources;"
 496
 ```
 
@@ -30,7 +30,7 @@ The 1,023 figure is a phantom created by summing overlapping progress reports. T
 ### (c) Duplicate claim check
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT article_id, text, COUNT(*) FROM claims GROUP BY article_id, text HAVING COUNT(*) > 1;"
+$ sqlite3 data/demo/demo.db "SELECT article_id, text, COUNT(*) FROM claims GROUP BY article_id, text HAVING COUNT(*) > 1;"
 
 (no output)
 ```
@@ -46,10 +46,10 @@ Zero duplicate claim rows. The 320 claims are unique (article_id, text) pairs.
 Doc 43 stated both "1 remaining" and "processed, 0 claims." Both are wrong in context: the DB shows **28** body-bearing articles without claims, not 1. Article 290 was one of 28 articles whose Agent 2 extraction failed or was never retried.
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT COUNT(*) FROM articles WHERE body_status = 'AVAILABLE' AND body IS NOT NULL AND body != '' AND id NOT IN (SELECT DISTINCT article_id FROM claims);"
+$ sqlite3 data/demo/demo.db "SELECT COUNT(*) FROM articles WHERE body_status = 'AVAILABLE' AND body IS NOT NULL AND body != '' AND id NOT IN (SELECT DISTINCT article_id FROM claims);"
 28
 
-$ sqlite3 /tmp/demo.db "SELECT id, source_id, title FROM articles WHERE id = 290;"
+$ sqlite3 data/demo/demo.db "SELECT id, source_id, title FROM articles WHERE id = 290;"
 290|32|Heatwave deaths rise as funeral homes hit capacity in France
 ```
 
@@ -75,7 +75,7 @@ Claims for article 290 after retry: 7
 ## O7.3 — LIST ALL 15 CLUSTERS
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT c.id, c.title, COUNT(DISTINCT cl.article_id) as article_count, COUNT(DISTINCT a.source_id) as distinct_source_count, COUNT(cl.id) as claim_count FROM clusters c LEFT JOIN claims cl ON cl.cluster_id = c.id LEFT JOIN articles a ON a.id = cl.article_id GROUP BY c.id ORDER BY claim_count DESC;"
+$ sqlite3 data/demo/demo.db "SELECT c.id, c.title, COUNT(DISTINCT cl.article_id) as article_count, COUNT(DISTINCT a.source_id) as distinct_source_count, COUNT(cl.id) as claim_count FROM clusters c LEFT JOIN claims cl ON cl.cluster_id = c.id LEFT JOIN articles a ON a.id = cl.article_id GROUP BY c.id ORDER BY claim_count DESC;"
 ```
 
 | cluster_id | title | article_count | distinct_source_count | claim_count |
@@ -106,10 +106,10 @@ The 4 story clusters (889, 898, 897, 899) account for 281 of 320 post-match clai
 ### (a) Claim date histogram
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT MIN(created_at), MAX(created_at) FROM claims;"
+$ sqlite3 data/demo/demo.db "SELECT MIN(created_at), MAX(created_at) FROM claims;"
 2026-04-16T10:19:47+00:00|2026-06-29T22:04:46.855589+00:00
 
-$ sqlite3 /tmp/demo.db "SELECT date(created_at), COUNT(*) FROM claims GROUP BY 1 ORDER BY 1;"
+$ sqlite3 data/demo/demo.db "SELECT date(created_at), COUNT(*) FROM claims GROUP BY 1 ORDER BY 1;"
 2026-04-16|4
 2026-06-13|5
 2026-06-19|3
@@ -145,17 +145,17 @@ All claims have `created_at` backdated to the article's `published_at` (Agent 2 
 ### (c) nytimes (source_id=9) numerator and denominator for 2026-07-04
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT 'denominator' as label, COUNT(*) FROM claim_sources cs JOIN claims c ON c.id = cs.claim_id WHERE cs.source_id = 9 AND cs.first_seen_at = (SELECT MIN(first_seen_at) FROM claim_sources WHERE claim_id = cs.claim_id);"
+$ sqlite3 data/demo/demo.db "SELECT 'denominator' as label, COUNT(*) FROM claim_sources cs JOIN claims c ON c.id = cs.claim_id WHERE cs.source_id = 9 AND cs.first_seen_at = (SELECT MIN(first_seen_at) FROM claim_sources WHERE claim_id = cs.claim_id);"
 denominator|27
 
-$ sqlite3 /tmp/demo.db "SELECT 'numerator_7day' as label, COUNT(*) FROM claim_sources cs JOIN claims c ON c.id = cs.claim_id WHERE cs.source_id = 9 AND c.state = 'CONSENSUS_ABSORBED' AND cs.first_seen_at = (SELECT MIN(first_seen_at) FROM claim_sources WHERE claim_id = cs.claim_id) AND c.created_at <= date('2026-07-04', '-7 days');"
+$ sqlite3 data/demo/demo.db "SELECT 'numerator_7day' as label, COUNT(*) FROM claim_sources cs JOIN claims c ON c.id = cs.claim_id WHERE cs.source_id = 9 AND c.state = 'CONSENSUS_ABSORBED' AND cs.first_seen_at = (SELECT MIN(first_seen_at) FROM claim_sources WHERE claim_id = cs.claim_id) AND c.created_at <= date('2026-07-04', '-7 days');"
 numerator_7day|4
 ```
 
 nytimes originated 27 claims. 5 are absorbed total. 4 are within the 7-day window (created_at <= 2026-06-27). **1 claim is excluded by the 7-day filter:**
 
 ```
-$ sqlite3 /tmp/demo.db "SELECT c.id, c.text, c.created_at FROM claim_sources cs JOIN claims c ON c.id = cs.claim_id WHERE cs.source_id = 9 AND c.state = 'CONSENSUS_ABSORBED' AND cs.first_seen_at = (SELECT MIN(first_seen_at) FROM claim_sources WHERE claim_id = cs.claim_id) AND c.created_at > date('2026-07-04', '-7 days');"
+$ sqlite3 data/demo/demo.db "SELECT c.id, c.text, c.created_at FROM claim_sources cs JOIN claims c ON c.id = cs.claim_id WHERE cs.source_id = 9 AND c.state = 'CONSENSUS_ABSORBED' AND cs.first_seen_at = (SELECT MIN(first_seen_at) FROM claim_sources WHERE claim_id = cs.claim_id) AND c.created_at > date('2026-07-04', '-7 days');"
 1334|The heatwaves broke long-standing temperature records.|2026-06-27T03:16:46+00:00
 ```
 

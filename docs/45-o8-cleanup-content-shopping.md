@@ -1,7 +1,7 @@
 # O8 — Cleanup + Content Shopping Run
 
 **Date:** 2026-07-04
-**Target DB:** /tmp/demo.db
+**Target DB:** data/demo/demo.db
 **No commits made.**
 
 ---
@@ -51,7 +51,7 @@ Reuters extract confirms: "Anthropic's Mythos model identified vulnerabilities i
 
 ## O8.3 — BACKUP + SINGLE CLEAN RE-RUN
 
-**Backup:** `/tmp/demo-pre-o8.db` (3.9M) — created before any changes.
+**Backup:** `data/demo/backups/demo-pre-o8.db` (3.9M) — created before any changes.
 
 **Ingestion:**
 - Inserted article 373 (foxnews, Hormuz) with ~8,200 chars body
@@ -95,7 +95,7 @@ These are distinct subtopics within Anthropic (export controls vs. vulnerability
 | O8.1 | Fix 7-day boundary bug, unit test | YES | Diff pasted, test PASS |
 | O8.2a | Hormuz T1/T2 article search | YES | 3 real URLs found, extracts pasted |
 | O8.2b | Anthropic T1/T2 article search | YES | 2 real URLs found, extracts pasted |
-| O8.3 | Backup | YES | /tmp/demo-pre-o8.db 3.9M |
+| O8.3 | Backup | YES | data/demo/backups/demo-pre-o8.db 3.9M |
 | O8.3 | Ingestion | YES | 2 articles inserted, 900 deleted, 15 claims extracted |
 | O8.3 | Recluster, hygiene guard | YES | 165 cached, 2 new, 0 non-nomic |
 | O8.3 | Per-story verification | **STOP** | Article 374 → cluster 907, NOT 918 |

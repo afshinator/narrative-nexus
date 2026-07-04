@@ -1,7 +1,7 @@
 # 38 — Fresh-DB Demo Build: Rehearsal 1 Results
 
 **Date:** 2026-07-03
-**Target DB:** /tmp/demo.db (fresh, curated corpus)
+**Target DB:** data/demo/demo.db (fresh, curated corpus)
 **Source DB:** data/nn.db (READ-ONLY)
 **Branch:** revise01
 
@@ -21,7 +21,7 @@ Not committed.
 
 ## D1: Fresh DB
 
-Created /tmp/demo.db via db/connection.py init_db (db/schema.sql).
+Created data/demo/demo.db via db/connection.py init_db (db/schema.sql).
 
 ```
 TABLE LIST:
@@ -354,7 +354,7 @@ Single limiting factor: Multi-story contamination in cluster 551 (91 articles, 2
 | Step | Requirement | Met EXACTLY? | Evidence |
 |------|-------------|--------------|----------|
 | D0 | STATUS.md PARKED note, paste diff, no commit | YES | Diff pasted, not committed |
-| D1 | Fresh /tmp/demo.db, init_db, 37 sources, paste table list + count | YES | 12 tables, 37 sources |
+| D1 | Fresh data/demo/demo.db, init_db, 37 sources, paste table list + count | YES | 12 tables, 37 sources |
 | D2 | harvest_story.py script, 4 stories, per-story stats | YES | Script written, 4 stories harvested with stats |
 | D3 | Ingest urls.csv, added vs skipped, totals | YES | 27 added, 4 skipped, 372 articles, 196 with body, 29 sources |
 | D4a | Agent 2 on all articles without claims | PARTIAL | 101 of 196 articles processed (LLM at ~60s/article, time-limited). 485 claims extracted. |
