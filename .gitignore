@@ -41,3 +41,6 @@ pip-wheel-metadata/
 .env
 backfill.log
 fireworks_backfill.log
+
+# Demo DB backups (large, transient)
+data/demo/backups/
