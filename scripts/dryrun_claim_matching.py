@@ -17,7 +17,7 @@ from pipeline.embedding_client import EmbeddingClient
 async def main():
     # Copy DB
     src = _PROJ / "data" / "nn.db"
-    dst = "/tmp/dryrun.db"
+    dst = str(_PROJ / "data" / "demo" / "dryrun.db")
     print(f"Copying {src} → {dst}...")
     shutil.copy2(src, dst)
     print(f"Done ({os.path.getsize(dst):,} bytes)")

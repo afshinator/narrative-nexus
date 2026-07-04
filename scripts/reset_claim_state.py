@@ -10,9 +10,9 @@ claim count.
 - claim_variants: restored as independent claims, then table cleared
 - claim_sources: restored to 1:1 (claim_id, article's source_id, first_seen_at=article.published_at)
 """
-import sqlite3, sys
+import sqlite3
 
-db_path = sys.argv[1] if len(sys.argv) > 1 else "/tmp/phase2.db"
+db_path = "data/nn.db"
 conn = sqlite3.connect(db_path)
 conn.row_factory = sqlite3.Row
 c = conn.cursor()

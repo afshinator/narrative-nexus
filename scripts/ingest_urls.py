@@ -6,7 +6,7 @@ web_extract, inserts into articles table with body_status='AVAILABLE'.
 Idempotent: skips URLs already present.  Uses real published_at dates
 from page metadata, fallback to CSV column if present.
 
-Usage: python3 scripts/ingest_urls.py [--db /tmp/p8.db] [--csv path/to/urls.csv]
+Usage: python3 scripts/ingest_urls.py [--db data/nn.db] [--csv path/to/urls.csv]
 """
 
 import argparse
