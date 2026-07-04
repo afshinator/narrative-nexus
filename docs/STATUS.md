@@ -58,7 +58,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-S2: Sanity Follow-Up — COMPLETE. Key: S1.7 no fabrication (all FAQ numbers in files), nn.db has 7,747 not FAQ's 7,635 (112-claim gap UNKNOWN), Iran arc thin (13 articles, 2 sources — needs Firecrawl shopping), Agent 4 + corrections feasible on demo. Ready for next.
+R1: Time Depth Candidates — STOPPED for review. Presenting: A1 (Iran War, 4 outlets Mar 2026), A2 (Ceasefire+Hormuz, 2 outlets Apr 2026), B1 (May Inflation — NOT COVERED, 1 outlet), B2 (May Tech — NOT COVERED, all June-published). Awaiting human approval before R2 ingestion. Skeleton harvest: 13 articles from nn.db but ~5 false positives.
 
 ## BANNED
 
