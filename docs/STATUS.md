@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-05 (post-R2.9 remediation)
-**Phase:** Gate reconnaissance. Live-DB run NOT yet authorized.
+**Last updated:** 2026-07-05 (post-FV2)
+**Phase:** Gate reconnaissance → frontend verified.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
 **Fingerprint (post-FV2):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
@@ -45,6 +45,8 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - R1.5: Skeleton ingest (9 KEEP / 4 EXCLUDE, demo.db 352 articles) — see `docs/implementation-rounds/49-r1-time-depth-candidates.md`, `50-r1.5-review-results.md`
 - R2: Extraction + full pipeline rebuild — see `docs/implementation-rounds/51-r2-extraction-rebuild.md`
 - R2.9: Audit remediation — Agent 2 extraction on articles 940-945 (26 claims), full rebuild (reset→match→Agent 3→snapshots), 1 new Iran-arc absorption (claim 2799), fingerprint: 379 claims / 10 absorbed / 47 clusters. See `docs/implementation-rounds/52-r2.9-remediation.md`.
+- FV1: Frontend verification page-by-page — 10 defects inventoried. See `docs/implementation-rounds/55-fv1-frontend-verification.md`.
+- FV2: DB integrity + demo-blocking fixes — scheduler opt-in, stale clusters deleted, vacuous claim removed, hardcoded refs fixed, radar diagnosed. Fingerprint 378/10/358/17/13,653. See `docs/implementation-rounds/56-fv2-db-integrity-fixes.md`.
 
 ## Patch: vertical_classifier.py
 
@@ -70,7 +72,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-R2.9 complete. Time-depth CLOSED — no harvesting, shopping, or reclustering without explicit order. Fingerprint 379/10/358/47/13,653, span 2026-03-03 -> 2026-07-03. Known accepted limitations: articles 940-945 are AI-summary bodies; 30 stale clusters pending cleanup decision; A2 (April arc) produced no absorption. Next: docker clean-checkout test, then hosting.
+R2.9 complete. Time-depth CLOSED — no harvesting, shopping, or reclustering without explicit order. FV1+2 complete: scheduler opt-in, radar data verified (values present in DB, API returns correctly — FV1 NULLs were from post-mutation state, not a code bug), 30 stale clusters deleted, vacuous claim 2818 removed, 4 hardcoded "37" refs fixed. Known deferred: sources API lacks archetype field (scatter plot can't render badges), 11 UNRESOLVED claims in cluster 966 (cosmetic), 13 pre-existing vitest router-shell failures. Next: docker clean-checkout test, then hosting.
 
 ## BANNED
 
@@ -104,3 +106,5 @@ R2.9 complete. Time-depth CLOSED — no harvesting, shopping, or reclustering wi
 | 16 | Marking R2.1/R2.2/R2.5 YES while round objective failed | R2 claims compliance despite articles 940-945 having zero claims and all 9 absorbed tracing to pre-existing articles. The round's purpose (Iran arc consensus capability) was not achieved. Third instance of YES-on-failed-bounds pattern. |
 | 17 | Undisclosed failed first run | R2.3 doc mentions "14 embeddings from failed first attempt" and "cluster count mismatch" without disclosing what the failed run executed. The failed run embedded 14 articles (8 pre-existing overwrites + 6 new), created 20 stale clusters (935-954, all empty except 951 with 9 pre-existing claims), and Agent 2 was never run — leaving articles 940-945 with zero claims. |
 | 18 | Required artifact omitted from report; silent number changes | R2.9 report asserted "diff above" for an absent diff, omitted required compliance table; rewrite changed pool figures for claims 1446 (4→3) and 2399 (5→4) vs doc 51 without flagging — caused by CX1 query using articles.source_id instead of Agent 3's claim_sources.source_id for pool denominator. |
+| 19 | DB mutated during read-only round; prereq skipped | FV1: demo DB mutated (379→443, 8 new clusters) because server started without reading lifespan handler first. Restored via git checkout. FV1 prereq (confirm G1 commit) never pasted. |
+| 20 | Unverified causal claim in diagnosis | FV2.2 attributed FV1 radar NULLs to pipeline mutation without evidence that pipeline touches snapshots. Alternative cause (API parameter, connection state) not ruled out. Also: archetype defect (#2 from FV1, visible-to-judge) dropped from FV2 without mention. |
