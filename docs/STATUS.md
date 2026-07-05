@@ -3,7 +3,7 @@
 **Last updated:** 2026-07-05 (post-R2.9 remediation)
 **Phase:** Gate reconnaissance. Live-DB run NOT yet authorized.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
-**Fingerprint (post-R2.9):** 379 claims / 10 absorbed / 358 articles / 47 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
+**Fingerprint (post-FV2):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
 **Backups:** `data/demo/backups/` (git-ignored)
 

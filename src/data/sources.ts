@@ -1,5 +1,5 @@
 // Single source of truth for the default source panel.
-// Per REQ-048–053: 37 sources across 5 tiers.
+// Per REQ-048–053: curated source panel across 5 tiers.
 // Modify this array to change the default panel.
 
 export type SourceRegion =

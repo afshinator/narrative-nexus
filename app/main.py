@@ -55,7 +55,7 @@ async def lifespan(application: FastAPI):
 
     # Pipeline runner — daily consensus + snapshot computation
     pipeline_scheduler = None
-    if not os.environ.get("NN_NO_PIPELINE"):
+    if os.environ.get("NN_ENABLE_PIPELINE"):
         pipeline_scheduler = start_pipeline_scheduler(
             db_path,
             provider_overrides=application.state.providers,
