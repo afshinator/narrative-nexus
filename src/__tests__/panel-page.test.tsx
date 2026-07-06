@@ -31,7 +31,7 @@ describe("Panel Management Page", () => {
 		expect(screen.getByText(/balance/i)).toBeInTheDocument();
 	});
 
-	it("shows all 20 source names", () => {
+	it("shows all source names", () => {
 		renderPanel();
 		// Use getAllByText — each source name like "Reuters" appears once in the list
 		expect(screen.getByText("Reuters")).toBeInTheDocument();

@@ -36,7 +36,7 @@ describe("Store — consensusThresholds", () => {
 });
 
 describe("Store — activeSources", () => {
-	it("initializes with all 20 source IDs active", async () => {
+	it("initializes with all source IDs active", async () => {
 		const { useStore } = await import("../store");
 		const { DEFAULT_SOURCES } = await import("../data/sources");
 		// Reset to ensure we test the actual initial state

@@ -109,6 +109,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	useEffect(() => {
 		if (typeof window !== "undefined" && !window.fetch) return;
 		let cancelled = false;
+		setFetchedScores([]);
 		fetch(`/api/scores?vertical=${vertical}`)
 			.then((r) => {
 				if (!r.ok) throw new Error("Failed to load scores");
@@ -168,6 +169,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	}, [scores]);
 
 	// Scatter plot data: enriched sources with scores and archetype for color encoding
+	// A2: apply archetype filter — keep all points but dim non-matching
 	const scatterData = useMemo(
 		() =>
 			visibleSources.map((source) => {
@@ -189,17 +191,22 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				archetype,
 				};
 				}),
-				[scoreMap, panelMedian, visibleSources],
+				[scoreMap, panelMedian, visibleSources, filter],
 				);
 
 				// F2c: Split scatter data into graded (has R_val) and ungraded (no R_val yet)
+				// A2: When archetype filter is active, hide non-matching points from plot
+				const scatterVisible = useMemo(
+					() => (filter === null ? scatterData : scatterData.filter((s) => s.archetype === filter)),
+					[scatterData, filter],
+				);
 				const gradedData = useMemo(
-				() => scatterData.filter((s): s is typeof s & { R_val: number } => s.R_val != null),
-				[scatterData],
+					() => scatterVisible.filter((s): s is typeof s & { R_val: number } => s.R_val != null),
+					[scatterVisible],
 				);
 				const ungradedSources = useMemo(
-				() => scatterData.filter((s) => s.R_val == null),
-				[scatterData],
+					() => scatterVisible.filter((s) => s.R_val == null),
+					[scatterVisible],
 				);
 
 			// Enrich sources with scores + archetype, then filter + sort
@@ -284,7 +291,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</h1>
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-			Behavioral reputation across 20 monitored outlets —{" "}
+			Behavioral reputation across {visibleSources.length} monitored outlets —{" "}
 			{VERTICAL_LABELS[vertical]} vertical
 			</p>
 
@@ -327,11 +334,11 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				<div className="mb-3 space-y-2 font-sans text-[0.78rem] text-[var(--nn-text)]">
 					<p>
 						<strong>X-axis:</strong> Origination (0–100) — how often this source
-						is first to report a story that becomes consensus-absorbed.
+						reports claims before the rest of the panel.
 					</p>
 					<p>
-						<strong>Y-axis:</strong> Validation (0–100) — how often this
-						source's outlier claims become consensus-absorbed.
+						<strong>Y-axis:</strong> Validation (0–100) — how often its early
+						claims later enter consensus.
 					</p>
 				</div>
 				<div className="mb-3 space-y-1 font-sans text-[0.75rem] text-[var(--nn-text)]">
@@ -371,6 +378,9 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							</span>
 						</div>
 					))}
+					<div className="mt-2 border-t border-[var(--nn-border)] pt-2 font-sans text-[0.72rem] text-[var(--nn-text-dim)]">
+						Shapes: ● Circle (T1) · ■ Square (T2) · ◆ Diamond (T3) · ▲ Triangle (T4) · ✚ Cross (T5)
+					</div>
 				</div>
 				<ScatterPlot
 					data={gradedData}
@@ -454,11 +464,12 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							data={coverageScatter}
 							hoveredId={hoveredSource}
 							onHoverPosition={handleHoverPosition}
-													onSelect={handleSelect}
-													xScale="log"
-													xLabel="Claim volume (log)"
-													yLabel="Solo coverage share %"
-													regions={[
+							onSelect={handleSelect}
+							xScale="log"
+							xLabel="Claim volume (log)"
+							yLabel="Solo coverage share %"
+							showQuadrants={false}
+							regions={[
 														{ yMin: 60, yMax: 100, label: "Sole voices", sublabel: "uncorroborated coverage" },
 														{ yMin: 0, yMax: 30, label: "Consensus arena", sublabel: "cross-source overlap" },
 													]}

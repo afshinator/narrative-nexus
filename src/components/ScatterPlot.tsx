@@ -35,6 +35,7 @@ interface Props {
 	xLabel?: string;
 	yLabel?: string;
 	regions?: Region[];
+	showQuadrants?: boolean;
 }
 
 export default function ScatterPlot({
@@ -46,6 +47,7 @@ export default function ScatterPlot({
 	xLabel = "Origination",
 	yLabel = "Validation",
 	regions,
+	showQuadrants = true,
 }: Props) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -117,37 +119,39 @@ export default function ScatterPlot({
 			}
 		}
 
-		// Quadrant backgrounds
-		svg.append("rect").attr("x", xScale(50)).attr("y", yScale(100))
-			.attr("width", width - xScale(50)).attr("height", yScale(50))
-			.attr("fill", "var(--nn-navy)").attr("opacity", 0.09);
-		svg.append("rect").attr("x", xScale(50)).attr("y", yScale(50))
-			.attr("width", width - xScale(50)).attr("height", yScale(50))
-			.attr("fill", "var(--nn-red)").attr("opacity", 0.09);
-		svg.append("rect").attr("x", 0).attr("y", yScale(100))
-			.attr("width", xScale(50)).attr("height", yScale(50))
-			.attr("fill", "var(--nn-teal)").attr("opacity", 0.09);
-		svg.append("rect").attr("x", 0).attr("y", yScale(50))
-			.attr("width", xScale(50)).attr("height", yScale(50))
-			.attr("fill", "var(--nn-slate)").attr("opacity", 0.09);
+		// Quadrant backgrounds + labels — A3: hide for coverage lens
+		if (showQuadrants) {
+			svg.append("rect").attr("x", xScale(50)).attr("y", yScale(100))
+				.attr("width", width - xScale(50)).attr("height", yScale(50))
+				.attr("fill", "var(--nn-navy)").attr("opacity", 0.09);
+			svg.append("rect").attr("x", xScale(50)).attr("y", yScale(50))
+				.attr("width", width - xScale(50)).attr("height", yScale(50))
+				.attr("fill", "var(--nn-red)").attr("opacity", 0.09);
+			svg.append("rect").attr("x", 0).attr("y", yScale(100))
+				.attr("width", xScale(50)).attr("height", yScale(50))
+				.attr("fill", "var(--nn-teal)").attr("opacity", 0.09);
+			svg.append("rect").attr("x", 0).attr("y", yScale(50))
+				.attr("width", xScale(50)).attr("height", yScale(50))
+				.attr("fill", "var(--nn-slate)").attr("opacity", 0.09);
 
-		// Quadrant labels
-		svg.append("text").attr("x", width - 10).attr("y", 18)
-			.attr("text-anchor", "end").attr("fill", "var(--nn-navy)")
-			.style("font-weight", "600").style("font-size", "11.5px")
-			.text("EARLY BREAKERS");
-		svg.append("text").attr("x", width - 10).attr("y", yScale(0) - 10)
-			.attr("text-anchor", "end").attr("fill", "var(--nn-red)")
-			.style("font-weight", "600").style("font-size", "11.5px")
-			.text("NOISE GENERATORS");
-		svg.append("text").attr("x", 10).attr("y", 18)
-			.attr("text-anchor", "start").attr("fill", "var(--nn-teal)")
-			.style("font-weight", "600").style("font-size", "11.5px")
-			.text("SELECTIVE BUT ACCURATE");
-		svg.append("text").attr("x", 10).attr("y", yScale(0) - 10)
-			.attr("text-anchor", "start").attr("fill", "var(--nn-slate)")
-			.style("font-weight", "600").style("font-size", "11.5px")
-			.text("CONSENSUS FOLLOWERS");
+			// Quadrant labels
+			svg.append("text").attr("x", width - 10).attr("y", 18)
+				.attr("text-anchor", "end").attr("fill", "var(--nn-navy)")
+				.style("font-weight", "600").style("font-size", "11.5px")
+				.text("EARLY BREAKERS");
+			svg.append("text").attr("x", width - 10).attr("y", yScale(0) - 10)
+				.attr("text-anchor", "end").attr("fill", "var(--nn-red)")
+				.style("font-weight", "600").style("font-size", "11.5px")
+				.text("NOISE GENERATORS");
+			svg.append("text").attr("x", 10).attr("y", 18)
+				.attr("text-anchor", "start").attr("fill", "var(--nn-teal)")
+				.style("font-weight", "600").style("font-size", "11.5px")
+				.text("SELECTIVE BUT ACCURATE");
+			svg.append("text").attr("x", 10).attr("y", yScale(0) - 10)
+				.attr("text-anchor", "start").attr("fill", "var(--nn-slate)")
+				.style("font-weight", "600").style("font-size", "11.5px")
+				.text("CONSENSUS FOLLOWERS");
+		} // end showQuadrants
 
 				// Axes
 				svg.append("g").call(xAxis).attr("transform", `translate(0,${yScale(0)})`);
