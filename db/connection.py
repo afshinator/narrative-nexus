@@ -19,8 +19,14 @@ def get_db(path: str = ":memory:") -> sqlite3.Connection:
     persistent storage. Schema is NOT loaded here — call init_db() once
     at application startup for persistent databases, or call load_schema()
     explicitly for in-memory test databases.
+
+    check_same_thread=False: safe because connections are per-request
+    (opened in get_persistent_db dependency, closed after response).
+    FastAPI runs sync endpoints in a thread pool; without this flag,
+    a thread pool thread may fail the thread-identity check on a
+    connection opened by a different pool worker.
     """
-    conn = sqlite3.connect(path)
+    conn = sqlite3.connect(path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode = WAL")
     conn.execute("PRAGMA foreign_keys = ON")
