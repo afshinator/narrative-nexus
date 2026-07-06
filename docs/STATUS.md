@@ -1,9 +1,9 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-FV3)
-**Phase:** Archetype API + render verification → docker gate next.
+**Last updated:** 2026-07-06 (post-FV4)
+**Phase:** Three fixes → docker gate next.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
-**Fingerprint (post-FV3):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
+**Fingerprint (post-FV4):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
 **Backups:** `data/demo/backups/` (git-ignored)
 
@@ -47,8 +47,9 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - R2.9: Audit remediation — Agent 2 extraction on articles 940-945 (26 claims), full rebuild (reset→match→Agent 3→snapshots), 1 new Iran-arc absorption (claim 2799), fingerprint: 379 claims / 10 absorbed / 47 clusters. See `docs/implementation-rounds/52-r2.9-remediation.md`.
 - FV1: Frontend verification page-by-page — 10 defects inventoried. See `docs/implementation-rounds/55-fv1-frontend-verification.md`.
 - FV2: DB integrity + demo-blocking fixes — scheduler opt-in, stale clusters deleted, vacuous claim removed, hardcoded refs fixed, radar diagnosed. Fingerprint 378/10/358/17/13,653. See `docs/implementation-rounds/56-fv2-db-integrity-fixes.md`.
-- FV2.2 causal explanation: **UNKNOWN.** The claim that "scheduler overwrote snapshots during unauthorized run" is unverified — no snapshot timestamps or scheduler logs from the FV1 session exist. FV1's frontend NULLs could also stem from API parameter mismatch, connection state, or mutated-DB side effects. FV2.2 correctly restored the DB and confirmed API values are present; the causal attribution to "scheduler overwrote snapshots" is speculation. Per audit item (a): cause recorded as UNKNOWN.
+- FV2.2 causal explanation: **UNKNOWN.** ... (see above).
 - FV3: Archetype API + render verification — `app/main.py:101` enriched `/api/sources` with `archetypes` dict per vertical from latest snapshots, null contract enforced (NULL R_orig/R_val → archetype=null). Panel median for 2026-07-03 geopolitics: R_orig=52.0, R_val=48.0 (26 graded sources). 4-page render verification via API data (`docs/evidence/fv3/README.md`). Browser tool unavailable — all render observations are API-backed; pixel-level rendering is UNKNOWN.
+- FV4: Three fixes — (F1) Cluster 966 count reconciled: 19 claims, 1 unique absorbed (claim 2799, appears under 2 claim_sources → report double-counts to 2). Claim 2818 confirmed absent (deleted FV2.4). (F2) Archetype median canon: profile endpoint returns stored snapshot archetype (`_get_latest_archetype`), resolving the scatter (52/48) vs profile (76/0) median conflict. Frontend badge now matches stored value. (F3) Cluster 966 renamed to "US-Iran War: March Escalation & April Ceasefire".
 
 ## Patch: vertical_classifier.py
 
@@ -74,7 +75,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-FV3 complete: archetype API endpoint implemented, render verification via API data (browser unavailable — pixel rendering UNKNOWN), FV2.2 cause recorded as UNKNOWN. Next: docker clean-checkout build + run test.
+FV4 complete: cluster 966 reconciled (19 claims/1 absorbed, per-source double-count explained), archetype median canonized (profile returns stored value), cluster renamed. Next: docker clean-checkout build + run test.
 
 ## BANNED
 

@@ -93,6 +93,26 @@ def get_persistent_db(request: Request):
 
 # ── Routes ─────────────────────────────────────────────────────────────
 
+
+def _get_latest_archetype(conn, source_id: int, vertical: str) -> str | None:
+    """Return the stored archetype from the latest snapshot for source+vertical.
+
+    The pipeline computes archetype from percentile-ranked R_orig/R_val vs
+    panel median and stores it in the snapshots table.  This is the canonical
+    value — the profile endpoint returns it directly instead of recomputing
+    from a different median, which resolves the FV3 median-conflict where
+    the scatter (stored, median 52/48) and profile (computed, median 76/0)
+    produced different archetypes for the same source.
+    """
+    row = conn.execute(
+        "SELECT archetype FROM snapshots "
+        "WHERE source_id = ? AND vertical = ? "
+        "ORDER BY date DESC LIMIT 1",
+        (source_id, vertical),
+    ).fetchone()
+    return row["archetype"] if row else None
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "version": "0.1.0"}
@@ -286,6 +306,7 @@ def api_source_profile(
         "snapshots": snapshots,
         "tierAvg": tier_avg,
         "panelMedian": panel_median,
+        "archetype": _get_latest_archetype(conn, source_id, vertical),
         "events": events,
         "edits": edits,
         "claimSummary": claim_summary,
