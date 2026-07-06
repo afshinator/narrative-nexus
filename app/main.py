@@ -100,8 +100,51 @@ def health():
 
 @app.get("/api/sources")
 def api_sources(active_only: bool = False, conn = Depends(get_persistent_db)):
+    """Return all sources with archetype per vertical from latest snapshots.
+
+    Archetype is read from the snapshots table (computed by the pipeline using
+    panel medians of percentile-ranked R_orig/R_val across active sources).
+    Sources with NULL R_orig or R_val get archetype=null per the null contract.
+    """
     sources = list_sources(conn, active_only=active_only)
-    return {"sources": sources}
+
+    # Latest date in snapshots — one query for all sources
+    latest_date_row = conn.execute(
+        "SELECT MAX(date) FROM snapshots"
+    ).fetchone()
+    latest_date = latest_date_row[0] if latest_date_row else None
+
+    # Build archetype per (source_id, vertical) from latest snapshots
+    archetype_map: dict[tuple[int, str], str | None] = {}
+    if latest_date:
+        rows = conn.execute(
+            """SELECT source_id, vertical, r_orig, r_val, archetype
+               FROM snapshots
+               WHERE date = ?""",
+            (latest_date,),
+        ).fetchall()
+        for r in rows:
+            sid = r["source_id"]
+            vert = r["vertical"]
+            r_orig = r["r_orig"]
+            r_val = r["r_val"]
+            # Null contract: if either R_orig or R_val is NULL, archetype is null
+            if r_orig is not None and r_val is not None:
+                archetype_map[(sid, vert)] = r["archetype"]
+            else:
+                archetype_map[(sid, vert)] = None
+
+    # Enrich each source with archetypes dict
+    result = []
+    for src in sources:
+        sid = src["id"]
+        src["archetypes"] = {
+            vert: archetype_map.get((sid, vert))
+            for vert in ["geopolitics", "economics", "technology"]
+        }
+        result.append(src)
+
+    return {"sources": result}
 
 
 @app.get("/api/sources/{source_id}")
