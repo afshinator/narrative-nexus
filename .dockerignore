@@ -9,6 +9,8 @@ venv/
 htmlcov/
 # Don't send the entire data directory (may contain large SQLite files)
 data/
+# But allow the demo DB — needed for Docker build COPY
+!data/demo/demo.db
 # Don't send test files or docs
 pipeline/test_*.py
 app/test_*.py

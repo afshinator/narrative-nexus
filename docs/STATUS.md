@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-D1)
-**Phase:** Docker gate attempted — docker not available in environment.
+**Last updated:** 2026-07-06 (post-D2)
+**Phase:** Docker gate — container config self-sufficient. Build executes on human's machine.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
 **Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
@@ -51,6 +51,7 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - FV3: Archetype API + render verification — `app/main.py:101` enriched `/api/sources` with `archetypes` dict per vertical from latest snapshots, null contract enforced (NULL R_orig/R_val → archetype=null). Panel median for 2026-07-03 geopolitics: R_orig=52.0, R_val=48.0 (26 graded sources). 4-page render verification via API data (`docs/evidence/fv3/README.md`). Browser tool unavailable — all render observations are API-backed; pixel-level rendering is UNKNOWN.
 - FV4: Three fixes — (F1) Cluster 966 count reconciled... (F3) Cluster 966 renamed to "US-Iran War: March Escalation & April Ceasefire".
 - D1: Docker clean-checkout gate — (X1) cluster report absorbed count fixed to COUNT DISTINCT (966: 2→1). (X2) archetype null contract extended to profile endpoint. (D1a) clean clone succeeded. (D1b-D1c) CANNOT COMPLY: no container runtime in environment. (D1d) Static analysis: Dockerfile COPY dist/ will fail (dist/ not tracked), demo.db not baked/mounted/fetched → container starts empty. See `docs/implementation-rounds/59-d1-docker-gate.md`.
+- D2: Container self-sufficiency — (D2.1) Multi-stage Dockerfile.app: Stage 1 node:20-slim builds frontend (npm ci + npm run build), Stage 2 python:3.12-slim copies dist/ from Stage 1. (D2.2) Demo DB baked via COPY data/demo/demo.db /data/nn.db. Volume footgun resolved: removed nn-data volume mount from app service in docker-compose.yml — no volume shadows /data, baked COPY is visible at runtime. (D2.3) Scheduler confirmed OFF: NN_ENABLE_PIPELINE absent from compose env block, app/main.py:58 only starts pipeline when var is truthy. (D2.4) Human runbook at docs/docker-runbook.md (clone → build → up → two curl verifications). See `docs/docker-runbook.md`.
 
 ## Patch: vertical_classifier.py
 
@@ -76,7 +77,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-FV4 complete: cluster 966 reconciled (19 claims/1 absorbed, per-source double-count explained), archetype median canonized (profile returns stored value), cluster renamed. Next: docker clean-checkout build + run test.
+D2 complete: multi-stage Dockerfile.app (self-sufficient frontend build), demo DB baked into image, volume footgun resolved, scheduler confirmed OFF, human runbook delivered. Next: D3 — human executes `docker compose build && docker compose up` from clean clone and reports results.
 
 ## BANNED
 
