@@ -57,8 +57,11 @@ def _get_model() -> SentenceTransformer:
     """Lazy-load the embedding model (shared with Agent 1's local-cpu path)."""
     global _model
     if _model is None:
-        from sentence_transformers import SentenceTransformer  # lazy import — server doesn't need it
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
+        try:
+            from sentence_transformers import SentenceTransformer  # lazy import — server doesn't need it
+            _model = SentenceTransformer("all-MiniLM-L6-v2")
+        except ImportError:
+            _model = False  # sentinel: model unavailable
     return _model
 
 
@@ -67,6 +70,9 @@ def _get_prototypes() -> dict[str, np.ndarray]:
     global _prototype_embeddings
     if _prototype_embeddings is None:
         model = _get_model()
+        if model is False:
+            # ponytail: model unavailable, return zero-vec fallback (won't be used)
+            return {}
         _prototype_embeddings = {
             vertical: model.encode(description)
             for vertical, description in VERTICAL_PROTOTYPES.items()
@@ -84,12 +90,15 @@ def classify_text(text: str) -> str:
 
     Embeds the text and returns the vertical whose prototype embedding
     is closest (cosine similarity). Falls back to "geopolitics" if
-    text is empty.
+    text is empty or model unavailable.
     """
     if not text or not text.strip():
         return "geopolitics"
 
     model = _get_model()
+    if model is False:
+        return "geopolitics"  # ponytail: model unavailable, default vertical
+    
     text_emb = model.encode(text[:2000])  # ponytail: truncate to 2000 chars
     prototypes = _get_prototypes()
 
