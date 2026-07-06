@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-D4)
-**Phase:** Docker gate — container serves frontend + API self-sufficiently. Push blocked (SSH).
+**Last updated:** 2026-07-06 (post-UX1)
+**Phase:** Docker gate — container serves frontend + API. UX1 Part A committed. Part B POC served.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
 **Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
@@ -52,7 +52,9 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - FV4: Three fixes — (F1) Cluster 966 count reconciled... (F3) Cluster 966 renamed to "US-Iran War: March Escalation & April Ceasefire".
 - D1: Docker clean-checkout gate — (X1) cluster report absorbed count fixed to COUNT DISTINCT (966: 2→1). (X2) archetype null contract extended to profile endpoint. (D1a) clean clone succeeded. (D1b-D1c) CANNOT COMPLY: no container runtime in environment. (D1d) Static analysis: Dockerfile COPY dist/ will fail (dist/ not tracked), demo.db not baked/mounted/fetched → container starts empty. See `docs/implementation-rounds/59-d1-docker-gate.md`.
 - D3: Fixed container build failure — better-sqlite3 (native module, needs node-gyp/python3/make/g++) removed from devDependencies. NOT used by frontend build path (tsconfig.app.json includes only src/, better-sqlite3 only imported in db/__tests__/schema.test.ts:2). npm run build PASS locally. Commit ac89bc5. Push blocked: SSH host key verification fails (no keys in container).
-- D4: Frontend serving + count fixes — (D4.0) SPA catch-all route in app/main.py serves dist/index.html for /, /source/5, /cluster/966 (API routes take priority). Verified: / → HTML, /source/5 → HTML (SPA fallback), /api/sources → JSON. (D4.1) totalClaims double-count fixed: sum-of-sources → COUNT(*) direct query. cluster 966: 20→19. (D4.2) Claims array deduped — claim 2799 had 2 claim_sources → now one row with domains: ["reuters.com", "theguardian.com"]. Frontend updated to domains[] + join rendering. (D4.3) Runbook updated with browser check. Commit bae4cc3.
+- D4: Frontend serving + count fixes — (D4.0) SPA catch-all... Commit bae4cc3.
+- UX1-A: Sources page functional fixes — (A1) Vertical button flash: clear fetchedScores on vertical change (Sources.tsx:112). (A2) Archetype filter wired to scatter plot via scatterVisible memo (Sources.tsx:198-201). (A3) Coverage lens quadrant overlap: showQuadrants=false on coverage ScatterPlot (ScatterPlot.tsx:37,124). (A4) Shape legend added inside color legend (Sources.tsx:381-383). (A5) Hardcoded "20" → {visibleSources.length}; fixed test descriptions too. (A6) Axis copy corrected: X="reports claims before the rest of the panel", Y="its early claims later enter consensus" (Sources.tsx:336-341). Quadrant labels verified correct at four plot corners. Commit 8ac2685.
+- UX1-B: Comprehension POC built — static HTML at docs/mock-ux1-comprehension-poc.html served on port 8080. 10 hardcoded scatter points with design-tokens styling, all tooltips functional (hover).
 
 ## Patch: vertical_classifier.py
 
@@ -78,7 +80,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-D4 complete: frontend SPA serving via FastAPI catch-all (/ → index.html, /source/5 → HTML, /api/* priority), totalClaims fixed (20→19), claims deduped (domains array). Commit bae4cc3. Push blocked by SSH. Next: human pushes all commits (D3+4), rebuilds from clean clone, verifies browser loads at localhost:8000.
+UX1 Part A committed (8ac2685). Part B POC served at http://localhost:8080/mock-ux1-comprehension-poc.html. Human reviews mock at the browser; Part B production implementation follows only after approval. Push all commits (human pushes from desktop — SSH blocked in container).
 
 ## BANNED
 
