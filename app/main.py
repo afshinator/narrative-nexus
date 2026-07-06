@@ -105,12 +105,18 @@ def _get_latest_archetype(conn, source_id: int, vertical: str) -> str | None:
     produced different archetypes for the same source.
     """
     row = conn.execute(
-        "SELECT archetype FROM snapshots "
+        "SELECT archetype, r_orig, r_val FROM snapshots "
         "WHERE source_id = ? AND vertical = ? "
         "ORDER BY date DESC LIMIT 1",
         (source_id, vertical),
     ).fetchone()
-    return row["archetype"] if row else None
+    if not row:
+        return None
+    # Null contract: if r_orig or r_val is NULL, archetype is null
+    # even if the DB stored a value.
+    if row["r_orig"] is None or row["r_val"] is None:
+        return None
+    return row["archetype"]
 
 
 @app.get("/api/health")
@@ -434,7 +440,13 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
 
     sources = [dict(r) for r in src_rows]
     total_claims = sum(s["claims"] for s in sources)
-    total_absorbed = sum(s["absorbed"] for s in sources)
+    # Count DISTINCT absorbed claims (avoid per-source double-count from
+    # claim_sources JOIN — a merged claim appears under multiple sources).
+    total_absorbed = conn.execute(
+        "SELECT COUNT(DISTINCT id) FROM claims "
+        "WHERE cluster_id = ? AND state = 'CONSENSUS_ABSORBED'",
+        (cluster_id,),
+    ).fetchone()[0]
     total_pending = sum(s["pending"] for s in sources)
 
     # Flat claim list with source domain

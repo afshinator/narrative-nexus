@@ -1,9 +1,9 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-FV4)
-**Phase:** Three fixes → docker gate next.
+**Last updated:** 2026-07-06 (post-D1)
+**Phase:** Docker gate attempted — docker not available in environment.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
-**Fingerprint (post-FV4):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
+**Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
 **Backups:** `data/demo/backups/` (git-ignored)
 
@@ -49,7 +49,8 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - FV2: DB integrity + demo-blocking fixes — scheduler opt-in, stale clusters deleted, vacuous claim removed, hardcoded refs fixed, radar diagnosed. Fingerprint 378/10/358/17/13,653. See `docs/implementation-rounds/56-fv2-db-integrity-fixes.md`.
 - FV2.2 causal explanation: **UNKNOWN.** ... (see above).
 - FV3: Archetype API + render verification — `app/main.py:101` enriched `/api/sources` with `archetypes` dict per vertical from latest snapshots, null contract enforced (NULL R_orig/R_val → archetype=null). Panel median for 2026-07-03 geopolitics: R_orig=52.0, R_val=48.0 (26 graded sources). 4-page render verification via API data (`docs/evidence/fv3/README.md`). Browser tool unavailable — all render observations are API-backed; pixel-level rendering is UNKNOWN.
-- FV4: Three fixes — (F1) Cluster 966 count reconciled: 19 claims, 1 unique absorbed (claim 2799, appears under 2 claim_sources → report double-counts to 2). Claim 2818 confirmed absent (deleted FV2.4). (F2) Archetype median canon: profile endpoint returns stored snapshot archetype (`_get_latest_archetype`), resolving the scatter (52/48) vs profile (76/0) median conflict. Frontend badge now matches stored value. (F3) Cluster 966 renamed to "US-Iran War: March Escalation & April Ceasefire".
+- FV4: Three fixes — (F1) Cluster 966 count reconciled... (F3) Cluster 966 renamed to "US-Iran War: March Escalation & April Ceasefire".
+- D1: Docker clean-checkout gate — (X1) cluster report absorbed count fixed to COUNT DISTINCT (966: 2→1). (X2) archetype null contract extended to profile endpoint. (D1a) clean clone succeeded. (D1b-D1c) CANNOT COMPLY: no container runtime in environment. (D1d) Static analysis: Dockerfile COPY dist/ will fail (dist/ not tracked), demo.db not baked/mounted/fetched → container starts empty. See `docs/implementation-rounds/59-d1-docker-gate.md`.
 
 ## Patch: vertical_classifier.py
 
