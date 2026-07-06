@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
 import LensToggle from "../components/LensToggle";
 import ScatterPlot from "../components/ScatterPlot";
+import Tooltip from "../components/Tooltip";
 import VerticalPills from "../components/VerticalPills";
 import type { ReputationScore } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
@@ -283,7 +284,22 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	);
 
 	return (
-		<div className="mx-auto max-w-[1340px] space-y-6">
+		<>
+			{/* U1: Full-width intro strip — sits under the app header, outside page layout */}
+			<div className="-mx-8 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-5 text-center">
+				<p className="mx-auto max-w-[900px] font-sans text-[0.9rem] leading-relaxed text-[var(--nn-text-dim)]">
+					<Tooltip content="Consensus reality: the version of events agreed upon by the majority of the panel at a given threshold. Not 'the truth.' — design-v1.2 §1">
+						<strong className="font-heading text-[1.05rem] text-[var(--nn-navy)]">
+							Not the truth — consensus reality.
+						</strong>
+					</Tooltip>{" "}
+					Narrative Nexus tracks how news outlets originate, validate, and correct
+					claims across geopolitics, economics, and technology — scoring each source
+					0–100 on six independent reputation dimensions.
+				</p>
+			</div>
+
+			<div className="mx-auto max-w-[1340px] space-y-6">
 			{/* Page header */}
 			<div className="flex items-center gap-3 mb-1.5">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
@@ -291,8 +307,13 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</h1>
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-			Behavioral reputation across {visibleSources.length} monitored outlets —{" "}
-			{VERTICAL_LABELS[vertical]} vertical
+			Behavioral reputation across{" "}
+			<Tooltip content="Curated panel of wire services, mainstream editorial, international, investigative, and contrarian sources across 5 tiers. — design-v1.2 §5">
+				{visibleSources.length} monitored outlets
+			</Tooltip>{" "}
+			— <Tooltip content="Topic vertical: stories categorized by domain keywords into geopolitics, economics, and technology. Reputation scores are tracked independently per source per vertical. — design-v1.2 §5">
+ 	{VERTICAL_LABELS[vertical]} vertical
+ </Tooltip>
 			</p>
 
 		{/* T4a: Landing copy with live DB counts — U3: derived from scores */}
@@ -333,12 +354,18 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</div>
 				<div className="mb-3 space-y-2 font-sans text-[0.78rem] text-[var(--nn-text)]">
 					<p>
-						<strong>X-axis:</strong> Origination (0–100) — how often this source
-						reports claims before the rest of the panel.
+						<strong>X-axis:</strong>{" "}
+						<Tooltip content="Outlier claim origination: how often a source breaks claims before the rest of the panel reports them. — design-v1.2 §4 (R_orig)">
+							Origination (0–100)
+						</Tooltip>{" "}
+						— how often this source reports claims before the rest of the panel.
 					</p>
 					<p>
-						<strong>Y-axis:</strong> Validation (0–100) — how often its early
-						claims later enter consensus.
+						<strong>Y-axis:</strong>{" "}
+						<Tooltip content="Consensus-absorbed: a claim that has entered the consensus version of events. Terminal state. — design-v1.2 §1">
+							Validation (0–100)
+						</Tooltip>{" "}
+						— how often its early claims later enter consensus.
 					</p>
 				</div>
 				<div className="mb-3 space-y-1 font-sans text-[0.75rem] text-[var(--nn-text)]">
@@ -347,21 +374,25 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							color: "var(--nn-navy)",
 							label: "Early Breaker",
 							desc: "high origination + high validation — consistently breaks stories that become consensus-absorbed",
+							tip: "High origination + high validation. Consistently breaks outlier claims that later become consensus-absorbed by the panel. — design-v1.2 §4",
 						},
 						{
 							color: "var(--nn-red)",
 							label: "Noise Generator",
 							desc: "high origination, low validation — frequently first, rarely becomes consensus-absorbed",
+							tip: "High origination, low validation. Frequently breaks claims that never enter consensus — systematic noise. — design-v1.2 §1",
 						},
 						{
 							color: "var(--nn-teal)",
 							label: "Selective but Accurate",
 							desc: "low origination, high validation — late to stories but reliable",
+							tip: "Low origination, high validation. Late to stories but their claims reliably enter consensus. — design-v1.2 §4",
 						},
 						{
 							color: "var(--nn-slate)",
 							label: "Consensus Follower",
 							desc: "low origination, low validation — safe but uninformative",
+							tip: "Low origination, low validation. Stays close to the mainstream view without independent breakout claims. — design-v1.2 §1",
 						},
 					].map((item) => (
 						<div key={item.label} className="flex items-baseline gap-1.5">
@@ -370,7 +401,9 @@ export default function SourcesPage({ scores: propScores }: Props) {
 								style={{ backgroundColor: item.color }}
 							/>
 							<span>
-								<span style={{ color: item.color }}>{item.label}</span>
+								<Tooltip content={item.tip}>
+									<span style={{ color: item.color }}>{item.label}</span>
+								</Tooltip>
 								<span className="text-[var(--nn-text-dim)]">
 									{" "}
 									— {item.desc}
@@ -379,7 +412,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 						</div>
 					))}
 					<div className="mt-2 border-t border-[var(--nn-border)] pt-2 font-sans text-[0.72rem] text-[var(--nn-text-dim)]">
-						Shapes: ● Circle (T1) · ■ Square (T2) · ◆ Diamond (T3) · ▲ Triangle (T4) · ✚ Cross (T5)
+						Shapes: ● Wire/Consensus Anchor · ■ Mainstream Editorial · ◆ International · ▲ Investigative · ✚ Contrarian
 					</div>
 				</div>
 				<ScatterPlot
@@ -628,5 +661,6 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				</div>
 			</div>
 		</div>
+		</>
 	);
 }

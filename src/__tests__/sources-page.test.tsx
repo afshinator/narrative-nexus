@@ -80,11 +80,11 @@ describe("Sources Page", () => {
 			renderSources();
 			// ponytail: check for the explanatory paragraphs directly
 			const xLabel = screen.getByText(
-				/how often this source is first to report/i,
+				/how often this source reports claims before/i,
 			);
 			expect(xLabel).toBeInTheDocument();
 			const yLabel = screen.getByText(
-				/how often this source.*outlier claims become/i,
+				/how often its early claims later enter consensus/i,
 			);
 			expect(yLabel).toBeInTheDocument();
 		});
