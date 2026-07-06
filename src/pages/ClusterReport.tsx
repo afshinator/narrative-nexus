@@ -15,7 +15,7 @@ interface ClaimRow {
 	state: string;
 	absorbed_at: string | null;
 	created_at: string;
-	domain: string;
+	domains: string[];
 }
 
 interface ReportData {
@@ -209,7 +209,7 @@ export default function ClusterReportPage() {
 										className="border-b border-[var(--nn-border)] last:border-b-0"
 									>
 										<td className="px-1.5 py-1.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)] whitespace-nowrap">
-											{c.domain}
+											{c.domains.join(", ")}
 										</td>
 										<td
 											className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate"

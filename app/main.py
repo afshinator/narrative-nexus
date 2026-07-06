@@ -10,6 +10,7 @@ from typing import Any
 
 from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from db.sources import list_sources
 from db.articles import list_articles
@@ -439,7 +440,12 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
     ).fetchall()
 
     sources = [dict(r) for r in src_rows]
-    total_claims = sum(s["claims"] for s in sources)
+    # D4.1: count distinct claims directly (not sum of per-source counts —
+    # a claim with multiple claim_sources would be double-counted).
+    total_claims = conn.execute(
+        "SELECT COUNT(*) FROM claims WHERE cluster_id = ?",
+        (cluster_id,),
+    ).fetchone()[0]
     # Count DISTINCT absorbed claims (avoid per-source double-count from
     # claim_sources JOIN — a merged claim appears under multiple sources).
     total_absorbed = conn.execute(
@@ -449,7 +455,8 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
     ).fetchone()[0]
     total_pending = sum(s["pending"] for s in sources)
 
-    # Flat claim list with source domain
+    # Flat claim list with source domains (deduplicated — one row per claim,
+    # with aggregated domains for claims that have multiple claim_sources).
     claim_rows = conn.execute(
         """SELECT cl.id, cl.text, cl.state, cl.absorbed_at, cl.created_at,
                   s.domain
@@ -461,7 +468,20 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
         (cluster_id,),
     ).fetchall()
 
-    claims = [dict(r) for r in claim_rows]
+    claims_by_id: dict[int, dict] = {}
+    for r in claim_rows:
+        cid = r["id"]
+        if cid not in claims_by_id:
+            claims_by_id[cid] = {
+                "id": r["id"],
+                "text": r["text"],
+                "state": r["state"],
+                "absorbed_at": r["absorbed_at"],
+                "created_at": r["created_at"],
+                "domains": [],
+            }
+        claims_by_id[cid]["domains"].append(r["domain"])
+    claims = list(claims_by_id.values())
 
     return {
         "cluster": {"id": cluster["id"], "title": cluster["title"],
@@ -574,3 +594,31 @@ def get_available_providers(request: Request) -> dict:
 
 # ── Investigate SSE endpoint (Track B Phase 2) ──────────────────────────
 app.post("/api/investigate/stream")(investigate_stream_endpoint)
+
+
+# ── SPA Frontend Serving (D4.0) ─────────────────────────────────────────
+# Serves the Vite-built dist/ directory. All routes not matched by /api/*
+# fall back to index.html for client-side routing (/source/5, /cluster/966,
+# etc. work as deep links). Static files under dist/ are served directly.
+
+import os as _os
+
+_DIST_DIR = _os.path.join(_os.path.dirname(__file__), "..", "dist")
+
+
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str = ""):
+    """Serve SPA frontend — API routes take priority, everything else is SPA.
+
+    /                → dist/index.html
+    /assets/app.js   → dist/assets/app.js (if exists)
+    /source/5        → dist/index.html (SPA fallback)
+    /cluster/966     → dist/index.html (SPA fallback)
+    """
+    # Direct file match: serve static assets under dist/
+    if full_path:
+        file_path = _os.path.join(_DIST_DIR, full_path)
+        if _os.path.isfile(file_path):
+            return FileResponse(file_path)
+    # SPA fallback: all client-side routes serve index.html
+    return FileResponse(_os.path.join(_DIST_DIR, "index.html"))

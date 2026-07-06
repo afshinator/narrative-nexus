@@ -17,7 +17,7 @@ const mockData = {
 			state: "CONSENSUS_ABSORBED",
 			absorbed_at: "2026-06-01T00:00:00Z",
 			created_at: "2026-06-01T00:00:00Z",
-			domain: "reuters.com",
+			domains: ["reuters.com"],
 		},
 		{
 			id: 2,
@@ -25,7 +25,7 @@ const mockData = {
 			state: "PENDING",
 			absorbed_at: null,
 			created_at: "2026-06-01T00:00:00Z",
-			domain: "bbc.com",
+			domains: ["bbc.com"],
 		},
 	],
 };

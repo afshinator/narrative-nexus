@@ -18,6 +18,9 @@ curl -s http://localhost:8000/api/sources | python3 -c "import sys,json; print(l
 
 curl -s http://localhost:8000/api/clusters/966/report | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'absorbed={d[\"absorbed\"]}, totalClaims={d[\"totalClaims\"]}')"
 # → absorbed=1, totalClaims=19
+
+# 5. Open in browser
+open http://localhost:8000  # → app loads (SPA served by FastAPI)
 ```
 
 ## Notes
