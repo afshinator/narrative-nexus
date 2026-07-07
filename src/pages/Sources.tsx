@@ -4,11 +4,8 @@ import ArchetypePills from "../components/ArchetypePills";
 import LensToggle from "../components/LensToggle";
 import ScatterPlot from "../components/ScatterPlot";
 import Tooltip from "../components/Tooltip";
-import VerticalPills from "../components/VerticalPills";
 import type { ReputationScore } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
-import type { VerticalThresholdKey } from "../data/thresholds";
-import { VERTICAL_LABELS } from "../data/thresholds";
 import { useStore } from "../store";
 import { getArchetype } from "../utils/archetype";
 
@@ -41,7 +38,6 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	);
 	const [sortKey, setSortKey] = useState<SortKey>("name");
 	const [sortDir, setSortDir] = useState<1 | -1>(1);
-	const [vertical, setVertical] = useState<VerticalThresholdKey>("geopolitics");
 	const [fetchedScores, setFetchedScores] = useState<ReputationScore[]>([]);
 
 	// T2b: Lens toggle — persisted in URL search params for deep-linking
@@ -111,7 +107,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		if (typeof window !== "undefined" && !window.fetch) return;
 		let cancelled = false;
 		setFetchedScores([]);
-		fetch(`/api/scores?vertical=${vertical}`)
+		fetch(`/api/scores?vertical=geopolitics`)
 			.then((r) => {
 				if (!r.ok) throw new Error("Failed to load scores");
 				return r.json();
@@ -130,7 +126,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		return () => {
 			cancelled = true;
 		};
-	}, [vertical]);
+	}, []);
 
 	// ponytail: useMemo prevents new [] reference on every render before fetch completes.
 	// An unstable scores ref cascades into scoreMap → scatterData → D3 rebuild.
@@ -143,10 +139,10 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		() =>
 			new Map(
 				scores
-					.filter((s) => s.vertical === vertical)
+					.filter((s) => s.vertical === "geopolitics")
 					.map((s) => [s.sourceId, s]),
 			),
-		[scores, vertical],
+		[scores],
 	);
 
 	// Compute panel median for archetype assignment
@@ -286,17 +282,18 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	return (
 		<>
 			{/* U1: Full-width intro strip — sits under the app header, outside page layout */}
-			<div className="-mx-8 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-5 text-center">
-				<p className="mx-auto max-w-[900px] font-sans text-[0.9rem] leading-relaxed text-[var(--nn-text-dim)]">
-					<Tooltip content="Consensus reality: the version of events agreed upon by the majority of the panel at a given threshold. Not 'the truth.' — design-v1.2 §1">
-						<strong className="font-heading text-[1.05rem] text-[var(--nn-navy)]">
-							Not the truth — consensus reality.
+			<div className="-mx-8 -mt-7 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-5">
+				<div className="mx-auto flex max-w-[900px] items-center gap-6">
+					<strong className="shrink-0 font-heading text-[1.35rem] leading-tight text-[var(--nn-navy)]">
+							Rating not the truth —<br />but identifying consensus reality
 						</strong>
-					</Tooltip>{" "}
-					Narrative Nexus tracks how news outlets originate, validate, and correct
-					claims across geopolitics, economics, and technology — scoring each source
-					0–100 on six independent reputation dimensions.
-				</p>
+					<span className="block w-px self-stretch bg-[var(--nn-border)]" />
+					<p className="font-sans text-[1.05rem] leading-relaxed text-[var(--nn-text-dim)]">
+						Narrative Nexus tracks how news outlets originate, validate, and correct
+						claims across geopolitics, economics, and technology — scoring each source
+						0–100 on six independent reputation dimensions.
+					</p>
+				</div>
 			</div>
 
 			<div className="mx-auto max-w-[1340px] space-y-6">
@@ -311,9 +308,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			<Tooltip content="Curated panel of wire services, mainstream editorial, international, investigative, and contrarian sources across 5 tiers. — design-v1.2 §5">
 				{visibleSources.length} monitored outlets
 			</Tooltip>{" "}
-			— <Tooltip content="Topic vertical: stories categorized by domain keywords into geopolitics, economics, and technology. Reputation scores are tracked independently per source per vertical. — design-v1.2 §5">
- 	{VERTICAL_LABELS[vertical]} vertical
- </Tooltip>
+			— Geopolitics vertical
 			</p>
 
 		{/* T4a: Landing copy with live DB counts — U3: derived from scores */}
@@ -326,9 +321,11 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			(Coverage lens).
 		</p>
 
-			{/* Vertical picker + Archetype filter */}
+			{/* Vertical label + Archetype filter */}
 			<div className="flex flex-wrap items-center gap-4">
-				<VerticalPills vertical={vertical} onChange={setVertical} />
+				<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[color-mix(in_srgb,var(--nn-navy)_10%,transparent)] px-4 py-1.5 font-heading text-[0.78rem] font-semibold text-[var(--nn-navy)]">
+					Vertical: Geopolitics (demo corpus)
+				</span>
 				<div className="h-6 w-px bg-[var(--nn-border)]" />
 				<ArchetypePills />
 			</div>
@@ -368,7 +365,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 						— how often its early claims later enter consensus.
 					</p>
 				</div>
-				<div className="mb-3 space-y-1 font-sans text-[0.75rem] text-[var(--nn-text)]">
+				<div className="mb-3 space-y-1 font-sans text-[0.82rem] text-[var(--nn-text)]">
 					{[
 						{
 							color: "var(--nn-navy)",
@@ -411,7 +408,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							</span>
 						</div>
 					))}
-					<div className="mt-2 border-t border-[var(--nn-border)] pt-2 font-sans text-[0.72rem] text-[var(--nn-text-dim)]">
+					<div className="mt-1.5 font-sans text-[0.82rem] text-[var(--nn-text-dim)]">
 						Shapes: ● Wire/Consensus Anchor · ■ Mainstream Editorial · ◆ International · ▲ Investigative · ✚ Contrarian
 					</div>
 				</div>
@@ -451,26 +448,23 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			{/* Ungraded sources callout (F2c) */}
 		{ungradedSources.length > 0 && (
 			<div className="mt-3 rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-4 py-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
-				<span className="font-semibold text-[var(--nn-text)]">{ungradedSources.length} source{ungradedSources.length !== 1 ? "s" : ""} not yet graded</span>
-				{" "}in this vertical — need at least one absorbed claim to compute a Validation score.{" "}
-				{ungradedSources.map((s, i) => (
-					<span key={s.sourceId}>
-						<span className="text-[var(--nn-text)]">{s.name}</span>
-						{i < ungradedSources.length - 1 ? ", " : ""}
+				<Tooltip content={`Regional and contrarian outlets frequently cover stories no other panel source touches, so cross-source consensus can't form yet. This is a panel-composition characteristic, not a quality judgment. Ungraded: ${ungradedSources.map(s => s.name).join(", ")}`}>
+					<span className="font-semibold text-[var(--nn-text)]">
+						{ungradedSources.length} source{ungradedSources.length !== 1 ? "s" : ""} not yet graded ⓘ
 					</span>
-				))}
+				</Tooltip>
 			</div>
 		)}
 
 		{/* Shape legend + R_val=0 explanation */}
-			<div className="mt-4 flex flex-wrap items-start gap-6 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+			<div className="mt-4 flex flex-wrap items-start gap-6 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
 				<div>
 					<span className="font-semibold text-[var(--nn-text)]">Shapes = Source Tier</span>
-					<div>● Circle — Tier 1: Major Wire Services</div>
-					<div>■ Square — Tier 2: National Outlets</div>
-					<div>◆ Diamond — Tier 3: Regional / Specialized</div>
-					<div>▲ Triangle — Tier 4: Investigative / Alternative</div>
-					<div>✚ Cross — Tier 5: Propaganda / Fringe</div>
+					<div>● Wire/Consensus Anchor — Tier 1: Major Wire Services</div>
+					<div>■ Mainstream Editorial — Tier 2: National Outlets</div>
+					<div>◆ International — Tier 3: Regional / Specialized</div>
+					<div>▲ Investigative — Tier 4: Investigative / Alternative</div>
+					<div>✚ Contrarian — Tier 5: Propaganda / Fringe</div>
 				</div>
 				<div className="min-w-0 flex-1 border-l border-[var(--nn-border)] pl-4">
 				<span className="font-semibold text-[var(--nn-text)]">About Validation scoring</span>

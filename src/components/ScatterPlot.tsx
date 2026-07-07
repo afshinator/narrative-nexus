@@ -185,9 +185,8 @@ export default function ScatterPlot({
 								.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${d.R_val != null ? Math.round(d.R_val) : "ungraded"}`)
 				.style("cursor", "pointer")
 				.on("mouseenter", (_event, d) => {
-					// ponytail: only call onHoverPosition — it sets both hover ID and position.
-					// Calling onHover here too would double-set hover state.
-					onHoverPosition?.(d.sourceId, _event.pageX, _event.pageY);
+					// Use clientX/Y (viewport-relative) since tooltip is position:fixed
+					onHoverPosition?.(d.sourceId, _event.clientX, _event.clientY);
 				})
 				.on("mouseleave", () => {
 					onHoverPosition?.(null, 0, 0);

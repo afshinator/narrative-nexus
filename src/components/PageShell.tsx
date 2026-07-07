@@ -13,6 +13,10 @@ export default function PageShell() {
 			</main>
 			<footer className="py-9 text-center font-mono text-[1.1rem] tracking-[0.04em] text-[var(--nn-text)]">
 				Narrative Nexus tracks consensus reality, not truth
+				<br />
+				<span className="text-[0.7rem] text-[var(--nn-text-dim)]">
+					Demo corpus: 358 articles · 37 sources · Mar–Jul 2026
+				</span>
 			</footer>
 		</div>
 	);

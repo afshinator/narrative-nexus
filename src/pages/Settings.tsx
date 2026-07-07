@@ -8,11 +8,9 @@ import { useStore } from "../store";
 import { formatPercent } from "../utils/format";
 
 const FONT_PRESETS = [
-	{ value: "0.8", label: "80%" },
-	{ value: "0.9", label: "90%" },
-	{ value: "1.0", label: "100%" },
-	{ value: "1.1", label: "110%" },
-	{ value: "1.2", label: "120%" },
+	{ value: "1.0", label: "Default" },
+	{ value: "1.1", label: "Large" },
+	{ value: "1.2", label: "Larger" },
 ] as const;
 
 const THRESHOLD_PRESETS = [50, 60, 65, 75, 85, 90] as const;

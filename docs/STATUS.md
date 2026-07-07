@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-UX1B)
-**Phase:** Docker gate — container serves frontend + API. SQLite threading fix applied (uncommitted).
+**Last updated:** 2026-07-06 (post-UX5)
+**Phase:** UX5 subtract complete (uncommitted). Vertical pills removed, corpus → footer, ungraded → one-liner. Build passes.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
 **Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
@@ -54,7 +54,7 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - D3: Fixed container build failure — better-sqlite3 (native module, needs node-gyp/python3/make/g++) removed from devDependencies. NOT used by frontend build path (tsconfig.app.json includes only src/, better-sqlite3 only imported in db/__tests__/schema.test.ts:2). npm run build PASS locally. Commit ac89bc5. Push blocked: SSH host key verification fails (no keys in container).
 - D4: Frontend serving + count fixes — (D4.0) SPA catch-all... Commit bae4cc3.
 - UX1-A: Sources page functional fixes — (A1) Vertical button flash: clear fetchedScores on vertical change (Sources.tsx:112). (A2) Archetype filter wired to scatter plot via scatterVisible memo (Sources.tsx:198-201). (A3) Coverage lens quadrant overlap: showQuadrants=false on coverage ScatterPlot (ScatterPlot.tsx:37,124). (A4) Shape legend added inside color legend (Sources.tsx:381-383). (A5) Hardcoded "20" → {visibleSources.length}; fixed test descriptions too. (A6) Axis copy corrected: X="reports claims before the rest of the panel", Y="its early claims later enter consensus" (Sources.tsx:336-341). Quadrant labels verified correct at four plot corners. Commit 8ac2685.
-- UX1-B: Comprehension POC built — static HTML at docs/mock-ux1-comprehension-poc.html served on port 3015. 10 hardcoded scatter points with design-tokens styling, all tooltips functional (hover).
+- UX2: Comprehension layer — (U1) Full-width intro strip "Not the truth — consensus reality." + one-sentence app description (Sources.tsx:288-300). (U2) Reusable Tooltip component (src/components/Tooltip.tsx) + 7 tooltips wired: intro strip, source count, vertical label, X/Y-axis labels, 4 archetype legend items — copy from design-v1.2 §1 vocab table + §4 dimensions + §5 tiers. (U3) Tier legend rewritten: "● Wire/Consensus Anchor · ■ Mainstream Editorial · ◆ International · ▲ Investigative · ✚ Contrarian" per design-v1.2 §5. (U4) POC server killed (PID 5501). Commit 2b6bafb.
 - UX1B: SQLite threading fix — db/connection.py:23: sqlite3.connect(path, check_same_thread=False). Root cause: FastAPI runs sync endpoints in thread pool; default check_same_thread=True rejects connections when thread pool reuses a different thread. Safe because connections are per-request (opened in get_persistent_db dependency, closed after response). Verified: 40/40 sequential curls (20 /api/coverage_landscape + 20 /api/sources) all 200, zero exceptions. Fingerprint unchanged: 378/10/358/17/13653.
 
 ## Patch: vertical_classifier.py
@@ -81,7 +81,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-UX1B fix applied (uncommitted): db/connection.py check_same_thread=False. Human commits all uncommitted changes. Next: container rebuild test.
+UX2 committed (2b6bafb): intro strip, 7 tooltips, tier legend rewrite. Vitest: 13 failures (11 router-shell pre-existing + 1 schema/better-sqlite3 stale + 1 docker/D2 volume). POC server killed. Next: human reviews rendered copy.
 
 ## BANNED
 
