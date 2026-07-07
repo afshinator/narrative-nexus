@@ -262,6 +262,11 @@ function SourceProfilePage({
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
 				Tier {source.tier} &middot; {source.domain}
 			</p>
+			<p className="font-sans text-[0.85rem] text-[var(--nn-navy)]">
+				<Link to="/cluster/966" className="hover:underline">
+					View cluster → US-Iran War: March Escalation &amp; April Ceasefire
+				</Link>
+			</p>
 
 			{/* Vertical picker pills */}
 			<VerticalPills vertical={vertical} onChange={setVertical} />

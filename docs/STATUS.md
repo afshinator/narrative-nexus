@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-UX5)
-**Phase:** UX5 subtract complete (uncommitted). Vertical pills removed, corpus → footer, ungraded → one-liner. Build passes.
+**Last updated:** 2026-07-06 (post-UX6)
+**Phase:** UX6 nav integrity fixed (uncommitted). Cluster/Timeline → 966, deep-link from profile.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
 **Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.

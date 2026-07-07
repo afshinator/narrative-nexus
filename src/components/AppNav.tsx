@@ -6,8 +6,8 @@ import { OnboardingDialog } from "./OnboardingDialog";
 
 const navItems = [
 	{ to: "/", label: "Sources" },
-	{ to: "/cluster/880", label: "Cluster Report" },
-	{ to: "/timeline/880", label: "Timeline" },
+	{ to: "/cluster/966", label: "Cluster Report" },
+	{ to: "/timeline/966", label: "Timeline" },
 	{ to: "/pipeline", label: "Pipeline" },
 	{ to: "/investigate", label: "Investigate" },
 	{ to: "/panel", label: "Panel" },
