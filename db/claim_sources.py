@@ -12,10 +12,11 @@ def add_claim_source(
 ) -> bool:
     """Link a claim to a source. Returns True if inserted (False if already exists).
 
-    If first_seen_at is provided, it overrides the DEFAULT datetime('now').
+    If first_seen_at is provided (non-empty and non-None), it is used as-is.
+    Otherwise explicit NULL is inserted — unknown dates must not be stamped with processing time.
     """
     try:
-        if first_seen_at is not None:
+        if first_seen_at is not None and first_seen_at != "":
             conn.execute(
                 "INSERT INTO claim_sources (claim_id, source_id, first_seen_at) "
                 "VALUES (?, ?, ?)",
@@ -23,7 +24,7 @@ def add_claim_source(
             )
         else:
             conn.execute(
-                "INSERT INTO claim_sources (claim_id, source_id) VALUES (?, ?)",
+                "INSERT INTO claim_sources (claim_id, source_id, first_seen_at) VALUES (?, ?, NULL)",
                 (claim_id, source_id),
             )
         conn.commit()

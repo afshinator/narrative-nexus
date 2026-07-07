@@ -80,9 +80,11 @@ export default function TimelinePage() {
 		);
 	}
 
-	// ponytail: compute time range for positioning
+	// ponytail: compute time range for positioning — filter NaN from empty first_seen_at
 	const allTimes = data.sources.flatMap((s) =>
-		s.claims.map((c) => new Date(c.first_seen_at).getTime()),
+		s.claims
+			.map((c) => new Date(c.first_seen_at).getTime())
+			.filter((t) => !Number.isNaN(t)),
 	);
 
 	// ponytail: cluster with no claims — show empty state
@@ -206,7 +208,7 @@ export default function TimelinePage() {
 									<span
 										key={claim.id}
 										title={claim.text}
-										className={`absolute top-1 block h-7 max-w-[140px] cursor-default overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-0.5 font-mono text-[0.68rem] leading-relaxed ${
+										className={`absolute top-1 block h-7 max-w-[280px] cursor-default overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-0.5 font-sans text-[0.72rem] leading-relaxed ${
 											absorbed
 												? "bg-[var(--nn-teal)]/15 text-[var(--nn-teal)]"
 												: "bg-[var(--nn-surface2)] text-[var(--nn-text-dim)]"

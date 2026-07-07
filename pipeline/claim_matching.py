@@ -139,7 +139,7 @@ async def match_claims_in_cluster(
             c_idx = canonical_indices[best_canonical]
             canonical_id = rows[c_idx]["id"]
             source_id = row["source_id"]
-            first_seen = row["published_at"] or row["created_at"] if hasattr(row, "created_at") else ""
+            first_seen = row["published_at"] if row["published_at"] else None
 
             logger.debug(
                 "merge: claim %d → canonical %d (sim=%.4f) [%s]",

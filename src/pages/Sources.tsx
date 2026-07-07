@@ -448,7 +448,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			{/* Ungraded sources callout (F2c) */}
 		{ungradedSources.length > 0 && (
 			<div className="mt-3 rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-4 py-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
-				<Tooltip content={`Regional and contrarian outlets frequently cover stories no other panel source touches, so cross-source consensus can't form yet. This is a panel-composition characteristic, not a quality judgment. Ungraded: ${ungradedSources.map(s => s.name).join(", ")}`}>
+				<Tooltip content={`These outlets mostly cover stories no other panel source reports, so cross-source consensus can't form — a panel-composition trait, not a quality judgment. ${ungradedSources.map(s => s.name).join(", ")}`}>
 					<span className="font-semibold text-[var(--nn-text)]">
 						{ungradedSources.length} source{ungradedSources.length !== 1 ? "s" : ""} not yet graded ⓘ
 					</span>

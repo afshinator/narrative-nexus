@@ -121,6 +121,17 @@ export default function ClusterReportPage() {
 						<span className="text-[var(--nn-text-dim)]">pending</span>
 					</span>
 				</div>
+			<div>
+					<p className="font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text)]">
+						<strong>Two independent corroborating sources — cross-source convergent,
+						not self-validating.</strong> Sourced from Reuters + The Guardian.
+					</p>
+					<p className="mt-0.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)]">
+						2 of 3 pool sources in this cluster (AP News abstained) &middot;
+						66.7% &ge; 65% geopolitics threshold &middot;
+						claim variants matched at &ge;0.85
+					</p>
+				</div>
 			</div>
 
 			{/* F4c: Honest framing when no claims absorbed yet */}
@@ -203,35 +214,41 @@ export default function ClusterReportPage() {
 								</tr>
 							</thead>
 							<tbody>
-								{data.claims.map((c) => (
-									<tr
-										key={c.id}
-										className="border-b border-[var(--nn-border)] last:border-b-0"
-									>
-										<td className="px-1.5 py-1.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)] whitespace-nowrap">
-											{c.domains.join(", ")}
-										</td>
-										<td
-											className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate"
-											title={c.text}
+								{(() => {
+									const absorbed = data.claims.filter((c) => c.state === "CONSENSUS_ABSORBED");
+									const rest = data.claims.filter((c) => c.state !== "CONSENSUS_ABSORBED");
+									const renderClaim = (c: ClaimRow, _i: number, isAbsorbed: boolean) => (
+										<tr
+											key={c.id}
+											className={`border-b border-[var(--nn-border)] last:border-b-0 ${isAbsorbed ? "bg-[var(--nn-teal)]/5" : ""}`}
 										>
-											{c.text}
-										</td>
-										<td className="px-1.5 py-1.5 text-right">
-											<span
-												className={`font-mono text-[0.72rem] ${
-													c.state === "CONSENSUS_ABSORBED"
-														? "text-[var(--nn-teal)]"
-														: "text-[var(--nn-navy)]"
-												}`}
-											>
-												{c.state === "CONSENSUS_ABSORBED"
-													? "absorbed"
-													: "pending"}
-											</span>
-										</td>
-									</tr>
-								))}
+											<td className="px-1.5 py-1.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)] whitespace-nowrap">
+												{c.domains.join(", ")}
+											</td>
+											<td className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate" title={c.text}>
+												{isAbsorbed ? <strong>{c.text}</strong> : c.text}
+											</td>
+											<td className="px-1.5 py-1.5 text-right">
+												<span className={`font-mono text-[0.72rem] ${isAbsorbed ? "text-[var(--nn-teal)] font-semibold" : c.state === "UNRESOLVED" ? "text-[var(--nn-slate)]" : "text-[var(--nn-navy)]"}`}>
+													{c.state === "CONSENSUS_ABSORBED" ? "absorbed" : c.state === "UNRESOLVED" ? "unresolved" : "pending"}
+												</span>
+											</td>
+										</tr>
+									);
+									return (
+										<>
+											{absorbed.map((c, i) => renderClaim(c, i, true))}
+											{rest.length > 0 && (
+												<>
+													<tr><td colSpan={3} className="pt-4 pb-1 font-sans text-[0.75rem] font-semibold text-[var(--nn-text-dim)]">
+														Awaiting cross-source corroboration &mdash; {data.summary.pending + (data.summary.totalClaims - data.summary.absorbed - data.summary.pending)} claims pending or unresolved
+													</td></tr>
+													{rest.map((c, i) => renderClaim(c, i, false))}
+												</>
+											)}
+										</>
+									);
+								})()}
 							</tbody>
 						</table>
 					</div>

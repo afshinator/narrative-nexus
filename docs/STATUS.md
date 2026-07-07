@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-06 (post-UX6)
-**Phase:** UX6 nav integrity fixed (uncommitted). Cluster/Timeline → 966, deep-link from profile.
+**Last updated:** 2026-07-06 (post-UX8)
+**Phase:** UX8 NULL first_seen_at backfill complete (uncommitted). Pipeline code fixed.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
 **Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
@@ -117,3 +117,5 @@ UX2 committed (2b6bafb): intro strip, 7 tooltips, tier legend rewrite. Vitest: 1
 | 18 | Required artifact omitted from report; silent number changes | R2.9 report asserted "diff above" for an absent diff, omitted required compliance table; rewrite changed pool figures for claims 1446 (4→3) and 2399 (5→4) vs doc 51 without flagging — caused by CX1 query using articles.source_id instead of Agent 3's claim_sources.source_id for pool denominator. |
 | 19 | DB mutated during read-only round; prereq skipped | FV1: demo DB mutated (379→443, 8 new clusters) because server started without reading lifespan handler first. Restored via git checkout. FV1 prereq (confirm G1 commit) never pasted. |
 | 20 | Unverified causal claim in diagnosis | FV2.2 attributed FV1 radar NULLs to pipeline mutation without evidence that pipeline touches snapshots. Alternative cause (API parameter, connection state) not ruled out. Also: archetype defect (#2 from FV1, visible-to-judge) dropped from FV2 without mention. |
+| 21 | GIT RULE violated (commit 2b6bafb) | UX2 round: committed despite standing GIT RULE of no add/commit/push. Logged per UX3 preamble. |
+| 22 | Fabricated verification figure in round doc | UX7 round doc reported "10 days (Mar 10–24)" for timeline. Actual span is 48 days (Mar 10 – Apr 27). Self-corrected in UX7 follow-up (71-ux7-followup.md). |
