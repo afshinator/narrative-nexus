@@ -23,10 +23,16 @@ ChartJS.register(
 
 interface Props {
 	snapshots: DailySnapshot[];
-	currentDay: number;
+	currentDay?: number;
 }
 
-export default function VfTrendChart({ snapshots, currentDay }: Props) {
+/** Format ISO date "2026-03-03" → "Mar 3" */
+function fmtDate(dateStr: string): string {
+	const d = new Date(`${dateStr}T00:00:00`);
+	return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 	// ponytail: currentDay reserved for vertical reference line — not yet implemented
 	void currentDay;
 
@@ -34,8 +40,11 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 		return (
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
 				<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
-					Verifiability Trend
+					Validation over time
 				</h2>
+				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+					How this source's validation score changed across the demo window (Mar–Jul 2026)
+				</p>
 				<p className="text-sm text-[var(--nn-text-dim)]">No trend data</p>
 			</div>
 		);
@@ -47,8 +56,11 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 		return (
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
 				<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
-					Verifiability Trend
+					Validation over time
 				</h2>
+				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+					How this source's validation score changed across the demo window (Mar–Jul 2026)
+				</p>
 				<div className="flex h-[200px] items-center justify-center">
 					<p className="text-[0.85rem] text-[var(--nn-text-dim)]">
 						No validation events recorded yet.
@@ -58,7 +70,7 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 		);
 	}
 
-	const labels = snapshots.map((s) => String(s.day));
+	const labels = snapshots.map((s) => fmtDate(s.date));
 	const values = snapshots.map((s) => s.R_val);
 
 	const data = {
@@ -68,7 +80,7 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 				label: "Vf",
 				data: values,
 				borderColor: "var(--nn-teal)",
-				backgroundColor: "rgba(94,189,142,0.08)",
+				backgroundColor: "rgba(94,189,142,0.22)",
 				borderWidth: 2,
 				pointRadius: 0,
 				fill: true,
@@ -88,6 +100,12 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 			y: {
 				min: 0,
 				max: 100,
+				title: {
+					display: true,
+					text: "Validation score",
+					color: "var(--nn-text-dim)",
+					font: { size: 10 },
+				},
 				ticks: {
 					color: "var(--nn-text-dim)",
 					font: { size: 9 },
@@ -110,13 +128,16 @@ export default function VfTrendChart({ snapshots, currentDay }: Props) {
 	return (
 		<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
 			<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
-				Verifiability Trend
+				Validation over time
 			</h2>
+			<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+				How this source's validation score changed across the demo window (Mar–Jul 2026)
+			</p>
 			<div className="h-[200px]">
 				<Line
 					data={data}
 					options={options}
-					aria-label="Verifiability trend chart"
+					aria-label="Validation trend chart"
 				/>
 			</div>
 		</div>

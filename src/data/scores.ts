@@ -17,7 +17,8 @@ export interface ReputationScore {
 export interface DailySnapshot {
 	sourceId: string;
 	vertical: string;
-	day: number; // 0–90
+	day: number; // sequential index from 0
+	date: string; // ISO date string e.g. "2026-03-03"
 	R_orig: number; // 0–100 percentile
 	R_val: number;
 	R_speed: number;

@@ -67,9 +67,12 @@ export default function PanelPage() {
 			{/* Single card containing everything */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">
 				{/* Category Balance Indicator */}
-				<h2 className="mb-3 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
+				<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
 					Category Balance
 				</h2>
+				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+					How panel sources are distributed across tiers and regions — toggle sources to adjust
+				</p>
 
 				{/* Tier distribution bar */}
 				<div className="mb-4">

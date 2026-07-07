@@ -92,9 +92,12 @@ export default function ClusterReportPage() {
 
 			{/* ── Consensus Summary ── */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
-				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">
+				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-1">
 					Consensus Summary
 				</h2>
+				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+					How many claims are in this cluster, from how many sources, and how many reached consensus
+				</p>
 				<div className="flex flex-wrap gap-x-8 gap-y-1 font-mono text-[0.85rem]">
 					<span>
 						<span className="text-[var(--nn-text)]">
@@ -152,9 +155,12 @@ export default function ClusterReportPage() {
 			<div className="grid gap-6 lg:grid-cols-[280px_1fr]">
 				{/* Source breakdown (was: distortion matrix) */}
 				<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
-					<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">
+					<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-1">
 						Source Breakdown
 					</h2>
+					<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+						Which sources reported claims in this cluster, and how many each contributed
+					</p>
 					<div className="overflow-x-auto">
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
@@ -195,9 +201,12 @@ export default function ClusterReportPage() {
 
 				{/* Claim list */}
 				<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
-					<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-3">
+					<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-1">
 						Claims
 					</h2>
+					<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+						Every claim in this cluster, its current state, and which sources reported it
+					</p>
 					<div className="max-h-[60vh] overflow-y-auto">
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>

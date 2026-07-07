@@ -151,6 +151,9 @@ export default function TimelinePage() {
 			)}
 
 			{/* Day header bar */}
+			<p className="mb-2 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+				Each marker shows when a source first reported a claim. Claims from different sources on related stories are grouped vertically.
+			</p>
 			<div
 				className="relative mb-2 ml-[180px] h-6"
 				style={{ width: "calc(100% - 180px)" }}

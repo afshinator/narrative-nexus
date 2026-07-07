@@ -222,6 +222,7 @@ def api_source_profile(
     for day, row in enumerate(rows):
         snapshots.append({
             "day": day,
+            "date": row["date"],
             "sourceId": source_id,
             "vertical": vertical,
             "R_orig": row["r_orig"],
@@ -281,13 +282,15 @@ def api_source_profile(
            GROUP BY cl.state""",
         (source_id,),
     ).fetchall()
-    claim_summary = {"total": 0, "absorbed": 0, "pending": 0}
+    claim_summary = {"total": 0, "absorbed": 0, "pending": 0, "unresolved": 0}
     for r in claim_rows:
         claim_summary["total"] += r["cnt"]
         if r["state"] == "CONSENSUS_ABSORBED":
             claim_summary["absorbed"] = r["cnt"]
         elif r["state"] == "PENDING":
             claim_summary["pending"] = r["cnt"]
+        elif r["state"] == "UNRESOLVED":
+            claim_summary["unresolved"] = r["cnt"]
 
     # ── Events (aggregated) ─────────────────────────────────────────────
     # ponytail: all edits/absorptions on 2026-06-30, after snapshots end at 2026-06-28

@@ -15,6 +15,7 @@ function makeSnapshot(day: number, r_val: number): DailySnapshot {
 		sourceId: "1",
 		vertical: "geopolitics",
 		day,
+		date: "2026-03-03",
 		R_orig: 50,
 		R_val: r_val,
 		R_speed: 0,

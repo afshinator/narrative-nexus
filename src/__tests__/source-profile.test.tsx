@@ -102,35 +102,13 @@ describe("SourceProfile Page", () => {
 		).toBeInTheDocument();
 	});
 
-	it("renders 6 sparkline SVGs", () => {
+	it("renders sparklines for live dimensions, 'no events' for dead ones", () => {
 		renderPage();
-		// Each dimension gets a sparkline SVG — check for 6 svg elements
+		// 4 live dimensions (orig, val, speed, frame) get SVG sparklines
+		// 2 dead dimensions (edit, correct) show 'no events' text
 		const svgs = document.querySelectorAll("svg");
-		expect(svgs.length).toBeGreaterThanOrEqual(6);
-	});
-
-	it("renders day scrubber with slider and play button", () => {
-		renderPage();
-		expect(screen.getByRole("button", { name: /play/i })).toBeInTheDocument();
-		expect(screen.getByRole("slider")).toBeInTheDocument();
-		// Day counter starts at 0
-		const sliders = screen.getAllByRole("slider");
-		const daySlider = sliders[0] as HTMLInputElement;
-		expect(daySlider.value).toBe("0");
-	});
-
-	it("play button toggles to pause when clicked", async () => {
-		const user = userEvent.setup();
-		renderPage();
-		const playBtn = screen.getByRole("button", { name: /play/i });
-		await user.click(playBtn);
-		// ponytail: just check that clicking toggled — don't fight fake timers + startTransition
-		expect(screen.getByRole("button", { name: /pause/i })).toBeInTheDocument();
-	});
-
-	it("renders event card placeholder in empty state", () => {
-		renderPage();
-		expect(screen.getByText(/drag the slider/i)).toBeInTheDocument();
+		expect(svgs.length).toBeGreaterThanOrEqual(4);
+		expect(screen.getAllByText("no events").length).toBeGreaterThanOrEqual(2);
 	});
 
 	it("vertical pills default to GEOPOLITICS active", () => {

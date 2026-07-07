@@ -3,7 +3,6 @@ import { useNavigate, useSearchParams } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
 import LensToggle from "../components/LensToggle";
 import ScatterPlot from "../components/ScatterPlot";
-import Tooltip from "../components/Tooltip";
 import type { ReputationScore } from "../data/scores";
 import { DEFAULT_SOURCES } from "../data/sources";
 import { useStore } from "../store";
@@ -285,7 +284,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			<div className="-mx-8 -mt-7 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-5">
 				<div className="mx-auto flex max-w-[900px] items-center gap-6">
 					<strong className="shrink-0 font-heading text-[1.35rem] leading-tight text-[var(--nn-navy)]">
-							Rating not the truth —<br />but identifying consensus reality
+							We can't extract truth,<br />but we can identify consensus reality
 						</strong>
 					<span className="block w-px self-stretch bg-[var(--nn-border)]" />
 					<p className="font-sans text-[1.05rem] leading-relaxed text-[var(--nn-text-dim)]">
@@ -305,10 +304,8 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
 			Behavioral reputation across{" "}
-			<Tooltip content="Curated panel of wire services, mainstream editorial, international, investigative, and contrarian sources across 5 tiers. — design-v1.2 §5">
-				{visibleSources.length} monitored outlets
-			</Tooltip>{" "}
-			— Geopolitics vertical
+			{visibleSources.length} outlets across 5 tiers: wire services, mainstream editorial, international, investigative, contrarian
+			{" "}— Geopolitics vertical
 			</p>
 
 		{/* T4a: Landing copy with live DB counts — U3: derived from scores */}
@@ -336,7 +333,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		</div>
 		<p className="mt-1 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
 			{lens === "consensus"
-				? "R_orig vs R_val — how often each source breaks stories vs how often those stories become consensus. Only graded sources shown."
+				? "Origination vs Validation — how often each source breaks stories vs how often those stories become consensus. Only graded sources shown."
 				: "Claim volume vs Solo Coverage Share — every source plotted. High-solo sources cover stories no one else in the panel does; low-solo sources report the shared news cycle."}
 		</p>
 
@@ -352,17 +349,13 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				<div className="mb-3 space-y-2 font-sans text-[0.78rem] text-[var(--nn-text)]">
 					<p>
 						<strong>X-axis:</strong>{" "}
-						<Tooltip content="Outlier claim origination: how often a source breaks claims before the rest of the panel reports them. — design-v1.2 §4 (R_orig)">
-							Origination (0–100)
-						</Tooltip>{" "}
-						— how often this source reports claims before the rest of the panel.
+						Origination (0–100)
+						{" "}— how often this source reports claims before the rest of the panel.
 					</p>
 					<p>
 						<strong>Y-axis:</strong>{" "}
-						<Tooltip content="Consensus-absorbed: a claim that has entered the consensus version of events. Terminal state. — design-v1.2 §1">
-							Validation (0–100)
-						</Tooltip>{" "}
-						— how often its early claims later enter consensus.
+						Validation (0–100)
+						{" "}— how often its early claims later enter consensus.
 					</p>
 				</div>
 				<div className="mb-3 space-y-1 font-sans text-[0.82rem] text-[var(--nn-text)]">
@@ -398,9 +391,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 								style={{ backgroundColor: item.color }}
 							/>
 							<span>
-								<Tooltip content={item.tip}>
 									<span style={{ color: item.color }}>{item.label}</span>
-								</Tooltip>
 								<span className="text-[var(--nn-text-dim)]">
 									{" "}
 									— {item.desc}
@@ -448,11 +439,14 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			{/* Ungraded sources callout (F2c) */}
 		{ungradedSources.length > 0 && (
 			<div className="mt-3 rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-4 py-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
-				<Tooltip content={`These outlets mostly cover stories no other panel source reports, so cross-source consensus can't form — a panel-composition trait, not a quality judgment. ${ungradedSources.map(s => s.name).join(", ")}`}>
+				<p>
 					<span className="font-semibold text-[var(--nn-text)]">
 						{ungradedSources.length} source{ungradedSources.length !== 1 ? "s" : ""} not yet graded ⓘ
 					</span>
-				</Tooltip>
+				</p>
+				<p className="mt-1">
+					These outlets mostly cover stories no other panel source reports, so cross-source consensus can't form — a panel-composition trait, not a quality judgment.
+				</p>
 			</div>
 		)}
 
