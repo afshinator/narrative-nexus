@@ -32,6 +32,27 @@ function fmtDate(dateStr: string): string {
 	return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
+/**
+ * Resolve a CSS custom property to its actual hex value for Chart.js canvas rendering.
+ * Canvas2D fillStyle/strokeStyle does NOT resolve CSS var() — must read from the DOM.
+ */
+function cssVar(name: string): string {
+	if (typeof document === "undefined") return "#888";
+	return (
+		getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
+		"#888"
+	);
+}
+
+/** Convert hex color to rgba with the given alpha. */
+function hexToRgba(hex: string, alpha: number): string {
+	const h = hex.replace("#", "");
+	const r = parseInt(h.slice(0, 2), 16);
+	const g = parseInt(h.slice(2, 4), 16);
+	const b = parseInt(h.slice(4, 6), 16);
+	return `rgba(${r},${g},${b},${alpha})`;
+}
+
 export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 	// ponytail: currentDay reserved for vertical reference line — not yet implemented
 	void currentDay;
@@ -43,7 +64,7 @@ export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 					Validation over time
 				</h2>
 				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
-					How this source's validation score changed across the demo window (Mar–Jul 2026)
+					How this source's validation score changed across the demo window (Mar–Jul 2026). Ranks are relative: a drop can mean other sources improved, not that this source declined.
 				</p>
 				<p className="text-sm text-[var(--nn-text-dim)]">No trend data</p>
 			</div>
@@ -59,7 +80,7 @@ export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 					Validation over time
 				</h2>
 				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
-					How this source's validation score changed across the demo window (Mar–Jul 2026)
+					How this source's validation score changed across the demo window (Mar–Jul 2026). Ranks are relative: a drop can mean other sources improved, not that this source declined.
 				</p>
 				<div className="flex h-[200px] items-center justify-center">
 					<p className="text-[0.85rem] text-[var(--nn-text-dim)]">
@@ -73,14 +94,18 @@ export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 	const labels = snapshots.map((s) => fmtDate(s.date));
 	const values = snapshots.map((s) => s.R_val);
 
+	const teal = cssVar("--nn-teal");
+	const textDim = cssVar("--nn-text-dim");
+	const border = cssVar("--nn-border");
+
 	const data = {
 		labels,
 		datasets: [
 			{
 				label: "Vf",
 				data: values,
-				borderColor: "var(--nn-teal)",
-				backgroundColor: "rgba(94,189,142,0.22)",
+				borderColor: teal,
+				backgroundColor: hexToRgba(teal, 0.22),
 				borderWidth: 2,
 				pointRadius: 0,
 				fill: true,
@@ -94,8 +119,8 @@ export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 		maintainAspectRatio: false,
 		scales: {
 			x: {
-				ticks: { color: "var(--nn-text-dim)", font: { size: 9 } },
-				grid: { color: "var(--nn-border)" },
+				ticks: { color: textDim, font: { size: 9 } },
+				grid: { color: border },
 			},
 			y: {
 				min: 0,
@@ -103,15 +128,15 @@ export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 				title: {
 					display: true,
 					text: "Validation score",
-					color: "var(--nn-text-dim)",
+					color: textDim,
 					font: { size: 10 },
 				},
 				ticks: {
-					color: "var(--nn-text-dim)",
+					color: textDim,
 					font: { size: 9 },
 					stepSize: 25,
 				},
-				grid: { color: "var(--nn-border)" },
+				grid: { color: border },
 			},
 		},
 		plugins: {
@@ -131,7 +156,7 @@ export default function VfTrendChart({ snapshots, currentDay = 0 }: Props) {
 				Validation over time
 			</h2>
 			<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
-				How this source's validation score changed across the demo window (Mar–Jul 2026)
+				How this source's validation score changed across the demo window (Mar–Jul 2026). Ranks are relative: a drop can mean other sources improved, not that this source declined.
 			</p>
 			<div className="h-[200px]">
 				<Line

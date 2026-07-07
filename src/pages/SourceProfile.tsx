@@ -197,6 +197,12 @@ function SourceProfilePage({
 			{/* Vertical picker pills */}
 			<VerticalPills vertical={vertical} onChange={setVertical} />
 
+			{/* M1: Percentile explainer */}
+			<p className="font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]">
+				All scores are percentile ranks within the monitored panel —
+				100 means this source leads the panel on that measure, 50 is median.
+			</p>
+
 			{/* P5: 2 — Archetype badge + radar + stat panel row */}
 			<div className="grid gap-6 lg:grid-cols-[280px_1fr]">
 				<StatPanel
@@ -209,6 +215,7 @@ function SourceProfilePage({
 					snapshot={latestSnapshot}
 					baseline={baseline}
 					tierAvg={tierAvg}
+					tier={source.tier}
 				/>
 			</div>
 
@@ -218,7 +225,7 @@ function SourceProfilePage({
 					Claim Flow
 				</h2>
 				<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
-					Of the {claimSummary.total} claims this source contributed to, how many entered consensus, are pending, or expired unresolved
+					Of the {claimSummary.total} claims this source contributed to, how many entered consensus, are pending, or expired unresolved. Pending claims are awaiting corroboration from other panel sources — most single-source regional claims stay pending.
 				</p>
 				{claimSummary.total > 0 ? (
 					<div className="space-y-2">
@@ -393,6 +400,14 @@ function StatPanel({
 		? getArchetype(snapshot.R_orig, snapshot.R_val, medianOrig, medianVal)
 		: null;
 
+	// M2: Plain-language clauses per dimension
+	const DIM_MEANING: Record<string, string> = {
+		R_orig: "reports claims before others",
+		R_val: "its early claims later enter consensus",
+		R_speed: "days until claims absorbed — lower is better, shown inverted",
+		R_frame: "steadiness of editorial tone",
+	};
+
 	return (
 		<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
 			{/* Archetype badge */}
@@ -414,31 +429,35 @@ function StatPanel({
 			</span>
 
 			{/* Stat rows */}
-			<div className="mt-3 space-y-0">
+			<div className="mt-3 space-y-1.5">
 				{DIMENSIONS.map((dim) => {
 					const value = snapshot?.[dim.key] as number | undefined;
 					const baselineVal = baseline?.[dim.key] as number | undefined;
 					const isDead = DEAD_DIMS.has(dim.key);
+					const meaning = DIM_MEANING[dim.key];
 
-					// P3: Dead dimensions show "no events detected"
+					// Dead dimensions: "no events detected"
 					if (isDead && (value == null || value === 0)) {
 						return (
 							<div
 								key={dim.key}
-								className="flex items-baseline justify-between border-b border-[var(--nn-border)] py-1.5 last:border-b-0"
+								className="border-b border-[var(--nn-border)] py-1.5 last:border-b-0"
 							>
-								<span className="text-[0.76rem] text-[var(--nn-text-dim)]">
-									{dim.label}
-								</span>
-								<span className="text-[0.72rem] italic text-[var(--nn-text-dim)]">
-									no events detected
-								</span>
+								<div className="flex items-baseline justify-between">
+									<span className="text-[0.76rem] text-[var(--nn-text-dim)]">
+										{dim.label}
+									</span>
+									<span className="text-[0.72rem] italic text-[var(--nn-text-dim)]">
+										no events detected
+									</span>
+								</div>
 							</div>
 						);
 					}
 
 					const hasDelta = value != null && baselineVal != null;
 					const diff = hasDelta ? value! - baselineVal! : undefined;
+					const absDiff = diff != null ? Math.abs(Math.round(diff)) : 0;
 					const dir: "up" | "down" | "flat" =
 						diff != null
 							? Math.abs(diff) < STAT_DELTA_THRESHOLD
@@ -447,7 +466,7 @@ function StatPanel({
 									? "up"
 									: "down"
 							: "flat";
-					const arrow = dir === "up" ? "▲" : dir === "down" ? "▼" : "·";
+					const arrow = dir === "up" ? "+" : dir === "down" ? "−" : "";
 					const arrowColor =
 						dir === "up"
 							? "text-[var(--nn-teal)]"
@@ -460,26 +479,30 @@ function StatPanel({
 					return (
 						<div
 							key={dim.key}
-							className="flex items-baseline justify-between border-b border-[var(--nn-border)] py-1.5 last:border-b-0"
+							className="border-b border-[var(--nn-border)] py-1.5 last:border-b-0"
 						>
-							<span className="text-[0.76rem] text-[var(--nn-text-dim)]">
-								{dim.label}
-								{dim.trait && <span className="opacity-50"> (trait)</span>}
-							</span>
-							<span className="flex items-baseline gap-1.5">
+							<div className="flex items-baseline justify-between">
 								<span
-									className="font-mono text-[0.78rem] tabular-nums"
+									className="font-mono text-[0.82rem] font-semibold tabular-nums"
 									style={{ color: valueColor || "var(--nn-text)" }}
 								>
 									{value != null ? Math.round(value) : "—"}
 								</span>
-								{hasDelta && (
+								{hasDelta && dir !== "flat" && (
 									<span className={`font-mono text-[0.66rem] ${arrowColor}`}>
-										{arrow}
-										{Math.abs(Math.round(diff!)).toString()}
+										Δ 30d: {arrow}
+										{absDiff}
 									</span>
 								)}
-							</span>
+							</div>
+							<div className="flex items-baseline justify-between">
+								<span className="text-[0.76rem] font-medium text-[var(--nn-text)]">
+									{dim.label}
+								</span>
+								<span className="text-[0.7rem] text-[var(--nn-text-dim)]">
+									— {meaning}
+								</span>
+							</div>
 						</div>
 					);
 				})}
@@ -492,11 +515,41 @@ function RadarChart({
 	snapshot,
 	baseline,
 	tierAvg,
+	tier,
 }: {
 	snapshot: DailySnapshot | null;
 	baseline: DailySnapshot | null;
 	tierAvg?: number[];
+	tier: number;
 }) {
+	/**
+	 * Resolve a CSS custom property to its actual hex value for Chart.js canvas rendering.
+	 * Canvas2D fillStyle/strokeStyle does NOT resolve CSS var() — must read from the DOM.
+	 */
+	function cssVar(name: string): string {
+		if (typeof document === "undefined") return "#888";
+		return (
+			getComputedStyle(document.documentElement).getPropertyValue(name).trim() ||
+			"#888"
+		);
+	}
+
+	/** Convert hex color to rgba with the given alpha. */
+	function hexToRgba(hex: string, alpha: number): string {
+		const h = hex.replace("#", "");
+		const r = parseInt(h.slice(0, 2), 16);
+		const g = parseInt(h.slice(2, 4), 16);
+		const b = parseInt(h.slice(4, 6), 16);
+		return `rgba(${r},${g},${b},${alpha})`;
+	}
+
+	// Resolve theme colors once for use across datasets + options
+	const teal = cssVar("--nn-teal");
+	const slate = cssVar("--nn-slate");
+	const text = cssVar("--nn-text");
+	const textDim = cssVar("--nn-text-dim");
+	const border = cssVar("--nn-border");
+
 	// P3: Use RADAR_DIMS (excludes dead R_edit/R_correct)
 	const toRadarValues = (s: DailySnapshot | null): number[] | undefined => {
 		if (!s) return undefined;
@@ -518,21 +571,20 @@ function RadarChart({
 		labels: RADAR_DIMS.map((d) => d.label),
 		datasets: [
 			{
-				label: "Current",
+				label: "This source",
 				data: curVal ?? [],
-				borderColor: "var(--nn-teal)",
-				// P2: raised fill alpha from 0.13 to 0.22 for dark-mode visibility
-				backgroundColor: "rgba(94,189,142,0.22)",
+				borderColor: teal,
+				backgroundColor: hexToRgba(teal, 0.22),
 				borderWidth: 2,
 				pointRadius: hasData ? 3 : 0,
-				pointBackgroundColor: "var(--nn-teal)",
+				pointBackgroundColor: teal,
 			},
 			...(baseVal
 				? [
 						{
 							label: "Day 0 baseline",
 							data: baseVal,
-							borderColor: "rgba(115,133,103,0.55)",
+							borderColor: hexToRgba(textDim, 0.55),
 							backgroundColor: "transparent",
 							borderWidth: 1.3,
 							borderDash: [4, 3],
@@ -543,13 +595,13 @@ function RadarChart({
 			...(tierAvg
 				? [
 						{
-							label: "Tier avg",
+							label: `Tier ${tier} average (its peer group)`,
 							data: tierAvg
 								.filter((_, i) => i < RADAR_DIMS.length)
 								.map((v, i) =>
 									INVERTED_DIMS.has(RADAR_DIMS[i].key) ? 100 - v : v,
 								),
-							borderColor: "var(--nn-slate)",
+							borderColor: slate,
 							backgroundColor: "transparent",
 							borderWidth: 1.2,
 							borderDash: [2, 3],
@@ -571,24 +623,22 @@ function RadarChart({
 					display: true,
 					stepSize: 25,
 					backdropColor: "transparent",
-					// P2: tick labels to --nn-text for dark-mode visibility
-					color: "var(--nn-text)",
+					color: text,
 					font: { size: 9 },
 				},
 				pointLabels: {
-					// P2: axis labels to --nn-text for dark-mode visibility
-					color: "var(--nn-text)",
+					color: text,
 					font: { size: 10, family: "'IBM Plex Mono', monospace" },
 				},
-				grid: { color: "var(--nn-border)" },
-				angleLines: { color: "var(--nn-border)" },
+				grid: { color: border },
+				angleLines: { color: border },
 			},
 		},
 		plugins: {
 			legend: {
 				position: "bottom" as const,
 				labels: {
-					color: "var(--nn-text-dim)",
+					color: textDim,
 					font: { size: 10 },
 					usePointStyle: true,
 					padding: 16,
@@ -616,13 +666,16 @@ function RadarChart({
 			<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
 				Reputation Radar
 			</h2>
+			<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+				Shape shows where this source leads (outer edge) or trails (center) the panel
+			</p>
 			{hasData ? (
 				<>
 					<div className="h-[340px]">
 						<Radar data={data} options={options} />
 					</div>
 					{/* P3: caption for dead dimensions */}
-					<p className="mt-2 text-center font-sans text-[0.7rem] italic text-[var(--nn-text-dim)]">
+					<p className="mt-2 text-center font-sans text-[0.78rem] italic text-[var(--nn-text-dim)]">
 						Silent Edits and Corrections omitted — no edit or correction events in demo corpus
 					</p>
 				</>
@@ -646,6 +699,16 @@ function SparklineGrid({
 	snapshots: DailySnapshot[];
 	latestSnapshot: DailySnapshot | null;
 }) {
+	// M6: Short plain-language labels for sparkline cells
+	const SPARK_LABELS: Record<string, string> = {
+		R_orig: "Breaks stories",
+		R_val: "Validated",
+		R_speed: "Speed",
+		R_frame: "Framing",
+		R_edit: "Silent Edits",
+		R_correct: "Corrections",
+	};
+
 	// P1: Use trailing 30 days from the latest snapshot, not currentDay
 	const latestDay = useMemo(() => {
 		if (snapshots.length === 0) return 0;
@@ -694,7 +757,7 @@ function SparklineGrid({
 					return (
 						<div key={dim.key} className="flex items-center gap-2">
 							<span className="w-28 flex-shrink-0 text-right font-mono text-[0.66rem] text-[var(--nn-text-dim)]">
-								{dim.label}
+								{SPARK_LABELS[dim.key] ?? dim.label}
 							</span>
 							{isDead ? (
 								<span className="flex-1 text-[0.66rem] italic text-[var(--nn-text-dim)]">
