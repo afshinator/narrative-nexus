@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 
 interface SourceRow {
 	domain: string;
@@ -108,9 +108,9 @@ export default function ClusterReportPage() {
 				One story, reconstructed from {data.sources.length} sources — {data.summary.totalClaims} extracted claims, {data.summary.absorbed} absorbed into consensus.
 				{data.summary.distinctDays != null && data.summary.distinctDays > 1
 				 && data.summary.emptyDateCount === 0 && (
-					<>{" "}<a href={`/timeline/${data.cluster.id}`} className="font-medium text-[var(--nn-navy)] hover:underline">
+					<>{" "}<Link to={`/timeline/${data.cluster.id}`} className="font-medium text-[var(--nn-navy)] hover:underline">
 						View timeline →
-					</a></>
+					</Link></>
 				)}
 			</p>
 
@@ -265,14 +265,14 @@ export default function ClusterReportPage() {
 											key={c.id}
 											className={`border-b border-[var(--nn-border)] last:border-b-0 ${isAbsorbed ? "bg-[var(--nn-teal)]/5" : ""}`}
 										>
-											<td className="px-1.5 py-1.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)] whitespace-nowrap">
+											<td className="px-1.5 py-1.5 font-mono text-[0.75rem] text-[var(--nn-text-dim)] whitespace-nowrap">
 												{c.domains.join(", ")}
 											</td>
 											<td className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate" title={c.text}>
 												{isAbsorbed ? <strong>{c.text}</strong> : c.text}
 											</td>
 											<td className="px-1.5 py-1.5 text-right">
-												<span className={`font-mono text-[0.72rem] ${isAbsorbed ? "text-[var(--nn-teal)] font-semibold" : c.state === "UNRESOLVED" ? "text-[var(--nn-slate)]" : "text-[var(--nn-navy)]"}`}>
+												<span className={`font-mono text-[0.75rem] ${isAbsorbed ? "text-[var(--nn-teal)] font-semibold" : c.state === "UNRESOLVED" ? "text-[var(--nn-slate)]" : "text-[var(--nn-navy)]"}`}>
 													{c.state === "CONSENSUS_ABSORBED" ? "absorbed" : c.state === "UNRESOLVED" ? "unresolved" : "pending"}
 												</span>
 											</td>

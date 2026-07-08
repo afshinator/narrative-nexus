@@ -423,20 +423,6 @@ export default function SourcesPage({ scores: propScores }: Props) {
 
   return (
     <>
-      {/* D3: merged header — one coherent intro per UX20 mock (distill: "don't repeat") */}
-      {/*
-      <div className="-mx-8 -mt-7 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-6">
-        <p className="mx-auto max-w-[900px] font-heading text-[1.35rem] font-semibold leading-tight text-[var(--nn-navy)]">
-          We can't extract truth, but we can identify consensus reality
-        </p>
-        <p className="mx-auto mt-2 max-w-[900px] font-sans text-[0.95rem] leading-relaxed text-[var(--nn-text-dim)]">
-          Narrative Nexus tracks how {visibleSources.length} outlets originate
-          and validate claims — scoring each source 0–100 across six reputation
-          dimensions. Click any dot or table row to open that outlet's full
-          profile.
-        </p>
-      </div>
-*/}
       <PageHeader sourceCount={visibleSources.length} />
 
       <div className="mx-auto max-w-[1340px] space-y-6">

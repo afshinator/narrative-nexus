@@ -302,7 +302,7 @@ function SourceProfilePage({
 								</span>
 							</div>
 						)}
-						<p className="font-mono text-[0.72rem] text-[var(--nn-text-dim)] pt-1">
+						<p className="font-mono text-[0.75rem] text-[var(--nn-text-dim)] pt-1">
 							{claimSummary.total} claims contributed to by this source
 						</p>
 					</div>

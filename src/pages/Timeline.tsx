@@ -210,7 +210,7 @@ export default function TimelinePage() {
 						<span className="block font-semibold text-[0.85rem] text-[var(--nn-text)]">
 							{source.domain}
 						</span>
-						<span className="font-mono text-[0.72rem] text-[var(--nn-text-dim)]">
+						<span className="font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
 							Tier {source.tier} &middot; {source.claims.length} claims
 						</span>
 					</div>
@@ -232,7 +232,7 @@ export default function TimelinePage() {
 									<span
 										key={claim.id}
 										title={claim.text}
-										className={`absolute top-1 block h-7 max-w-[280px] cursor-default overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-0.5 font-sans text-[0.72rem] leading-relaxed ${
+										className={`absolute top-1 block h-7 max-w-[280px] cursor-default overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-0.5 font-sans text-[0.75rem] leading-relaxed ${
 											absorbed
 												? "bg-[var(--nn-teal)]/15 text-[var(--nn-teal)]"
 												: "bg-[var(--nn-surface2)] text-[var(--nn-text-dim)]"
