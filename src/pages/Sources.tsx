@@ -55,6 +55,22 @@ function PageHeader({ sourceCount }: { sourceCount: number }) {
   );
 }
 
+function AboutValidationCard() {
+  return (
+    <div className="rounded-xl border border-(--nn-border) bg-(--nn-surface) p-5 shadow-xs">
+      <h2 className="font-heading text-[1.1rem] font-bold text-(--nn-navy) mb-2">
+        About Validation Scoring
+      </h2>
+      <p className="font-sans text-[0.85rem] leading-relaxed text-(--nn-text-dim)">
+        Validation tracks how rigorously an outlet verifies a claim before publishing. 
+        High scores indicate primary source confirmation, zero stealth edits, and rapid, 
+        transparent corrections. Low scores reflect unmitigated aggregation of unverified 
+        third-party reporting.
+      </p>
+    </div>
+  );
+}
+
 export default function SourcesPage({ scores: propScores }: Props) {
   const navigate = useNavigate();
   const [hoveredSource, setHoveredSource] = useState<string | null>(null);
@@ -489,23 +505,9 @@ export default function SourcesPage({ scores: propScores }: Props) {
               </div>
             )}
 
-            {/* B1+B2: duplicate legend deleted; "Propaganda / Fringe" → "Contrarian" */}
-            <div className="mt-4 flex flex-wrap items-start gap-6 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-              <div className="min-w-0 flex-1">
-                <span className="font-semibold text-[var(--nn-text)]">
-                  About Validation scoring
-                </span>
-                <p>
-                  Validation measures how often a source's claims clear
-                  cross-source corroboration: at least 2 independent Tier 1–2
-                  sources must report the same claim above the vertical's
-                  consensus threshold. Sources without any absorbed claims in
-                  this vertical are ungraded and listed separately — this
-                  includes mainstream outlets whose claims haven't yet cleared
-                  cross-source corroboration.
-                </p>
-              </div>
-            </div>
+
+						{ AboutValidationCard()}
+
           </>
         ) : (
           <>
