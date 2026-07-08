@@ -8,7 +8,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -336,6 +336,10 @@ def api_scores(vertical: str = "geopolitics", conn = Depends(get_persistent_db))
                             WHERE source_id = s.id AND vertical = ?)""",
         (vertical, vertical),
     ).fetchall()
+    drange = conn.execute(
+        "SELECT MIN(date), MAX(date) FROM snapshots WHERE vertical=?",
+        (vertical,),
+    ).fetchone()
     scores = [
         {
             "sourceId": r["domain"],
@@ -349,7 +353,11 @@ def api_scores(vertical: str = "geopolitics", conn = Depends(get_persistent_db))
         }
         for r in rows
     ]
-    return {"scores": scores}
+    return {
+        "scores": scores,
+        "date_min": drange[0] if drange else None,
+        "date_max": drange[1] if drange else None,
+    }
 
 
 @app.get("/api/articles")
@@ -456,7 +464,11 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
         "WHERE cluster_id = ? AND state = 'CONSENSUS_ABSORBED'",
         (cluster_id,),
     ).fetchone()[0]
-    total_pending = sum(s["pending"] for s in sources)
+    total_pending = conn.execute(
+        "SELECT COUNT(DISTINCT id) FROM claims "
+        "WHERE cluster_id = ? AND state = 'PENDING'",
+        (cluster_id,),
+    ).fetchone()[0]
 
     # Flat claim list with source domains (deduplicated — one row per claim,
     # with aggregated domains for claims that have multiple claim_sources).
@@ -486,6 +498,36 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
         claims_by_id[cid]["domains"].append(r["domain"])
     claims = list(claims_by_id.values())
 
+    # K5a: dynamic absorption strip — per-cluster, not hardcoded
+    # Top sources (by absorbed count, then total count)
+    top_srcs = sorted(
+        [s for s in sources if s["absorbed"] > 0],
+        key=lambda s: (s["absorbed"], s["claims"]), reverse=True,
+    )[:2]
+    top_src_names = [s["domain"] for s in top_srcs]
+
+    # Pool: Tier 1-2 sources in this cluster
+    pool_srcs = [s for s in sources if s["tier"] in (1, 2)]
+    pool_total = len(pool_srcs)
+    pool_absorbed = len([s for s in pool_srcs if s["absorbed"] > 0])
+    pool_pct = round(100 * pool_absorbed / pool_total) if pool_total > 0 else 0
+    abstaining = [s["domain"] for s in pool_srcs if s["absorbed"] == 0]
+
+    # M2: distinct first_seen_at days for timeline health check
+    distinct_days = conn.execute(
+        "SELECT COUNT(DISTINCT DATE(cs.first_seen_at)) FROM claim_sources cs "
+        "JOIN claims c ON c.id = cs.claim_id "
+        "WHERE c.cluster_id = ? AND cs.first_seen_at != '' AND cs.first_seen_at IS NOT NULL",
+        (cluster_id,),
+    ).fetchone()[0]
+    # UX27: suppress timeline link when data is incomplete (62% empty for 924)
+    empty_dates = conn.execute(
+        "SELECT COUNT(*) FROM claim_sources cs "
+        "JOIN claims c ON c.id = cs.claim_id "
+        "WHERE c.cluster_id = ? AND (cs.first_seen_at = '' OR cs.first_seen_at IS NULL)",
+        (cluster_id,),
+    ).fetchone()[0]
+
     return {
         "cluster": {"id": cluster["id"], "title": cluster["title"],
                      "vertical": cluster["vertical"]},
@@ -494,6 +536,13 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
             "absorbed": total_absorbed,
             "pending": total_pending,
             "sourceCount": len(sources),
+            "topSourceNames": top_src_names,
+            "poolSize": pool_total,
+            "poolParticipating": pool_absorbed,
+            "poolPct": pool_pct,
+            "abstainingNames": abstaining,
+            "distinctDays": distinct_days,
+            "emptyDateCount": empty_dates,
         },
         "sources": sources,
         "claims": claims,
@@ -542,17 +591,31 @@ def api_coverage_landscape(conn=Depends(get_persistent_db)):
 
 @app.get("/api/scraper/status")
 def scraper_status(request: Request) -> dict:
-    return request.app.state.scraper.status()
+    data = request.app.state.scraper.status()
+    data["readonly"] = _is_readonly()
+    return data
+
+
+def _is_readonly() -> bool:
+    """Checks env or sentinel file — env vars lost by uvicorn worker spawns."""
+    return bool(
+        os.environ.get("NN_READONLY")
+        or os.path.exists(os.path.join(os.path.dirname(__file__), "..", ".readonly"))
+    )
 
 
 @app.post("/api/scraper/start")
 def scraper_start(request: Request) -> dict:
+    if _is_readonly():
+        raise HTTPException(status_code=403, detail="read-only demo")
     request.app.state.scraper.start()
     return {"status": "started"}
 
 
 @app.post("/api/scraper/stop")
 def scraper_stop(request: Request) -> dict:
+    if _is_readonly():
+        raise HTTPException(status_code=403, detail="read-only demo")
     request.app.state.scraper.stop()
     return {"status": "stopped"}
 

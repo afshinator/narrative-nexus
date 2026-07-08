@@ -6,7 +6,6 @@ import { OnboardingDialog } from "./OnboardingDialog";
 
 const navItems = [
 	{ to: "/", label: "Sources" },
-	{ to: "/cluster/966", label: "Cluster Report" },
 	{ to: "/timeline/966", label: "Timeline" },
 	{ to: "/pipeline", label: "Pipeline" },
 	{ to: "/investigate", label: "Investigate" },
@@ -88,7 +87,7 @@ export default function AppNav() {
 			{/* Spacer + scraper status + Settings */}
 			<span className="flex-1" />
 			<span
-				className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 mr-2 font-mono text-[0.66rem] self-center ${
+				className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 mr-2 font-mono text-[0.75rem] self-center ${
 					scraperRunning === null
 						? "border-[var(--nn-border)] text-[var(--nn-text-dim)]"
 						: scraperRunning

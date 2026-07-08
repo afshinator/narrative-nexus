@@ -118,7 +118,7 @@ export default function PanelPage() {
 				<div className="mb-4">
 					<div className="mb-2 flex items-center gap-2">
 						<span className="h-px flex-1 bg-[var(--nn-border)]" />
-						<span className="font-mono text-[0.65rem] uppercase tracking-[0.08em] text-[var(--nn-text-dim)]">
+						<span className="font-mono text-[0.75rem] uppercase tracking-[0.08em] text-[var(--nn-text-dim)]">
 							Geographic spread
 						</span>
 						<span className="h-px flex-1 bg-[var(--nn-border)]" />

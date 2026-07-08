@@ -16,6 +16,26 @@ A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geop
 | Backend | FastAPI, SQLite (WAL), APScheduler |
 | ML | Provider-agnostic: configurable LLM + embedding backends. Local CPU (sentence-transformers for embeddings), OpenCode Zen (free LLM), Fireworks (AMD Instinct), OpenAI, DeepSeek |
 
+## AMD Platform Usage
+
+**All AI pipeline stages are configured to run on Fireworks AI, which serves inference on AMD Instinct hardware.** This includes:
+
+| Pipeline Stage | Default Provider | Evidence |
+|----------------|-----------------|----------|
+| Agent 1 — Embeddings & Clustering | Fireworks AI | `config/providers.json:57` (`"agent1_embedding": "fireworks"`) |
+| Agent 1 — LLM Classification | Fireworks AI | `config/providers.json:59` (`"agent1_llm": "fireworks"`) |
+| Agent 2 — Forensic Claim Extraction | Fireworks AI | `config/providers.json:60` (`"agent2_llm": "fireworks"`) |
+| Agent 4 — Silent Auditor | Fireworks AI | `config/providers.json:61` (`"agent4_llm": "fireworks"`) |
+| Claim Matching (cross-stage) | Fireworks AI (nomic) | `config/providers.json:58` (`"claim_matching_embedding": "fireworks-nomic"`) |
+
+Fireworks AI runs on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The design document states: *"calling Fireworks IS using AMD Instinct hardware"* (`docs/design-v1.3.md` §3).
+
+**Provider configurability:** Runtime provider selection is visible in the Pipeline Flow page (`/pipeline`) where each agent stage shows a dropdown of available compute providers. Fireworks AI entries are marked with an `(AMD)` badge. When all AI stages are set to Fireworks, the page displays: *"All AI stages running on AMD Instinct accelerators via Fireworks AI"* (`src/pages/PipelineFlow.tsx:195-197`).
+
+**Development credits:** The Fireworks AI API credits used during hackathon development were provided by the hackathon organizers ($50 allocation, documented in `docs/design-v1.3.md` §2). All pipeline runs during development used these credits for AMD Instinct-backed inference.
+
+**Important:** The wording "configured to run" is used because no per-inference-row hardware provenance exists. The system is configured — via `config/providers.json` defaults and Pipeline page dropdowns — to route AI workloads through Fireworks AI on AMD Instinct accelerators. Individual LLM responses do not carry a hardware attestation trail.
+
 ## Quick start
 
 ### Host development (outside Docker)

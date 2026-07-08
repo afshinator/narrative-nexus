@@ -38,6 +38,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 	const [sortKey, setSortKey] = useState<SortKey>("name");
 	const [sortDir, setSortDir] = useState<1 | -1>(1);
 	const [fetchedScores, setFetchedScores] = useState<ReputationScore[]>([]);
+	const [dateRange, setDateRange] = useState<{ min: string; max: string } | null>(null);
 
 	// T2b: Lens toggle — persisted in URL search params for deep-linking
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -93,6 +94,15 @@ export default function SourcesPage({ scores: propScores }: Props) {
 				}));
 		}, [coverageData, nameToSlug]);
 
+	// E2: day span for caption
+	const daySpan = useMemo(() => {
+		if (!dateRange) return null;
+		const d1 = new Date(dateRange.min);
+		const d2 = new Date(dateRange.max);
+		const days = Math.ceil((d2.getTime() - d1.getTime()) / 86400000) + 1;
+		return days;
+	}, [dateRange]);
+
 	const filter = useStore((s) => s.archetypeFilter);
 	const activeSources = useStore((s) => s.activeSources);
 	const visibleSources = useMemo(
@@ -106,6 +116,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		if (typeof window !== "undefined" && !window.fetch) return;
 		let cancelled = false;
 		setFetchedScores([]);
+		setDateRange(null);
 		fetch(`/api/scores?vertical=geopolitics`)
 			.then((r) => {
 				if (!r.ok) throw new Error("Failed to load scores");
@@ -114,14 +125,16 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			.then((data) => {
 				if (cancelled) return;
 				const raw: ReputationScore[] = data.scores ?? [];
-				// Map domain sourceId → slug for DEFAULT_SOURCES lookup
 				const mapped = raw.map((s) => ({
 					...s,
 					sourceId: _domainToSlug.get(s.sourceId) ?? s.sourceId,
 				}));
 				setFetchedScores(mapped);
+				if (data.date_min && data.date_max) {
+					setDateRange({ min: data.date_min, max: data.date_max });
+				}
 			})
-			.catch(() => {}); // ponytail: keep default empty state
+			.catch(() => {});
 		return () => {
 			cancelled = true;
 		};
@@ -280,43 +293,20 @@ export default function SourcesPage({ scores: propScores }: Props) {
 
 	return (
 		<>
-			{/* U1: Full-width intro strip — sits under the app header, outside page layout */}
-			<div className="-mx-8 -mt-7 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-5">
-				<div className="mx-auto flex max-w-[900px] items-center gap-6">
-					<strong className="shrink-0 font-heading text-[1.35rem] leading-tight text-[var(--nn-navy)]">
-							We can't extract truth,<br />but we can identify consensus reality
-						</strong>
-					<span className="block w-px self-stretch bg-[var(--nn-border)]" />
-					<p className="font-sans text-[1.05rem] leading-relaxed text-[var(--nn-text-dim)]">
-						Narrative Nexus tracks how news outlets originate, validate, and correct
-						claims across geopolitics, economics, and technology — scoring each source
-						0–100 on six independent reputation dimensions.
-					</p>
-				</div>
+			{/* D3: merged header — one coherent intro per UX20 mock (distill: "don't repeat") */}
+			<div className="-mx-8 -mt-7 mb-6 border-b border-[var(--nn-border)] bg-[var(--nn-surface)] px-8 py-6">
+				<p className="mx-auto max-w-[900px] font-heading text-[1.35rem] font-semibold leading-tight text-[var(--nn-navy)]">
+					We can't extract truth, but we can identify consensus reality
+				</p>
+				<p className="mx-auto mt-2 max-w-[900px] font-sans text-[0.95rem] leading-relaxed text-[var(--nn-text-dim)]">
+					Narrative Nexus tracks how{" "}
+					{visibleSources.length} outlets originate and validate claims
+					— scoring each source 0–100 across six reputation dimensions.
+					Click any dot or table row to open that outlet's full profile.
+				</p>
 			</div>
 
 			<div className="mx-auto max-w-[1340px] space-y-6">
-			{/* Page header */}
-			<div className="flex items-center gap-3 mb-1.5">
-				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
-					Sources
-				</h1>
-			</div>
-			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-			Behavioral reputation across{" "}
-			{visibleSources.length} outlets across 5 tiers: wire services, mainstream editorial, international, investigative, contrarian
-			{" "}— Geopolitics vertical
-			</p>
-
-		{/* T4a: Landing copy with live DB counts — U3: derived from scores */}
-		<p className="-mt-1 font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]">
-			{coverageData.filter((s) => s.has_absorbed_claims).length} of{" "}
-			{coverageData.length} panel sources have crossed cross-source
-			corroboration on at least one claim. The remaining sources produce
-			coverage that either overlaps only partially with the panel
-			(Consensus lens) or covers stories no other panel source touches
-			(Coverage lens).
-		</p>
 
 			{/* Vertical label + Archetype filter */}
 			<div className="flex flex-wrap items-center gap-4">
@@ -346,43 +336,34 @@ export default function SourcesPage({ scores: propScores }: Props) {
 						The Reputation Map
 					</h2>
 				</div>
-				<div className="mb-3 space-y-2 font-sans text-[0.78rem] text-[var(--nn-text)]">
-					<p>
-						<strong>X-axis:</strong>{" "}
-						Origination (0–100)
-						{" "}— how often this source reports claims before the rest of the panel.
-					</p>
-					<p>
-						<strong>Y-axis:</strong>{" "}
-						Validation (0–100)
-						{" "}— how often its early claims later enter consensus.
-					</p>
-				</div>
+				<p className="mb-3 font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+					Each dot is a news outlet, plotted by origination (how often it reports claims before the panel) vs validation (how often those claims later enter consensus).
+				</p>
+				{/* E2: caption — upper-right of chart, Space Grotesk, navy accent, gentle slide-in per animate skill */}
+				<p className="mb-3 text-right font-heading text-[0.95rem] font-medium text-[var(--nn-navy)] animate-[caption-in_0.5s_cubic-bezier(0.16,1,0.3,1)]">
+					{visibleSources.length} outlets · {daySpan != null ? `${daySpan} days` : "multi-year"} of coverage — click any dot to see that outlet's full record.
+				</p>
 				<div className="mb-3 space-y-1 font-sans text-[0.82rem] text-[var(--nn-text)]">
 					{[
 						{
 							color: "var(--nn-navy)",
 							label: "Early Breaker",
-							desc: "high origination + high validation — consistently breaks stories that become consensus-absorbed",
-							tip: "High origination + high validation. Consistently breaks outlier claims that later become consensus-absorbed by the panel. — design-v1.2 §4",
+							desc: "breaks stories, consensus follows",
 						},
 						{
 							color: "var(--nn-red)",
 							label: "Noise Generator",
-							desc: "high origination, low validation — frequently first, rarely becomes consensus-absorbed",
-							tip: "High origination, low validation. Frequently breaks claims that never enter consensus — systematic noise. — design-v1.2 §1",
+							desc: "breaks stories, rarely absorbed",
 						},
 						{
 							color: "var(--nn-teal)",
 							label: "Selective but Accurate",
-							desc: "low origination, high validation — late to stories but reliable",
-							tip: "Low origination, high validation. Late to stories but their claims reliably enter consensus. — design-v1.2 §4",
+							desc: "late, reliable",
 						},
 						{
 							color: "var(--nn-slate)",
 							label: "Consensus Follower",
-							desc: "low origination, low validation — safe but uninformative",
-							tip: "Low origination, low validation. Stays close to the mainstream view without independent breakout claims. — design-v1.2 §1",
+							desc: "safe, uninformative",
 						},
 					].map((item) => (
 						<div key={item.label} className="flex items-baseline gap-1.5">
@@ -416,20 +397,26 @@ export default function SourcesPage({ scores: propScores }: Props) {
 							(s) => s.sourceId === hoveredSource,
 						);
 						if (!source) return null;
+						// A2: clamp tooltip to viewport
+						const tx = Math.min(tooltipPos.x + 12, window.innerWidth - 200);
+						const ty = Math.min(Math.max(tooltipPos.y - 10, 0), window.innerHeight - 80);
 						return (
 							<div
 								className="pointer-events-none fixed z-50 rounded-[8px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-3 py-2 shadow-lg transition-opacity duration-150"
 								style={{
-									left: tooltipPos.x + 12,
-									top: tooltipPos.y - 10,
+									left: tx,
+									top: ty,
 								}}
 							>
 								<div className="font-sans text-[0.82rem] font-semibold text-[var(--nn-text)]">
 									{source.name}
 								</div>
 								<div className="font-mono text-[0.82rem] tabular-nums text-[var(--nn-text)]">
-								Tier {source.tier} · Origination {Math.round(source.R_orig)} · Validation{" "}
-								{source.R_val != null ? Math.round(source.R_val) : "—"}
+									Tier {source.tier} · Origination {Math.round(source.R_orig)} · Validation{" "}
+									{source.R_val != null ? Math.round(source.R_val) : "—"}
+								</div>
+								<div className="mt-0.5 font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
+									Click to view profile
 								</div>
 							</div>
 						);
@@ -450,17 +437,9 @@ export default function SourcesPage({ scores: propScores }: Props) {
 			</div>
 		)}
 
-		{/* Shape legend + R_val=0 explanation */}
+			{/* B1+B2: duplicate legend deleted; "Propaganda / Fringe" → "Contrarian" */}
 			<div className="mt-4 flex flex-wrap items-start gap-6 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-				<div>
-					<span className="font-semibold text-[var(--nn-text)]">Shapes = Source Tier</span>
-					<div>● Wire/Consensus Anchor — Tier 1: Major Wire Services</div>
-					<div>■ Mainstream Editorial — Tier 2: National Outlets</div>
-					<div>◆ International — Tier 3: Regional / Specialized</div>
-					<div>▲ Investigative — Tier 4: Investigative / Alternative</div>
-					<div>✚ Contrarian — Tier 5: Propaganda / Fringe</div>
-				</div>
-				<div className="min-w-0 flex-1 border-l border-[var(--nn-border)] pl-4">
+				<div className="min-w-0 flex-1">
 				<span className="font-semibold text-[var(--nn-text)]">About Validation scoring</span>
 				<p>
 				Validation measures how often a source's claims clear cross-source
@@ -501,16 +480,27 @@ export default function SourcesPage({ scores: propScores }: Props) {
 		)}
 
 		{/* Ledger card */}
-			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">
-				<div className="mb-3 flex items-baseline justify-between gap-2">
+		<div id="full-ledger" className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6">
+			<div className="mb-4 flex flex-wrap items-center gap-3">
+				<span className="font-heading text-[0.82rem] font-semibold text-[var(--nn-text)]">
+					This demo corpus contains two fully traced stories:
+				</span>
+				<a href="/cluster/966" className="font-sans text-[0.85rem] font-medium text-[var(--nn-navy)] hover:underline">
+					US-Iran War: March Escalation &amp; April Ceasefire
+				</a>
+				<span className="text-[var(--nn-text-dim)]">·</span>
+				<a href="/cluster/924" className="font-sans text-[0.85rem] font-medium text-[var(--nn-navy)] hover:underline">
+					Venezuela Emergency and Rescue Response
+				</a>
+			</div>
+			<div className="mb-3 flex items-baseline justify-between gap-2">
 					<h2 className="font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
 						Full Ledger
 					</h2>
 				</div>
 				<div className="mb-3 space-y-1.5 font-sans text-[0.85rem] text-[var(--nn-text)]">
 					<p>
-						Each source scored 0–100 across six reputation dimensions. Click
-						column headers to sort.
+						Each source scored 0–100 across six reputation dimensions. Click a source row to open its profile. Click column headers to sort.
 					</p>
 					<div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
 						<span className="font-semibold">Origination</span>
@@ -563,7 +553,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 												: "descending"
 											: "none"
 									}
-									className="px-2.5 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)] cursor-pointer select-none hover:text-[var(--nn-text)]"
+									className="px-2.5 py-2 text-left font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)] cursor-pointer select-none hover:text-[var(--nn-text)]"
 									onClick={() => handleSort("name")}
 									onKeyDown={(e) => {
 										if (e.key === "Enter" || e.key === " ") {
@@ -593,7 +583,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
 													? "Lower is better"
 													: ""
 										}
-										className="px-2.5 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)] cursor-pointer select-none hover:text-[var(--nn-text)]"
+										className="px-2.5 py-2 text-left font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)] cursor-pointer select-none hover:text-[var(--nn-text)]"
 										onClick={() => handleSort(col.key)}
 										onKeyDown={(e) => {
 											if (e.key === "Enter" || e.key === " ") {
@@ -626,8 +616,10 @@ export default function SourcesPage({ scores: propScores }: Props) {
 									onMouseLeave={() => setHoveredSource(null)}
 									onClick={() => navigate(`/source/${source.domain}`)}
 								>
-									<td className="px-2.5 py-2.5 font-semibold text-[0.9rem] text-[var(--nn-text)]">
-										{source.name}
+									<td className="px-2.5 py-2.5 font-semibold text-[0.9rem]">
+										<span className="text-[var(--nn-navy)] cursor-pointer hover:underline">
+											{source.name}
+										</span>
 										<span className="ml-2 font-mono text-[0.78rem] font-normal text-[var(--nn-text-dim)]">
 											{source.domain}
 										</span>

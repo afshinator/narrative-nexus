@@ -18,10 +18,11 @@ describe("Sources Page", () => {
 		useStore.setState({ archetypeFilter: null });
 	});
 
+	// D3: "Sources" h1 removed — merged into intro strip. Heading is now descriptive.
 	it("renders page heading", () => {
 		renderSources();
 		expect(
-			screen.getByRole("heading", { name: /sources/i }),
+			screen.getByText(/We can't extract truth/i),
 		).toBeInTheDocument();
 	});
 
@@ -76,17 +77,12 @@ describe("Sources Page", () => {
 			expect(svg.textContent).toContain("CONSENSUS FOLLOWERS");
 		});
 
-		it("renders axis explanations", () => {
+		// UX18-B4: axis explanation block deleted — replaced with single chart subtitle
+		it("renders chart subtitle instead of axis explanations", () => {
 			renderSources();
-			// ponytail: check for the explanatory paragraphs directly
-			const xLabel = screen.getByText(
-				/how often this source reports claims before/i,
-			);
-			expect(xLabel).toBeInTheDocument();
-			const yLabel = screen.getByText(
-				/how often its early claims later enter consensus/i,
-			);
-			expect(yLabel).toBeInTheDocument();
+			expect(screen.getByText(/each dot is a news outlet/i)).toBeInTheDocument();
+			// Old X/Y explanations removed
+			expect(screen.queryByText(/how often this source reports claims before the rest/i)).toBeNull();
 		});
 
 		it("renders scatter markers when scores are provided", () => {

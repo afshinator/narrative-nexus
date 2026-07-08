@@ -1,4 +1,4 @@
-import { Play, Square, Zap } from "lucide-react";
+import { Play, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 // ── Types ────────────────────────────────────────────────────────────────
@@ -7,6 +7,7 @@ interface ScraperStatus {
 	running: boolean;
 	last_run: string | null;
 	articles_inserted: number;
+	readonly?: boolean;
 }
 
 interface ProviderInfo {
@@ -24,15 +25,6 @@ interface ProviderCatalog {
 interface ProviderAssignments {
 	[key: string]: string;
 }
-
-// ── Agent slot → human-readable label ─────────────────────────────────────
-
-const SLOT_LABELS: Record<string, string> = {
-	agent1_embedding: "Stage 1 — Embeddings",
-	agent1_llm: "Stage 1 — Classification",
-	agent2_llm: "Stage 2 — Extraction",
-	agent4_llm: "Stage 4 — Auditor",
-};
 
 // ── Provider badge colours ────────────────────────────────────────────────
 
@@ -156,23 +148,6 @@ export default function PipelineFlowPage() {
 			.catch(() => showError("Failed to update provider"));
 	};
 
-	const setAllAMD = () => {
-		const amdBody: Record<string, string> = {};
-		for (const slot of Object.keys(SLOT_LABELS)) {
-			amdBody[slot] = "fireworks";
-		}
-		fetch("/api/config/providers", {
-			method: "PUT",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(amdBody),
-		})
-			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("put failed"))))
-			.then((data) => setAssignments(data.providers))
-			.catch(() =>
-				showError("AMD shortcut failed — Fireworks API key may be missing"),
-			);
-	};
-
 	const hasProviders = catalog !== null && assignments !== null;
 
 	return (
@@ -192,50 +167,60 @@ export default function PipelineFlowPage() {
 							providers
 						</p>
 					</div>
-					{/* AMD shortcut button */}
-					<button
-						type="button"
-						onClick={setAllAMD}
-						className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-4 py-2 font-heading text-[0.78rem] font-semibold text-[var(--nn-red)] shadow-sm transition-all hover:bg-[var(--nn-red)] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed"
-						title="Switch all agents to AMD-backed Fireworks AI"
-					>
-						<Zap size={14} />
-						Use AMD Hardware
-					</button>
 				</div>
 			</div>
 
-			{/* Legend */}
+			{/* F1+F5: Legend — compute-class summary instead of per-slot pills */}
 			<div
-				className="animate-fade-up mb-8 mt-7 flex flex-wrap gap-4 rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-[22px] py-4"
+				className="animate-fade-up mb-8 mt-7 rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-[22px] py-4"
 				style={{ "--i": 1 } as React.CSSProperties}
 			>
-				{/* Dynamic legend from actual assignments */}
 				{hasProviders ? (
-					Object.entries(assignments as Record<string, string>).map(
-						([slot, providerId]) => {
-							const badge = badgeFor(providerId);
-							return (
-								<LegendItem
-									key={slot}
-									badge={
-										<span
-											className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] ${badge.className}`}
-										>
-											{badge.label}
-										</span>
-									}
-									label={SLOT_LABELS[slot] ?? slot}
-								/>
-							);
-						},
-					)
+					(() => {
+						const slots = Object.entries(assignments as Record<string, string>)
+							// P1: exclude claim_matching — internal pipeline, not an agent stage
+							.filter(([slot]) => slot !== "claim_matching_embedding");
+						// Count distinct providers + always-CPU for consensus
+						const counts = new Map<string, number>();
+						for (const [, pid] of slots) {
+							const b = badgeFor(pid);
+							const key = b.label.includes("CPU") ? "CPU" : pid;
+							counts.set(key, (counts.get(key) ?? 0) + 1);
+						}
+						// F5b: all-AI-on-Fireworks status line
+						const aiSlots = slots.filter(([s]) => s !== "consensus");
+						const allAmd = aiSlots.length > 0 && aiSlots.every(([, pid]) => badgeFor(pid).label.includes("Fireworks"));
+						return (
+							<>
+								{allAmd && (
+									<p className="mb-3 font-heading text-[0.82rem] font-semibold text-[var(--nn-red)]">
+										All AI stages running on AMD Instinct accelerators via Fireworks AI
+									</p>
+								)}
+								<div className="flex flex-wrap gap-4">
+									{[...counts.entries()].map(([pid, count]) => {
+										const b = badgeFor(pid);
+										return (
+											<LegendItem
+												key={pid}
+												badge={
+													<span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] ${b.className}`}>
+														{b.label}
+													</span>
+												}
+												label={`${count} stage${count > 1 ? "s" : ""}`}
+											/>
+										);
+									})}
+								</div>
+							</>
+						);
+					})()
 				) : (
-					// Fallback: static legend when backend not connected
 					<>
 						<LegendItem
 							badge={
-								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
+								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
 									AMD GPU
 								</span>
 							}
@@ -243,7 +228,7 @@ export default function PipelineFlowPage() {
 						/>
 						<LegendItem
 							badge={
-								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
+								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
 									API
 								</span>
 							}
@@ -251,7 +236,7 @@ export default function PipelineFlowPage() {
 						/>
 						<LegendItem
 							badge={
-								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.66rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
+								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
 									CPU
 								</span>
 							}
@@ -269,15 +254,19 @@ export default function PipelineFlowPage() {
 				<div className="flex items-center gap-4">
 					<button
 						type="button"
-						disabled={pending || status === null}
+						disabled={pending || status === null || status?.readonly}
 						onClick={() => toggle(status?.running ? "stop" : "start")}
-						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 hover:brightness-110 ${
-							status?.running
+						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 ${
+							status?.readonly
+								? "border-[var(--nn-border)] bg-[var(--nn-surface)] text-[var(--nn-text-dim)]"
+								: status?.running
 								? "border-[var(--nn-red)] bg-[var(--nn-red)] text-white"
 								: "border-[var(--nn-teal)] bg-[var(--nn-teal)] text-white"
 						}`}
 					>
-						{status?.running ? (
+						{status?.readonly ? (
+							<>Scraper (paused)</>
+						) : status?.running ? (
 							<>
 								<Square size={14} fill="currentColor" /> Stop
 							</>
@@ -287,7 +276,7 @@ export default function PipelineFlowPage() {
 							</>
 						)}
 					</button>
-					<span className="font-mono text-[0.72rem] tabular-nums text-[var(--nn-text-dim)]">
+					<span className="font-mono text-[0.75rem] tabular-nums text-[var(--nn-text-dim)]">
 						{status
 							? status.running
 								? `Running · ${status.articles_inserted} articles · last run ${status.last_run?.slice(11, 16) ?? "—"}`
@@ -296,7 +285,7 @@ export default function PipelineFlowPage() {
 					</span>
 				</div>
 				{error && (
-					<p className="mt-3 font-sans text-[0.74rem] text-[var(--nn-red)]">
+					<p className="mt-3 font-sans text-[0.75rem] text-[var(--nn-red)]">
 						{error}
 					</p>
 				)}
@@ -449,7 +438,7 @@ export default function PipelineFlowPage() {
 					</strong>{" "}
 					&mdash;{" "}
 					{hasProviders
-						? "Backend connected. Provider assignments loaded. Start the scraper to begin processing live article feeds."
+						? "Backend connected. Provider assignments loaded."
 						: "No backend connected. All four agents will activate when the agent swarm runs against live article feeds."}
 				</p>
 			</div>
@@ -467,7 +456,7 @@ function LegendItem({
 	label: string;
 }) {
 	return (
-		<div className="flex items-center gap-2 font-sans text-[0.74rem] text-[var(--nn-text-dim)]">
+		<div className="flex items-center gap-2 font-sans text-[0.75rem] text-[var(--nn-text-dim)]">
 			{badge}
 			<span>{label}</span>
 		</div>
@@ -499,7 +488,7 @@ function EndpointCard({
 			<div className="font-heading text-[0.9rem] font-semibold text-[var(--nn-text)]">
 				{label}
 			</div>
-			<div className="font-sans text-[0.72rem] text-[var(--nn-text-dim)]">
+			<div className="font-sans text-[0.75rem] text-[var(--nn-text-dim)]">
 				{desc}
 			</div>
 		</div>
@@ -608,7 +597,7 @@ function Accordion({
 		<details className="group flex-1 min-w-[160px] overflow-hidden rounded-[10px] border border-[var(--nn-border)] bg-[var(--nn-surface2)] transition-colors duration-200 open:border-[var(--nn-navy)]">
 			<summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-3.5 font-heading text-[0.78rem] font-semibold text-[var(--nn-text)] transition-colors duration-200 hover:text-[var(--nn-navy)] list-none [&::-webkit-details-marker]:hidden">
 				<span
-					className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[0.62rem] font-medium uppercase tracking-[0.03em] ${badge.className}`}
+					className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] ${badge.className}`}
 				>
 					{badge.label}
 				</span>
@@ -619,11 +608,11 @@ function Accordion({
 						value={dropdown.value}
 						onChange={(e) => dropdown.onChange(e.target.value)}
 						onClick={(e) => e.stopPropagation()}
-						className="ml-2 rounded-md border border-[var(--nn-border)] bg-[var(--nn-surface)] px-2 py-0.5 font-mono text-[0.6rem] text-[var(--nn-text)] outline-none focus:border-[var(--nn-navy)] cursor-pointer"
+						className="ml-2 rounded-md border border-[var(--nn-border)] bg-[var(--nn-surface)] px-2 py-0.5 font-mono text-[0.75rem] text-[var(--nn-text)] outline-none focus:border-[var(--nn-navy)] cursor-pointer"
 					>
 						{dropdown.options.map((p) => (
 							<option key={p.id} value={p.id}>
-								{p.name} — {p.model}
+								{p.name}{p.amd ? " (AMD)" : ""} — {p.model}
 							</option>
 						))}
 					</select>
@@ -645,7 +634,7 @@ function Accordion({
 			</summary>
 			<div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 group-open:grid-rows-[1fr]">
 				<div className="overflow-hidden px-4 pb-3.5">
-					<p className="font-sans text-[0.72rem] leading-[1.45] text-[var(--nn-text-dim)] m-0">
+					<p className="font-sans text-[0.75rem] leading-[1.45] text-[var(--nn-text-dim)] m-0">
 						{body}
 					</p>
 				</div>

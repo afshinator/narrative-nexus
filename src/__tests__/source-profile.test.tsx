@@ -59,33 +59,34 @@ describe("SourceProfile Page", () => {
 		renderPage();
 		const econ = screen.getByRole("button", { name: /economics/i });
 		await user.click(econ);
-		// After click, the economics pill should have active styling
 		expect(econ.className).toContain("border");
 	});
 
-	it("renders stat panel with 6 dimension rows", () => {
+	// UX15-B: Two-tier stat panel — hero row (Origination/Validation) + secondary (Speed/Framing)
+	it("renders stat panel with two-tier layout", () => {
 		renderPage();
-		// Dimension labels appear in both stat panel and sparkline grid — getAllByText
-		expect(screen.getAllByText(/origination/i).length).toBeGreaterThanOrEqual(
-			1,
-		);
+		// Hero row: Origination and Validation as the two scatter-plot axes
+		expect(screen.getAllByText(/origination/i).length).toBeGreaterThanOrEqual(1);
 		expect(screen.getAllByText(/validation/i).length).toBeGreaterThanOrEqual(1);
-		expect(screen.getAllByText(/speed premium/i).length).toBeGreaterThanOrEqual(
-			1,
-		);
+		// Secondary row: Speed and Framing
+		expect(screen.getAllByText(/speed/i).length).toBeGreaterThanOrEqual(1);
 		expect(screen.getAllByText(/framing/i).length).toBeGreaterThanOrEqual(1);
-		expect(screen.getAllByText(/silent edits/i).length).toBeGreaterThanOrEqual(
-			1,
-		);
-		expect(screen.getAllByText(/corrections/i).length).toBeGreaterThanOrEqual(
-			1,
-		);
+		// Dead dims collapsed into one line — no separate "Silent Edits" or "Corrections" rows
+		expect(screen.queryByText("Silent Edits")).toBeNull();
+		expect(screen.queryByText("Corrections")).toBeNull();
+		// No per-row "no events detected" — dead dims collapsed
+		expect(screen.queryByText("no events detected")).toBeNull();
+		// No meaning clauses ("reports claims before others", "steadiness of editorial tone")
+		expect(screen.queryByText(/reports claims before/i)).toBeNull();
+		expect(screen.queryByText(/steadiness of editorial/i)).toBeNull();
+		// No Δ annotations
+		expect(screen.queryByText(/Δ/)).toBeNull();
 	});
 
-	it("stat panel shows '—' for all values in empty state", () => {
+	it("stat panel shows '—' for uncomputed values in empty state", () => {
 		renderPage();
 		const dashes = screen.getAllByText("—");
-		expect(dashes.length).toBeGreaterThanOrEqual(6);
+		expect(dashes.length).toBeGreaterThanOrEqual(4);
 	});
 
 	it('renders archetype badge with "Unclassified" in empty state', () => {
@@ -95,26 +96,21 @@ describe("SourceProfile Page", () => {
 
 	it("renders radar empty state when dimensions are null", () => {
 		renderPage();
-		// F3a: When no snapshot data has all 6 dimensions populated,
-		// radar shows empty state message instead of a collapsed polygon
 		expect(
 			screen.getByText(/hasn.*t crossed the.*2-source corroboration/i),
 		).toBeInTheDocument();
 	});
 
-	it("renders sparklines for live dimensions, 'no events' for dead ones", () => {
+	// UX14: SparklineGrid + VfTrendChart unmounted
+	it("no longer renders sparkline grid or validation-over-time", () => {
 		renderPage();
-		// 4 live dimensions (orig, val, speed, frame) get SVG sparklines
-		// 2 dead dimensions (edit, correct) show 'no events' text
-		const svgs = document.querySelectorAll("svg");
-		expect(svgs.length).toBeGreaterThanOrEqual(4);
-		expect(screen.getAllByText("no events").length).toBeGreaterThanOrEqual(2);
+		expect(screen.queryByText("30-Day Trends")).toBeNull();
+		expect(screen.queryByText("Validation over time")).toBeNull();
 	});
 
 	it("vertical pills default to GEOPOLITICS active", () => {
 		renderPage();
 		const geopolitics = screen.getByRole("button", { name: /geopolitics/i });
-		// Active pill should have the navy color border
 		expect(geopolitics.className).toContain("font-heading");
 	});
 });

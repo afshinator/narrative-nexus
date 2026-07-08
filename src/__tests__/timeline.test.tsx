@@ -138,10 +138,8 @@ describe("Timeline Page", () => {
 		await waitFor(() =>
 			expect(screen.getByText("Test Cluster")).toBeInTheDocument(),
 		);
-		// Summary line: "2 sources · 2 claims · 2 days"
-		expect(screen.getByText(/2 sources/i)).toBeInTheDocument();
-		expect(screen.getByText(/2 claims/i)).toBeInTheDocument();
-		expect(screen.getByText(/2 days/i)).toBeInTheDocument();
+	// Summary line: "One story, reconstructed from 2 sources — 2 extracted claims over 2 days."
+		expect(screen.getByText(/One story, reconstructed from 2 sources/i)).toBeInTheDocument();
 	});
 
 	it("renders source rows with domains and tier", async () => {
@@ -162,14 +160,14 @@ describe("Timeline Page", () => {
 		expect(screen.getByText("Claim two")).toBeInTheDocument();
 	});
 
-	it("renders single-claim timeline without crash (rangeMs=0 fallback)", async () => {
+	// M2: single-day clusters show "unavailable" instead of broken timeline
+	it("shows unavailable message for single-day clusters", async () => {
 		mockFetch(singleClaimData);
 		renderPage();
 		await waitFor(() =>
 			expect(screen.getByText("Single Claim Cluster")).toBeInTheDocument(),
 		);
-		// No crash = test passes
-		expect(screen.getByText("Only claim")).toBeInTheDocument();
+		expect(screen.getByText(/Timeline unavailable for this cluster/i)).toBeInTheDocument();
 	});
 });
 

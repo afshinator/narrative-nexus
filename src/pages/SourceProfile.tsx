@@ -15,7 +15,6 @@ import {
 import { Radar } from "react-chartjs-2";
 import { Link, useParams } from "react-router";
 import VerticalPills from "../components/VerticalPills";
-import VfTrendChart from "../components/VfTrendChart";
 import type { DailySnapshot } from "../data/scores";
 
 // ── Inline types for new profile sections ──
@@ -58,8 +57,8 @@ const DEAD_DIMS = new Set(["R_edit", "R_correct"]);
 // ── Live radar dimensions (exclude dead ones) ──
 const RADAR_DIMS = DIMENSIONS.filter((d) => !DEAD_DIMS.has(d.key));
 
-const SPARKLINE_WINDOW = 30; // trailing days for sparklines
-const STAT_DELTA_THRESHOLD = 1; // delta < 1pt = · (flat)
+// SPARKLINE_WINDOW removed — SparklineGrid cut per UX14-V2
+// ponytail: STAT_DELTA_THRESHOLD removed — Δ annotations cut per UX15-B
 
 interface Props {
 	snapshots?: DailySnapshot[];
@@ -179,14 +178,24 @@ function SourceProfilePage({
 
 	return (
 		<div className="mx-auto max-w-[1340px] space-y-6">
-			{/* P5: 1 — Page header */}
+			{/* UX15 title block */}
+			<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+				Source Profile
+			</p>
 			<div className="flex items-center gap-3">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
 					{source.name}
 				</h1>
 			</div>
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-				Tier {source.tier} &middot; {source.domain}
+				Tier {source.tier} &middot; {source.tier === 1 ? "Wire/Consensus Anchor"
+					: source.tier === 2 ? "Mainstream Editorial"
+					: source.tier === 3 ? "International"
+					: source.tier === 4 ? "Independent/Investigative"
+					: "Contrarian"} &middot; {source.domain}
+			</p>
+			<p className="font-sans text-[0.85rem] text-[var(--nn-text-dim)]">
+				How this outlet behaves across the monitored panel — scores, archetype, and claim outcomes.
 			</p>
 			<p className="font-sans text-[0.85rem] text-[var(--nn-navy)]">
 				<Link to="/cluster/966" className="hover:underline">
@@ -207,7 +216,6 @@ function SourceProfilePage({
 			<div className="grid gap-6 lg:grid-cols-[280px_1fr]">
 				<StatPanel
 					snapshot={latestSnapshot}
-					baseline={baseline}
 					medianOrig={panelMedianOrig}
 					medianVal={panelMedianVal}
 				/>
@@ -315,13 +323,13 @@ function SourceProfilePage({
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
 								<tr>
-									<th className="px-2 py-2 text-left font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
+									<th className="px-2 py-2 text-left font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
 										Article
 									</th>
-									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
+									<th className="px-2 py-2 text-right font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
 										Change
 									</th>
-									<th className="px-2 py-2 text-right font-mono text-[0.7rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
+									<th className="px-2 py-2 text-right font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b-2 border-[var(--nn-border)]">
 										Stored → Fetched
 									</th>
 								</tr>
@@ -372,13 +380,8 @@ function SourceProfilePage({
 				)}
 			</div>
 
-			{/* P5: 5 — Sparklines + Vf Trend (last) */}
-			<SparklineGrid
-				snapshots={filtered}
-				latestSnapshot={latestSnapshot}
-			/>
+			{/* SparklineGrid + VfTrendChart unmounted per UX14 — percentile-rank noise */}
 
-			<VfTrendChart snapshots={filtered} />
 		</div>
 	);
 }
@@ -387,12 +390,10 @@ function SourceProfilePage({
 
 function StatPanel({
 	snapshot,
-	baseline,
 	medianOrig,
 	medianVal,
 }: {
 	snapshot: DailySnapshot | null;
-	baseline: DailySnapshot | null;
 	medianOrig: number;
 	medianVal: number;
 }) {
@@ -400,19 +401,25 @@ function StatPanel({
 		? getArchetype(snapshot.R_orig, snapshot.R_val, medianOrig, medianVal)
 		: null;
 
-	// M2: Plain-language clauses per dimension
-	const DIM_MEANING: Record<string, string> = {
-		R_orig: "reports claims before others",
-		R_val: "its early claims later enter consensus",
-		R_speed: "days until claims absorbed — lower is better, shown inverted",
-		R_frame: "steadiness of editorial tone",
-	};
+	// UX15-B: Two-tier layout — hero row (Origination/Validation) + secondary (Speed/Framing)
+	// ponytail: dead dims collapsed to one line, meaning clauses and Δ removed
+	const HERO_DIMS = [
+		{ key: "R_orig", label: "Origination" },
+		{ key: "R_val", label: "Validation" },
+	];
+	const SUB_DIMS = [
+		{ key: "R_speed", label: "Speed" },
+		{ key: "R_frame", label: "Framing" },
+	];
+	const noDeadEvents = snapshot != null
+		&& (snapshot.R_edit == null || snapshot.R_edit === 0)
+		&& (snapshot.R_correct == null || snapshot.R_correct === 0);
 
 	return (
 		<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
 			{/* Archetype badge */}
 			<span
-				className={`inline-block rounded-full px-3 py-1 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.04em] ${
+				className={`inline-block rounded-full px-3 py-1 font-mono text-[0.75rem] font-semibold uppercase tracking-[0.04em] ${
 					archetype
 						? {
 								EARLY_BREAKER: "bg-[var(--nn-navy)]/10 text-[var(--nn-navy)]",
@@ -428,85 +435,54 @@ function StatPanel({
 				{archetype ? archetype.replace(/_/g, " ") : "Unclassified"}
 			</span>
 
-			{/* Stat rows */}
-			<div className="mt-3 space-y-1.5">
-				{DIMENSIONS.map((dim) => {
-					const value = snapshot?.[dim.key] as number | undefined;
-					const baselineVal = baseline?.[dim.key] as number | undefined;
-					const isDead = DEAD_DIMS.has(dim.key);
-					const meaning = DIM_MEANING[dim.key];
-
-					// Dead dimensions: "no events detected"
-					if (isDead && (value == null || value === 0)) {
-						return (
-							<div
-								key={dim.key}
-								className="border-b border-[var(--nn-border)] py-1.5 last:border-b-0"
-							>
-								<div className="flex items-baseline justify-between">
-									<span className="text-[0.76rem] text-[var(--nn-text-dim)]">
-										{dim.label}
-									</span>
-									<span className="text-[0.72rem] italic text-[var(--nn-text-dim)]">
-										no events detected
-									</span>
-								</div>
-							</div>
-						);
-					}
-
-					const hasDelta = value != null && baselineVal != null;
-					const diff = hasDelta ? value! - baselineVal! : undefined;
-					const absDiff = diff != null ? Math.abs(Math.round(diff)) : 0;
-					const dir: "up" | "down" | "flat" =
-						diff != null
-							? Math.abs(diff) < STAT_DELTA_THRESHOLD
-								? "flat"
-								: diff > 0
-									? "up"
-									: "down"
-							: "flat";
-					const arrow = dir === "up" ? "+" : dir === "down" ? "−" : "";
-					const arrowColor =
-						dir === "up"
-							? "text-[var(--nn-teal)]"
-							: dir === "down"
-								? "text-[var(--nn-red)]"
-								: "text-[var(--nn-text-dim)]";
-					const valueColor =
-						value != null ? getPolarityColor(dim.key, value) : "";
-
+			{/* UX15-B: Hero row — Origination + Validation (scatter-plot axes) */}
+			<div className="mt-3 flex justify-around">
+				{HERO_DIMS.map((dim) => {
+					const value = snapshot?.[dim.key as keyof DailySnapshot] as number | undefined;
+					const valueColor = value != null ? getPolarityColor(dim.key, value) : "";
 					return (
-						<div
-							key={dim.key}
-							className="border-b border-[var(--nn-border)] py-1.5 last:border-b-0"
-						>
-							<div className="flex items-baseline justify-between">
-								<span
-									className="font-mono text-[0.82rem] font-semibold tabular-nums"
-									style={{ color: valueColor || "var(--nn-text)" }}
-								>
-									{value != null ? Math.round(value) : "—"}
-								</span>
-								{hasDelta && dir !== "flat" && (
-									<span className={`font-mono text-[0.66rem] ${arrowColor}`}>
-										Δ 30d: {arrow}
-										{absDiff}
-									</span>
-								)}
-							</div>
-							<div className="flex items-baseline justify-between">
-								<span className="text-[0.76rem] font-medium text-[var(--nn-text)]">
-									{dim.label}
-								</span>
-								<span className="text-[0.7rem] text-[var(--nn-text-dim)]">
-									— {meaning}
-								</span>
-							</div>
+						<div key={dim.key} className="text-center">
+							<span
+								className="block font-heading text-[1.65rem] font-bold leading-none tabular-nums"
+								style={{ color: valueColor || "var(--nn-text)" }}
+							>
+								{value != null ? Math.round(value) : "—"}
+							</span>
+							<span className="mt-0.5 block font-mono text-[0.75rem] uppercase tracking-[0.05em] text-[var(--nn-text-dim)]">
+								{dim.label}
+							</span>
 						</div>
 					);
 				})}
 			</div>
+
+			{/* Secondary row — Speed + Framing */}
+			<div className="mt-2 flex justify-around">
+				{SUB_DIMS.map((dim) => {
+					const value = snapshot?.[dim.key as keyof DailySnapshot] as number | undefined;
+					const valueColor = value != null ? getPolarityColor(dim.key, value) : "";
+					return (
+						<div key={dim.key} className="text-center">
+							<span
+								className="block font-mono text-[0.82rem] font-semibold tabular-nums"
+								style={{ color: valueColor || "var(--nn-text)" }}
+							>
+								{value != null ? Math.round(value) : "—"}
+							</span>
+							<span className="mt-0.5 block font-mono text-[0.75rem] uppercase tracking-[0.05em] text-[var(--nn-text-dim)]">
+								{dim.label}
+							</span>
+						</div>
+					);
+				})}
+			</div>
+
+			{/* Dead dims collapsed */}
+			{noDeadEvents && (
+				<p className="mt-2 text-center font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
+					No silent edits or corrections detected
+				</p>
+			)}
 		</div>
 	);
 }
@@ -692,105 +668,7 @@ function RadarChart({
 	);
 }
 
-function SparklineGrid({
-	snapshots,
-	latestSnapshot,
-}: {
-	snapshots: DailySnapshot[];
-	latestSnapshot: DailySnapshot | null;
-}) {
-	// M6: Short plain-language labels for sparkline cells
-	const SPARK_LABELS: Record<string, string> = {
-		R_orig: "Breaks stories",
-		R_val: "Validated",
-		R_speed: "Speed",
-		R_frame: "Framing",
-		R_edit: "Silent Edits",
-		R_correct: "Corrections",
-	};
-
-	// P1: Use trailing 30 days from the latest snapshot, not currentDay
-	const latestDay = useMemo(() => {
-		if (snapshots.length === 0) return 0;
-		const sorted = [...snapshots].sort((a, b) => a.day - b.day);
-		return sorted[sorted.length - 1].day;
-	}, [snapshots]);
-
-	const sparkData = useMemo(() => {
-		if (snapshots.length === 0) return null;
-		const sorted = [...snapshots].sort((a, b) => a.day - b.day);
-		const startDay = Math.max(0, latestDay - SPARKLINE_WINDOW);
-		const window = sorted.filter(
-			(s) => s.day >= startDay && s.day <= latestDay,
-		);
-
-		return DIMENSIONS.map((dim) => {
-			const values = window.map((s) => s[dim.key] as number);
-			if (values.length === 0) return { dim, points: "" };
-			const min = Math.min(...values);
-			const max = Math.max(...values);
-			const range = max - min || 1;
-			const pts = values.map((v, i) => {
-				const x = (i / Math.max(values.length - 1, 1)) * 30;
-				const y = 20 - ((v - min) / range) * 16 - 2;
-				return `${x.toFixed(1)},${y.toFixed(1)}`;
-			});
-			return { dim, points: pts.join(" ") };
-		});
-	}, [snapshots, latestDay]);
-
-	const currentVal = latestSnapshot;
-
-	return (
-		<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
-			<h2 className="mb-1 font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
-				30-Day Trends
-			</h2>
-			<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
-				How each score moved over the last 30 days
-			</p>
-			<div className="grid grid-cols-2 gap-x-6 gap-y-2">
-				{DIMENSIONS.map((dim) => {
-					const spark = sparkData?.find((s) => s.dim.key === dim.key);
-					const val = currentVal?.[dim.key] as number | undefined;
-					const isDead = DEAD_DIMS.has(dim.key) && (val == null || val === 0);
-					return (
-						<div key={dim.key} className="flex items-center gap-2">
-							<span className="w-28 flex-shrink-0 text-right font-mono text-[0.66rem] text-[var(--nn-text-dim)]">
-								{SPARK_LABELS[dim.key] ?? dim.label}
-							</span>
-							{isDead ? (
-								<span className="flex-1 text-[0.66rem] italic text-[var(--nn-text-dim)]">
-									no events
-								</span>
-							) : (
-								<svg
-									viewBox="0 0 30 20"
-									className="h-5 flex-1"
-									role="img"
-									aria-label={`${dim.label} trend`}
-								>
-									{spark?.points ? (
-										<polyline
-											fill="none"
-											stroke="var(--nn-teal)"
-											strokeWidth="1.2"
-											points={spark.points}
-										/>
-									) : null}
-								</svg>
-							)}
-							<span className="w-9 text-right font-mono text-[0.66rem] tabular-nums text-[var(--nn-text)]">
-								{val != null ? Math.round(val) : "—"}
-							</span>
-						</div>
-					);
-				})}
-			</div>
-		</div>
-	);
-}
-
+// SparklineGrid cut per UX14-V2 (percentile-rank noise, not source behavior)
 // DayScrubber kept in codebase but unmounted — removed from page per UX11-P1
 
 export default SourceProfilePage;

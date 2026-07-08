@@ -61,6 +61,9 @@ export default function TimelinePage() {
 	if (error) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
+				<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+					Timeline
+				</p>
 				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
 					Timeline
 				</h1>
@@ -72,6 +75,9 @@ export default function TimelinePage() {
 	if (!data) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
+				<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+					Timeline
+				</p>
 				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
 					Timeline
 				</h1>
@@ -91,7 +97,6 @@ export default function TimelinePage() {
 	if (allTimes.length === 0) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
-				{/* Header */}
 				<div className="flex items-center gap-3 mb-1.5">
 					<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
 						Timeline
@@ -122,21 +127,37 @@ export default function TimelinePage() {
 		days.push(new Date(d));
 	}
 
+	// M2: single-day range — timeline unavailable
+	if (days.length <= 1) {
+		return (
+			<div className="mx-auto max-w-[1340px] space-y-6">
+				<div className="flex items-center gap-3 mb-1.5">
+					<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">Timeline</h1>
+					<span className="font-mono text-[0.8rem] text-[var(--nn-text-dim)]">{data.cluster.title}</span>
+				</div>
+				<p className="text-[var(--nn-text-dim)] text-[0.85rem]">
+					Timeline unavailable for this cluster — claims span a single day, insufficient for temporal visualization.
+				</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="mx-auto max-w-[1340px] space-y-6">
+			{/* UX15 title block */}
+			<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+				Timeline
+			</p>
 			{/* Header */}
 			<div className="flex items-center gap-3 mb-1.5">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
-					Timeline
-				</h1>
-				<span className="font-mono text-[0.8rem] text-[var(--nn-text-dim)]">
 					{data.cluster.title}
-				</span>
+				</h1>
 			</div>
-			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
-				{data.sources.length} sources &middot;{" "}
-				{data.sources.reduce((sum, s) => sum + s.claims.length, 0)} claims
-				&middot; {days.length} day{days.length !== 1 ? "s" : ""}
+			{/* K3: narrative description */}
+			<p className="-mt-2 font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]">
+				One story, reconstructed from {data.sources.length} sources —{" "}
+				{data.sources.reduce((sum, s) => sum + s.claims.length, 0)} extracted claims over {days.length} day{days.length !== 1 ? "s" : ""}.
 			</p>
 
 			{/* F5: Single-source cluster banner */}
@@ -163,7 +184,7 @@ export default function TimelinePage() {
 					return (
 						<span
 							key={d.toISOString()}
-							className="absolute font-mono text-[0.7rem] text-[var(--nn-text-dim)]"
+							className="absolute font-mono text-[0.75rem] text-[var(--nn-text-dim)]"
 							style={{
 								left: `${Math.max(0, pct)}%`,
 								transform: "translateX(-50%)",

@@ -38,6 +38,14 @@ interface Props {
 	showQuadrants?: boolean;
 }
 
+// E1: standard D3 margin convention. Enough space for:
+//  - quadrant labels (11.5px font) at top
+//  - y-axis label + tick text (11px) at left
+//  - x-axis label + tick text (11px) at bottom
+//  - quadrant labels at right
+//  - dots at extremes (max radius ~11px)
+const M = { top: 32, right: 28, bottom: 38, left: 44 };
+
 export default function ScatterPlot({
 	data,
 	hoveredId,
@@ -53,7 +61,7 @@ export default function ScatterPlot({
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [dimensions, setDimensions] = useState({ w: 0, h: 0 });
 
-	// ResizeObserver — only update when dimensions actually change (≥2px)
+	// ResizeObserver
 	useEffect(() => {
 		const el = containerRef.current;
 		if (!el) return;
@@ -71,12 +79,7 @@ export default function ScatterPlot({
 		return () => obs.disconnect();
 	}, []);
 
-	// ── Data / layout effect (axes, quadrants, markers) ──────────────────
-	// hoveredId is deliberately excluded — hover is applied in a separate,
-	// lightweight effect below that only tweaks opacity on existing markers.
-	// Including hoveredId triggers svg.selectAll("*").remove() on every hover,
-	// which recreates DOM elements under the cursor and fires mouseenter again,
-	// creating an infinite cycle.
+	// ── Data / layout effect ──
 	useEffect(() => {
 		const svg = d3.select(svgRef.current);
 		if (!svg.node()) return;
@@ -86,31 +89,40 @@ export default function ScatterPlot({
 		if (!node) return;
 		const { width, height } = node.getBoundingClientRect();
 
-				const xScale = xScaleType === "log"
-					? d3.scaleLog().domain([1, d3.max(data, (d) => d.R_orig) || 100]).range([0, width])
-					: d3.scaleLinear().domain([0, 100]).range([0, width]);
-		const yScale = d3.scaleLinear().domain([0, 100]).range([height, 0]);
+		// Plot area = SVG minus margins (fallback to minimum on jsdom)
+		const pw = Math.max(width - M.left - M.right, 300);
+		const ph = Math.max(height - M.top - M.bottom, 200);
 
+		// Root group, translated to the plot area
+		const g = svg.append("g").attr("transform", `translate(${M.left},${M.top})`);
+
+		// Scales: domain [0,100] → plot area (pw × ph)
+		const xScale = xScaleType === "log"
+			? d3.scaleLog().domain([1, d3.max(data, (d) => d.R_orig) || 100]).range([0, pw])
+			: d3.scaleLinear().domain([0, 100]).range([0, pw]);
+		const yScale = d3.scaleLinear().domain([0, 100]).range([ph, 0]);
+
+		// Axes
 		const xAxis = d3.axisBottom(xScale).tickFormat(d3.format("d"));
 		const yAxis = d3.axisLeft(yScale).tickFormat(d3.format("d"));
 
-		// U2: Region backgrounds (rendered before markers for z-order)
+		// Region backgrounds
 		if (regions) {
 			for (const r of regions) {
 				const ry = yScale(r.yMax);
 				const rh = yScale(r.yMin) - yScale(r.yMax);
-				svg.append("rect")
+				g.append("rect")
 					.attr("x", 0).attr("y", ry)
-					.attr("width", width).attr("height", Math.max(0, rh))
+					.attr("width", pw).attr("height", Math.max(0, rh))
 					.attr("fill", "var(--nn-surface2)").attr("opacity", 0.4);
-				svg.append("text")
+				g.append("text")
 					.attr("x", 8).attr("y", ry + 16)
 					.attr("fill", "var(--nn-text-dim)")
 					.style("font-family", "IBM Plex Sans").style("font-size", "12px")
 					.style("font-weight", "600")
 					.text(r.label);
 				if (r.sublabel) {
-					svg.append("text")
+					g.append("text")
 						.attr("x", 8).attr("y", ry + 32)
 						.attr("fill", "var(--nn-text-dim)")
 						.style("font-family", "IBM Plex Sans").style("font-size", "11px")
@@ -119,73 +131,74 @@ export default function ScatterPlot({
 			}
 		}
 
-		// Quadrant backgrounds + labels — A3: hide for coverage lens
+		// Quadrant backgrounds + labels — inside plot area
 		if (showQuadrants) {
-			svg.append("rect").attr("x", xScale(50)).attr("y", yScale(100))
-				.attr("width", width - xScale(50)).attr("height", yScale(50))
+			const mx = xScale(50);
+			const my = yScale(50);
+			g.append("rect").attr("x", mx).attr("y", 0).attr("width", pw - mx).attr("height", my)
 				.attr("fill", "var(--nn-navy)").attr("opacity", 0.09);
-			svg.append("rect").attr("x", xScale(50)).attr("y", yScale(50))
-				.attr("width", width - xScale(50)).attr("height", yScale(50))
+			g.append("rect").attr("x", mx).attr("y", my).attr("width", pw - mx).attr("height", ph - my)
 				.attr("fill", "var(--nn-red)").attr("opacity", 0.09);
-			svg.append("rect").attr("x", 0).attr("y", yScale(100))
-				.attr("width", xScale(50)).attr("height", yScale(50))
+			g.append("rect").attr("x", 0).attr("y", 0).attr("width", mx).attr("height", my)
 				.attr("fill", "var(--nn-teal)").attr("opacity", 0.09);
-			svg.append("rect").attr("x", 0).attr("y", yScale(50))
-				.attr("width", xScale(50)).attr("height", yScale(50))
+			g.append("rect").attr("x", 0).attr("y", my).attr("width", mx).attr("height", ph - my)
 				.attr("fill", "var(--nn-slate)").attr("opacity", 0.09);
 
-			// Quadrant labels
-			svg.append("text").attr("x", width - 10).attr("y", 18)
+			// Labels: inset 8px from plot corners, semi-transparent, behind dots
+			g.append("text").attr("x", pw - 8).attr("y", 16)
 				.attr("text-anchor", "end").attr("fill", "var(--nn-navy)")
+				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
 				.text("EARLY BREAKERS");
-			svg.append("text").attr("x", width - 10).attr("y", yScale(0) - 10)
+			g.append("text").attr("x", pw - 8).attr("y", ph - 8)
 				.attr("text-anchor", "end").attr("fill", "var(--nn-red)")
+				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
 				.text("NOISE GENERATORS");
-			svg.append("text").attr("x", 10).attr("y", 18)
+			g.append("text").attr("x", 8).attr("y", 16)
 				.attr("text-anchor", "start").attr("fill", "var(--nn-teal)")
+				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
 				.text("SELECTIVE BUT ACCURATE");
-			svg.append("text").attr("x", 10).attr("y", yScale(0) - 10)
+			g.append("text").attr("x", 8).attr("y", ph - 8)
 				.attr("text-anchor", "start").attr("fill", "var(--nn-slate)")
+				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
 				.text("CONSENSUS FOLLOWERS");
-		} // end showQuadrants
+		}
 
-				// Axes
-				svg.append("g").call(xAxis).attr("transform", `translate(0,${yScale(0)})`);
-				svg.append("g").call(yAxis).attr("transform", `translate(${xScale(0)},0)`);
+		// Axes (drawn in plot coordinate space)
+		g.append("g").call(xAxis).attr("transform", `translate(0,${ph})`);
+		g.append("g").call(yAxis);
 
-				// U1: Axis labels
-				svg.append("text")
-					.attr("x", width / 2).attr("y", height - 2)
-					.attr("text-anchor", "middle")
-					.attr("fill", "var(--nn-text-dim)")
-					.style("font-family", "IBM Plex Sans").style("font-size", "11px")
-					.text(xLabel);
-				svg.append("text")
-					.attr("x", -height / 2).attr("y", 8)
-					.attr("text-anchor", "middle")
-					.attr("transform", "rotate(-90)")
-					.attr("fill", "var(--nn-text-dim)")
-					.style("font-family", "IBM Plex Sans").style("font-size", "11px")
-					.text(yLabel);
+		// Axis labels — positioned in SVG space (outside margins)
+		svg.append("text")
+			.attr("x", M.left + pw / 2).attr("y", height - 4)
+			.attr("text-anchor", "middle")
+			.attr("fill", "var(--nn-text-dim)")
+			.style("font-family", "IBM Plex Sans").style("font-size", "11px")
+			.text(xLabel);
+		svg.append("text")
+			.attr("x", M.left - 8).attr("y", M.top + ph / 2)
+			.attr("text-anchor", "middle")
+			.attr("transform", `rotate(-90, ${M.left - 8}, ${M.top + ph / 2})`)
+			.attr("fill", "var(--nn-text-dim)")
+			.style("font-family", "IBM Plex Sans").style("font-size", "11px")
+			.text(yLabel);
 
-		// Data markers
+		// Data markers — in plot coordinates
 		if (data.length > 0) {
 			const symbol = d3.symbol().size(120);
-			svg.selectAll("path.marker").data(data).enter().append("path")
+			g.selectAll("path.marker").data(data).enter().append("path")
 				.attr("class", "marker")
 				.attr("d", (d) => symbol.type(TIER_D3_SYMBOL[d.tier] ?? d3.symbolCircle)() ?? "")
-								.attr("transform", (d) => `translate(${xScale(d.R_orig)},${yScale(d.R_val ?? 0)})`)
+				.attr("transform", (d) => `translate(${xScale(d.R_orig)},${yScale(d.R_val ?? 0)})`)
 				.attr("fill", (d) => ARCHETYPE_FILL[d.archetype ?? "CONSENSUS_FOLLOWER"] ?? "var(--nn-slate)")
 				.attr("stroke", "var(--nn-bg)").attr("stroke-width", 1).attr("opacity", 1)
 				.attr("role", "button").attr("tabindex", 0)
-								.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${d.R_val != null ? Math.round(d.R_val) : "ungraded"}`)
+				.attr("aria-label", (d) => `${d.name}, Origination ${Math.round(d.R_orig)}, Validation ${d.R_val != null ? Math.round(d.R_val) : "ungraded"}`)
 				.style("cursor", "pointer")
 				.on("mouseenter", (_event, d) => {
-					// Use clientX/Y (viewport-relative) since tooltip is position:fixed
 					onHoverPosition?.(d.sourceId, _event.clientX, _event.clientY);
 				})
 				.on("mouseleave", () => {
@@ -201,9 +214,7 @@ export default function ScatterPlot({
 		}
 	}, [data, onHoverPosition, onSelect, dimensions]);
 
-	// ── Hover effect — lightweight, only tweaks opacity on existing markers ─
-	// This runs on every hover change WITHOUT destroying/recreating DOM elements,
-	// breaking the mouseenter→destroy→recreate→mouseenter infinite loop.
+	// ── Hover effect ──
 	useEffect(() => {
 		const svg = d3.select(svgRef.current);
 		if (!svg.node()) return;

@@ -25,6 +25,13 @@ interface ReportData {
 		absorbed: number;
 		pending: number;
 		sourceCount: number;
+		topSourceNames?: string[];
+		poolSize?: number;
+		poolParticipating?: number;
+		poolPct?: number;
+		abstainingNames?: string[];
+		distinctDays?: number;
+		emptyDateCount?: number;
 	};
 	sources: SourceRow[];
 	claims: ClaimRow[];
@@ -59,6 +66,9 @@ export default function ClusterReportPage() {
 	if (error) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
+				<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+					Cluster Report
+				</p>
 				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
 					Cluster Report
 				</h1>
@@ -70,6 +80,9 @@ export default function ClusterReportPage() {
 	if (!data) {
 		return (
 			<div className="mx-auto max-w-[1340px] space-y-6">
+				<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+					Cluster Report
+				</p>
 				<h1 className="font-heading text-[2rem] font-bold text-[var(--nn-text)]">
 					Cluster Report
 				</h1>
@@ -80,15 +93,26 @@ export default function ClusterReportPage() {
 
 	return (
 		<div className="mx-auto max-w-[1340px] space-y-6">
+			{/* UX15 title block */}
+			<p className="font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]">
+				Cluster Report
+			</p>
 			{/* Header */}
 			<div className="flex items-center gap-3 mb-1.5">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
-					Cluster Report
-				</h1>
-				<span className="font-mono text-[0.8rem] text-[var(--nn-text-dim)]">
 					{data.cluster.title}
-				</span>
+				</h1>
 			</div>
+			{/* K3: narrative description — explains what the page is */}
+			<p className="-mt-2 font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]">
+				One story, reconstructed from {data.sources.length} sources — {data.summary.totalClaims} extracted claims, {data.summary.absorbed} absorbed into consensus.
+				{data.summary.distinctDays != null && data.summary.distinctDays > 1
+				 && data.summary.emptyDateCount === 0 && (
+					<>{" "}<a href={`/timeline/${data.cluster.id}`} className="font-medium text-[var(--nn-navy)] hover:underline">
+						View timeline →
+					</a></>
+				)}
+			</p>
 
 			{/* ── Consensus Summary ── */}
 			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
@@ -124,17 +148,27 @@ export default function ClusterReportPage() {
 						<span className="text-[var(--nn-text-dim)]">pending</span>
 					</span>
 				</div>
-			<div>
-					<p className="font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text)]">
-						<strong>Two independent corroborating sources — cross-source convergent,
-						not self-validating.</strong> Sourced from Reuters + The Guardian.
-					</p>
-					<p className="mt-0.5 font-mono text-[0.72rem] text-[var(--nn-text-dim)]">
-						2 of 3 pool sources in this cluster (AP News abstained) &middot;
-						66.7% &ge; 65% geopolitics threshold &middot;
-						claim variants matched at &ge;0.85
-					</p>
-				</div>
+			{data.summary.absorbed > 0 && (
+						<>
+							<p className="font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text)]">
+								<strong>Two independent corroborating sources — cross-source convergent,
+								not self-validating.</strong>{" "}
+								{data.summary.topSourceNames && data.summary.topSourceNames.length > 0
+									? `Sourced from ${data.summary.topSourceNames.join(" + ")}.`
+									: ""}
+							</p>
+							{data.summary.poolSize != null && data.summary.poolSize > 0 && (
+								<p className="mt-0.5 font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
+									{data.summary.poolParticipating} of {data.summary.poolSize} pool sources
+									{data.summary.abstainingNames && data.summary.abstainingNames.length > 0
+										? ` (${data.summary.abstainingNames.join(", ")} abstained)`
+										: ""}{" "}
+									&middot; {data.summary.poolPct}% &ge; 65% geopolitics threshold
+									&middot; claim variants matched at &ge;0.85
+								</p>
+							)}
+						</>
+					)}
 			</div>
 
 			{/* F4c: Honest framing when no claims absorbed yet */}
@@ -165,10 +199,10 @@ export default function ClusterReportPage() {
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
 								<tr>
-									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+									<th className="px-1.5 py-1.5 text-left font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
 										Source
 									</th>
-									<th className="px-1.5 py-1.5 text-right font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+									<th className="px-1.5 py-1.5 text-right font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
 										Claims
 									</th>
 								</tr>
@@ -181,13 +215,13 @@ export default function ClusterReportPage() {
 									>
 										<td className="px-1.5 py-1.5">
 											<span className="text-[var(--nn-text)]">{s.domain}</span>
-											<span className="ml-1.5 font-mono text-[0.7rem] text-[var(--nn-text-dim)]">
+											<span className="ml-1.5 font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
 												T{s.tier}
 											</span>
 										</td>
 										<td className="px-1.5 py-1.5 text-right font-mono tabular-nums text-[var(--nn-text)]">
 											{s.claims}
-											<span className="ml-1 text-[0.7rem] text-[var(--nn-text-dim)]">
+											<span className="ml-1 text-[0.75rem] text-[var(--nn-text-dim)]">
 												{s.absorbed > 0 ? ` (${s.absorbed}A)` : ""}
 												{s.pending > 0 ? ` (${s.pending}P)` : ""}
 											</span>
@@ -211,13 +245,13 @@ export default function ClusterReportPage() {
 						<table className="w-full border-collapse text-[0.82rem]">
 							<thead>
 								<tr>
-									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+									<th className="px-1.5 py-1.5 text-left font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
 										Source
 									</th>
-									<th className="px-1.5 py-1.5 text-left font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+									<th className="px-1.5 py-1.5 text-left font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
 										Claim
 									</th>
-									<th className="px-1.5 py-1.5 text-right font-mono text-[0.68rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
+									<th className="px-1.5 py-1.5 text-right font-mono text-[0.75rem] font-bold uppercase tracking-[0.05em] text-[var(--nn-text-dim)] border-b border-[var(--nn-border)]">
 										State
 									</th>
 								</tr>
