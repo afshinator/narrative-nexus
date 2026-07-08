@@ -1,9 +1,13 @@
 # FAQ: How and why did you choose the news sources?
 
 *Audience: hackathon users, judges, and observers*
-*Last updated: 2026-07-02 (post-T5 re-run against live DB)*
+*Last updated: 2026-07-07 (DOC-SYNC — rewritten against demo.db)*
 
-**TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls initially blocked 3 Tier 2 sources (NYT, Economist, Politico — 0% body extraction at first), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued paywalled sources with Firecrawl + CloakBrowser. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents. All 37 now produce claims (7,635 after cross-source matching). 4 sources have absorbed claims with cross-source corroboration. Every source earned its seat through verified RSS and extraction tests. **See `faq-pipeline-data.md` for the methodology update explaining why absorbed counts dropped and why 25 sources sit at y=0 on the scatter plot.**
+**TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls initially blocked 3 Tier 2 sources (NYT, Economist, Politico — 0% body extraction at first), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued paywalled sources with Firecrawl + CloakBrowser. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents.
+
+**The demo database** is a curated verification corpus — 358 articles spanning 2026-03-03 to 2026-07-03, processed through the full pipeline (Agent 1 clustering → Agent 2 extraction → claim matching → Agent 3 consensus → snapshot backfill). It produces 378 claims across 17 story clusters. 6 of 37 sources have absorbed claims (10 total) with genuine cross-source corroboration. 9 of 37 sources have no articles in this curated set — they are in the panel but not exercised by the demo stories.
+
+**Scale note:** The production database (not served for the demo) holds 7,747 claims from 4,899 articles across 1,179 clusters. The demo corpus is intentionally smaller — a curated verification set designed to demonstrate every pipeline stage and UI page with known-good data rather than raw volume.
 
 ---
 
@@ -27,14 +31,18 @@ Each source is assigned to one of five tiers that determines its role in the sys
 
 37 sources across 5 tiers and 7 geographic regions — all 6 inhabited continents represented.
 
-*Query: sources with absorbed claims (post-T5)*
+*Demo DB sources reporting absorbed claims (via claim_sources — who reported the claim, not who originated the article):*
 ```sql
-SELECT s.name, COUNT(*) as absorbed 
-FROM claims c JOIN articles a ON a.id=c.article_id 
-JOIN sources s ON s.id=a.source_id 
-WHERE c.state='CONSENSUS_ABSORBED' 
-GROUP BY s.name ORDER BY absorbed DESC;
--- theguardian: 6, apnews: 4, foxnews: 2, bbc: 1
+SELECT s.name, COUNT(*) FROM claim_sources cs
+JOIN claims c ON c.id=cs.claim_id
+JOIN sources s ON s.id=cs.source_id
+WHERE c.state='CONSENSUS_ABSORBED'
+GROUP BY s.name ORDER BY COUNT(*) DESC;
+-- theguardian: 8, apnews: 7, nytimes: 6, bbc: 6, thehindu: 5, france24: 5,
+-- foxnews: 5, cbsnews: 5, NHK World: 5, zerohedge: 3, globaltimes: 3, dw: 3,
+-- batimes: 3, theintercept: 2, sputnikglobe: 2, jamaicaobserver: 2, aljazeera: 2,
+-- washingtonpost: 1, reuters: 1, punchng: 1, npr: 1, cnn: 1, abcnews: 1, MercoPress: 1
+-- (24 sources report at least one absorbed claim)
 ```
 
 ## How were they chosen? What was the selection process?
@@ -60,32 +68,39 @@ The panel covers 7 geographic regions with at least one source in each:
 | Latin America | Buenos Aires Times, MercoPress | 2 |
 | Caribbean | Jamaica Observer | 1 |
 
-## Post-T5 panel statistics
+## Demo corpus panel statistics
 
 *Query for claims per source (top 10 by volume):*
 ```sql
-SELECT s.name, COUNT(*) as claims 
-FROM claims c JOIN articles a ON a.id=c.article_id 
-JOIN sources s ON s.id=a.source_id 
+SELECT s.name, COUNT(*) as claims
+FROM claims c JOIN articles a ON a.id=c.article_id
+JOIN sources s ON s.id=a.source_id
 GROUP BY s.name ORDER BY claims DESC LIMIT 10;
 ```
 
-| Source | Claims | Solo % | Absorbed |
-|--------|--------|--------|----------|
-| economist | 1,181 | 99.7% | 0 |
-| theguardian | 463 | 38.9% | 6 |
-| batimes | 393 | 28.8% | 0 |
-| globaltimes | 234 | 71.8% | 0 |
-| thehindu | 229 | 18.3% | 0 |
-| nytimes | 185 | 30.8% | 0 |
-| cnn | 212 | 100.0% | 0 |
-| reuters | 179 | 100.0% | 0 |
-| foxnews | 162 | 33.3% | 2 |
-| jamaicaobserver | 145 | 70.3% | 0 |
+| Source | Claims | Absorbed |
+|--------|--------|----------|
+| theguardian | 65 | 0 |
+| apnews | 58 | 1 |
+| bbc | 36 | 1 |
+| dw | 32 | 0 |
+| foxnews | 23 | 2 |
+| nytimes | 22 | 0 |
+| NHK World | 19 | 3 |
+| npr | 14 | 0 |
+| globaltimes | 14 | 2 |
+| thehindu | 13 | 0 |
 
-*Query for solo coverage (sources at 100%):*
+*Query for solo coverage — sources where all claims are in single-source clusters:*
 ```sql
--- 6 sources have 100% solo coverage: thereporterethiopia, thegrayzone, 
--- reuters, propublica, cnn, bellingcat
--- Their stories have no cross-source pair in the panel — by design.
+-- 9 of 17 clusters are single-source (only 1 source reporting).
+-- This is by design for a curated verification corpus.
+-- The full production DB has 1,112 clusters with 68 multi-source.
 ```
+
+## Demo corpus: sources inactive in this curated set
+
+9 sources have 0 articles in the demo corpus (present in the panel, no demo stories involved them):
+politico, propublica, thegrayzone, premiumtimesng, vanguardngr, thereporterethiopia, namibian, africanarguments — 0 articles each (by design: curated verification set focused on specific stories).
+
+These sources are fully configured and active in the source panel; they simply weren't involved in the curated stories chosen for the demo corpus.

@@ -1,8 +1,19 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-07 (post-UX13)
-**Phase:** UX13 meaning layer on Source Profile complete. Every number explains itself — percentile explainer, plain-language stat clauses, radar/shape metaphor, PENDING mechanism, VfTrend relativity annotation.
+**Last updated:** 2026-07-08 (post-DOCKER-READONLY)
+**Phase:** DOCKER-READONLY — RUN touch /app/.readonly baked into Dockerfile.app (line 61). Path verified: _is_readonly() resolves to /app/.readonly. No ENV counterpart in compose — sentinel is sole guard. Submitted image now ships read-only-guarded by default.
+**Phase:** PORT-CONFIRM — Submission container audit: app publishes :8000, judge URL http://localhost:8000. FLAGGED: .readonly sentinel does NOT ship in Dockerfile.app — deployed instance has unguarded scraper. Fix: add COPY .readonly or RUN touch to Dockerfile.app.
+**Phase:** UX28-FIX — Scraper button visibly disabled in readonly mode (gray, not-allowed, "Scraper (paused)" label). Normal path unchanged. FP: 378/10/358/17/13653.
+**Phase:** UX28 — P1: claim_matching nomic pill removed from legend (filtered out). P2: scraper captions removed (guard intact). P3: deferred — scraper controls → Settings page later. FP: 378/10/358/17/13653.
+**Phase:** FC-99 — Video script fact-check: all stages ran Fireworks (DeepSeek never executed), Panel functional client-side, OnboardingDialog 6-term glossary active, stage labels verified, 37 sources T1=5/T2=8/T3=17/T4=4/T5=3. FP: 378/10/358/17/13653.
+**Phase:** UX27 — 924 timeline link SUPPRESSED (emptyDateCount=145, 62% incomplete). Gate: require distinctDays>1 AND zero empty dates. 966 link shows.
+**Phase:** UX26 — 924 timeline suppressed (link hidden, single-day guard), 966 timeline verified 48-day span, 924 counts reconciled (138/20/233/88/6d). Violation #27 logged.
+**Phase:** UX25 — Nav restructure (cluster names removed, demo stories block on Sources), cluster 924 title, timeline View-link, nomic limitation recorded in Accepted Limitations. FP: 378/10/358/17/13653.
+**Phase:** UX24-K5 — Cluster 924 defects: absorption strip was hardcoded from 966 (fixed dynamic), pending sum double-counted (fixed DISTINCT), source count reconciled (20, not 18). FP: 378/10/358/17/13653.
+**Phase:** UX24 — K1: nomic label confirmed correct (claim matching, not article clustering). K2: cluster 924 named + nav links added. K3: narrative description lines on cluster/timeline pages. K4: scraper caption operator clause. FP: 378/10/358/17/13653.
+**Phase:** R-DB2 — Clean server restart + guard verified. .readonly sentinel file bypasses uvicorn env-var-loss bug. Server on :3019: scraper start returns 403, status shows readonly:true. Golden fingerprint 378/10/358/17/13653 confirmed.
 **Demo DB:** `data/demo/demo.db` (absolute: `/project/narrative-nexus/data/demo/demo.db`)
+**Dev server:** `NN_DB_PATH=data/demo/demo.db uvicorn app.main:app --host 0.0.0.0 --port 3015 --reload` (port range 3000–3019 forwarded to host; bind 0.0.0.0 required)
 **Fingerprint (post-D1):** 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, span 2026-03-03 → 2026-07-03
 **AI-summary bodies:** articles 940-945 bodies are Firecrawl AI summaries, not raw text — accepted limitation per human decision.
 **Backups:** `data/demo/backups/` (git-ignored)
@@ -56,6 +67,23 @@ Per `SELECT id, name, tier FROM sources ORDER BY id`:
 - UX1-A: Sources page functional fixes — (A1) Vertical button flash: clear fetchedScores on vertical change (Sources.tsx:112). (A2) Archetype filter wired to scatter plot via scatterVisible memo (Sources.tsx:198-201). (A3) Coverage lens quadrant overlap: showQuadrants=false on coverage ScatterPlot (ScatterPlot.tsx:37,124). (A4) Shape legend added inside color legend (Sources.tsx:381-383). (A5) Hardcoded "20" → {visibleSources.length}; fixed test descriptions too. (A6) Axis copy corrected: X="reports claims before the rest of the panel", Y="its early claims later enter consensus" (Sources.tsx:336-341). Quadrant labels verified correct at four plot corners. Commit 8ac2685.
 - UX2: Comprehension layer — (U1) Full-width intro strip "Not the truth — consensus reality." + one-sentence app description (Sources.tsx:288-300). (U2) Reusable Tooltip component (src/components/Tooltip.tsx) + 7 tooltips wired: intro strip, source count, vertical label, X/Y-axis labels, 4 archetype legend items — copy from design-v1.2 §1 vocab table + §4 dimensions + §5 tiers. (U3) Tier legend rewritten: "● Wire/Consensus Anchor · ■ Mainstream Editorial · ◆ International · ▲ Investigative · ✚ Contrarian" per design-v1.2 §5. (U4) POC server killed (PID 5501). Commit 2b6bafb.
 - UX1B: SQLite threading fix — db/connection.py:23: sqlite3.connect(path, check_same_thread=False). Root cause: FastAPI runs sync endpoints in thread pool; default check_same_thread=True rejects connections when thread pool reuses a different thread. Safe because connections are per-request (opened in get_persistent_db dependency, closed after response). Verified: 40/40 sequential curls (20 /api/coverage_landscape + 20 /api/sources) all 200, zero exceptions. Fingerprint unchanged: 378/10/358/17/13653.
+- UX3: Regression fixes — nav restore (Sources/Cluster/Timeline/Settings), ClusterReport absorbed-count fix (COUNT DISTINCT), hardcoded archetype-switch routes updated, Coverage lens panel grid restored. See `docs/implementation-rounds/66-ux3-regression-fixes.md`.
+- UX5: Sources page subtract — removed Coverage-Only Panel from Sources, adjusted vertical-pill check for scopes, 3 tests updated for static content. See `docs/implementation-rounds/69-ux5-sources-subtract.md`.
+- UX6-8: Nav integrity, cluster/timeline presentation, first_seen_at backfill + pipeline guard. Commit 5f18c3e.
+- UX9: Tooltip kill-switch — removed 7 tooltips from Sources page per design-direction change. See `docs/implementation-rounds/73-ux9-kill-tooltips.md`.
+- UX10-DIAG: Source Profile time-machine diagnostic (read-only). See `docs/implementation-rounds/74-ux10-diag-time-machine.md`.
+- UX11: Profile recenter pass. See `docs/implementation-rounds/75-ux11-profile-recenter.md`.
+- UX12: Legibility captions, chart color fixes (Chart.js CSS var → hex resolution). See `docs/implementation-rounds/76-ux12-legibility-captions.md`, `78-ux12-fix2.md`, `79-ux12-fix3.md`.
+- UX13: Meaning layer on Source Profile — percentile explainer, plain-language stat labels, radar/shape metaphor, PENDING mechanism, VfTrend relativity annotation. Commit cd87056.
+- DV1: Design doc refresh v1.2→v1.3 — 5 corrections (default provider Fireworks, locked pipeline params, R-score status, nav/onboarding, source panel 20→37). See `docs/design-v1.3.md`. Same session that produced faq-demo-goal.md.
+- DOC-SYNC: FAQ truth-sync — both FAQ files rewritten against demo.db numbers (378/10/358/17/13,653), honest pipeline capacity description for curated verification corpus. Dev server command documented in header.
+- DOC-SYNC-FU: Attribution fix — absorbed-per-source table corrected from articles.source_id to claim_sources.source_id (6 sources → 24 sources reporting absorbed claims). Cluster name audit confirmed only 966 rendered on judge pages. Orphaned files (design-v1.3.md, faq-demo-goal.md) bookkept. See `docs/design-v1.3.md`, `docs/faq-demo-goal.md`.
+- UX14: Profile trims + Sources click affordance. VfTrendChart unmounted (Validation over time card — percentile-rank noise). SparklineGrid cut (30-day sparklines chart panel data-density, not source behavior). Scatter tooltip gets "Click to view profile →" hint + "Click any source dot" subtitle. Leaderboard source names styled as links (navy + hover underline). See `docs/implementation-rounds/82-ux14-cut-invite.md`.
+- UX15: Title blocks on Source Profile, Cluster Report, Timeline. Kicker + h1 + description on all three. Tier names from design-v1.2 §5 (Wire/Consensus Anchor, etc.) not bare numbers. Two-tier stat panel (hero row Origination/Validation, secondary Speed/Framing, dead dims collapsed). No DB changes. See `docs/implementation-rounds/83-ux15-cosmetics.md`.
+- UX16: Archetype boundary diagnosis — read-only. Code is correct (pipeline/archetype.py:4-19). User's reported median 27/26 used all 37 sources; correct median is 52/48 from 26 graded sources (pipeline/snapshots.py:297-298 filters to active_ids). All 26 graded sources match §4 rule. Zero mismatches. No fixes applied.
+- UX17: Sources page inventory — read-only. 26 elements across 9 sections (intro strip, header, landing copy, vertical label, lens toggle, consensus lens content, coverage lens content, full ledger table, layout container). Tooltips absent (removed UX9). Coverage Panel absent (removed UX5). Click affordances present (UX14). See `docs/implementation-rounds/85-ux17-recon.md`.
+- UX18: Font floor + contrast floor + Sources subtract/hierarchy. Design laws recorded in STATUS.md. Token fixes: text-dim #717a68→#606b5f (light 3.91→4.86), #738567→#858f7b (dark 4.43→5.22), slate #5c6b5a→#556453 (4.33→4.80). App-wide font floor: all text-[.66/.68/.65/.62/.6]→0.75rem (9 files, ~30 sites). Sources: deleted landing copy, duplicate shape legend, X/Y axis block. Propaganda/Fringe→Contrarian. Chart subtitle + click CTA added. Page subtitle shortened. No DB writes. See `docs/implementation-rounds/86-ux18-font-contrast.md`.
+- UX19: CTA regression fix — B5 CTA was never written (patch failure, undetected YES-on-failed-bound). Two affordances added: "Hover any dot for details — click to open that outlet's profile →" under chart subtitle, and "Click a source row to open its profile" in Full Ledger intro. design-tokens.md synced. Violation #24 logged. See `docs/implementation-rounds/87-ux19-cta-fix.md`.
 
 ## Patch: vertical_classifier.py
 
@@ -76,12 +104,32 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## RESOLVED
 
-- recluster_all vs P4 cluster-count discrepancy: RESOLVED. P1 sweep and P4 (max 94) ran on cached BGE vectors (F5-REDO baseline: embeddings table = 2,028 BGE). All true-nomic runs produced floor-limited mega-clusters (809 / 1,329 / 154). Locked params (eps=0.35, floor=0.25, sim=0.85) were calibrated in BGE space. Embedding model hereby locked to BAAI/bge-base-en-v1.5 on empirical grounds, superseding the nomic intent. "clustering:" prefix is nomic-specific and moot under BGE.
-- O7 claim-less articles: CORRECTED. 28 articles without claims = 27 merge artifacts (all claims merged into canonicals) + 1 real extraction failure (article 290, now resolved). The 27 were NOT extraction failures.
+- recluster_all vs P4 cluster-count discrepancy: RESOLVED... (see above).
+- O7 claim-less articles: CORRECTED... 
+
+## Accepted Limitations (human — standing, UX25)
+
+- **Nomic claim matching + BGE-calibrated threshold:** Demo corpus claim matching ran nomic-embed-text-v1.5 (F5-REDO commit 2b3b1df changed provider BGE→nomic) while sim=0.85 remained calibrated in BGE space. Threshold uncalibrated for the model that used it. Output human-verified (P8-PRE autopsies; clusters 966/924 eyeballed); no rebuild. Recalibration is post-hackathon work.
 
 ## Next Action
 
 UX2 committed (2b6bafb): intro strip, 7 tooltips, tier legend rewrite. Vitest: 13 failures (11 router-shell pre-existing + 1 schema/better-sqlite3 stale + 1 docker/D2 volume). POC server killed. Next: human reviews rendered copy.
+
+## Design Law (human — standing, UX18)
+
+1. **Don't make the user think. Explicit beats elegant.** Cold visitor understands the chart and knows to click in 10 sec.
+2. **FONT FLOOR:** No rendered text below 12px (0.75rem) app-wide. Sole exception: chart-internal SVG/canvas labels where geometry forces it.
+3. **CONTRAST FLOOR:** All text meets WCAG AA — 4.5:1 against its actual background (3:1 permitted only for text >= 18.66px bold or >= 24px regular). Applies in BOTH themes. Non-text UI (borders on interactive elements, chart marks) >= 3:1.
+
+Laws 2 and 3 SUPERSEDE design-tokens.md where they conflict.
+
+## Process Rule (human — standing, UX20)
+
+**Design work is propose-first.** No visual implementation without an approved mockup. All styling changes must follow: mockup → human review → approval → implement. Violating this = unordered work.
+
+**NN_READONLY=1 is standing default** for all dev and hosted servers. The scraper Start button mutates the golden demo DB — it is a destructive action, not a UI toy. Rounds needing scraper writes must state that explicitly and run against a scratch DB, never `data/demo/demo.db`.
+
+**Deferred (UX28):** Scraper start/stop control to be relocated to Settings page in a future session. Currently: endpoints exist, guarded read-only via `.readonly` sentinel, no special caption on Pipeline page — scraper controls are Start/Stop button (always visible, guarded by 403 if sentinel present).
 
 ## BANNED
 
@@ -119,3 +167,8 @@ UX2 committed (2b6bafb): intro strip, 7 tooltips, tier legend rewrite. Vitest: 1
 | 20 | Unverified causal claim in diagnosis | FV2.2 attributed FV1 radar NULLs to pipeline mutation without evidence that pipeline touches snapshots. Alternative cause (API parameter, connection state) not ruled out. Also: archetype defect (#2 from FV1, visible-to-judge) dropped from FV2 without mention. |
 | 21 | GIT RULE violated (commit 2b6bafb) | UX2 round: committed despite standing GIT RULE of no add/commit/push. Logged per UX3 preamble. |
 | 22 | Fabricated verification figure in round doc | UX7 round doc reported "10 days (Mar 10–24)" for timeline. Actual span is 48 days (Mar 10 – Apr 27). Self-corrected in UX7 follow-up (71-ux7-followup.md). |
+| 23 | Evidence computed by method the code doesn't use; presented as system state | UX16-precursor query computed panel medians (27/26) over all 37 snapshot rows including 11 ungraded zero-rows, contradicting the code's active_ids-filtered medians (52/48, per snapshots.py:297-298). Triggered an unnecessary diagnosis round — the code was never wrong. Pattern: deriving evidence with a non-matching computation and presenting it as the system's actual output. |
+| 24 | YES-on-failed-bound: B5 CTA marked YES, never rendered | UX18 B5 compliance table row marked YES — "Click any dot to open that outlet's profile →" CTA. Patch tool failed with "Found 3 matches" error, never retried. Code was never added to Sources.tsx. Human browser confirms zero click affordance on Sources page. The B5 evidence was a summary claim, not a pasted working diff. |
+| 25 | Partial-fix reported complete: y-axis padding under-sized | UX20-A1 claimed both x and y D3 scale ranges padded for edge clipping. Only x-axis fixes were visible in browser (guardian at orig=100 OK). Dots at y-extremes (washingtonpost r_val=100, reuters/economist/tehrantimes r_val=0) still clipped. Root cause: PAD=8 insufficient for D3 symbol.size(120) marks — diamond symbol half-diagonal is ~11px. PAD raised to 14px in UX21. |
+| 26 | YES-on-failed-bound + demo DB contamination — unguarded destructive action (design flaw) | UX23 round doc marked "DB untouched: YES" while fingerprinting 2,143 articles (was 358). +1,785 articles scraped. Root cause: human pressed Start on Pipeline page expecting UI animation — the Start/Stop button is a destructive action (mutates golden demo DB) presented as a benign play control. Design flaw: no guard, no confirmation, no readonly default. Fix: NN_READONLY=1 guard (UX23) now standing default for all dev/hosted servers. Rounds needing scraper writes must state explicitly and run against scratch DB, never data/demo/demo.db. See R-DB round.
+| 27 | YES-on-failed-bound: UX25 L4 claimed "both timelines render: YES" while L4b evidence shows cluster 924 timeline collapses to 1 day (145/233 rows empty first_seen_at). Suppressed in UX26 per cut-not-caption rule — timeline link hidden when ≤1 distinct day of first_seen_at data. See UX26 diary. |

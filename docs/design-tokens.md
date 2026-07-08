@@ -21,7 +21,7 @@ Use dark-mode fonts for both light and dark modes.
 --surface2:  #e8ebe3;
 --border:    #d0d5c7;
 --text:      #1c2018;
---text-dim:  #717a68;
+--text-dim:  #606b5f;
 
 /* Archetype colors — earthy, muted */
 --navy:      #2e4a7c;
@@ -30,8 +30,8 @@ Use dark-mode fonts for both light and dark modes.
 --red-dim:   rgba(139,44,40,.10);
 --teal:      #276b52;
 --teal-dim:  rgba(39,107,82,.10);
---slate:     #5c6b5a;
---slate-dim: rgba(92,107,90,.10);
+--slate:     #556453;
+--slate-dim: rgba(85,100,83,.10);
 --amber:     #7a5217;
 --ink:       #2e4a7c;
 ```
@@ -45,7 +45,7 @@ Use dark-mode fonts for both light and dark modes.
 --surface2:  #1f2619;
 --border:    #2c3625;
 --text:      #d2e4c5;
---text-dim:  #738567;
+--text-dim:  #858f7b;
 
 /* Archetype colors */
 --navy:      #7eb3e0;    /* Early Breaker */
@@ -69,7 +69,7 @@ Use dark-mode fonts for both light and dark modes.
 | Body | IBM Plex Sans | 16px (1rem) | 400 | 1.55 | |
 | Nav links | IBM Plex Sans | 13.44px (0.84rem) | 400-600 | 1.55 | |
 | Mono / Data | IBM Plex Mono | 11-14px | 400-500 | varies | Tabular nums |
-| Footer | IBM Plex Mono | 11.2px (0.7rem) | 400 | 1.55 | Letter-spacing: 0.04em |
+| Footer | IBM Plex Mono | 12px (0.75rem) | 400 | 1.55 | Letter-spacing: 0.04em |
 
 ## Nav Bar
 
@@ -103,4 +103,10 @@ Default: 0.15s. Color + border-color transitions on interactive elements.
 
 **Links (nav):** No underline by default. Active state: border-bottom 2px solid archetype color + weight 600.
 
-**Footer:** IBM Plex Mono, 0.7rem, `var(--text-dim)`, centered, letter-spacing 0.04em.
+**Footer:** IBM Plex Mono, 0.75rem, `var(--text-dim)`, centered, letter-spacing 0.04em.
+
+## Design Laws (UX18 — human, standing)
+
+1. **Don't make the user think.** Explicit beats elegant.
+2. **FONT FLOOR:** No rendered text below 12px (0.75rem) app-wide. Sole exception: chart-internal SVG/canvas labels where geometry forces it.
+3. **CONTRAST FLOOR:** All text meets WCAG AA — 4.5:1 against its actual background. Applies in BOTH themes.
