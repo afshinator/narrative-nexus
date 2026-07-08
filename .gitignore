@@ -44,3 +44,9 @@ fireworks_backfill.log
 
 # Demo DB backups (large, transient)
 data/demo/backups/
+
+# Production DB — local only, judges get data/demo/demo.db
+data/nn.db
+
+# Local dev read-only sentinel (submission container gets its own via Dockerfile)
+.readonly
