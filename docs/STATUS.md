@@ -1,6 +1,10 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-08 (post-DOCKER-READONLY)
+**Last updated:** 2026-07-09 (post-UX32)
+**Phase:** UX32 — Cluster Report: coverage stat block + tempo descriptor per cluster (DB-driven, UX31-audited). FP: 378/10/358/17/13653.
+**Phase:** UX31 — Evidence audit: UX30 cluster measurements reconciled. UX30 errors corrected (wrong article counts via JOIN-vs-DISTINCT, wrong source counts via table path, first_seen_at on claim_sources not claims). FP: 378/10/358/17/13653.
+**Phase:** UX30 — Pipeline: AMD card removed, scraper relocated to Settings, collection windows measured. UX28 P3 RESOLVED. FP: 378/10/358/17/13653.
+**Phase:** UX29 — Sources Full Ledger: legend + DemoCorpusNote same row, click-to-sort line extracted to centered mono below. FP: 378/10/358/17/13653.
 **Phase:** DOCKER-READONLY — RUN touch /app/.readonly baked into Dockerfile.app (line 61). Path verified: _is_readonly() resolves to /app/.readonly. No ENV counterpart in compose — sentinel is sole guard. Submitted image now ships read-only-guarded by default.
 **Phase:** PORT-CONFIRM — Submission container audit: app publishes :8000, judge URL http://localhost:8000. FLAGGED: .readonly sentinel does NOT ship in Dockerfile.app — deployed instance has unguarded scraper. Fix: add COPY .readonly or RUN touch to Dockerfile.app.
 **Phase:** UX28-FIX — Scraper button visibly disabled in readonly mode (gray, not-allowed, "Scraper (paused)" label). Normal path unchanged. FP: 378/10/358/17/13653.
@@ -129,7 +133,7 @@ Laws 2 and 3 SUPERSEDE design-tokens.md where they conflict.
 
 **NN_READONLY=1 is standing default** for all dev and hosted servers. The scraper Start button mutates the golden demo DB — it is a destructive action, not a UI toy. Rounds needing scraper writes must state that explicitly and run against a scratch DB, never `data/demo/demo.db`.
 
-**Deferred (UX28):** Scraper start/stop control to be relocated to Settings page in a future session. Currently: endpoints exist, guarded read-only via `.readonly` sentinel, no special caption on Pipeline page — scraper controls are Start/Stop button (always visible, guarded by 403 if sentinel present).
+**Resolved (UX30):** Scraper control relocated from Pipeline to Settings page. UX28 P3 resolved. Read-only guard carries over intact — button disabled + 403 when `.readonly` present.
 
 ## BANNED
 
@@ -173,5 +177,6 @@ Laws 2 and 3 SUPERSEDE design-tokens.md where they conflict.
 | 26 | YES-on-failed-bound + demo DB contamination — unguarded destructive action (design flaw) | UX23 round doc marked "DB untouched: YES" while fingerprinting 2,143 articles (was 358). +1,785 articles scraped. Root cause: human pressed Start on Pipeline page expecting UI animation — the Start/Stop button is a destructive action (mutates golden demo DB) presented as a benign play control. Design flaw: no guard, no confirmation, no readonly default. Fix: NN_READONLY=1 guard (UX23) now standing default for all dev/hosted servers. Rounds needing scraper writes must state explicitly and run against scratch DB, never data/demo/demo.db. See R-DB round.
 | 27 | YES-on-failed-bound: UX25 L4 claimed "both timelines render: YES" while L4b evidence shows cluster 924 timeline collapses to 1 day (145/233 rows empty first_seen_at). Suppressed in UX26 per cut-not-caption rule — timeline link hidden when ≤1 distinct day of first_seen_at data. See UX26 diary. |
 | 28 | Arithmetic error: summary count ≠ raw data count | SW1 summary claimed 14 font-floor violations / 9 Investigate-only. Raw grep output: 13 grep matches, 8 Investigate-only. The misplaced +1 came from double-counting Investigate.tsx:91's multi-hit line. Corrected in SW2 fix round. |
+| 29 | Retyped tables + JOIN-vs-DISTINCT: cluster measurements wrong | UX30 reported 924 articles=138 (correct: 61 distinct — JOIN counted rows), 924 sources=18 (correct: 20 via claim_sources — used wrong table path), 966 articles=19 (correct: 6 distinct), first_seen_at "absent" (exists on claim_sources table). Violation #18 pattern: articles.source_id vs claim_sources.source_id. Corrected in UX31 audit. |
 
 ## Completed Work (recent)

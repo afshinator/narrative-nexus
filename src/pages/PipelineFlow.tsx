@@ -1,14 +1,6 @@
-import { Play, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 // ── Types ────────────────────────────────────────────────────────────────
-
-interface ScraperStatus {
-	running: boolean;
-	last_run: string | null;
-	articles_inserted: number;
-	readonly?: boolean;
-}
 
 interface ProviderInfo {
 	id: string;
@@ -73,12 +65,8 @@ function badgeFor(providerId: string): {
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
-const DEBOUNCE_MS = 500;
-
 export default function PipelineFlowPage() {
-	const [status, setStatus] = useState<ScraperStatus | null>(null);
 	const [error, setError] = useState("");
-	const [pending, setPending] = useState(false);
 	const errorTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
 		undefined,
 	);
@@ -93,15 +81,6 @@ export default function PipelineFlowPage() {
 		clearTimeout(errorTimer.current);
 		setError(msg);
 		errorTimer.current = setTimeout(() => setError(""), 3000);
-	};
-
-	const fetchStatus = () => {
-		fetch("/api/scraper/status")
-			.then((r) =>
-				r.ok ? r.json() : Promise.reject(new Error("bad response")),
-			)
-			.then(setStatus)
-			.catch(() => setStatus(null));
 	};
 
 	const fetchProviders = () => {
@@ -121,19 +100,8 @@ export default function PipelineFlowPage() {
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: fetch on mount only
 	useEffect(() => {
-		fetchStatus();
 		fetchProviders();
 	}, []);
-
-	const toggle = (action: "start" | "stop") => {
-		setPending(true);
-		setError("");
-		clearTimeout(errorTimer.current);
-		fetch(`/api/scraper/${action}`, { method: "POST" })
-			.then(() => fetchStatus())
-			.catch(() => showError(`${action} failed — retry?`))
-			.finally(() => setTimeout(() => setPending(false), DEBOUNCE_MS));
-	};
 
 	// ── Provider helpers ───────────────────────────────────────────────
 
@@ -170,125 +138,18 @@ export default function PipelineFlowPage() {
 				</div>
 			</div>
 
-			{/* F1+F5: Legend — compute-class summary instead of per-slot pills */}
-			<div
-				className="animate-fade-up mb-8 mt-7 rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] px-[22px] py-4"
-				style={{ "--i": 1 } as React.CSSProperties}
-			>
-				{hasProviders ? (
-					(() => {
-						const slots = Object.entries(assignments as Record<string, string>)
-							// P1: exclude claim_matching — internal pipeline, not an agent stage
-							.filter(([slot]) => slot !== "claim_matching_embedding");
-						// Count distinct providers + always-CPU for consensus
-						const counts = new Map<string, number>();
-						for (const [, pid] of slots) {
-							const b = badgeFor(pid);
-							const key = b.label.includes("CPU") ? "CPU" : pid;
-							counts.set(key, (counts.get(key) ?? 0) + 1);
-						}
-						// F5b: all-AI-on-Fireworks status line
-						const aiSlots = slots.filter(([s]) => s !== "consensus");
-						const allAmd = aiSlots.length > 0 && aiSlots.every(([, pid]) => badgeFor(pid).label.includes("Fireworks"));
-						return (
-							<>
-								{allAmd && (
-									<p className="mb-3 font-heading text-[0.82rem] font-semibold text-[var(--nn-red)]">
-										All AI stages running on AMD Instinct accelerators via Fireworks AI
-									</p>
-								)}
-								<div className="flex flex-wrap gap-4">
-									{[...counts.entries()].map(([pid, count]) => {
-										const b = badgeFor(pid);
-										return (
-											<LegendItem
-												key={pid}
-												badge={
-													<span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] ${b.className}`}>
-														{b.label}
-													</span>
-												}
-												label={`${count} stage${count > 1 ? "s" : ""}`}
-											/>
-										);
-									})}
-								</div>
-							</>
-						);
-					})()
-				) : (
-					<>
-						<LegendItem
-							badge={
-								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-red)] bg-[var(--nn-red-dim)] px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-red)]">
-									AMD GPU
-								</span>
-							}
-							label="Embeddings"
-						/>
-						<LegendItem
-							badge={
-								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[var(--nn-navy-dim)] px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-navy)]">
-									API
-								</span>
-							}
-							label="LLM Inference"
-						/>
-						<LegendItem
-							badge={
-								<span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.75rem] font-medium uppercase tracking-[0.03em] text-[var(--nn-slate)]">
-									CPU
-								</span>
-							}
-							label="Consensus Math · Snapshots"
-						/>
-					</>
-				)}
-			</div>
+	
 
-			{/* Scraper Controls */}
+			{/* Scraper status card — button relocated to Settings (UX30) */}
 			<div
-				className="animate-fade-up rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5"
+				className="animate-fade-up mt-7 rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5"
 				style={{ "--i": 1.5 } as React.CSSProperties}
 			>
-				<div className="flex items-center gap-4">
-					<button
-						type="button"
-						disabled={pending || status === null || status?.readonly}
-						onClick={() => toggle(status?.running ? "stop" : "start")}
-						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 ${
-							status?.readonly
-								? "border-[var(--nn-border)] bg-[var(--nn-surface)] text-[var(--nn-text-dim)]"
-								: status?.running
-								? "border-[var(--nn-red)] bg-[var(--nn-red)] text-white"
-								: "border-[var(--nn-teal)] bg-[var(--nn-teal)] text-white"
-						}`}
-					>
-						{status?.readonly ? (
-							<>Scraper (paused)</>
-						) : status?.running ? (
-							<>
-								<Square size={14} fill="currentColor" /> Stop
-							</>
-						) : (
-							<>
-								<Play size={14} fill="currentColor" /> Start
-							</>
-						)}
-					</button>
-					<span className="font-mono text-[0.75rem] tabular-nums text-[var(--nn-text-dim)]">
-						{status
-							? status.running
-								? `Running · ${status.articles_inserted} articles · last run ${status.last_run?.slice(11, 16) ?? "—"}`
-								: "Paused"
-							: "No connection — start backend to control scraper"}
-					</span>
-				</div>
-				{error && (
-					<p className="mt-3 font-sans text-[0.75rem] text-[var(--nn-red)]">
-						{error}
-					</p>
-				)}
+				<p className="font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text-dim)]">
+					Runs continuously in production: polls RSS feeds, ingests, and rescans
+					on a schedule. Paused here against a frozen demo corpus. Can be
+					restarted in settings page.
+				</p>
 			</div>
 
 			{/* Pipeline */}
@@ -441,27 +302,17 @@ export default function PipelineFlowPage() {
 						? "Backend connected. Provider assignments loaded."
 						: "No backend connected. All four agents will activate when the agent swarm runs against live article feeds."}
 				</p>
+				{error && (
+					<p className="mt-2 font-sans text-[0.75rem] text-[var(--nn-red)]">
+						{error}
+					</p>
+				)}
 			</div>
 		</div>
 	);
 }
 
 /* ── Sub-components ── */
-
-function LegendItem({
-	badge,
-	label,
-}: {
-	badge: React.ReactNode;
-	label: string;
-}) {
-	return (
-		<div className="flex items-center gap-2 font-sans text-[0.75rem] text-[var(--nn-text-dim)]">
-			{badge}
-			<span>{label}</span>
-		</div>
-	);
-}
 
 function EndpointCard({
 	icon,

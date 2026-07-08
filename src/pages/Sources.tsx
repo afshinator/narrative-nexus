@@ -113,8 +113,7 @@ function Legend() {
   return (
     <div className="mb-3 space-y-1.5 font-sans text-[0.85rem] text-(--nn-text)">
       <p>
-        Each source scored 0–100 across six reputation dimensions. Click a
-        source row to open its profile. Click column headers to sort.
+        Each source scored 0–100 across six reputation dimensions.
       </p>
       <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
         <span className="font-semibold">Origination</span>
@@ -622,6 +621,11 @@ export default function SourcesPage({ scores: propScores }: Props) {
 
             <DemoCorpusNote />
           </div>
+
+          <p className="mb-2 text-center font-mono text-[0.75rem] text-(--nn-text-dim)">
+            Click a source row to open its profile. Click column headers to
+            sort.
+          </p>
 
           <p className="mb-2 font-sans text-[0.75rem] text-[var(--nn-text-dim)]">
             ↑ higher is better · ↓ lower is better

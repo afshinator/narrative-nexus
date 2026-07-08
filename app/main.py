@@ -528,6 +528,18 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
         (cluster_id,),
     ).fetchone()[0]
 
+    # UX32: coverage stats — article count, date window
+    article_count = conn.execute(
+        "SELECT COUNT(DISTINCT article_id) FROM claims WHERE cluster_id = ?",
+        (cluster_id,),
+    ).fetchone()[0]
+    date_window = conn.execute(
+        "SELECT MIN(a.published_at), MAX(a.published_at) "
+        "FROM articles a INNER JOIN claims c ON c.article_id = a.id "
+        "WHERE c.cluster_id = ? AND a.published_at IS NOT NULL",
+        (cluster_id,),
+    ).fetchone()
+
     return {
         "cluster": {"id": cluster["id"], "title": cluster["title"],
                      "vertical": cluster["vertical"]},
@@ -536,6 +548,9 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
             "absorbed": total_absorbed,
             "pending": total_pending,
             "sourceCount": len(sources),
+            "articleCount": article_count,
+            "coverageStart": date_window[0] if date_window else None,
+            "coverageEnd": date_window[1] if date_window else None,
             "topSourceNames": top_src_names,
             "poolSize": pool_total,
             "poolParticipating": pool_absorbed,

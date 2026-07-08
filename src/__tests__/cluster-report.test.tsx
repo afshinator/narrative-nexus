@@ -105,9 +105,9 @@ describe("ClusterReport Page", () => {
 		await waitFor(() =>
 			expect(screen.getByText(/consensus summary/i)).toBeInTheDocument(),
 		);
-		// "5" appears once (totalClaims), "2" appears twice, "3" appears twice (absorbed + reuters claims)
-		expect(screen.getByText("5")).toBeInTheDocument();
-		expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(2);
+		// "5" (totalClaims) appears in both Consensus Summary and Coverage blocks
+		expect(screen.getAllByText("5").length).toBeGreaterThanOrEqual(1);
+		expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(3);
 		expect(screen.getAllByText("3").length).toBeGreaterThanOrEqual(2);
 	});
 

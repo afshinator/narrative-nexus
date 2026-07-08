@@ -1,5 +1,5 @@
-import { RotateCcw } from "lucide-react";
-import { startTransition } from "react";
+import { Play, RotateCcw, Square } from "lucide-react";
+import { startTransition, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -15,6 +15,13 @@ const FONT_PRESETS = [
 
 const THRESHOLD_PRESETS = [50, 60, 65, 75, 85, 90] as const;
 
+interface ScraperStatus {
+	running: boolean;
+	last_run: string | null;
+	articles_inserted: number;
+	readonly?: boolean;
+}
+
 export default function SettingsPage() {
 	const theme = useStore((s) => s.theme);
 	const setTheme = useStore((s) => s.setTheme);
@@ -23,6 +30,32 @@ export default function SettingsPage() {
 	const resetThresholds = useStore((s) => s.resetThresholds);
 	const fontScale = useStore((s) => s.fontScale);
 	const setFontScale = useStore((s) => s.setFontScale);
+
+	// Scraper state
+	const [scraperStatus, setScraperStatus] = useState<ScraperStatus | null>(null);
+	const [scraperPending, setScraperPending] = useState(false);
+	const [scraperError, setScraperError] = useState("");
+
+	const fetchScraper = () => {
+		fetch("/api/scraper/status")
+			.then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad response"))))
+			.then(setScraperStatus)
+			.catch(() => setScraperStatus(null));
+	};
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: fetch on mount only
+	useEffect(() => {
+		fetchScraper();
+	}, []);
+
+	const toggleScraper = (action: "start" | "stop") => {
+		setScraperPending(true);
+		setScraperError("");
+		fetch(`/api/scraper/${action}`, { method: "POST" })
+			.then(() => fetchScraper())
+			.catch(() => setScraperError(`${action} failed — retry?`))
+			.finally(() => setTimeout(() => setScraperPending(false), 500));
+	};
 
 	return (
 		<div className="mx-auto max-w-2xl space-y-6">
@@ -35,6 +68,55 @@ export default function SettingsPage() {
 			<p className="-mt-2 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
 				Configure thresholds, appearance, and preferences
 			</p>
+
+			{/* Scraper Control — relocated from Pipeline (UX30) */}
+			<Card className="p-6">
+				<h2 className="mb-4 text-base font-medium text-foreground">
+					Scraper
+				</h2>
+				<p className="mb-3 font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text-dim)]">
+					Runs continuously in production: polls RSS feeds, ingests, and
+					rescans on a schedule. Paused against the demo corpus by default.
+				</p>
+				<div className="flex items-center gap-4">
+					<button
+						type="button"
+						disabled={scraperPending || scraperStatus === null || scraperStatus?.readonly}
+						onClick={() => toggleScraper(scraperStatus?.running ? "stop" : "start")}
+						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 ${
+							scraperStatus?.readonly
+								? "border-[var(--nn-border)] bg-[var(--nn-surface)] text-[var(--nn-text-dim)]"
+								: scraperStatus?.running
+									? "border-[var(--nn-red)] bg-[var(--nn-red)] text-white"
+									: "border-[var(--nn-teal)] bg-[var(--nn-teal)] text-white"
+						}`}
+					>
+						{scraperStatus?.readonly ? (
+							<>Scraper (paused)</>
+						) : scraperStatus?.running ? (
+							<>
+								<Square size={14} fill="currentColor" /> Stop
+							</>
+						) : (
+							<>
+								<Play size={14} fill="currentColor" /> Start
+							</>
+						)}
+					</button>
+					<span className="font-mono text-[0.75rem] tabular-nums text-[var(--nn-text-dim)]">
+						{scraperStatus
+							? scraperStatus.running
+								? `Running · ${scraperStatus.articles_inserted} articles · last run ${scraperStatus.last_run?.slice(11, 16) ?? "—"}`
+								: "Paused"
+							: "No connection — start backend to control scraper"}
+					</span>
+				</div>
+				{scraperError && (
+					<p className="mt-3 font-sans text-[0.75rem] text-[var(--nn-red)]">
+						{scraperError}
+					</p>
+				)}
+			</Card>
 
 			{/* Font Scale */}
 			<Card className="p-6">

@@ -25,6 +25,9 @@ interface ReportData {
 		absorbed: number;
 		pending: number;
 		sourceCount: number;
+		articleCount?: number;
+		coverageStart?: string | null;
+		coverageEnd?: string | null;
 		topSourceNames?: string[];
 		poolSize?: number;
 		poolParticipating?: number;
@@ -114,8 +117,9 @@ export default function ClusterReportPage() {
 				)}
 			</p>
 
-			{/* ── Consensus Summary ── */}
-			<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
+			{/* ── Consensus Summary + Coverage ── */}
+			<div className="grid gap-4 lg:grid-cols-[1fr_280px]">
+				<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
 				<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-1">
 					Consensus Summary
 				</h2>
@@ -169,6 +173,60 @@ export default function ClusterReportPage() {
 							)}
 						</>
 					)}
+				</div>
+
+				{/* UX32: Coverage stat block */}
+				<div className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
+					<h2 className="font-heading text-[1.1rem] font-bold text-[var(--nn-text)] mb-1">
+						Coverage
+					</h2>
+					<p className="mb-3 font-sans text-[0.78rem] text-[var(--nn-text-dim)]">
+						How long and wide the collection ran
+					</p>
+					{(() => {
+						const start = data.summary.coverageStart;
+						const end = data.summary.coverageEnd;
+						const spanDays = start && end
+							? Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86400000)
+							: null;
+						const THRESHOLD = 30;
+						const tempo = spanDays != null
+							? (spanDays >= THRESHOLD ? `${spanDays}-day arc` : `${spanDays}-day surge`)
+							: null;
+						const fmt = (iso: string | null | undefined) => {
+							if (!iso) return "—";
+							const d = new Date(iso);
+							return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+						};
+						const startFmt = fmt(start);
+						const endFmt = fmt(end);
+						return (
+							<div className="space-y-3 font-mono text-[0.75rem]">
+								<p className="text-[var(--nn-text)]">
+									<span className="font-semibold">{tempo ?? "—"}</span>
+								</p>
+								<p className="text-[var(--nn-text-dim)]">
+									{startFmt} – {endFmt}
+									{spanDays != null && <span className="ml-1">({spanDays} days)</span>}
+								</p>
+								<div className="space-y-0.5">
+									<p>
+										<span className="text-[var(--nn-text)]">{data.summary.articleCount ?? "—"}</span>
+										<span className="text-[var(--nn-text-dim)]"> articles</span>
+									</p>
+									<p>
+										<span className="text-[var(--nn-text)]">{data.summary.totalClaims}</span>
+										<span className="text-[var(--nn-text-dim)]"> claims</span>
+									</p>
+									<p>
+										<span className="text-[var(--nn-text)]">{data.summary.sourceCount}</span>
+										<span className="text-[var(--nn-text-dim)]"> sources</span>
+									</p>
+								</div>
+							</div>
+						);
+					})()}
+				</div>
 			</div>
 
 			{/* F4c: Honest framing when no claims absorbed yet */}

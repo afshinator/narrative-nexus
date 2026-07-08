@@ -1,19 +1,14 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import PipelineFlowPage from "../pages/PipelineFlow";
 
 function renderPage() {
-	const user = userEvent.setup();
-	return {
-		user,
-		...render(
-			<MemoryRouter>
-				<PipelineFlowPage />
-			</MemoryRouter>,
-		),
-	};
+	return render(
+		<MemoryRouter>
+			<PipelineFlowPage />
+		</MemoryRouter>,
+	);
 }
 
 /** Create a global fetch mock that handles provider config + scraper calls. */
@@ -113,72 +108,18 @@ describe("PipelineFlow Page", () => {
 		});
 	});
 
-	describe("Scraper controls", () => {
-		it("shows Start button and fetches status on mount", async () => {
-			mockFetch({ running: false, last_run: null, articles_inserted: 0 });
+	describe("Scraper status card", () => {
+		it("shows copy text on mount", () => {
 			renderPage();
-			await waitFor(() => {
-				expect(
-					screen.getByRole("button", { name: /start/i }),
-				).toBeInTheDocument();
-			});
+			expect(screen.getByText(/polls RSS feeds, ingests/i)).toBeInTheDocument();
+			expect(screen.getByText(/restarted in settings page/i)).toBeInTheDocument();
 		});
 
-		it("shows Stop button and article count when running", async () => {
-			mockFetch({
-				running: true,
-				last_run: "2026-06-26T14:30:00Z",
-				articles_inserted: 142,
-			});
+		it("no scraper button present (relocated to Settings — UX30)", () => {
 			renderPage();
-			await waitFor(() => {
-				expect(
-					screen.getByRole("button", { name: /stop/i }),
-				).toBeInTheDocument();
-			});
-			expect(screen.getByText(/142 articles/i)).toBeInTheDocument();
-		});
-
-		it("sends POST /api/scraper/start on click and updates", async () => {
-			const fn = mockFetch(
-				{ running: false, last_run: null, articles_inserted: 0 },
-				{ status: "started" },
-				{ running: true, last_run: "Z", articles_inserted: 142 },
-			);
-			const { user } = renderPage();
-			await waitFor(() => screen.getByRole("button", { name: /start/i }));
-			await user.click(screen.getByRole("button", { name: /start/i }));
-			expect(fn).toHaveBeenCalledWith("/api/scraper/start", { method: "POST" });
-			await waitFor(() => screen.getByRole("button", { name: /stop/i }));
-		});
-
-		it("sends POST /api/scraper/stop on click", async () => {
-			const fn = mockFetch(
-				{ running: true, last_run: "Z", articles_inserted: 142 },
-				{ status: "stopped" },
-				{ running: false, last_run: null, articles_inserted: 142 },
-			);
-			const { user } = renderPage();
-			await waitFor(() => screen.getByRole("button", { name: /stop/i }));
-			await user.click(screen.getByRole("button", { name: /stop/i }));
-			expect(fn).toHaveBeenCalledWith("/api/scraper/stop", { method: "POST" });
-		});
-
-		it("shows and auto-clears error on failed POST", async () => {
-			const _fn = mockFetch(
-				{ running: false, last_run: null, articles_inserted: 0 },
-				new Error("Network error"),
-			);
-			const { user } = renderPage();
-			await waitFor(() => screen.getByRole("button", { name: /start/i }));
-			await user.click(screen.getByRole("button", { name: /start/i }));
-			await waitFor(() =>
-				expect(screen.getByText(/failed/i)).toBeInTheDocument(),
-			);
-			await waitFor(
-				() => expect(screen.queryByText(/failed/i)).not.toBeInTheDocument(),
-				{ timeout: 5000 },
-			);
+			expect(
+				screen.queryByRole("button", { name: /start|stop/i }),
+			).not.toBeInTheDocument();
 		});
 	});
 });
