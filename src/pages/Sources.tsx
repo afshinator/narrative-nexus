@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import ArchetypePills from "../components/ArchetypePills";
 import LensToggle from "../components/LensToggle";
 import ScatterPlot from "../components/ScatterPlot";
@@ -43,12 +43,13 @@ function PageHeader({ sourceCount }: { sourceCount: number }) {
         <div className="hidden w-px self-stretch bg-(--nn-border) md:block"></div>
 
         <p className="flex-1 font-sans text-[0.95rem] leading-relaxed text-(--nn-text-dim)">
-          Narrative Nexus tracks how (currently) {sourceCount} outlets originate and
-          validate claims — scoring each source 0–100 across six reputation
+          Narrative Nexus tracks how (currently) {sourceCount} outlets originate
+          and validate claims — scoring each source 0–100 across six reputation
           dimensions.
         </p>
         <p className="flex-1 font-sans text-[0.95rem] leading-relaxed text-(--nn-text-dim)">
-          Click any dot or table row (in ledger below) to open that outlet's full profile.
+          Click any dot or table row (in ledger below) to open that outlet's
+          full profile.
         </p>
       </div>
     </div>
@@ -62,10 +63,88 @@ function AboutValidationCard() {
         About Validation Scoring
       </h2>
       <p className="font-sans text-[0.85rem] leading-relaxed text-(--nn-text-dim)">
-        Validation tracks how rigorously an outlet verifies a claim before publishing. 
-        High scores indicate primary source confirmation, zero stealth edits, and rapid, 
-        transparent corrections. Low scores reflect unmitigated aggregation of unverified 
-        third-party reporting.
+        Validation tracks how rigorously an outlet verifies a claim before
+        publishing. High scores indicate primary source confirmation, zero
+        stealth edits, and rapid, transparent corrections. Low scores reflect
+        unmitigated aggregation of unverified third-party reporting.
+      </p>
+    </div>
+  );
+}
+
+const DEMO_STORIES = [
+  { id: 966, title: "US-Iran War: March Escalation & April Ceasefire" },
+  { id: 924, title: "Venezuela Emergency and Rescue Response" },
+] as const;
+
+function DemoCorpusNote() {
+  return (
+    <aside
+      aria-label="About this data"
+      className="max-w-[420px] rounded-lg border border-[color-mix(in_srgb,var(--nn-amber)_35%,transparent)] bg-[color-mix(in_srgb,var(--nn-amber)_8%,transparent)] px-4 py-3"
+    >
+      <div className="mb-1.5 font-mono text-[0.75rem] font-medium tracking-[0.06em] text-[var(--nn-amber)]">
+        ABOUT THIS DATA
+      </div>
+      <p className="mb-2 font-sans text-[0.82rem] leading-normal text-[var(--nn-text)]">
+        A curated 90-day corpus processed through the real pipeline — 358
+        articles, 378 claims, 10 cross-source absorptions. Not mock data.
+      </p>
+      <p className="font-sans text-[0.82rem] leading-normal text-[var(--nn-text-dim)]">
+        Two stories traced end-to-end:
+      </p>
+      <ul className="mt-0.5 space-y-0.5">
+        {DEMO_STORIES.map((story) => (
+          <li key={story.id}>
+            <Link
+              to={`/cluster/${story.id}`}
+              className="font-sans text-[0.82rem] font-medium text-[var(--nn-navy)] hover:underline"
+            >
+              {story.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
+function Legend() {
+  return (
+    <div className="mb-3 space-y-1.5 font-sans text-[0.85rem] text-(--nn-text)">
+      <p>
+        Each source scored 0–100 across six reputation dimensions. Click a
+        source row to open its profile. Click column headers to sort.
+      </p>
+      <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
+        <span className="font-semibold">Origination</span>
+        <span className="text-(--nn-text-dim)">
+          first to report a story that becomes consensus-absorbed
+        </span>
+        <span className="font-semibold">Validation</span>
+        <span className="text-(--nn-text-dim)">
+          claims absorbed by the panel consensus
+        </span>
+        <span className="font-semibold">Speed</span>
+        <span className="text-(--nn-text-dim)">
+          how quickly claims spread (lower is faster)
+        </span>
+        <span className="font-semibold">Framing</span>
+        <span className="text-(--nn-text-dim)">
+          consistency of editorial framing across stories
+        </span>
+        <span className="font-semibold">Silent Edits</span>
+        <span className="text-(--nn-text-dim)">
+          rate of unreported article changes
+        </span>
+        <span className="font-semibold">Corrections</span>
+        <span className="text-(--nn-text-dim)">
+          rate of formal published corrections
+        </span>
+      </div>
+      <p className="text-(--nn-text-dim)">
+        * Not yet computed — shows "—" for all sources. Sources with 0
+        Validation have no consensus-absorbed claims yet.
       </p>
     </div>
   );
@@ -505,9 +584,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
               </div>
             )}
 
-
-						{ AboutValidationCard()}
-
+            {AboutValidationCard()}
           </>
         ) : (
           <>
@@ -551,66 +628,16 @@ export default function SourcesPage({ scores: propScores }: Props) {
           id="full-ledger"
           className="rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-6"
         >
-          <div className="mb-4 flex flex-wrap items-center gap-3">
-            <span className="font-heading text-[0.82rem] font-semibold text-[var(--nn-text)]">
-              This demo corpus contains two fully traced stories:
-            </span>
-            <a
-              href="/cluster/966"
-              className="font-sans text-[0.85rem] font-medium text-[var(--nn-navy)] hover:underline"
-            >
-              US-Iran War: March Escalation &amp; April Ceasefire
-            </a>
-            <span className="text-[var(--nn-text-dim)]">·</span>
-            <a
-              href="/cluster/924"
-              className="font-sans text-[0.85rem] font-medium text-[var(--nn-navy)] hover:underline"
-            >
-              Venezuela Emergency and Rescue Response
-            </a>
+          <h2 className="font-heading text-[1.15rem] font-bold text-(--nn-text)">
+            Full Ledger
+          </h2>
+          <div className="mb-4 flex flex-wrap items-start justify-between gap-5">
+            <Legend />
+
+            <DemoCorpusNote />
           </div>
-          <div className="mb-3 flex items-baseline justify-between gap-2">
-            <h2 className="font-heading text-[1.15rem] font-bold text-[var(--nn-text)]">
-              Full Ledger
-            </h2>
-          </div>
-          <div className="mb-3 space-y-1.5 font-sans text-[0.85rem] text-[var(--nn-text)]">
-            <p>
-              Each source scored 0–100 across six reputation dimensions. Click a
-              source row to open its profile. Click column headers to sort.
-            </p>
-            <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
-              <span className="font-semibold">Origination</span>
-              <span className="text-[var(--nn-text-dim)]">
-                first to report a story that becomes consensus-absorbed
-              </span>
-              <span className="font-semibold">Validation</span>
-              <span className="text-[var(--nn-text-dim)]">
-                claims absorbed by the panel consensus
-              </span>
-              <span className="font-semibold">Speed</span>
-              <span className="text-[var(--nn-text-dim)]">
-                how quickly claims spread (lower is faster)
-              </span>
-              <span className="font-semibold">Framing</span>
-              <span className="text-[var(--nn-text-dim)]">
-                consistency of editorial framing across stories
-              </span>
-              <span className="font-semibold">Silent Edits</span>
-              <span className="text-[var(--nn-text-dim)]">
-                rate of unreported article changes
-              </span>
-              <span className="font-semibold">Corrections</span>
-              <span className="text-[var(--nn-text-dim)]">
-                rate of formal published corrections
-              </span>
-            </div>
-            <p className="text-[var(--nn-text-dim)]">
-              * Not yet computed — shows "—" for all sources. Sources with 0
-              Validation have no consensus-absorbed claims yet.
-            </p>
-          </div>
-          <p className="mb-2 font-sans text-[0.72rem] text-[var(--nn-text-dim)]">
+
+          <p className="mb-2 font-sans text-[0.75rem] text-[var(--nn-text-dim)]">
             ↑ higher is better · ↓ lower is better
           </p>
           <div className="overflow-x-auto">
