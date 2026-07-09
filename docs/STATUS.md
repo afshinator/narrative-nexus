@@ -127,6 +127,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 - **Nomic claim matching + BGE-calibrated threshold:** Demo corpus claim matching ran nomic-embed-text-v1.5 (F5-REDO commit 2b3b1df changed provider BGE→nomic) while sim=0.85 remained calibrated in BGE space. Threshold uncalibrated for the model that used it. Output human-verified (P8-PRE autopsies; clusters 966/924 eyeballed); no rebuild. Recalibration is post-hackathon work.
 - **Stories page hardcodes 2 cluster IDs:** `CLUSTER_IDS = [966, 924]`. New clusters with rich data won't appear. Post-v1: add `/api/stories` endpoint with a quality gate (≥2 sources, ≥2 distinct dates, ≥1 absorbed), then frontend fetches dynamically instead of the hardcoded list.
+- **Investigate extraction fails in uvicorn, works in direct Python:** Fireworks returns 500 on extraction calls from uvicorn-served endpoints but succeeds on identical calls from a standalone Python process. Search/Fetch/Embed stages all work. Extraction is the blocking stage. Possible workaround: subprocess call from endpoint.
 
 ## Next Action
 

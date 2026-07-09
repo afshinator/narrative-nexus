@@ -140,9 +140,12 @@ async def investigate_stream_endpoint(request: Request):
 
         yield {"event": "stage_start", "data": json.dumps({"stage": "extract", "index": 4, "total": 6})}
         sem = asyncio.Semaphore(6)
-        extracted = await asyncio.gather(*[_extract_one(a, extract_provider, api_key, sem) for a in articles])
-        for er in extracted:
-            yield {"event": "extract_result", "data": json.dumps(er)}
+        # Serial extraction — avoid concurrent API calls from uvicorn event loop
+        extracted = []
+        for a in articles:
+            result = await _extract_one(a, extract_provider, api_key, sem)
+            extracted.append(result)
+            yield {"event": "extract_result", "data": json.dumps(result)}
         successful = [er for er in extracted if er.get("claims")]
         if not successful:
             yield {"event": "error", "data": json.dumps({"stage": "extract", "message": "No claims extracted"})}

@@ -47,7 +47,7 @@ Error code: 500 - {'error': {'message': 'Internal server error', 'param': None, 
 | Accepts query | YES | SSE streaming endpoint works |
 | Search/fetch | YES | 4 articles found, all fetched |
 | Embed | YES | BGE embeddings computed |
-| Extract claims | **BROKEN** | kimi-k2p5 returns 500 on all articles |
+| Extract claims | **BROKEN** | deepseek-v4-flash + kimi-k2p5 both return 500 — prompt/format issue |
 | Match/consensus | UNTESTED | Extract stage must succeed first |
 | Results display | NO | Shows "Not enough panel sources" empty state |
 | History persistence | YES | Working, but all historical results have 0 claims |

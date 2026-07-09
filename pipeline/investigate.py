@@ -144,7 +144,7 @@ async def extract_claims(article: dict, provider: dict, api_key: str) -> dict:
             ],
             response_format={"type": "json_object"},
             temperature=0.0,
-            max_tokens=8000,
+            max_tokens=2000,
         )
     except Exception as exc:
         result["error"] = str(exc)
