@@ -1,6 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (post-UX41)
+**Last updated:** 2026-07-09 (post-UX43/UX46)
+**Phase:** UX43/UX46 — 924 claim_sources first_seen_at backfilled (145 rows, origin derivation = article.published_at, verified against pipeline code UX45). Timeline unsuppressed (distinctDays=6, emptyDateCount=0). FP: 378/10/358/17/13653.
 **Phase:** UX41 — Stories fixups: 924 title corrected (DB UPDATE), hardcoded stats moved to API (silentEdits/corrections/timeToConsensusDays), time-to-consensus label improved with explanation. FP: 378/10/358/17/13653.
 **Phase:** UX40 — /stories page built, nav restructured (Cluster Report + Timeline removed, Stories added with dot separator), redirect routes for bare /cluster and /timeline. FP: 378/10/358/17/13653.
 **Phase:** UX39 — Timeline 966: date axis fixed (6 labels instead of 49), claim markers replaced with numbered dots + legend table. Chronological numbering, same-date offset, hover tooltips preserved. FP: 378/10/358/17/13653.
