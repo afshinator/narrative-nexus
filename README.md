@@ -2,9 +2,15 @@
 
 **A media-behavior measurement instrument.** Narrative Nexus monitors 37 news outlets across 6 continents and algorithmically measures their *reporting behavior* over time — not to judge who is "right," but to answer: which sources reliably break stories ahead of the mainstream consensus, which generate systematic noise, and which quietly rewrite their articles after publication?
 
-Built for the AMD Developer Hackathon ACT II (Track 3 — Unicorn) by [team/name].
+Built for the AMD Developer Hackathon ACT II (Track 3 — Unicorn) by **DreamTeam**.
 
 > *"Narrative Nexus tracks consensus reality, not truth."*
+
+![Narrative Nexus — Media Risk & OSINT Reputational Workflow](app-img-01.png)
+
+**Submission materials:**
+- 📊 Slide deck: [`narrative-nexus-deck.pdf`](narrative-nexus-deck.pdf)
+- 🎥 Demo video: [`demo-video-01.mp4`](demo-video-01.mp4)
 
 ---
 
@@ -17,7 +23,7 @@ Four AI agents run in sequence over live news:
 3. **Consensus Alignment** — pure math: finds where ≥2 independent consensus-pool sources converge on the same claim. That convergence is "consensus reality."
 4. **Silent Auditor** — re-reads old articles and flags significant unannounced edits.
 
-The output is a **living reputation ledger**: six behavioral dimensions per source per topic vertical, no composite score. The Sources scatter plot splits the panel into four behavioral archetypes — Early Breakers, Noise Generators, Selective-but-Accurate, and Consensus Followers — visible at a glance.
+The output is a **living reputation ledger**: six behavioral dimensions per source per topic vertical, no composite score. The Sources scatter plot splits the panel into four behavioral archetypes — **Early Breakers, Unmatched Breakers, Late but Reliable, and Consensus Echoes** — visible at a glance.
 
 ## AMD Platform Usage
 
@@ -37,33 +43,67 @@ Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Ev
 
 **Honest wording note:** we say "configured to run" because individual LLM responses carry no hardware attestation trail. The system routes AI workloads through Fireworks AI on AMD Instinct via `config/providers.json` defaults and the Pipeline page dropdowns.
 
-## Quick start
+---
+
+## Running Narrative Nexus
+
+### Recommended: one-command Docker run
+
+The app ships as a single self-contained container — FastAPI backend, the pre-built demo database, and the compiled SPA frontend, all in one image. From a fresh clone:
 
 ```bash
-# 1. Install
+git clone https://github.com/afshinator/narrative-nexus
+cd narrative-nexus
+docker compose up
+```
+
+Then open **http://localhost:8000**.
+
+`docker compose up` builds the image on first run (from `Dockerfile.app`, per `docker-compose.yml`) and starts it — no separate build step. **No API keys are required** to browse the dashboard: the demo database (`data/demo/demo.db`) is baked into the image.
+
+The shipped database contains 358 articles from 37 sources, 378 extracted claims, 17 story clusters, and a 123-day reputation snapshot series — all produced by the real pipeline. Nothing is mocked.
+
+> **Rebuilding after changes:** `docker compose up --build` forces a fresh image build.
+
+### Optional: API keys for live collection
+
+Keys are needed **only** for live scraper collection or new pipeline runs — not for browsing the shipped data. Copy the template and fill in what you have:
+
+```bash
+cp .env.example .env
+# then edit .env — FIREWORKS_API_KEY, FIRECRAWL_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY
+```
+
+Compose picks up `.env` automatically on the next `docker compose up`.
+
+### To collect live data
+
+Open **Settings** and press **Start** on the scraper. It polls RSS feeds from all 37 sources and runs new articles through the pipeline. Each clone is its own instance with its own database — collect as much or as little as you want.
+
+> On shared or hosted instances, set `NN_DISABLE_SCRAPER=1` to prevent visitors from starting live collection against a shared database (see [Hosted deployment](#hosted-deployment) below).
+
+### Alternative: host-based developer setup
+
+If you prefer to run the backend and frontend directly on the host (for development, without Docker):
+
+```bash
+# 1. Install dependencies
 npm install
 pip install -r requirements.txt
 
-# 2. API keys (optional — the app ships with a pre-built database
-#    and runs fully without keys; keys are needed only for live
-#    collection and pipeline runs)
-cat > .env << 'EOF'
-FIREWORKS_API_KEY=fw-...
-EOF
+# 2. (Optional) API keys — only for live collection / pipeline runs
+cp .env.example .env   # then edit
 
-# 3. Backend
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-# 4. Frontend
+# 3. Build the frontend
 npm run build
-npx vite preview --host 0.0.0.0 --port 5173
+
+# 4. Run the backend (serves the API and the built SPA on :8000)
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-Open http://localhost:5173.
+Then open **http://localhost:8000** — same as the Docker path.
 
-The app ships with a working database (`data/demo/demo.db`, the default path): 358 articles from 37 sources, 378 extracted claims, 17 story clusters, and a 123-day reputation snapshot series — all produced by the real pipeline. Nothing is mocked.
-
-**To collect live data:** open Settings and press Start on the scraper. It polls RSS feeds from all 37 sources and runs new articles through the pipeline. Each clone is its own instance with its own database — collect as much or as little as you want.
+---
 
 ## Where to look first
 
@@ -92,25 +132,9 @@ The app ships with a working database (`data/demo/demo.db`, the default path): 3
 
 Full model documentation: `docs/design-v1.3.md`. Data provenance and per-source stats: `docs/faq-pipeline-data.md`, `docs/faq-source-selection.md`.
 
-## Docker & Deployment
+## Hosted deployment
 
-A single-container Docker Compose setup is included for containerized deployment. It is not required — the quick start above runs everything on the host.
-
-### One-command local run
-
-```bash
-docker compose up
-```
-
-Open http://localhost:8000. The app (FastAPI + baked demo DB + SPA frontend) is fully self-contained. No API keys required to browse the dashboard — the demo database ships in the image.
-
-### API keys (optional)
-
-Provider API keys are optional. Without them the app browses the demo data normally; keys are needed only for live scraper collection or pipeline runs. See `.env.example` for the variable names (FIREWORKS_API_KEY, FIRECRAWL_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY).
-
-### Scraper disabled on hosted deployments
-
-Set the environment variable `NN_DISABLE_SCRAPER=1` to disable the scraper on shared or hosted instances. This prevents any visitor from accidentally starting live collection and mutating the shared database. When set:
+Set `NN_DISABLE_SCRAPER=1` to disable the scraper on shared or hosted instances. This prevents any visitor from accidentally starting live collection and mutating the shared database. When set:
 
 - `POST /api/scraper/start` returns **403 Forbidden** with `"Scraper is disabled on this deployment."`
 - `GET /api/scraper/status` includes `"disabled": true`
@@ -118,9 +142,7 @@ Set the environment variable `NN_DISABLE_SCRAPER=1` to disable the scraper on sh
 
 Unset (the default) leaves the scraper fully functional for local or single-user deployments.
 
-### Deferred: hosting
-
-HF Spaces is the intended hosting target (Docker SDK Space, `app_port: 8000`, set `NN_DISABLE_SCRAPER=1` as a Space variable). Not yet deployed — this is post-deck/video work. See `docs/deployment-todo.md` for the full deferred checklist.
+**Intended target:** Hugging Face Spaces (Docker SDK Space, `app_port: 8000`, set `NN_DISABLE_SCRAPER=1` as a Space variable). See `docs/deployment-todo.md` for the deferred hosting checklist.
 
 ---
 
