@@ -1,198 +1,100 @@
 # Narrative Nexus
 
-A B2B Media Risk and OSINT workflow platform for hedge funds, PR firms, and geopolitical analysts. Monitors ~20 news outlets and algorithmically measures their reporting behavior over time — not to judge who is "right," but to answer which sources reliably break stories ahead of consensus, which generate noise, and which quietly rewrite history after publication.
+**A media-behavior measurement instrument.** Narrative Nexus monitors 37 news outlets across 6 continents and algorithmically measures their *reporting behavior* over time — not to judge who is "right," but to answer: which sources reliably break stories ahead of the mainstream consensus, which generate systematic noise, and which quietly rewrite their articles after publication?
+
+Built for the AMD Developer Hackathon ACT II (Track 3 — Unicorn) by [team/name].
 
 > *"Narrative Nexus tracks consensus reality, not truth."*
 
 ---
 
-## Stack
+## What it does
 
-| Layer | Tools |
-|-------|-------|
-| Frontend | React 19.2, TypeScript 6, Vite 8, Tailwind 4, shadcn (Nova) |
-| Routing / State | react-router v8, zustand 5 |
-| Visualizations | D3 v7 (scatter, sparklines, waterfall, timeline, pipeline), Chart.js 4 (radar) |
-| Backend | FastAPI, SQLite (WAL), APScheduler |
-| ML | Provider-agnostic: configurable LLM + embedding backends. Local CPU (sentence-transformers for embeddings), OpenCode Zen (free LLM), Fireworks (AMD Instinct), OpenAI, DeepSeek |
+Four AI agents run in sequence over live news:
+
+1. **Intake & Clustering** — embeds articles from 37 outlets, groups them into story clusters by semantic similarity (DBSCAN over BGE embeddings, 14-day windows).
+2. **Forensic Extraction** — strips editorial framing and extracts atomic factual claims as structured JSON via LLM.
+3. **Consensus Alignment** — pure math: finds where ≥2 independent consensus-pool sources converge on the same claim. That convergence is "consensus reality."
+4. **Silent Auditor** — re-reads old articles and flags significant unannounced edits.
+
+The output is a **living reputation ledger**: six behavioral dimensions per source per topic vertical, no composite score. The Sources scatter plot splits the panel into four behavioral archetypes — Early Breakers, Noise Generators, Selective-but-Accurate, and Consensus Followers — visible at a glance.
 
 ## AMD Platform Usage
 
-**All AI pipeline stages are configured to run on Fireworks AI, which serves inference on AMD Instinct hardware.** This includes:
+**All AI pipeline stages are configured to run on Fireworks AI, which serves inference on AMD Instinct accelerators.**
 
 | Pipeline Stage | Default Provider | Evidence |
 |----------------|-----------------|----------|
-| Agent 1 — Embeddings & Clustering | Fireworks AI | `config/providers.json:57` (`"agent1_embedding": "fireworks"`) |
-| Agent 1 — LLM Classification | Fireworks AI | `config/providers.json:59` (`"agent1_llm": "fireworks"`) |
-| Agent 2 — Forensic Claim Extraction | Fireworks AI | `config/providers.json:60` (`"agent2_llm": "fireworks"`) |
-| Agent 4 — Silent Auditor | Fireworks AI | `config/providers.json:61` (`"agent4_llm": "fireworks"`) |
-| Claim Matching (cross-stage) | Fireworks AI (nomic) | `config/providers.json:58` (`"claim_matching_embedding": "fireworks-nomic"`) |
+| Agent 1 — Embeddings & Clustering | Fireworks AI | `config/providers.json` (`"agent1_embedding": "fireworks"`) |
+| Agent 1 — LLM Classification | Fireworks AI | `config/providers.json` (`"agent1_llm": "fireworks"`) |
+| Agent 2 — Forensic Claim Extraction | Fireworks AI | `config/providers.json` (`"agent2_llm": "fireworks"`) |
+| Agent 4 — Silent Auditor | Fireworks AI | `config/providers.json` (`"agent4_llm": "fireworks"`) |
+| Claim Matching (cross-stage) | Fireworks AI (nomic-embed) | `config/providers.json` (`"claim_matching_embedding": "fireworks-nomic"`) |
 
-Fireworks AI runs on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The design document states: *"calling Fireworks IS using AMD Instinct hardware"* (`docs/design-v1.3.md` §3).
+Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The shipped database was constructed by running these agents — clustering, claim extraction, claim matching, and consensus — through Fireworks during hackathon week (July 3–5, 2026), using the hackathon-provided Fireworks credits.
 
-**Provider configurability:** Runtime provider selection is visible in the Pipeline Flow page (`/pipeline`) where each agent stage shows a dropdown of available compute providers. Fireworks AI entries are marked with an `(AMD)` badge. When all AI stages are set to Fireworks, the page displays: *"All AI stages running on AMD Instinct accelerators via Fireworks AI"* (`src/pages/PipelineFlow.tsx:195-197`).
+**Provider configurability:** runtime provider selection is visible on the Pipeline page (`/pipeline`), where each agent stage shows a dropdown of available compute providers. Fireworks entries carry an `(AMD)` badge. The architecture is deliberately provider-agnostic — Fireworks/AMD is the default, not a hard dependency.
 
-**Development credits:** The Fireworks AI API credits used during hackathon development were provided by the hackathon organizers ($50 allocation, documented in `docs/design-v1.3.md` §2). All pipeline runs during development used these credits for AMD Instinct-backed inference.
-
-**Important:** The wording "configured to run" is used because no per-inference-row hardware provenance exists. The system is configured — via `config/providers.json` defaults and Pipeline page dropdowns — to route AI workloads through Fireworks AI on AMD Instinct accelerators. Individual LLM responses do not carry a hardware attestation trail.
+**Honest wording note:** we say "configured to run" because individual LLM responses carry no hardware attestation trail. The system routes AI workloads through Fireworks AI on AMD Instinct via `config/providers.json` defaults and the Pipeline page dropdowns.
 
 ## Quick start
 
-### Host development (outside Docker)
-
-If Docker is running, stop it first — ports 3000–3019 are published from the container:
 ```bash
-docker compose down
-```
-
-```bash
-# 1. Install deps
+# 1. Install
 npm install
-pip install --break-system-packages -r requirements.txt
+pip install -r requirements.txt
 
-# 2. Create .env with API keys (gitignored)
+# 2. API keys (optional — the app ships with a pre-built database
+#    and runs fully without keys; keys are needed only for live
+#    collection and pipeline runs)
 cat > .env << 'EOF'
-DEEPSEEK_API_KEY=sk-...
 FIREWORKS_API_KEY=fw-...
 EOF
 
-# 3. Start backend (port 8000)
+# 3. Backend
 python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 
-# 4. Start frontend — production build only (no HMR, fastest, most stable)
+# 4. Frontend
 npm run build
 npx vite preview --host 0.0.0.0 --port 5173
 ```
 
-**Verify everything works:**
+Open http://localhost:5173.
 
-```bash
-python3 scripts/sanity_check.py --backend http://localhost:8000 --frontend http://localhost:5173
-```
+The app ships with a working database (`data/demo/demo.db`, the default path): 358 articles from 37 sources, 378 extracted claims, 17 story clusters, and a 123-day reputation snapshot series — all produced by the real pipeline. Nothing is mocked.
 
-Open http://localhost:5173 in your browser.
+**To collect live data:** open Settings and press Start on the scraper. It polls RSS feeds from all 37 sources and runs new articles through the pipeline. Each clone is its own instance with its own database — collect as much or as little as you want.
 
-| Port | Service |
-|------|---------|
-| 8000 | Backend API (FastAPI/uvicorn) |
-| 5173 | Frontend (Vite preview) |
+## Where to look first
 
-### Docker (hackathon submission format)
+- **Sources** (`/`) — the reputation scatter. Every dot is an outlet, positioned by how often it breaks claims early (x) vs. how often those claims survive into consensus (y). Four labeled corners. Click any dot for that outlet's six-dimension profile.
+- **Stories** (`/stories`) — two fully-traced story clusters:
+  - *US-Iran War: March Escalation & April Ceasefire* — a 48-day arc from a single outlet's scoop to cross-source consensus, animated on its Timeline.
+  - *Venezuela Emergency and Rescue Response* — a 5-day surge: 20 outlets, 138 claims, and the system separating corroborated facts from single-outlet outliers in real time.
+- **Pipeline** (`/pipeline`) — the four-agent machine, live provider assignments, AMD badges.
+- **Panel** (`/panel`) — the 37-source panel across 5 tiers and 7 regions; toggle sources on/off and watch the Sources page respond.
 
-All submissions must be containerized. Docker Compose is the delivery format.
+## Stack
 
-Ports 3000–3019 are published to the host from inside the container. If you switch to host development, run `docker compose down` first.
+| Layer | Tools |
+|-------|-------|
+| Frontend | React 19, TypeScript, Vite, Tailwind 4, shadcn |
+| Routing / State | react-router, zustand |
+| Visualizations | D3 (scatter, timeline, pipeline), Chart.js (radar) |
+| Backend | FastAPI, SQLite (WAL), APScheduler |
+| AI | Provider-agnostic LLM + embedding clients. Default: Fireworks AI (AMD Instinct). Alternatives: DeepSeek, OpenAI, local CPU via sentence-transformers |
 
-```bash
-# 1. Build the frontend
-npm install && npm run build
+## The analytical model, briefly
 
-# 2. Build Docker images
-docker compose build
+- A claim becomes **consensus-absorbed** only when ≥2 independent consensus-pool sources report it AND it crosses a per-vertical threshold (65–75%). Single-source claims can never self-validate.
+- Sources are scored on six independent dimensions (origination rate, validation rate, speed, framing consistency, silent-edit rate, correction rate) — never collapsed into one ranking.
+- The panel spans 5 tiers deliberately: wire services anchor the consensus baseline, while regional and contrarian outlets are tracked *against* it — that contrast is where the interesting signal lives.
 
-# 3. Run (app + db — embeddings on CPU, LLM via OpenCode Zen)
-OPEN...=sk-... docker compose up
+Full model documentation: `docs/design-v1.3.md`. Data provenance and per-source stats: `docs/faq-pipeline-data.md`, `docs/faq-source-selection.md`.
 
-# Optional: run with GPU worker (requires AMD GPU pod)
-docker compose --profile gpu up
-```
+## Docker (optional)
 
-**What runs where:**
-
-| Container | What it does | GPU? |
-|-----------|-------------|------|
-| `app` | FastAPI server, all 4 pipeline agents, frontend static files | No |
-| `db` | SQLite volume holder (WAL mode, shared via named volume) | No |
-| `worker` | Sentence-transformer embeddings on AMD GPU via ROCm (optional, `--profile gpu`) | Yes |
-
-**API keys:** Set `OPENCODE_API_KEY` for LLM inference (required). Other keys (`FIREWORKS_API_KEY`, `DEEPSEEK_API_KEY`, `OPENAI_API_KEY`) are optional — set them when switching providers on the Pipeline Flow page. Keys are read from the host environment at `docker compose up` time.
-
-**Data persistence:** The SQLite database lives in the `nn-data` Docker volume. It survives container restarts. To reset: `docker compose down -v`.
-
-### Provider configuration
-
-Pipeline stages use configurable AI providers. Defaults in `config/providers.json`, runtime overrides on the Pipeline Flow page.
-
-| Pipeline stage | Provider category | Options | Works today |
-|----------------|-------------------|---------|-------------|
-| Stage 1 — Embeddings (Agent 1) | embedding | Fireworks, OpenAI, **Local CPU** | Local CPU (sentence-transformers) |
-| Stage 1 — Classification (Agent 1) | llm | Fireworks, **OpenCode Zen**, DeepSeek, OpenAI | OpenCode Zen (free tier) |
-| Stage 2 — Forensic Extraction (Agent 2) | llm | same 4 | OpenCode Zen |
-| Stage 3 — Consensus Alignment (Agent 3) | none | Pure Python on CPU, not configurable | Always works |
-| Stage 4 — Silent Auditor (Agent 4) | llm | same 4 | OpenCode Zen |
-
-Providers without a set API key (`{PROVIDER}_API_KEY` env var) appear dimmed on the Pipeline Flow page. The AMD shortcut (1-click) switches all agents to Fireworks — dimmed until `FIREWORKS_API_KEY` is set.
-
----
-
-## Documentation map
-
-The project follows the [dev-workflow](https://github.com/afshinator/dev-workflow) process. Here's which doc to reach for when:
-
-| When you need… | Open this |
-|----------------|-----------|
-| The product narrative, architecture, analytical model, demo strategy | `docs/design-v1.2.md` |
-| Tagged requirements that `verify-spec-coverage.ts` checks | `spec/requirements.md` |
-| Resolved design decisions (filtering behavior, badge colors, etc.) | `docs/context.md` |
-| Architecture decision records (why we built it this way) | `docs/adr/0001` through `0004` |
-| Implementation reference (commands, gotchas, dependency notes) | `docs/older/TODO-pre-workflow.md` |
-
-### How they relate
-
-- **`docs/design-v1.2.md`** — the design document. Product narrative, system architecture, analytical model, page descriptions, demo strategy. Reference it for context behind the requirements.
-- **`spec/requirements.md`** — the dev-workflow spec. Every requirement is tagged (`[desired]`, `[compromise]`, `[stack-bound]`, `[aspirational]`). This is what `verify-spec-coverage.ts` checks, what plan slices reference, and what adversarial reviews verify against.
-- **`docs/context.md`** — domain glossary of design decisions made during the grilling phase. Captures the nuance between a requirement and its implementation (e.g., "scatter plot uses dim-mode filtering, not hide-mode; radar chart inverts three axes so outward = favorable").
-- **`docs/adr/`** — Architecture Decision Records. Each documents a significant decision, alternatives considered, and consequences.
-
-## Phases
-
-The project is in implementation. All 17 slices completed. Build passes, 356 tests pass (217 pytest + 139 vitest).
-
----
-
-## Future work
-
-### R_correct — Formal Correction Detection
-
-Current implementation detects corrections via inline body markers (AP, CNN, NYT patterns). Future enhancements:
-
-- **Option C — Scrape corrections pages:** Some outlets publish corrections on dedicated URLs (e.g., nytimes.com/corrections, apnews.com/about/ap-news-corrections). Requires per-site scraping rules and periodic polling.
-- **Option D — Wayback/archive diffing:** Periodically re-fetch old article URLs, diff against stored body text. Detects both silent edits and formal corrections. Heavy on bandwidth and computation; needs a rate-limited polling schedule.
-
-### R_frame — Framing Consistency
-
-Current implementation collects 3 framing scores (LLM, lexical, sentiment) per article. R_frame snapshot wiring (variance computation + percentile rank) deferred to user's scorer selection.
-
-### Hackathon Docker requirements
-
-| Req | Detail | Status |
-|-----|--------|--------|
-| REQ-007 | Docker Compose with ≥2 services | Done — app + db + optional worker |
-| REQ-017 | GPU worker on AMD ROCm via sentence-transformers | Done — worker profile optional |
-| REQ-019 | Consensus math + scoring on CPU only | Done — all pipeline agents in app container |
-| REQ-106 | Fireworks API calls from app container only | Done |
-| REQ-126 | 1-click AMD shortcut on Pipeline Flow page | Done |
-| REQ-096 | Pre-baked 90-day corpus, 30+ sources | Done — 37 sources, 90+ days of snapshots |
-| REQ-097–099 | Demo landing: scatter plot + radar in motion | Done |
-| — | Python 3.11 (Ubuntu 24.04 base image) | ⚠ Currently on Python 3.12 — downgrade to 3.11 for submission |
-| — | Vite proxy port | ⚠ `vite.config.ts` points to 8000 (host dev) — change to 3006 for Docker |
-
----
-
-## Pre-submission cleanup
-
-Items to address before finalizing the project:
-
-| Item | Location | Notes |
-|------|----------|-------|
-| Python version | `Dockerfile` | Must be 3.11, not 3.12 (hackathon requirement) |
-| Vite proxy port | `vite.config.ts` | Change 8000 → 3006 for Docker submission |
-| `.commandcode/` | Project root | Personal Codex taste config — move to `~/.codex/` or delete. |
-| `.libretto/` | Project root | Personal Libretto sessions — move to `~/.libretto/` or delete. |
-| `__pycache__/` | Project root | Auto-generated Python bytecode. Delete (already gitignored). |
-| Uncommitted DB changes | `data/nn.db` | Modified but uncommitted — commit or reset. |
-| `docs/plan/` | Empty directory | All plan docs deleted (slices complete). Remove directory. |
-| `docs/older/TODO-pre-workflow.md` | Reference | Archive or delete if stale. |
+A Docker Compose setup is included for containerized deployment (`docker compose up`). It is not required — the quick start above runs everything on the host.
 
 ---
 

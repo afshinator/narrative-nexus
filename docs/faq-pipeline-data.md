@@ -5,7 +5,7 @@
 
 **TL;DR:** The pipeline ingests RSS feeds from 37 news outlets across 6 continents, clusters stories by semantic similarity, extracts factual claims, classifies consensus, detects silent edits, scores framing consistency, detects corrections, and computes reputation scores across 6 dimensions and 3 verticals (geopolitics, economics, technology).
 
-**The database** contains 358 articles spanning 2026-03-03 to 2026-07-03, processed through the full pipeline. It produces 378 claims (10 absorbed, 357 pending, 11 unresolved) across 17 story clusters. 6 of 37 sources have absorbed claims with cross-source corroboration. The reputation snapshot time series spans 123 dates with 13,653 rows. All 6 radar dimensions are live, with all 37 sources having computed R_orig, R_val, R_speed, R_edit, and R_correct values; R_frame is partially populated (855 of 13,653 rows).
+**The database** contains 358 articles spanning 2026-03-03 to 2026-07-03, processed through the full pipeline. It produces 378 claims (10 absorbed, 357 pending, 11 unresolved) across 17 story clusters. 6 of 37 sources originated absorbed claims (articles.source_id); 24 of 37 sources report absorbed claims (claim_sources.source_id). The reputation snapshot time series spans 123 dates with 13,653 rows. All 6 radar dimensions are live, with all 37 sources having computed R_orig, R_val, R_speed, R_edit, and R_correct values; R_frame is partially populated (855 of 13,653 rows).
 
 **Scale note:** The 358-article corpus is a starting dataset. The pipeline scales linearly — start the scraper in Settings to grow into higher volumes. All pipeline mechanisms (clustering, consensus, correction detection) become richer with more articles.
 

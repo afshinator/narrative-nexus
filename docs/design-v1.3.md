@@ -3,6 +3,12 @@
 **Track:** Track 3 — Unicorn (creativity, originality, product/market potential)
 **Status:** Corrected to match current code/DB reality (2026-07-07). Supersedes v1.2.
 
+**Post-v1.3 amendments (2026-07-09):**
+- §6 Nav updated: Cluster Report and Timeline removed from top-level nav, Stories page added (UX40). Timeline reached via Stories cards, gated on data completeness.
+- Stories page added to §6 pages: flagship story cards with full stats, CTAs to cluster report and timeline.
+- Archetype labels updated throughout: Noise Generator → Unmatched Breaker, Selective but Accurate → Late but Reliable, Consensus Follower → Consensus Echo (UX49).
+- §3 §4 §7: Legacy nn.db-era snapshot/R_frame counts corrected to demo.db fingerprint (378/10/358/17/13,653).
+
 ---
 
 ## STATUS KEY
@@ -116,7 +122,7 @@ The following formats apply system-wide across all pipeline stages and API bound
 - **Dates:** All dates stored in ISO 8601 format with UTC timezone (`YYYY-MM-DDTHH:MM:SS+00:00`). Feed dates from RSS (RFC 2822) must be converted before storage. The frontend displays dates in Pacific Time (America/Los_Angeles) with the appropriate offset applied at render time — the canonical store is always UTC.
 - **URLs:** All article URLs stored as canonical source URLs. Redirect chains must be resolved before storage. Google News redirect URLs must not be stored as-is — extract the original source URL from the redirect target.
 - **Numeric scales:** All percentage values normalized to 0–100. No 0–1 fractional values in the database. Raw values (days, counts) stored at native scale.
-- **Nullable fields:** Dimensions not yet computable for a given cell (e.g., R_frame for sources with no framing scores collected yet) are stored as `NULL` in SQLite, not 0 or empty string. The frontend handles nulls gracefully (dash display, no rendering of missing data as zero). As of 2026-07-07, all 6 dimensions are live: R_edit, R_correct, and R_frame are computed in snapshots and have populated values. R_frame has partial coverage (5,676 of 44,955 snapshots non-NULL) due to incomplete LLM framing backfill — remaining cells are NULL but the computation pipeline exists.
+- **Nullable fields:** Dimensions not yet computable for a given cell (e.g., R_frame for sources with no framing scores collected yet) are stored as `NULL` in SQLite, not 0 or empty string. The frontend handles nulls gracefully (dash display, no rendering of missing data as zero). As of 2026-07-09, all 6 dimensions are live: R_edit, R_correct, and R_frame are computed in snapshots and have populated values. R_frame has partial coverage (855 of 13,653 snapshots non-NULL) due to incomplete LLM framing backfill — remaining cells are NULL but the computation pipeline exists.
 
 ---
 
@@ -181,7 +187,7 @@ Six dimensions tracked per source per vertical. All six shown simultaneously; no
 | Silent Edit Rate | R_edit | Graded — low is favorable | Rate of significant unreported article edits |
 | Formal Correction Rate | R_correct | Trait (no favorable direction) | Rate of formal published corrections |
 
-**Implementation status:** All 6 computed per `pipeline/snapshots.py` (R_edit: line 184, R_correct: line 227, R_frame: line 258), wired into snapshot computation per `pipeline/runner.py:176-178`. R_frame has partial coverage (5,676/44,955 snapshots non-NULL — LLM framing backfill is incomplete; remaining cells are NULL and shown as dash).
+**Implementation status:** All 6 computed per `pipeline/snapshots.py` (R_edit: line 184, R_correct: line 227, R_frame: line 258), wired into snapshot computation per `pipeline/runner.py:176-178`. R_frame has partial coverage (855/13,653 snapshots non-NULL — LLM framing backfill is incomplete; remaining cells are NULL and shown as dash).
 
 **Archetype assignment** (from R_orig and R_val relative to panel median):
 - R_orig > median AND R_val > median → **Early Breaker**
@@ -252,11 +258,12 @@ Sources where the full body is unavailable (`BODY_UNAVAILABLE`) are:
 
 Sticky app-level nav bar on every page (`src/components/AppNav.tsx:7-14`):
 
-`Narrative Nexus [logo] | Sources | Cluster Report | Timeline | Pipeline | Investigate | Panel | [scraper status] | Settings | [? help]`
+`Narrative Nexus [logo] | Sources | Pipeline | Investigate | Panel | · | Stories | [scraper status] | Settings | [? help]`
 
 Notes:
 - **Source Profile** is NOT in the nav — it is accessed by clicking a source card from the Sources page (navigates to `/source/{domain}`).
-- **Cluster Report** and **Timeline** both deep-link to cluster 966 (`/cluster/966`, `/timeline/966`) for the demo.
+- **Cluster Report** and **Timeline** are NOT in the nav — they are reached via the Stories page cards (UX40). Timeline links are gated on data completeness: `distinctDays > 1` AND zero empty `first_seen_at` values (UX26/UX27).
+- **Stories** was added to the nav in UX40 — it displays story-cluster cards for the current flagship stories.
 - The `?` icon re-opens the onboarding glossary dialog.
 
 ### Pages [LOCKED]
@@ -267,13 +274,15 @@ Notes:
 
 **Cluster Report** — 3-zone forensic report (consensus summary / distortion matrix / forensic analysis). Version indicator. Config-change banner. Consensus-reality language throughout — no "source was right/wrong" copy anywhere.
 
-**Timeline** — Horizontal Day 0–90 animation per claim. Echo-mimic dots (dashed connection to origin). CONSENSUS-ABSORBED vertical line. UNRESOLVED claims fade at Day 90.
+**Timeline** — Horizontal Day 0–90 animation per claim. Echo-mimic dots (dashed connection to origin). CONSENSUS-ABSORBED vertical line. UNRESOLVED claims fade at Day 90. Story-specific — reached via Stories page cards, not in top-level nav. Timeline links are gated on data completeness (distinctDays > 1 AND zero empty first_seen_at).
 
 **Pipeline Flow ("The Machine")** — Animated pipeline diagram showing live status. Each stage node shows a dropdown selector for its compute provider, with an AMD 1-click shortcut button to switch all agents to AMD-backed providers. Replay mode for past clusters.
 
 **Investigate** — Ad-hoc forensic query tool. Accepts an article URL or pasted text. Runs through pipeline stages 1–3 (Intake & Clustering → Forensic Extraction → Consensus Alignment) as a read-only analysis. Displays extracted atomic claims, cross-source matches, and consensus baseline comparison inline. Results persist in localStorage and survive navigation, refresh, and browser restarts. Snapshot banner: "Claim resolution states are not available for ad-hoc reports." Does not write to reputation tables. Does not require database persistence for results.
 
 **Panel Management** — Activate/deactivate sources. Category balance indicator. Archived sources retain full history.
+
+**Stories** — Story-cluster cards for the flagship stories. Each card shows: coverage window, tempo descriptor, article/claims/sources/absorbed counts, consensus statements, median time-to-consensus. CTAs: "View timeline →" (gated on data completeness — distinctDays > 1 AND zero empty first_seen_at) and "Full cluster report →". Reached via the nav bar.
 
 **Settings** — Consensus thresholds (per vertical), font scale slider (rem-based, persisted to localStorage), theme/skin selector, system health panel, manual pipeline trigger.
 
@@ -422,9 +431,10 @@ The pitch is concrete: media risk intelligence for institutional buyers (hedge f
 - `pipeline/snapshots.py:227` — `compute_r_correct_raw()` — computed, wired
 - `pipeline/snapshots.py:258` — `compute_r_frame_raw()` — computed, wired
 - `pipeline/runner.py:176-178` — all three wired into `_compute_and_write_snapshots()`
-- DB: 44,955 snapshots total — r_edit=44,955 populated, r_correct=44,955 populated, r_frame=5,676 populated
+- DB: 13,653 snapshots total — r_frame=855 populated
+- **Note:** Prior v1.3 changelog entries reference nn.db-era counts (44,955 snapshots). These are corrected in the post-v1.3 amendments. The demo DB fingerprint is 378/10/358/17/13,653.
 
-**Change:** §3 data format contracts updated: removed "R_frame, R_edit, R_correct until their respective agents are built" claim. Replaced with: all 6 dimensions live, R_frame has partial coverage (5,676/44,955) due to incomplete LLM framing backfill. §4 dimensions table updated: "All six now live (all implemented and wired)" with implementation status note.
+**Change:** §3 data format contracts updated: removed "R_frame, R_edit, R_correct until their respective agents are built" claim. Replaced with: all 6 dimensions live, R_frame has partial coverage (855/13,653) due to incomplete LLM framing backfill.
 
 ### DV1.4 — Nav corrected: no "Source Profile" in nav bar; onboarding is glossary dialog, not 5-step walkthrough
 
