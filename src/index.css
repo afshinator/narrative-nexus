@@ -245,12 +245,35 @@ html {
 		var(--ease-out-quart, cubic-bezier(0.25, 1, 0.5, 1)) infinite;
 }
 
+/* ── Stories link arrow slide-in ── */
+.stories-link {
+  position: relative;
+  transition: color 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.stories-link::after {
+  content: " →";
+  display: inline-block;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s cubic-bezier(0.25, 1, 0.5, 1),
+              transform 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.stories-link:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
-	.animate-fade-up,
-	.animate-fade-up-card,
-	.animate-connector-flow,
-	.animate-status-breathe {
-		animation-duration: 0.01ms;
-		animation-iteration-count: 1;
-	}
+  .animate-fade-up,
+  .animate-fade-up-card,
+  .animate-connector-flow,
+  .animate-status-breathe {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+  }
+  .stories-link::after {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
 }

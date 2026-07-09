@@ -27,9 +27,9 @@ The system's foundational constraint — **it tracks consensus reality, not trut
 A **living reputation ledger** for each monitored source, built from measurable behavior across hundreds of stories. The ledger answers:
 
 - Does this source break outlier claims that later become mainstream consensus? (**Early Breaker**)
-- Does this source produce high-volume claims that never get confirmed? (**Noise Generator**)
-- Does this source cover stories selectively, but accurately? (**Selective but Accurate**)
-- Does this source stay close to the mainstream view? (**Consensus Follower**)
+- Does this source produce high-volume claims that never get confirmed? (**Unmatched Breaker**)
+- Does this source cover stories selectively, but accurately? (**Late but Reliable**)
+- Does this source stay close to the mainstream view? (**Consensus Echo**)
 - Does this source quietly edit its own articles without issuing corrections?
 
 No composite score. Six independent dimensions. The user sorts by what matters to them.
@@ -163,9 +163,9 @@ Six dimensions tracked per source per vertical. All six shown simultaneously; no
 
 **Archetype assignment** (from R_orig and R_val relative to panel median):
 - R_orig > median AND R_val > median → **Early Breaker**
-- R_orig > median AND R_val ≤ median → **Noise Generator**
-- R_orig ≤ median AND R_val > median → **Selective but Accurate**
-- R_orig ≤ median AND R_val ≤ median → **Consensus Follower**
+- R_orig > median AND R_val ≤ median → **Unmatched Breaker**
+- R_orig ≤ median AND R_val > median → **Late but Reliable**
+- R_orig ≤ median AND R_val ≤ median → **Consensus Echo**
 
 ### Resolution schedule [LOCKED]
 
@@ -359,7 +359,7 @@ To prevent scope creep:
 They land on the Sources page, immediately see the scatter plot with four labeled quadrants, click an Early Breaker source, see their radar chart, click through to a cluster, watch the timeline animate Day 0 → Day 90. They understand the core idea in under 2 minutes without reading documentation.
 
 **For the Analyst (the actual user):**
-They return daily. They check new silent edit flags. They watch whether a source they've been tracking is drifting toward Noise Generator territory. They run ad-hoc investigations on breaking news. The data changes their editorial or risk decisions.
+They return daily. They check new silent edit flags. They watch whether a source they've been tracking is drifting toward Unmatched Breaker territory. They run ad-hoc investigations on breaking news. The data changes their editorial or risk decisions.
 
 **For the judges' Business Value criterion:**
 The pitch is concrete: media risk intelligence for institutional buyers (hedge funds, PR firms, geopolitical analysts) who currently have no systematic way to track *how* sources behave over time — only *what* they publish. No competitor product exists. The moat is longitudinal behavioral data, not a one-shot analysis.

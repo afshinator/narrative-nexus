@@ -79,7 +79,7 @@ export default function InvestigatePage() {
   return (
     <div className="mx-auto max-w-[900px] space-y-6">
       <div><h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">Investigate</h1>
-        <p className="-mt-1 font-sans text-[0.88rem] text-[var(--nn-text-dim)]">Live analysis — your query runs through our pipeline in real time via Fireworks-hosted Kimi-K2P5. Not cached, not pre-computed.</p></div>
+        <p className="mt-1.5 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">Live analysis — your query runs through our pipeline in real time via Fireworks-hosted Kimi-K2P5. Not cached, not pre-computed.</p></div>
       {showBadge&&<div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-border)] bg-[var(--nn-surface)] px-3 py-1 font-mono text-[0.75rem] text-[var(--nn-text-dim)]"><Loader2 size={12} className="animate-spin"/>fireworks · kimi-k2p5</div>}
       {cachedAt&&<div className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-slate)] bg-[var(--nn-slate-dim)] px-3 py-1 font-mono text-[0.75rem] text-[var(--nn-slate)]"><Clock size={12}/>Viewing cached analysis from {new Date(cachedAt).toLocaleString()}</div>}
       <div className="rounded-[14px] border border-[var(--nn-amber)] bg-[var(--nn-amber)]/10 px-5 py-4"><p className="font-sans text-[0.82rem] leading-relaxed text-[var(--nn-amber)]">Claim resolution states are not available for ad-hoc reports. This analysis runs pipeline stages 1–3 in read-only mode.</p></div>

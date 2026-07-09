@@ -56,27 +56,6 @@ function PageHeader({ sourceCount }: { sourceCount: number }) {
   );
 }
 
-function AboutValidationCard() {
-  return (
-    <div className="rounded-xl border border-(--nn-border) bg-(--nn-surface) p-5 shadow-xs">
-      <h2 className="font-heading text-[1.1rem] font-bold text-(--nn-navy) mb-2">
-        About Validation Scoring
-      </h2>
-      <p className="font-sans text-[0.85rem] leading-relaxed text-(--nn-text-dim)">
-        Validation tracks how rigorously an outlet verifies a claim before
-        publishing. High scores indicate primary source confirmation, zero
-        stealth edits, and rapid, transparent corrections. Low scores reflect
-        unmitigated aggregation of unverified third-party reporting.
-      </p>
-    </div>
-  );
-}
-
-const DEMO_STORIES = [
-  { id: 966, title: "US-Iran War: March Escalation & April Ceasefire" },
-  { id: 924, title: "Venezuela Emergency and Rescue Response" },
-] as const;
-
 function DemoCorpusNote() {
   return (
     <aside
@@ -90,21 +69,12 @@ function DemoCorpusNote() {
         358 articles from 37 sources, processed through the full pipeline —
         378 claims, 10 cross-source absorptions across 17 story clusters.
       </p>
-      <p className="font-sans text-[0.82rem] leading-normal text-[var(--nn-text-dim)]">
-        Two stories traced end-to-end:
-      </p>
-      <ul className="mt-0.5 space-y-0.5">
-        {DEMO_STORIES.map((story) => (
-          <li key={story.id}>
-            <Link
-              to={`/cluster/${story.id}`}
-              className="font-sans text-[0.82rem] font-medium text-[var(--nn-navy)] hover:underline"
-            >
-              {story.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <Link
+        to="/stories"
+        className="stories-link font-sans text-[0.82rem] font-medium text-[var(--nn-navy)]"
+      >
+        Mature story arcs
+      </Link>
     </aside>
   );
 }
@@ -122,7 +92,7 @@ function Legend() {
         </span>
         <span className="font-semibold">Validation</span>
         <span className="text-(--nn-text-dim)">
-          claims absorbed by the panel consensus
+          share of claims later corroborated by ≥2 other panel sources
         </span>
         <span className="font-semibold">Speed</span>
         <span className="text-(--nn-text-dim)">
@@ -425,6 +395,17 @@ export default function SourcesPage({ scores: propScores }: Props) {
       <PageHeader sourceCount={visibleSources.length} />
 
       <div className="mx-auto max-w-[1340px] space-y-6">
+        {/* Page title */}
+        <div>
+          <h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-(--nn-text)">
+            Sources
+          </h1>
+          <p className="mt-1.5 font-sans text-[0.88rem] leading-relaxed text-(--nn-text-dim)">
+            37 news outlets scored across origination, validation, speed,
+            framing, silent edits, and corrections
+          </p>
+        </div>
+
         {/* Vertical label + Archetype filter */}
         <div className="flex flex-wrap items-center gap-4">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[color-mix(in_srgb,var(--nn-navy)_10%,transparent)] px-4 py-1.5 font-heading text-[0.78rem] font-semibold text-[var(--nn-navy)]">
@@ -467,24 +448,24 @@ export default function SourcesPage({ scores: propScores }: Props) {
               <div className="mb-3 space-y-1 font-sans text-[0.82rem] text-(--nn-text)">
                 {[
                   {
-                    color: "var(--nn-navy)",
-                    label: "Early Breaker",
-                    desc: "breaks stories, consensus follows",
+                  color: "var(--nn-navy)",
+                  label: "Early Breaker",
+                  desc: "breaks stories, consensus follows",
                   },
                   {
-                    color: "var(--nn-red)",
-                    label: "Noise Generator",
-                    desc: "breaks stories, rarely absorbed",
+                  color: "var(--nn-red)",
+                  label: "Unmatched Breaker",
+                  desc: "breaks stories, uncorroborated",
                   },
                   {
-                    color: "var(--nn-teal)",
-                    label: "Selective but Accurate",
-                    desc: "late, reliable",
+                  color: "var(--nn-teal)",
+                  label: "Late but Reliable",
+                  desc: "late, tracks consensus",
                   },
                   {
-                    color: "var(--nn-slate)",
-                    label: "Consensus Follower",
-                    desc: "safe, uninformative",
+                  color: "var(--nn-slate)",
+                  label: "Consensus Echo",
+                  desc: "tracks the consensus",
                   },
                 ].map((item) => (
                   <div key={item.label} className="flex items-baseline gap-1.5">
@@ -569,7 +550,6 @@ export default function SourcesPage({ scores: propScores }: Props) {
               </div>
             )}
 
-            {AboutValidationCard()}
           </>
         ) : (
           <>
@@ -585,8 +565,8 @@ export default function SourcesPage({ scores: propScores }: Props) {
                   onHoverPosition={handleHoverPosition}
                   onSelect={handleSelect}
                   xScale="log"
-                  xLabel="Claim volume (log)"
-                  yLabel="Solo coverage share %"
+                  xLabel=""
+                  yLabel=""
                   showQuadrants={false}
                   regions={[
                     {
@@ -603,6 +583,28 @@ export default function SourcesPage({ scores: propScores }: Props) {
                     },
                   ]}
                 />
+              </div>
+              <div className="mt-2 space-y-1">
+                <p className="font-sans text-[0.82rem] leading-relaxed text-(--nn-text-dim)">
+                  <span className="font-semibold text-(--nn-text)">Horizontal axis:</span> Claim volume (log scale) — how many claims each source originates
+                  <br />
+                  <span className="font-semibold text-(--nn-text)">Vertical axis:</span> Solo coverage share — share of claims no other panel source reports
+                </p>
+                <p className="font-sans text-[0.82rem] leading-relaxed text-(--nn-text-dim)">
+                  Near-zero for most outlets — they all report the same global news
+                  cycle. The panel has high coverage overlap, which is expected.
+                  Differentiating signal is in which stories each source originates
+                  and whether those are
+                  {" "}
+                  <button
+                    type="button"
+                    className="font-medium text-(--nn-navy) underline underline-offset-2 hover:no-underline transition-colors duration-150"
+                    onClick={() => setLens("consensus")}
+                  >
+                    corroborated by other sources
+                  </button>
+                  .
+                </p>
               </div>
             </div>
           </>

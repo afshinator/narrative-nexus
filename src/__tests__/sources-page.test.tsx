@@ -13,6 +13,26 @@ function renderSources() {
 }
 
 describe("Sources Page", () => {
+	// UX44-LEGEND: check the 4 archetype labels and descriptions render
+	describe("Archetype legend labels", () => {
+		it("renders four archetype labels with descriptions", () => {
+			renderSources();
+			// New labels (UX49 rename) — each appears twice (legend + pill)
+			expect(screen.getAllByText("Unmatched Breaker").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("Late but Reliable").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("Consensus Echo").length).toBeGreaterThanOrEqual(1);
+		});
+
+		it("renders updated descriptions", () => {
+			renderSources();
+			expect(
+				screen.getByText(/breaks stories, uncorroborated/i),
+			).toBeInTheDocument();
+			expect(
+				screen.getByText(/tracks consensus/i),
+			).toBeInTheDocument();
+		});
+	});
 	beforeEach(async () => {
 		const { useStore } = await import("../store");
 		useStore.setState({ archetypeFilter: null });
@@ -36,13 +56,13 @@ describe("Sources Page", () => {
 				screen.getByRole("button", { name: /early breaker/i }),
 			).toBeInTheDocument();
 			expect(
-				screen.getByRole("button", { name: /noise generator/i }),
+			screen.getByRole("button", { name: /unmatched breaker/i }),
 			).toBeInTheDocument();
 			expect(
-				screen.getByRole("button", { name: /selective/i }),
+			screen.getByRole("button", { name: /late but reliable/i }),
 			).toBeInTheDocument();
 			expect(
-				screen.getByRole("button", { name: /consensus follower/i }),
+			screen.getByRole("button", { name: /consensus echo/i }),
 			).toBeInTheDocument();
 		});
 
@@ -72,9 +92,9 @@ describe("Sources Page", () => {
 			const svg = document.querySelector("svg");
 			if (!svg) throw new Error("SVG not found");
 			expect(svg.textContent).toContain("EARLY BREAKERS");
-			expect(svg.textContent).toContain("NOISE GENERATORS");
-			expect(svg.textContent).toContain("SELECTIVE BUT ACCURATE");
-			expect(svg.textContent).toContain("CONSENSUS FOLLOWERS");
+			expect(svg.textContent).toContain("UNMATCHED BREAKERS");
+			expect(svg.textContent).toContain("LATE BUT RELIABLE");
+			expect(svg.textContent).toContain("CONSENSUS ECHO");
 		});
 
 		// UX18-B4: axis explanation block deleted — replaced with single chart subtitle

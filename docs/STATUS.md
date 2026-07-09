@@ -1,6 +1,8 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (post-UX43/UX46)
+**Last updated:** 2026-07-09 (post-UX49)
+**Phase:** UX49 — Archetype labels renamed on Sources page (Noise Generator → Unmatched Breaker, Selective but Accurate → Late but Reliable, Consensus Follower → Consensus Echo) and in ScatterPlot SVG. Descriptions updated to observational tone. FP: 378/10/358/17/13653.
+**Phase:** UX47 — 924 timeline link re-enabled (gate now uses API distinctDays/emptyDateCount instead of hardcoded id===966). Stories intro copy clarified (scraping dates vs news dates). FP: 378/10/358/17/13653.
 **Phase:** UX43/UX46 — 924 claim_sources first_seen_at backfilled (145 rows, origin derivation = article.published_at, verified against pipeline code UX45). Timeline unsuppressed (distinctDays=6, emptyDateCount=0). FP: 378/10/358/17/13653.
 **Phase:** UX41 — Stories fixups: 924 title corrected (DB UPDATE), hardcoded stats moved to API (silentEdits/corrections/timeToConsensusDays), time-to-consensus label improved with explanation. FP: 378/10/358/17/13653.
 **Phase:** UX40 — /stories page built, nav restructured (Cluster Report + Timeline removed, Stories added with dot separator), redirect routes for bare /cluster and /timeline. FP: 378/10/358/17/13653.
@@ -123,6 +125,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 ## Accepted Limitations (human — standing, UX25)
 
 - **Nomic claim matching + BGE-calibrated threshold:** Demo corpus claim matching ran nomic-embed-text-v1.5 (F5-REDO commit 2b3b1df changed provider BGE→nomic) while sim=0.85 remained calibrated in BGE space. Threshold uncalibrated for the model that used it. Output human-verified (P8-PRE autopsies; clusters 966/924 eyeballed); no rebuild. Recalibration is post-hackathon work.
+- **Stories page hardcodes 2 cluster IDs:** `CLUSTER_IDS = [966, 924]`. New clusters with rich data won't appear. Post-v1: add `/api/stories` endpoint with a quality gate (≥2 sources, ≥2 distinct dates, ≥1 absorbed), then frontend fetches dynamically instead of the hardcoded list.
 
 ## Next Action
 

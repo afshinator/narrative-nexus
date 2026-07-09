@@ -177,7 +177,7 @@ export default function PipelineFlowPage() {
             <h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
               Pipeline Flow
             </h1>
-            <p className="font-sans text-[0.88rem] text-[var(--nn-text-dim)]">
+            <p className="mt-1.5 font-sans text-[0.9rem] text-[var(--nn-text-dim)]">
               The 4-agent swarm architecture &mdash; configurable per-stage
               providers
             </p>

@@ -50,11 +50,11 @@ Use dark-mode fonts for both light and dark modes.
 /* Archetype colors */
 --navy:      #7eb3e0;    /* Early Breaker */
 --navy-dim:  rgba(126,179,224,.13);
---red:       #d97878;    /* Noise Generator */
+--red:       #d97878;    /* Unmatched Breaker */
 --red-dim:   rgba(217,120,120,.13);
---teal:      #5ebd8e;    /* Selective but Accurate */
+--teal:      #5ebd8e;    /* Late but Reliable */
 --teal-dim:  rgba(94,189,142,.13);
---slate:     #90a882;    /* Consensus Follower */
+--slate:     #90a882;    /* Consensus Echo */
 --slate-dim: rgba(144,168,130,.13);
 --amber:     #c49a42;    /* Warning / flags */
 --ink:       #7eb3e0;    /* Same as navy, for interactive elements */

@@ -4,9 +4,9 @@ import { useStore } from "../store";
 const PILLS: { label: string; value: Archetype | null }[] = [
 	{ label: "All sources", value: null },
 	{ label: "Early Breaker", value: "EARLY_BREAKER" },
-	{ label: "Noise Generator", value: "NOISE_GENERATOR" },
-	{ label: "Selective but Accurate", value: "SELECTIVE_ACCURATE" },
-	{ label: "Consensus Follower", value: "CONSENSUS_FOLLOWER" },
+	{ label: "Unmatched Breaker", value: "NOISE_GENERATOR" },
+	{ label: "Late but Reliable", value: "SELECTIVE_ACCURATE" },
+	{ label: "Consensus Echo", value: "CONSENSUS_FOLLOWER" },
 ];
 
 const TOKEN: Record<string, string> = {

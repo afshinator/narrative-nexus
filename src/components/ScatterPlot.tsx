@@ -57,6 +57,8 @@ export default function ScatterPlot({
 	regions,
 	showQuadrants = true,
 }: Props) {
+	// Reduce bottom margin when no x-axis label (coverage landscape mode)
+	const adjustedM = { ...M, bottom: xLabel ? M.bottom : 18 };
 	const svgRef = useRef<SVGSVGElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [dimensions, setDimensions] = useState({ w: 0, h: 0 });
@@ -90,11 +92,11 @@ export default function ScatterPlot({
 		const { width, height } = node.getBoundingClientRect();
 
 		// Plot area = SVG minus margins (fallback to minimum on jsdom)
-		const pw = Math.max(width - M.left - M.right, 300);
-		const ph = Math.max(height - M.top - M.bottom, 200);
+		const pw = Math.max(width - adjustedM.left - adjustedM.right, 300);
+		const ph = Math.max(height - adjustedM.top - adjustedM.bottom, 200);
 
 		// Root group, translated to the plot area
-		const g = svg.append("g").attr("transform", `translate(${M.left},${M.top})`);
+		const g = svg.append("g").attr("transform", `translate(${adjustedM.left},${adjustedM.top})`);
 
 		// Scales: domain [0,100] → plot area (pw × ph)
 		const xScale = xScaleType === "log"
@@ -154,17 +156,17 @@ export default function ScatterPlot({
 				.attr("text-anchor", "end").attr("fill", "var(--nn-red)")
 				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
-				.text("NOISE GENERATORS");
+				.text("UNMATCHED BREAKERS");
 			g.append("text").attr("x", 8).attr("y", 16)
 				.attr("text-anchor", "start").attr("fill", "var(--nn-teal)")
 				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
-				.text("SELECTIVE BUT ACCURATE");
+				.text("LATE BUT RELIABLE");
 			g.append("text").attr("x", 8).attr("y", ph - 8)
 				.attr("text-anchor", "start").attr("fill", "var(--nn-slate)")
 				.attr("opacity", 0.7)
 				.style("font-weight", "600").style("font-size", "11.5px")
-				.text("CONSENSUS FOLLOWERS");
+				.text("CONSENSUS ECHO");
 		}
 
 		// Axes (drawn in plot coordinate space)
@@ -173,15 +175,15 @@ export default function ScatterPlot({
 
 		// Axis labels — positioned in SVG space (outside margins)
 		svg.append("text")
-			.attr("x", M.left + pw / 2).attr("y", height - 4)
+			.attr("x", adjustedM.left + pw / 2).attr("y", height - 4)
 			.attr("text-anchor", "middle")
 			.attr("fill", "var(--nn-text-dim)")
 			.style("font-family", "IBM Plex Sans").style("font-size", "11px")
 			.text(xLabel);
 		svg.append("text")
-			.attr("x", M.left - 8).attr("y", M.top + ph / 2)
+			.attr("x", adjustedM.left - 8).attr("y", adjustedM.top + ph / 2)
 			.attr("text-anchor", "middle")
-			.attr("transform", `rotate(-90, ${M.left - 8}, ${M.top + ph / 2})`)
+			.attr("transform", `rotate(-90, ${adjustedM.left - 8}, ${adjustedM.top + ph / 2})`)
 			.attr("fill", "var(--nn-text-dim)")
 			.style("font-family", "IBM Plex Sans").style("font-size", "11px")
 			.text(yLabel);
