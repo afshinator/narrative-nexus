@@ -45,7 +45,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--db",
-        default="data/nn.db",
+        default="data/demo/demo.db",
         help="Path to SQLite database (default: data/nn.db)",
     )
     parser.add_argument(

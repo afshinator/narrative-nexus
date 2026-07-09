@@ -51,7 +51,7 @@ ChartJS.register(
 	Legend,
 );
 
-// ── Dead dimensions in demo corpus — UX10 finding 2 ──
+// ── Dimensions not exercised in the shipped dataset — UX10 finding 2 ──
 const DEAD_DIMS = new Set(["R_edit", "R_correct"]);
 
 // ── Live radar dimensions (exclude dead ones) ──
@@ -652,7 +652,7 @@ function RadarChart({
 					</div>
 					{/* P3: caption for dead dimensions */}
 					<p className="mt-2 text-center font-sans text-[0.78rem] italic text-[var(--nn-text-dim)]">
-						Silent Edits and Corrections omitted — no edit or correction events in demo corpus
+						Silent Edits and Corrections omitted — no edit or correction events in this dataset
 					</p>
 				</>
 			) : (

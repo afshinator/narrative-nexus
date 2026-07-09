@@ -146,9 +146,9 @@ describe("Timeline Page", () => {
 		mockFetch(mockData);
 		renderPage();
 		await waitFor(() =>
-			expect(screen.getByText("reuters.com")).toBeInTheDocument(),
+			expect(screen.getAllByText("reuters.com").length).toBeGreaterThanOrEqual(1),
 		);
-		expect(screen.getByText("bbc.com")).toBeInTheDocument();
+		expect(screen.getAllByText("bbc.com").length).toBeGreaterThanOrEqual(1);
 	});
 
 	it("renders claim cards for each claim", async () => {

@@ -58,7 +58,6 @@ RUN mkdir -p /data
 COPY data/demo/demo.db /data/nn.db
 
 # T1: baked read-only sentinel — disables scraper in deployed instances
-RUN touch /app/.readonly
 
 EXPOSE 8000
 

@@ -6,7 +6,6 @@ import { OnboardingDialog } from "./OnboardingDialog";
 
 const navItems = [
 	{ to: "/", label: "Sources" },
-	{ to: "/timeline/966", label: "Timeline" },
 	{ to: "/pipeline", label: "Pipeline" },
 	{ to: "/investigate", label: "Investigate" },
 	{ to: "/panel", label: "Panel" },
@@ -84,7 +83,22 @@ export default function AppNav() {
 				</NavLink>
 			))}
 
-			{/* Spacer + scraper status + Settings */}
+			{/* UX40: Stories — after Panel, before spacer */}
+		<span className="flex items-center font-sans text-[0.82rem] text-(--nn-text-dim) select-none">&middot;</span>
+		<NavLink
+			to="/stories"
+			className={({ isActive }) =>
+				`flex items-center px-3.5 font-sans text-[0.84rem] border-b-2 transition-[color,border-color] duration-150 ${
+					isActive
+						? "border-[var(--nn-navy)] font-semibold text-[var(--nn-navy)]"
+						: "border-transparent text-[var(--nn-text-dim)] hover:text-[var(--nn-text)]"
+				}`
+			}
+		>
+			Stories
+		</NavLink>
+
+		{/* Spacer + scraper status + Settings */}
 			<span className="flex-1" />
 			<span
 				className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 mr-2 font-mono text-[0.75rem] self-center ${

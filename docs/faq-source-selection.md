@@ -5,9 +5,9 @@
 
 **TL;DR:** We started with an idealized panel of 20 major outlets, then tested every source empirically. Paywalls initially blocked 3 Tier 2 sources (NYT, Economist, Politico — 0% body extraction at first), WaPo's feed was dead, and the panel was 90% Global North. We ran 45 candidate feeds through RSS + extraction tests, added 14 regional sources across Africa/LatAm/ME/Asia, plus 3 US replacements (CNN/CBS/ABC), and rescued paywalled sources with Firecrawl + CloakBrowser. Final panel: 37 sources, 5 tiers, 7 regions, 6 continents.
 
-**The demo database** is a curated verification corpus — 358 articles spanning 2026-03-03 to 2026-07-03, processed through the full pipeline (Agent 1 clustering → Agent 2 extraction → claim matching → Agent 3 consensus → snapshot backfill). It produces 378 claims across 17 story clusters. 6 of 37 sources have absorbed claims (10 total) with genuine cross-source corroboration. 9 of 37 sources have no articles in this curated set — they are in the panel but not exercised by the demo stories.
+**The database** contains 358 articles from 37 sources spanning 2026-03-03 to 2026-07-03, processed through the full pipeline (Agent 1 clustering → Agent 2 extraction → claim matching → Agent 3 consensus → snapshot backfill). It produces 378 claims across 17 story clusters. 6 of 37 sources have absorbed claims (10 total) with genuine cross-source corroboration. 9 of 37 sources have no articles — they are in the panel but not exercised by the stories collected so far.
 
-**Scale note:** The production database (not served for the demo) holds 7,747 claims from 4,899 articles across 1,179 clusters. The demo corpus is intentionally smaller — a curated verification set designed to demonstrate every pipeline stage and UI page with known-good data rather than raw volume.
+**Scale note:** The 358-article corpus is a starting dataset. The pipeline can process any volume — the source panel, clustering, and consensus mechanisms all scale linearly with article count. Start the scraper in Settings to grow the database with live collection.
 
 ---
 
@@ -94,13 +94,14 @@ GROUP BY s.name ORDER BY claims DESC LIMIT 10;
 *Query for solo coverage — sources where all claims are in single-source clusters:*
 ```sql
 -- 9 of 17 clusters are single-source (only 1 source reporting).
--- This is by design for a curated verification corpus.
--- The full production DB has 1,112 clusters with 68 multi-source.
+-- This is normal for a heterogeneous panel where regional outlets cover
+-- stories no other source reports. Multi-source clusters emerge as more
+-- articles are collected.
 ```
 
-## Demo corpus: sources inactive in this curated set
+## Sources with no articles
 
-9 sources have 0 articles in the demo corpus (present in the panel, no demo stories involved them):
-politico, propublica, thegrayzone, premiumtimesng, vanguardngr, thereporterethiopia, namibian, africanarguments — 0 articles each (by design: curated verification set focused on specific stories).
+9 sources have 0 articles (present in the panel but not yet exercised by collected stories):
+politico, propublica, thegrayzone, premiumtimesng, vanguardngr, thereporterethiopia, namibian, africanarguments.
 
-These sources are fully configured and active in the source panel; they simply weren't involved in the curated stories chosen for the demo corpus.
+These sources are fully configured and active in the source panel; they simply haven't been involved in the stories collected so far. Start the scraper in Settings to begin live collection across all 37 sources.

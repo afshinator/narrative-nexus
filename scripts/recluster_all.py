@@ -324,7 +324,7 @@ def print_histograms(conn: sqlite3.Connection, article_map: dict[int, int]):
 
 def main():
     parser = argparse.ArgumentParser(description="Re-cluster all articles from scratch")
-    parser.add_argument("--db", default="data/nn.db", help="Database path")
+    parser.add_argument("--db", default="data/demo/demo.db", help="Database path")
     parser.add_argument("--eps", type=float, default=0.5, help="DBSCAN epsilon (cosine distance)")
     parser.add_argument("--providers", default="config/providers.json", help="Provider config path")
     args = parser.parse_args()

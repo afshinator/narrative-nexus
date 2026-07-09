@@ -115,17 +115,16 @@ export default function TimelinePage() {
 	const rangeStart = Math.min(...allTimes);
 	const rangeEnd = Math.max(...allTimes);
 	const rangeMs = rangeEnd - rangeStart || 1;
-	// Day markers (midnight boundaries)
-	const startDay = new Date(rangeStart);
-	startDay.setHours(0, 0, 0, 0);
-	const days: Date[] = [];
-	for (
-		let d = new Date(startDay);
-		d.getTime() <= rangeEnd;
-		d.setDate(d.getDate() + 1)
-	) {
-		days.push(new Date(d));
-	}
+
+	// UX39: only label days that have claims — not every calendar day
+	const claimDates = [
+		...new Set(
+			data.sources.flatMap((s) =>
+				s.claims.map((c) => c.first_seen_at.split("T")[0]),
+			),
+		),
+	].sort();
+	const days = claimDates.map((d) => new Date(`${d}T00:00:00`));
 
 	// M2: single-day range — timeline unavailable
 	if (days.length <= 1) {
@@ -140,6 +139,35 @@ export default function TimelinePage() {
 				</p>
 			</div>
 		);
+	}
+
+	// UX39: global claim legend — numbered chronologically
+	const allClaims = data.sources
+		.flatMap((s) => s.claims.map((c) => ({ ...c, _source: s.domain })))
+		.sort(
+			(a, b) =>
+				new Date(a.first_seen_at).getTime() - new Date(b.first_seen_at).getTime(),
+		);
+
+	// Build per-source claim map with global index for dot rendering
+	const claimIndex = new Map<number, number>(); // claim.id -> global index
+	allClaims.forEach((c, i) => claimIndex.set(c.id, i + 1));
+
+	// Within each source, compute dot offset for same-date claims
+	function claimDotStyle(
+		claim: Claim,
+		sourceGroup: SourceGroup,
+	): { left: number; top: number } {
+		const pct = positionPercent(claim.first_seen_at, rangeStart, rangeMs);
+		const sameDay = sourceGroup.claims.filter(
+			(c) =>
+				c.first_seen_at.split("T")[0] === claim.first_seen_at.split("T")[0],
+		);
+		const idx = sameDay.findIndex((c) => c.id === claim.id);
+		return {
+			left: Math.max(0, Math.min(100, pct)),
+			top: 4 + idx * 22,
+		};
 	}
 
 	return (
@@ -215,31 +243,46 @@ export default function TimelinePage() {
 						</span>
 					</div>
 
-					{/* Claim cards — positioned horizontally */}
+					{/* Claim markers — numbered dots positioned horizontally */}
 					<div
-						className="relative flex-1 overflow-x-auto"
-						style={{ height: 48 }}
+						className="relative flex-1"
+						style={{
+							minHeight: Math.max(
+								40,
+								(() => {
+									const maxSameDay = Math.max(
+										...source.claims.reduce<Map<string, number>>((acc, c) => {
+											const d = c.first_seen_at.split("T")[0];
+											acc.set(d, (acc.get(d) ?? 0) + 1);
+											return acc;
+										}, new Map()).values(),
+									);
+									return (maxSameDay - 1) * 22 + 24;
+								})(),
+							),
+						}}
 					>
-						<div className="relative" style={{ width: "100%", height: 40 }}>
+						<div className="relative" style={{ width: "100%", height: "100%" }}>
 							{source.claims.map((claim) => {
-								const pct = positionPercent(
-									claim.first_seen_at,
-									rangeStart,
-									rangeMs,
-								);
+								const { left, top } = claimDotStyle(claim, source);
 								const absorbed = claim.state === "CONSENSUS_ABSORBED";
+								const idx = claimIndex.get(claim.id) ?? 0;
 								return (
 									<span
 										key={claim.id}
-										title={claim.text}
-										className={`absolute top-1 block h-7 max-w-[280px] cursor-default overflow-hidden text-ellipsis whitespace-nowrap rounded px-2 py-0.5 font-sans text-[0.75rem] leading-relaxed ${
+										title={`#${idx}: ${claim.text}`}
+										className={`absolute inline-flex size-5 items-center justify-center rounded-full font-mono text-[0.75rem] font-bold leading-none cursor-default ${
 											absorbed
-												? "bg-[var(--nn-teal)]/15 text-[var(--nn-teal)]"
-												: "bg-[var(--nn-surface2)] text-[var(--nn-text-dim)]"
+												? "bg-[var(--nn-teal)] text-white"
+												: "bg-[var(--nn-surface2)] text-[var(--nn-text)]"
 										}`}
-										style={{ left: `${Math.max(0, Math.min(100, pct))}%` }}
+										style={{
+											left: `${left}%`,
+											top: `${top}px`,
+											transform: "translateX(-50%)",
+										}}
 									>
-										{claim.text}
+										{idx}
 									</span>
 								);
 							})}
@@ -248,9 +291,40 @@ export default function TimelinePage() {
 				</div>
 			))}
 
-			{/* Day marker lines */}
-			<div className="hidden">
-				{/* ponytail: visual check first, add lines later */}
+			{/* UX39: Claim legend — numbered, chronologically sorted */}
+			<div className="mt-4 rounded-[14px] border border-[var(--nn-border)] bg-[var(--nn-surface)] p-5">
+				<h2 className="mb-3 font-heading text-[1.1rem] font-bold text-[var(--nn-text)]">
+					Claims Legend
+				</h2>
+				<div className="space-y-2">
+					{allClaims.map((claim, i) => {
+						const absorbed = claim.state === "CONSENSUS_ABSORBED";
+						return (
+							<div key={claim.id} className="flex items-start gap-3">
+								<span
+									className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full font-mono text-[0.75rem] font-bold leading-none ${
+										absorbed
+											? "bg-[var(--nn-teal)] text-white"
+											: "bg-[var(--nn-surface2)] text-[var(--nn-text)]"
+									}`}
+								>
+									{i + 1}
+								</span>
+								<div className="min-w-0">
+									<span className="font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text)]">
+										{claim.text}
+									</span>
+									<span className="ml-2 font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
+										{claim._source}
+									</span>
+									<span className="ml-1 font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
+										{claim.first_seen_at?.slice(0, 10)}
+									</span>
+								</div>
+							</div>
+						);
+					})}
+				</div>
 			</div>
 		</div>
 	);

@@ -297,9 +297,9 @@ The v1.2 doc referenced a "5-step walkthrough" — this was replaced by the sing
 
 **There is no demo mode.** The application always works the same way — it reads from SQLite and serves all pages normally. The database is pre-seeded with data spanning 90 days by processing curated article URLs through the real pipeline before demo day. The app is unaware it is being demonstrated.
 
-### How the database gets 90 days of data [LOCKED]
+### How the database gets data [LOCKED]
 
-The demo database (`data/demo/demo.db`) is pre-seeded with curated content. Current demo DB fingerprint (post-D1): 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, spanning 2026-03-03 → 2026-07-03.
+The database (`data/demo/demo.db`) ships pre-loaded with 358 articles from 37 sources, processed through the full pipeline. Fingerprint: 378 claims / 10 absorbed / 358 articles / 17 clusters / 13,653 snapshots, spanning 2026-03-03 → 2026-07-03. The scraper is paused on ship; toggling Start in Settings begins live collection into this same database.
 
 The seed process follows the pipeline's full chain: ingest → Agent 1 (BGE clustering, eps=0.35, blob guard at MAX_CLUSTER_SIZE=60) → Agent 2 (Fireworks extraction) → match_all_clusters (nomic claim matching, sim=0.85) → Agent 3 (consensus) → snapshot backfill (all 6 R-dimensions, every calendar day unconditionally). The full reset-recluster-rematch-consensus sequence is documented in the nn-dev-workflow skill under "Full Reconciliation-Verdict Pipeline (O9 Pattern)."
 

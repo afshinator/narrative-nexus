@@ -2,6 +2,13 @@ import { Play, RotateCcw, Square } from "lucide-react";
 import { startTransition, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { VERTICAL_LABELS, VERTICAL_ORDER } from "../data/thresholds";
 import { useStore } from "../store";
@@ -19,8 +26,9 @@ interface ScraperStatus {
 	running: boolean;
 	last_run: string | null;
 	articles_inserted: number;
-	readonly?: boolean;
 }
+
+type ConfirmAction = "start" | "stop" | null;
 
 export default function SettingsPage() {
 	const theme = useStore((s) => s.theme);
@@ -31,10 +39,10 @@ export default function SettingsPage() {
 	const fontScale = useStore((s) => s.fontScale);
 	const setFontScale = useStore((s) => s.setFontScale);
 
-	// Scraper state
 	const [scraperStatus, setScraperStatus] = useState<ScraperStatus | null>(null);
 	const [scraperPending, setScraperPending] = useState(false);
 	const [scraperError, setScraperError] = useState("");
+	const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
 
 	const fetchScraper = () => {
 		fetch("/api/scraper/status")
@@ -43,7 +51,6 @@ export default function SettingsPage() {
 			.catch(() => setScraperStatus(null));
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: fetch on mount only
 	useEffect(() => {
 		fetchScraper();
 	}, []);
@@ -57,9 +64,16 @@ export default function SettingsPage() {
 			.finally(() => setTimeout(() => setScraperPending(false), 500));
 	};
 
+	const handleConfirm = () => {
+		if (!confirmAction) return;
+		toggleScraper(confirmAction);
+		setConfirmAction(null);
+	};
+
+	const isRunning = scraperStatus?.running === true;
+
 	return (
 		<div className="mx-auto max-w-2xl space-y-6">
-			{/* Page header — mock style */}
 			<div className="flex items-center gap-3 mb-1.5">
 				<h1 className="font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]">
 					Settings
@@ -69,37 +83,34 @@ export default function SettingsPage() {
 				Configure thresholds, appearance, and preferences
 			</p>
 
-			{/* Scraper Control — relocated from Pipeline (UX30) */}
+			{/* Scraper Control */}
 			<Card className="p-6">
 				<h2 className="mb-4 text-base font-medium text-foreground">
 					Scraper
 				</h2>
 				<p className="mb-3 font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text-dim)]">
-					Runs continuously in production: polls RSS feeds, ingests, and
-					rescans on a schedule. Paused against the demo corpus by default.
+					{isRunning
+						? "Polling RSS feeds from 37 sources, ingesting new articles, and rescanning on a schedule."
+						: "Polls RSS feeds from 37 sources, ingests new articles, and rescans on a schedule. Paused by default — press Start to begin live collection."}
 				</p>
 				<div className="flex items-center gap-4">
 					<button
 						type="button"
-						disabled={scraperPending || scraperStatus === null || scraperStatus?.readonly}
-						onClick={() => toggleScraper(scraperStatus?.running ? "stop" : "start")}
+						disabled={scraperPending || scraperStatus === null}
+						onClick={() => setConfirmAction(isRunning ? "stop" : "start")}
 						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 ${
-							scraperStatus?.readonly
-								? "border-[var(--nn-border)] bg-[var(--nn-surface)] text-[var(--nn-text-dim)]"
-								: scraperStatus?.running
-									? "border-[var(--nn-red)] bg-[var(--nn-red)] text-white"
-									: "border-[var(--nn-teal)] bg-[var(--nn-teal)] text-white"
+							isRunning
+								? "border-[var(--nn-red)] bg-[var(--nn-red)] text-white"
+								: "border-[var(--nn-teal)] bg-[var(--nn-teal)] text-white"
 						}`}
 					>
-						{scraperStatus?.readonly ? (
-							<>Scraper (paused)</>
-						) : scraperStatus?.running ? (
+						{isRunning ? (
 							<>
-								<Square size={14} fill="currentColor" /> Stop
+								<Square size={14} fill="currentColor" /> Stop Scraper
 							</>
 						) : (
 							<>
-								<Play size={14} fill="currentColor" /> Start
+								<Play size={14} fill="currentColor" /> Start Scraper
 							</>
 						)}
 					</button>
@@ -117,6 +128,42 @@ export default function SettingsPage() {
 					</p>
 				)}
 			</Card>
+
+			{/* Confirmation modals */}
+			<Dialog open={confirmAction !== null} onOpenChange={() => setConfirmAction(null)}>
+				<DialogContent className="max-w-md">
+					<DialogHeader>
+						<DialogTitle>
+							{confirmAction === "start" ? "Start live collection?" : "Stop live collection?"}
+						</DialogTitle>
+						<DialogDescription className="pt-2 font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text-dim)]">
+							{confirmAction === "start"
+								? "The scraper will begin polling RSS feeds from the 37 sources and ingesting new articles into this instance's database. New clusters, claims, and reputation snapshots will accumulate."
+								: "Scraping will pause. Existing data remains — no articles or claims are removed. You can restart at any time."}
+						</DialogDescription>
+					</DialogHeader>
+					<div className="mt-4 flex justify-end gap-3">
+						<button
+							type="button"
+							onClick={() => setConfirmAction(null)}
+							className="rounded-lg border border-[var(--nn-border)] px-4 py-2 font-heading text-[0.84rem] font-semibold text-[var(--nn-text-dim)] hover:bg-[var(--nn-surface2)] transition-colors"
+						>
+							Cancel
+						</button>
+						<button
+							type="button"
+							onClick={handleConfirm}
+							className={`rounded-lg border px-4 py-2 font-heading text-[0.84rem] font-semibold text-white shadow-sm transition-all hover:brightness-110 ${
+								confirmAction === "stop"
+									? "border-[var(--nn-red)] bg-[var(--nn-red)]"
+									: "border-[var(--nn-teal)] bg-[var(--nn-teal)]"
+							}`}
+						>
+							{confirmAction === "start" ? "Start" : "Stop"}
+						</button>
+					</div>
+				</DialogContent>
+			</Dialog>
 
 			{/* Font Scale */}
 			<Card className="p-6">
@@ -154,7 +201,7 @@ export default function SettingsPage() {
 				</div>
 			</Card>
 
-			{/* Consensus Thresholds — kept at bottom intentionally */}
+			{/* Consensus Thresholds */}
 			<Card className="p-6">
 				<div className="mb-4 flex items-center justify-between">
 					<h2 className="text-base font-medium text-foreground">

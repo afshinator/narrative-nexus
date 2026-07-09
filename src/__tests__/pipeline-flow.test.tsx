@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import PipelineFlowPage from "../pages/PipelineFlow";
@@ -109,10 +109,11 @@ describe("PipelineFlow Page", () => {
 	});
 
 	describe("Scraper status card", () => {
-		it("shows copy text on mount", () => {
+		it("shows copy text on mount", async () => {
 			renderPage();
-			expect(screen.getByText(/polls RSS feeds, ingests/i)).toBeInTheDocument();
-			expect(screen.getByText(/restarted in settings page/i)).toBeInTheDocument();
+			await waitFor(() =>
+				expect(screen.getByText(/Scraper paused/i)).toBeInTheDocument(),
+			);
 		});
 
 		it("no scraper button present (relocated to Settings — UX30)", () => {

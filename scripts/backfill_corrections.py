@@ -20,7 +20,7 @@ from pipeline.corrections import detect_corrections
 
 def main():
     parser = argparse.ArgumentParser(description="Backfill correction detection")
-    parser.add_argument("--db", default="data/nn.db",
+    parser.add_argument("--db", default="data/demo/demo.db",
                         help="Database path (default: data/nn.db)")
     args = parser.parse_args()
 

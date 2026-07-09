@@ -2,6 +2,10 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "../App";
+import { MemoryRouter, Route, Routes } from "react-router";
+import PageShell from "../components/PageShell";
+import ClusterReportPage from "../pages/ClusterReport";
+import TimelinePage from "../pages/Timeline";
 
 describe("Router Shell — Slice 0", () => {
 	beforeEach(async () => {
@@ -12,22 +16,16 @@ describe("Router Shell — Slice 0", () => {
 		const { useStore } = await import("../store");
 		useStore.setState({ onboardingComplete: true });
 	});
-	it("renders nav bar with 8 navigation links", () => {
+	it("renders nav bar with 6 top-level navigation links", () => {
 		render(<App />);
-		expect(screen.getByRole("link", { name: /sources/i })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /^sources$/i })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /^pipeline$/i })).toBeInTheDocument();
 		expect(
-			screen.getByRole("link", { name: /source profile/i }),
+			screen.getByRole("link", { name: /^investigate$/i }),
 		).toBeInTheDocument();
-		expect(
-			screen.getByRole("link", { name: /cluster report/i }),
-		).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: /timeline/i })).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: /pipeline/i })).toBeInTheDocument();
-		expect(
-			screen.getByRole("link", { name: /investigate/i }),
-		).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: /panel/i })).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: /settings/i })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /^panel$/i })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /^stories$/i })).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /^settings$/i })).toBeInTheDocument();
 	});
 
 	it("renders Sources page at / (index route)", () => {
@@ -44,18 +42,30 @@ describe("Router Shell — Slice 0", () => {
 		expect(within(main).getByText("Reuters")).toBeInTheDocument();
 	});
 
-	it("navigates to Cluster Report at /cluster/abc123", async () => {
-		render(<App />);
-		const user = userEvent.setup();
-		await user.click(screen.getByRole("link", { name: /cluster report/i }));
+	it("renders Cluster Report at /cluster/abc123", async () => {
+		render(
+			<MemoryRouter initialEntries={["/cluster/abc123"]}>
+				<Routes>
+					<Route element={<PageShell />}>
+						<Route path="cluster/:clusterId" element={<ClusterReportPage />} />
+					</Route>
+				</Routes>
+			</MemoryRouter>,
+		);
 		const main = screen.getByRole("main");
 		expect(within(main).getByText("Cluster Report")).toBeInTheDocument();
 	});
 
-	it("navigates to Timeline at /timeline/abc123", async () => {
-		render(<App />);
-		const user = userEvent.setup();
-		await user.click(screen.getByRole("link", { name: /^timeline/i }));
+	it("renders Timeline at /timeline/abc123", async () => {
+		render(
+			<MemoryRouter initialEntries={["/timeline/abc123"]}>
+				<Routes>
+					<Route element={<PageShell />}>
+						<Route path="timeline/:clusterId" element={<TimelinePage />} />
+					</Route>
+				</Routes>
+			</MemoryRouter>,
+		);
 		const main = screen.getByRole("main");
 		expect(within(main).getByText("Timeline")).toBeInTheDocument();
 	});

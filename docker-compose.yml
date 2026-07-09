@@ -9,9 +9,9 @@
 
 services:
   # ── App: FastAPI + pipeline + frontend (self-sufficient) ───────────
-  # D2.2: demo DB baked into the image at /data/nn.db via Dockerfile COPY.
+  # D2.2: DB baked into the image at /data/demo/demo.db via Dockerfile COPY.
   # No nn-data volume mount on this service — if we mounted nn-data:/data,
-  # the volume would shadow the baked COPY, making /data/nn.db invisible.
+  # the volume would shadow the baked COPY, making /data/demo/demo.db invisible.
   # The db service still owns the volume for potential shared data, but
   # the app does not use it. Drop the volume mount, keep NN_DB_PATH unchanged.
   app:
@@ -21,7 +21,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - NN_DB_PATH=/data/nn.db
+      - NN_DB_PATH=/data/demo/demo.db
       # API keys for configured providers (OpenCode Zen required for LLM)
       - OPENCODE_API_KEY=${OPENCODE_API_KEY:-}
       # Optional: uncomment when keys are available

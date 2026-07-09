@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import PageShell from "./components/PageShell";
 
 // Code-split every page.  A single <Suspense> wraps all routes so
@@ -13,6 +13,7 @@ const PipelineFlowPage = lazy(() => import("./pages/PipelineFlow"));
 const InvestigatePage = lazy(() => import("./pages/Investigate"));
 const PanelPage = lazy(() => import("./pages/Panel"));
 const SettingsPage = lazy(() => import("./pages/Settings"));
+const StoriesPage = lazy(() => import("./pages/Stories"));
 const NotFoundPage = lazy(() => import("./pages/NotFound"));
 
 export function App() {
@@ -35,6 +36,10 @@ export function App() {
 						<Route path="investigate" element={<InvestigatePage />} />
 						<Route path="panel" element={<PanelPage />} />
 						<Route path="settings" element={<SettingsPage />} />
+						<Route path="stories" element={<StoriesPage />} />
+						{/* UX40: redirect bare /cluster and /timeline to /stories */}
+						<Route path="cluster" element={<Navigate to="/stories" replace />} />
+						<Route path="timeline" element={<Navigate to="/stories" replace />} />
 						<Route path="*" element={<NotFoundPage />} />
 					</Route>
 				</Routes>

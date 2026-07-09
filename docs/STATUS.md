@@ -1,6 +1,14 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (post-UX32)
+**Last updated:** 2026-07-09 (post-UX41)
+**Phase:** UX41 — Stories fixups: 924 title corrected (DB UPDATE), hardcoded stats moved to API (silentEdits/corrections/timeToConsensusDays), time-to-consensus label improved with explanation. FP: 378/10/358/17/13653.
+**Phase:** UX40 — /stories page built, nav restructured (Cluster Report + Timeline removed, Stories added with dot separator), redirect routes for bare /cluster and /timeline. FP: 378/10/358/17/13653.
+**Phase:** UX39 — Timeline 966: date axis fixed (6 labels instead of 49), claim markers replaced with numbered dots + legend table. Chronological numbering, same-date offset, hover tooltips preserved. FP: 378/10/358/17/13653.
+**Phase:** UX37 — UX36 followups: button state bug fixed (copy now dynamic), DB restore verified clean, scraper hygiene note added, Violation #30 logged. FP: 378/10/358/17/13653.
+**Phase:** UX36 — .readonly guard removed, normal scraper button, confirmation modals for start/stop. One-DB paradigm cleanup complete: no sentinel, no guard, button works. FP: 378/10/358/17/13653.
+**Phase:** UX34 — One-DB paradigm cleanup EXECUTED. App defaults to data/demo/demo.db, frontend copy + FAQ + design docs rewritten, harvest_story.py → legacy, 6 scripts re-defaulted, docker-compose updated. FP: 378/10/358/17/13653.
+**Phase:** UX33-INVENTORY — One-DB paradigm cleanup inventory complete. Grep yields across terminology, code paths, construction scripts, DB-switching support, construction history, sentinel mechanics, and FAQ/dependency docs. Execution round follows. FP: 378/10/358/17/13653.
+**Phase:** DIAGNOSTIC — Demo DB is a near-subset of production (B): 341/358 demo articles (95.3%) harvested from production via harvest_story.py; 17 independently ingested URLs. Clusters re-derived — only 7/17 titles overlap. Production DB not present as data/nn.db but nn-backup-2026-07-03-1151.db matches FAQ fingerprint. FP: 378/10/358/17/13653.
 **Phase:** UX32 — Cluster Report: coverage stat block + tempo descriptor per cluster (DB-driven, UX31-audited). FP: 378/10/358/17/13653.
 **Phase:** UX31 — Evidence audit: UX30 cluster measurements reconciled. UX30 errors corrected (wrong article counts via JOIN-vs-DISTINCT, wrong source counts via table path, first_seen_at on claim_sources not claims). FP: 378/10/358/17/13653.
 **Phase:** UX30 — Pipeline: AMD card removed, scraper relocated to Settings, collection windows measured. UX28 P3 RESOLVED. FP: 378/10/358/17/13653.
@@ -145,6 +153,8 @@ Laws 2 and 3 SUPERSEDE design-tokens.md where they conflict.
 | Paywall bypass | Not needed — Firecrawl extracts all major news sites |
 | Live data/nn.db writes | Recon phase only. Writes to /tmp copies. |
 
+**Scraper endpoint hygiene (UX37):** Scraper endpoints (`/api/scraper/start`, `/api/scraper/stop`) now execute under the one-DB paradigm. Any verification that hits these endpoints must run against a scratch DB copy, never `data/demo/demo.db`. Restoration via `git checkout` is a fallback, not a plan.
+
 ## Prior Violations (for agents to reference)
 
 | # | Violation | Example |
@@ -178,5 +188,6 @@ Laws 2 and 3 SUPERSEDE design-tokens.md where they conflict.
 | 27 | YES-on-failed-bound: UX25 L4 claimed "both timelines render: YES" while L4b evidence shows cluster 924 timeline collapses to 1 day (145/233 rows empty first_seen_at). Suppressed in UX26 per cut-not-caption rule — timeline link hidden when ≤1 distinct day of first_seen_at data. See UX26 diary. |
 | 28 | Arithmetic error: summary count ≠ raw data count | SW1 summary claimed 14 font-floor violations / 9 Investigate-only. Raw grep output: 13 grep matches, 8 Investigate-only. The misplaced +1 came from double-counting Investigate.tsx:91's multi-hit line. Corrected in SW2 fix round. |
 | 29 | Retyped tables + JOIN-vs-DISTINCT: cluster measurements wrong | UX30 reported 924 articles=138 (correct: 61 distinct — JOIN counted rows), 924 sources=18 (correct: 20 via claim_sources — used wrong table path), 966 articles=19 (correct: 6 distinct), first_seen_at "absent" (exists on claim_sources table). Violation #18 pattern: articles.source_id vs claim_sources.source_id. Corrected in UX31 audit. |
+| 30 | YES-on-failed-bound: FP unchanged claim while DB was mutated then restored | UX36 compliance table marked "FP unchanged: YES" for 378/10/358/17/13653, but during verification the DB had been mutated to 378/10/2110/17/13653 (1,752 articles ingested by accidental scraper run during curl testing) and was restored via git checkout before the compliance entry was written. The fingerprint was honest at the moment of writing BUT the restoration was hidden — the compliance row does not record the mutation-recovery sequence. Same pattern as #24. Logged in UX37. |
 
 ## Completed Work (recent)

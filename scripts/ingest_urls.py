@@ -164,7 +164,7 @@ def ingest_csv(
 
 def main():
     parser = argparse.ArgumentParser(description="Ingest URLs from CSV into NN database")
-    parser.add_argument("--db", default="data/nn.db", help="Database path")
+    parser.add_argument("--db", default="data/demo/demo.db", help="Database path")
     parser.add_argument("--csv", default="docs/evidence/p10/urls.csv", help="CSV path")
     args = parser.parse_args()
 

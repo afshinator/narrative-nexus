@@ -18,7 +18,7 @@ from pipeline.runner import _compute_and_write_snapshots
 
 def main():
     parser = argparse.ArgumentParser(description="Backfill snapshots over full calendar range")
-    parser.add_argument("--db", default="data/nn.db", help="Database path")
+    parser.add_argument("--db", default="data/demo/demo.db", help="Database path")
     parser.add_argument("--since", required=True, help="Start date (YYYY-MM-DD)")
     parser.add_argument("--until", default=None, help="End date (YYYY-MM-DD, default: today)")
     args = parser.parse_args()

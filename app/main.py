@@ -42,7 +42,7 @@ def _init_provider_state(app_state: Any) -> dict[str, Any]:
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
-    db_path = os.environ.get("NN_DB_PATH", "data/nn.db")
+    db_path = os.environ.get("NN_DB_PATH", "data/demo/demo.db")
     os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
     init_db(db_path)
     application.state.db_path = db_path
@@ -540,6 +540,33 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
         (cluster_id,),
     ).fetchone()
 
+    # UX41: silent edits, corrections, time-to-consensus
+    silent_edits = conn.execute(
+        "SELECT COUNT(*) FROM silent_edits se "
+        "INNER JOIN claims c ON c.article_id = se.article_id "
+        "WHERE c.cluster_id = ?",
+        (cluster_id,),
+    ).fetchone()[0]
+    corrections = conn.execute(
+        "SELECT COUNT(*) FROM corrections co "
+        "INNER JOIN claims c ON c.article_id = co.article_id "
+        "WHERE c.cluster_id = ?",
+        (cluster_id,),
+    ).fetchone()[0]
+    # Median time-to-consensus for absorbed claims
+    ttc_rows = conn.execute(
+        "SELECT ROUND(julianday(absorbed_at) - julianday(created_at), 1) AS days "
+        "FROM claims "
+        "WHERE cluster_id = ? AND state = 'CONSENSUS_ABSORBED' AND absorbed_at IS NOT NULL "
+        "ORDER BY days",
+        (cluster_id,),
+    ).fetchall()
+    ttc_values = [r[0] for r in ttc_rows if r[0] is not None]
+    median_ttc = None
+    if ttc_values:
+        n = len(ttc_values)
+        median_ttc = ttc_values[n // 2] if n % 2 else (ttc_values[n // 2 - 1] + ttc_values[n // 2]) / 2
+
     return {
         "cluster": {"id": cluster["id"], "title": cluster["title"],
                      "vertical": cluster["vertical"]},
@@ -551,6 +578,9 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
             "articleCount": article_count,
             "coverageStart": date_window[0] if date_window else None,
             "coverageEnd": date_window[1] if date_window else None,
+            "silentEdits": silent_edits,
+            "corrections": corrections,
+            "timeToConsensusDays": median_ttc,
             "topSourceNames": top_src_names,
             "poolSize": pool_total,
             "poolParticipating": pool_absorbed,
@@ -606,31 +636,17 @@ def api_coverage_landscape(conn=Depends(get_persistent_db)):
 
 @app.get("/api/scraper/status")
 def scraper_status(request: Request) -> dict:
-    data = request.app.state.scraper.status()
-    data["readonly"] = _is_readonly()
-    return data
-
-
-def _is_readonly() -> bool:
-    """Checks env or sentinel file — env vars lost by uvicorn worker spawns."""
-    return bool(
-        os.environ.get("NN_READONLY")
-        or os.path.exists(os.path.join(os.path.dirname(__file__), "..", ".readonly"))
-    )
+    return request.app.state.scraper.status()
 
 
 @app.post("/api/scraper/start")
 def scraper_start(request: Request) -> dict:
-    if _is_readonly():
-        raise HTTPException(status_code=403, detail="read-only demo")
     request.app.state.scraper.start()
     return {"status": "started"}
 
 
 @app.post("/api/scraper/stop")
 def scraper_stop(request: Request) -> dict:
-    if _is_readonly():
-        raise HTTPException(status_code=403, detail="read-only demo")
     request.app.state.scraper.stop()
     return {"status": "stopped"}
 

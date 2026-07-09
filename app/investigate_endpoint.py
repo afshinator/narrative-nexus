@@ -157,7 +157,7 @@ async def investigate_stream_endpoint(request: Request):
             return
 
         yield {"event": "stage_start", "data": json.dumps({"stage": "consensus", "index": 6, "total": 6})}
-        db_path = os.environ.get("NN_DB_PATH", "data/nn.db")
+        db_path = os.environ.get("NN_DB_PATH", "data/demo/demo.db")
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         panel: dict[str, dict] = {}

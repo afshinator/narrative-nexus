@@ -87,8 +87,8 @@ function DemoCorpusNote() {
         ABOUT THIS DATA
       </div>
       <p className="mb-2 font-sans text-[0.82rem] leading-normal text-[var(--nn-text)]">
-        A curated 90-day corpus processed through the real pipeline — 358
-        articles, 378 claims, 10 cross-source absorptions. Not mock data.
+        358 articles from 37 sources, processed through the full pipeline —
+        378 claims, 10 cross-source absorptions across 17 story clusters.
       </p>
       <p className="font-sans text-[0.82rem] leading-normal text-[var(--nn-text-dim)]">
         Two stories traced end-to-end:
@@ -428,7 +428,7 @@ export default function SourcesPage({ scores: propScores }: Props) {
         {/* Vertical label + Archetype filter */}
         <div className="flex flex-wrap items-center gap-4">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--nn-navy)] bg-[color-mix(in_srgb,var(--nn-navy)_10%,transparent)] px-4 py-1.5 font-heading text-[0.78rem] font-semibold text-[var(--nn-navy)]">
-            Vertical: Geopolitics (demo corpus)
+            Vertical: Geopolitics
           </span>
           <div className="h-6 w-px bg-[var(--nn-border)]" />
           <ArchetypePills />

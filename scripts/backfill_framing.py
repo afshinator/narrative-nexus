@@ -31,7 +31,7 @@ def main():
                         help="Seconds between LLM calls (default: 0.5)")
     parser.add_argument("--limit", type=int, default=0,
                         help="Max articles to score (0 = all)")
-    parser.add_argument("--db", default="data/nn.db",
+    parser.add_argument("--db", default="data/demo/demo.db",
                         help="Database path (default: data/nn.db)")
     parser.add_argument("--skip-llm", action="store_true",
                         help="Skip LLM scoring, only compute lexical + sentiment")
