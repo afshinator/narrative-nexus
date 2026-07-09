@@ -92,9 +92,35 @@ The app ships with a working database (`data/demo/demo.db`, the default path): 3
 
 Full model documentation: `docs/design-v1.3.md`. Data provenance and per-source stats: `docs/faq-pipeline-data.md`, `docs/faq-source-selection.md`.
 
-## Docker (optional)
+## Docker & Deployment
 
-A Docker Compose setup is included for containerized deployment (`docker compose up`). It is not required — the quick start above runs everything on the host.
+A single-container Docker Compose setup is included for containerized deployment. It is not required — the quick start above runs everything on the host.
+
+### One-command local run
+
+```bash
+docker compose up
+```
+
+Open http://localhost:8000. The app (FastAPI + baked demo DB + SPA frontend) is fully self-contained. No API keys required to browse the dashboard — the demo database ships in the image.
+
+### API keys (optional)
+
+Provider API keys are optional. Without them the app browses the demo data normally; keys are needed only for live scraper collection or pipeline runs. See `.env.example` for the variable names (FIREWORKS_API_KEY, FIRECRAWL_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY).
+
+### Scraper disabled on hosted deployments
+
+Set the environment variable `NN_DISABLE_SCRAPER=1` to disable the scraper on shared or hosted instances. This prevents any visitor from accidentally starting live collection and mutating the shared database. When set:
+
+- `POST /api/scraper/start` returns **403 Forbidden** with `"Scraper is disabled on this deployment."`
+- `GET /api/scraper/status` includes `"disabled": true`
+- The Settings page shows amber text: *Scraper disabled on this deployment.* — with the Start button disabled.
+
+Unset (the default) leaves the scraper fully functional for local or single-user deployments.
+
+### Deferred: hosting
+
+HF Spaces is the intended hosting target (Docker SDK Space, `app_port: 8000`, set `NN_DISABLE_SCRAPER=1` as a Space variable). Not yet deployed — this is post-deck/video work. See `docs/deployment-todo.md` for the full deferred checklist.
 
 ---
 
