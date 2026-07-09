@@ -26,6 +26,7 @@ interface ScraperStatus {
 	running: boolean;
 	last_run: string | null;
 	articles_inserted: number;
+	disabled?: boolean;
 }
 
 type ConfirmAction = "start" | "stop" | null;
@@ -71,6 +72,7 @@ export default function SettingsPage() {
 	};
 
 	const isRunning = scraperStatus?.running === true;
+	const isScraperDisabled = scraperStatus?.disabled === true;
 
 	return (
 		<div className="mx-auto max-w-2xl space-y-6">
@@ -88,15 +90,21 @@ export default function SettingsPage() {
 				<h2 className="mb-4 text-base font-medium text-foreground">
 					Scraper
 				</h2>
-				<p className="mb-3 font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text-dim)]">
-					{isRunning
-						? "Polling RSS feeds from 37 sources, ingesting new articles, and rescanning on a schedule."
-						: "Polls RSS feeds from 37 sources, ingests new articles, and rescans on a schedule. Paused by default — press Start to begin live collection."}
-				</p>
+				{isScraperDisabled ? (
+					<p className="mb-3 font-sans text-[0.82rem] leading-relaxed text-[var(--nn-amber)] font-medium">
+						Scraper disabled on this deployment.
+					</p>
+				) : (
+					<p className="mb-3 font-sans text-[0.82rem] leading-relaxed text-[var(--nn-text-dim)]">
+						{isRunning
+							? "Polling RSS feeds from 37 sources, ingesting new articles, and rescanning on a schedule."
+							: "Polls RSS feeds from 37 sources, ingests new articles, and rescans on a schedule. Paused by default — press Start to begin live collection."}
+					</p>
+				)}
 				<div className="flex items-center gap-4">
 					<button
 						type="button"
-						disabled={scraperPending || scraperStatus === null}
+						disabled={scraperPending || scraperStatus === null || isScraperDisabled}
 						onClick={() => setConfirmAction(isRunning ? "stop" : "start")}
 						className={`inline-flex items-center gap-2 rounded-lg border px-6 py-2.5 font-heading text-[0.84rem] font-semibold shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed hover:brightness-110 ${
 							isRunning

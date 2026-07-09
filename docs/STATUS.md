@@ -1,6 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (post-UX55)
+**Last updated:** 2026-07-09 (post-UX57)
+**Phase:** UX57 — Dockerfile.app COPY destination fixed (/data/nn.db → /data/demo/demo.db) to match NN_DB_PATH in docker-compose.yml. Container was silently booting with empty DB. Swept 30+ nn.db references — no runtime code paths, 1 test flagged (PROPOSED). scripts/smoke.sh added: 6-step container rebuild + fingerprint verification. Proposed loud-failure guard in db/connection.py (empty sources → RuntimeError, not implemented). FP: 378/10/358/17/13653.
 **Phase:** UX55 — Footer stats fetch fixed (stale backend predating UX54 — restarted), font floor fixed (0.7rem → 0.75rem), vitest baseline repaired (15→12), vite proxy aligned (8000→3015), console.warn added on fetch failure. FP: 378/10/358/17/13653.
 **Phase:** UX54 — Live footer stats via GET /api/stats endpoint. Footer fetches articles/sources/claims/clusters/date range on mount, renders "358 articles · 37 sources · Mar 2026–Jul 2026". Graceful fallback on error (tagline only, no broken text). FP: 378/10/358/17/13653.
 **Phase:** UX53 — design-v1.3.md synced to current paradigm: Docker optional (§2/§8), demo strategy updated (provider names, Investigate caveat), Source Profile no longer references cut sparklines/Vf, §9 open questions resolved, .readonly guard noted as removed, one-DB language enforced. FP: 378/10/358/17/13653.

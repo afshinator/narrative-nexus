@@ -45,6 +45,23 @@ async def lifespan(application: FastAPI):
     db_path = os.environ.get("NN_DB_PATH", "data/demo/demo.db")
     os.makedirs(os.path.dirname(db_path) or ".", exist_ok=True)
     init_db(db_path)
+
+    # Empty-DB guard: abort startup if the database has zero sources.
+    # Most common causes: wrong NN_DB_PATH, or missing COPY in Dockerfile.
+    import sqlite3 as _sqlite3
+    _conn = _sqlite3.connect(db_path)
+    try:
+        count = _conn.execute("SELECT COUNT(*) FROM sources").fetchone()[0]
+        if count == 0:
+            raise RuntimeError(
+                f"Empty database at {db_path}: zero sources found. "
+                "Likely causes: (a) NN_DB_PATH points to a wrong/new file, "
+                "or (b) Dockerfile.app is missing "
+                "'COPY data/demo/demo.db /data/demo/demo.db'."
+            )
+    finally:
+        _conn.close()
+
     application.state.db_path = db_path
 
     # Provider config — single source of truth
@@ -659,13 +676,26 @@ def stats(conn = Depends(get_persistent_db)) -> dict:
 
 # ── Scraper control endpoints ──────────────────────────────────────────
 
+def _scraper_disabled() -> bool:
+    """True when NN_DISABLE_SCRAPER=1 — hosting-only guard.
+
+    Does NOT check for sentinel files, _is_readonly(), or NN_READONLY.
+    Those are dead paradigms. One env var, read at request time.
+    """
+    return os.environ.get("NN_DISABLE_SCRAPER") == "1"
+
+
 @app.get("/api/scraper/status")
 def scraper_status(request: Request) -> dict:
-    return request.app.state.scraper.status()
+    status = request.app.state.scraper.status()
+    status["disabled"] = _scraper_disabled()
+    return status
 
 
 @app.post("/api/scraper/start")
 def scraper_start(request: Request) -> dict:
+    if _scraper_disabled():
+        raise HTTPException(status_code=403, detail="Scraper is disabled on this deployment.")
     request.app.state.scraper.start()
     return {"status": "started"}
 

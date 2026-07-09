@@ -1,71 +1,26 @@
-# Narrative Nexus — Docker Compose
-# Hackathon submission format (REQ-007, REQ-008, REQ-102–108)
+# Narrative Nexus -- Docker Compose
+# Docker is an optional deployment convenience for Track 3 (packaging).
+# One service: FastAPI app with baked demo DB + SPA frontend.
 #
 # Quick start:
-#   docker compose up           # app + db (embeddings run on CPU)
-#   docker compose --profile gpu up  # app + db + worker (AMD GPU pod)
-#
-# The worker is optional — embeddings run locally on CPU by default.
+#   docker compose up
+#   docker compose up -d          # detached
+#   docker compose down           # stop + remove
 
 services:
-  # ── App: FastAPI + pipeline + frontend (self-sufficient) ───────────
-  # D2.2: DB baked into the image at /data/demo/demo.db via Dockerfile COPY.
-  # No nn-data volume mount on this service — if we mounted nn-data:/data,
-  # the volume would shadow the baked COPY, making /data/demo/demo.db invisible.
-  # The db service still owns the volume for potential shared data, but
-  # the app does not use it. Drop the volume mount, keep NN_DB_PATH unchanged.
+  # App: FastAPI + pipeline + frontend (self-sufficient)
   app:
     build:
       context: .
       dockerfile: Dockerfile.app
     ports:
-      - "8000:8000"
+      - 8000:8000
     environment:
       - NN_DB_PATH=/data/demo/demo.db
-      # API keys for configured providers (OpenCode Zen required for LLM)
-      - OPENCODE_API_KEY=${OPENCODE_API_KEY:-}
-      # Optional: uncomment when keys are available
-      # - FIREWORKS_API_KEY=${FIREWORKS_API_KEY:-}
-      # - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
-      # - OPENAI_API_KEY=${OPENAI_API_KEY:-}
-    networks:
-      - nn-network
-    # External API calls originate from app (REQ-106)
-    # No GPU access needed (REQ-108)
-    depends_on:
-      db:
-        condition: service_started
-
-  # ── Worker: AMD GPU pod embeddings (optional) ────────────────────────
-  # Only started with: docker compose --profile gpu up
-  worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.worker
-    profiles:
-      - gpu
-    networks:
-      - nn-network
-    expose:
-      - "8001"
-    # ROCm base image + sentence-transformers (REQ-107)
-    # AMD GPU pod — embedding workloads only
-    # Communicates with app over HTTP (REQ-105)
-    # ponytail: placeholder until GPU pod access arrives.
-    # When GPU pod is available, switch Dockerfile.worker to ROCm base.
-
-  # ── DB: SQLite volume holder ────────────────────────────────────────
-  db:
-    image: busybox
-    volumes:
-      - nn-data:/data
-    command: ["sh", "-c", "mkdir -p /data && touch /data/.ready && tail -f /dev/null"]
-    networks:
-      - nn-network
-
-networks:
-  nn-network:
-    driver: bridge
-
-volumes:
-  nn-data:
+      # Provider API keys -- all optional, app degrades gracefully
+      - FIREWORKS_API_KEY
+      - FIRECRAWL_API_KEY
+      - DEEPSEEK_API_KEY
+      - OPENAI_API_KEY
+      # Hosting-only guard
+      - NN_DISABLE_SCRAPER
