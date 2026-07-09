@@ -40,7 +40,7 @@ def _get_embed_provider() -> dict:
 def _get_extraction_provider() -> dict:
     return {
         "id": "fireworks", "name": "Fireworks AI",
-        "model": "accounts/fireworks/models/kimi-k2p5",
+        "model": "accounts/fireworks/models/deepseek-v4-flash",
         "base_url": "https://api.fireworks.ai/inference/v1",
     }
 

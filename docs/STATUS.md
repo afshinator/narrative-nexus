@@ -1,6 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (post-UX49)
+**Last updated:** 2026-07-09 (post-UX48-AUDIT)
+**Phase:** UX48-AUDIT — Investigate + Panel page audit (READ-ONLY). Investigate: Search/Fetch/Embed chain works live, extraction broken (kimi-k2p5 returns 500). Panel: toggles work, downstream affects Sources scatter/ledger. All charts hardcoded. FP: 378/10/358/17/13653.
 **Phase:** UX49 — Archetype labels renamed on Sources page (Noise Generator → Unmatched Breaker, Selective but Accurate → Late but Reliable, Consensus Follower → Consensus Echo) and in ScatterPlot SVG. Descriptions updated to observational tone. FP: 378/10/358/17/13653.
 **Phase:** UX47 — 924 timeline link re-enabled (gate now uses API distinctDays/emptyDateCount instead of hardcoded id===966). Stories intro copy clarified (scraping dates vs news dates). FP: 378/10/358/17/13653.
 **Phase:** UX43/UX46 — 924 claim_sources first_seen_at backfilled (145 rows, origin derivation = article.published_at, verified against pipeline code UX45). Timeline unsuppressed (distinctDays=6, emptyDateCount=0). FP: 378/10/358/17/13653.
