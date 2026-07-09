@@ -1,6 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (post-UX51)
+**Last updated:** 2026-07-09 (post-UX52)
+**Phase:** UX52 — Nav scraper indicator verified STALE, upgraded to LIVE with 30s polling. Custom breathing animation (2.4s opacity pulse) on running state, slate static dot on paused, reduced-motion support. Context labels: Disconnected/Paused/Scraping. FP: 378/10/358/17/13653.
 **Phase:** UX51 — Archetype name sync confirmed complete. Zero old-name references survive in display surfaces (UI, docs, tests). 1,428 DB rows store internal constants (mapped via frontend, not user-facing). Human-approved canonical set: Early Breaker, Unmatched Breaker, Late but Reliable, Consensus Echo. FP: 378/10/358/17/13653.
 **Phase:** UX50 — Doc sync: faq-demo-goal, faq-pipeline-data, faq-source-selection, design-v1.3 updated to one-DB paradigm, current nav (Stories page), archetype labels (UX49), R_frame counts (855/13,653), absorbed-sources distinction (6 originated / 24 reporting), CloakBrowser removed. FP: 378/10/358/17/13653.
 **Phase:** UX48-AUDIT — Investigate + Panel page audit (READ-ONLY). Investigate: Search/Fetch/Embed chain works live, extraction broken (kimi-k2p5 returns 500). Panel: toggles work, downstream affects Sources scatter/ledger. All charts hardcoded. FP: 378/10/358/17/13653.

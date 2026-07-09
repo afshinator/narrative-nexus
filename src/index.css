@@ -276,4 +276,16 @@ html {
     opacity: 1;
     transform: none;
   }
+  .nn-scraper-breathe {
+    animation: none;
+  }
+}
+
+/* ── Scraper indicator breathing animation ── */
+@keyframes nn-scraper-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+.nn-scraper-breathe {
+  animation: nn-scraper-breathe 2.4s ease-in-out infinite;
 }

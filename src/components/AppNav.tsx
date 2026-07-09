@@ -22,12 +22,17 @@ export default function AppNav() {
 	// Scraper status indicator (review-03 slice 009)
 	const [scraperRunning, setScraperRunning] = useState<boolean | null>(null);
 	useEffect(() => {
-		fetch("/api/scraper/status")
-			.then((r) =>
-				r.ok ? r.json() : Promise.reject(new Error("bad response")),
-			)
-			.then((s) => setScraperRunning(s.running))
-			.catch(() => setScraperRunning(null));
+		let cancelled = false;
+		const poll = () => {
+			if (cancelled) return;
+			fetch("/api/scraper/status")
+				.then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad response"))))
+				.then((s: { running: boolean }) => { if (!cancelled) setScraperRunning(s.running); })
+				.catch(() => { if (!cancelled) setScraperRunning(null); });
+		};
+		poll();
+		const id = setInterval(poll, 30_000);
+		return () => { cancelled = true; clearInterval(id); };
 	}, []);
 
 	return (
@@ -101,7 +106,7 @@ export default function AppNav() {
 		{/* Spacer + scraper status + Settings */}
 			<span className="flex-1" />
 			<span
-				className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 mr-2 font-mono text-[0.75rem] self-center ${
+				className={`flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 mr-2 font-sans text-[0.75rem] self-center transition-colors duration-200 ${
 					scraperRunning === null
 						? "border-[var(--nn-border)] text-[var(--nn-text-dim)]"
 						: scraperRunning
@@ -118,8 +123,8 @@ export default function AppNav() {
 			>
 				<span
 					data-testid="scraper-status-dot"
-					className={`inline-block h-2 w-2 rounded-full ${
-						scraperRunning === true ? "animate-pulse" : ""
+					className={`inline-block h-2 w-2 rounded-full transition-[background-color] duration-200 ${
+						scraperRunning === true ? "nn-scraper-breathe" : ""
 					}`}
 					style={{
 						backgroundColor:
@@ -130,7 +135,11 @@ export default function AppNav() {
 									: "var(--nn-slate)",
 					}}
 				/>
-				Scraper
+				{scraperRunning === null
+					? "Disconnected"
+					: scraperRunning
+						? "Scraping"
+						: "Paused"}
 			</span>
 			<span className="my-[13px] w-px bg-[var(--nn-border)]" />
 			<NavLink

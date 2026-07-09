@@ -112,8 +112,10 @@ function Legend() {
         </span>
       </div>
       <p className="text-(--nn-text-dim)">
-        * Not yet computed — shows "—" for all sources. Sources with 0
-        Validation have no consensus-absorbed claims yet.
+        * Not yet computed — shows "—" for all sources.
+      </p>
+      <p className="text-(--nn-text-dim)">
+        Sources with 0 Validation have no consensus-absorbed claims yet.
       </p>
     </div>
   );
