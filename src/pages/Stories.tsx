@@ -126,7 +126,7 @@ export default function StoriesPage() {
         </h1>
       </div>
       <p className="mt-1.5 font-sans text-[0.9rem] leading-relaxed text-(--nn-text-dim)">
-        This is a curated list for the demo - Two stories the pipeline processed
+        This is a curated list for the hackathon - Two stories the pipeline processed
         end-to-end where cross-source coverage was rich enough to make the
         consensus math meaningful — and where the two contrasting tempos, a slow
         arc and a fast surge, show what the instrument is actually measuring.

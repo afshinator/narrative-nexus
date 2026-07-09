@@ -8,6 +8,13 @@
 - Stories page added to §6 pages: flagship story cards with full stats, CTAs to cluster report and timeline.
 - Archetype labels updated throughout: Noise Generator → Unmatched Breaker, Selective but Accurate → Late but Reliable, Consensus Follower → Consensus Echo (UX49).
 - §3 §4 §7: Legacy nn.db-era snapshot/R_frame counts corrected to demo.db fingerprint (378/10/358/17/13,653).
+- One-DB paradigm adopted (UX34): No separate "demo corpus" vs "production" DB. Single shipped database. "Frozen"/"curated verification" language removed from all docs.
+- `.readonly` sentinel guard removed (UX36): Replaced by per-endpoint confirmation modals for destructive scraper controls. `NN_READONLY` env var no longer exists.
+- Scraper control relocated to Settings page (UX30): Start/stop buttons moved from Pipeline to Settings. Pipeline page shows read-only status.
+- Nav scraper indicator upgraded to live (UX52): 30s polling, breathing animation on running state, reduced-motion support.
+- Docker optional for Track 3 submission (§2, §8): Submission is repo + video + deck. Docker Compose included as deployment convenience.
+- 924 Venezuela earthquake timeline backfilled and unsuppressed (UX43-47): 145 claim_sources rows with first_seen_at, timeline now available via Stories page.
+- §9 Open questions marked RESOLVED: Hardware (48GB GPU), models (DeepSeek V4), credits, JSON reliability, fallback, demo config all decided.
 
 ---
 
@@ -61,7 +68,7 @@ The footer on every page reads: **"Narrative Nexus tracks consensus reality, not
 
 ### Confirmed constraints [LOCKED]
 
-- **All submissions must be containerized.** Docker is the delivery format, not an optional nice-to-have. This affects how every component is structured from day one.
+- **Track 3 submission format:** GitHub repository + 5-minute demo video + slide deck. Hosted demo URL is optional. No Docker image is required for Track 3 — Docker Compose is included as a deployment convenience, not a submission requirement.
 - **Track 3 judging criteria:** Creativity · Originality · Product/Market Potential · Business Value · Application of Technology · Presentation.
 - **Model restriction:** The "two AMD-hardware models only" restriction applies to Tracks 1 and 2 only. Track 3 explicitly says "any open-source models and frameworks." We are not model-restricted.
 - **No benchmark scoring.** There is no throughput or accuracy score. The demo *is* the submission.
@@ -270,7 +277,7 @@ Notes:
 
 **Sources (home)** — Reputation leaderboard + scatter plot. The landing page. Archetype filter pills, sortable columns, cross-linked hover between table and scatter markers. Shapes in the scatter encode outlet format; color encodes behavior archetype. UX2 comprehension layer: full-width intro strip ("Not the truth — consensus reality." + one-sentence description), reusable tooltips on intro strip/source count/vertical label/axes/labels/archetype legend items.
 
-**Source Profile** — Radar chart (6 axes, percentile-oriented, outward = favorable), archetype badge, 30-day sparklines, Vf trend, outlier waterfall with convergence-type breakdown, silent edit log with human review UI. **(Not in nav bar — reached by clicking source cards on Sources page.)**
+**Source Profile** — Radar chart (6 axes, percentile-oriented, outward = favorable), archetype badge, title block with tier name and description, two-tier stat panel (source vs tier average), outlier waterfall with convergence-type breakdown, silent edit log with list UI. **(Not in nav bar — reached by clicking source cards on Sources page.)**
 
 **Cluster Report** — 3-zone forensic report (consensus summary / distortion matrix / forensic analysis). Version indicator. Config-change banner. Consensus-reality language throughout — no "source was right/wrong" copy anywhere.
 
@@ -318,9 +325,9 @@ The seed process follows the pipeline's full chain: ingest → Agent 1 (BGE clus
 
 2. **A reputation radar in motion** — scrub through 90 days on one source, watch the polygon morph, archetype badge change, event markers fire (claim absorbed / silent edit detected). This is the "this doesn't exist anywhere else" moment.
 
-3. **The pipeline replay** — the animated diagram showing which stage ran on which provider (GPU pod / Fireworks / OpenCode / CPU). This is the "configurable architecture is real, not decorative" moment.
+3. **The pipeline replay** — the animated diagram showing which stage ran on which provider (Fireworks, OpenCode Zen, DeepSeek, OpenAI, Local CPU). Dropdown selectors on each stage node. This is the "configurable architecture is real, not decorative" moment.
 
-4. **One live forensic pass** (if demo environment permits) — the live neutralization + claim extraction + threshold slider demo already built. Four outlets, one event, drag the threshold, watch claims snap between consensus-absorbed and outlier.
+4. **One live forensic pass (conditional — backup beat only):** The Investigate page's claim extraction stage has a known unresolved uvicorn transport bug (500 errors from Fireworks from uvicorn-served requests; identical calls work from standalone Python). This conflicts with the "never show live network calls that could fail mid-demo" rule. If the bug is resolved before submission, this can be a backup beat; otherwise, skip it.
 
 ### What the demo must NOT do [LOCKED]
 
@@ -332,9 +339,9 @@ The seed process follows the pipeline's full chain: ingest → Agent 1 (BGE clus
 
 ## SECTION 8: CONTAINERIZATION
 
-### Requirement [LOCKED]
+### Status [LOCKED]
 
-All submissions must be containerized. Docker Compose is the target format.
+Docker Compose is included as an optional deployment convenience — it is NOT a Track 3 submission requirement (see §2). The `docker-compose.yml` and `Dockerfile.app` exist and are maintained for users who prefer containerized deployment.
 
 ### Service split [LOCKED architecture, PENDING exact image details]
 
@@ -350,23 +357,25 @@ The `app` and `worker` containers communicate over HTTP when both are present. A
 
 The `worker` container requires ROCm base image and `sentence-transformers`. It is the only AMD GPU-dependent component, and is omitted when embeddings are served via external APIs.
 
+**Note:** The `.readonly` sentinel guard was removed in UX36 (replaced by per-endpoint confirmation modals for destructive scraper controls). `NN_READONLY` env var no longer exists.
+
 **[PENDING]:** Exact ROCm base image tag for the hackathon's Radeon GPU pod. Confirm at access time.
 
 ---
 
-## SECTION 9: OPEN QUESTIONS
+## SECTION 9: OPEN QUESTIONS [RESOLVED]
 
-These block specific implementation decisions but do not block design, frontend, or analytical layer work.
+All questions that blocked specific implementation decisions at design time have been resolved by hackathon access and two weeks of development. The table below is kept as useful history.
 
-| # | Question | Blocks | How to resolve |
-|---|---|---|---|
-| 1 | Exact hardware: what Radeon GPU pods does the hackathon provide? VRAM? | Worker container image, model size ceiling | Access + AMD support |
-| 2 | What LLM models are available on each provider and at what token cost? | Model selection for Agents 2/3/4 | Test with each provider's API |
-| 3 | What are the "additional hackathon launch credits"? | Budget for dev vs demo inference | Revealed at kickoff |
-| 4 | Which provider+model gives best JSON extraction reliability? | Agent 2 and 3 prompt design | Benchmark once API access arrives |
-| 5 | Is fine-tuning worth attempting on Track 3 within the timeline? | Stretch scope | Decide after initial pipeline is stable |
-| 6 | How should the provider abstraction layer handle fallback if the primary provider is unreachable? | Pipeline reliability | Test failover during integration |
-| 7 | What's the optimal config for provider/model per agent for demo day? | Demo strategy | Benchmark with seed script data |
+| # | Question | Blocks | How to resolve | Resolution |
+|---|---|---|---|---|
+| 1 | Exact hardware: what Radeon GPU pods does the hackathon provide? VRAM? | Worker container image, model size ceiling | Access + AMD support | 48GB GPU per hackathon FAQ |
+| 2 | What LLM models are available on each provider and at what token cost? | Model selection for Agents 2/3/4 | Test with each provider's API | MiniMax + Kimi-K2P5 on Fireworks; DeepSeek V4 family chosen for extraction |
+| 3 | What are the "additional hackathon launch credits"? | Budget for dev vs demo inference | Revealed at kickoff | Revealed |
+| 4 | Which provider+model gives best JSON extraction reliability? | Agent 2 and 3 prompt design | Benchmark once API access arrives | DeepSeek V4 family chosen; JSON reliability sufficient via response_format |
+| 5 | Is fine-tuning worth attempting on Track 3 within the timeline? | Stretch scope | Decide after initial pipeline is stable | Out of scope (§10) |
+| 6 | How should the provider abstraction layer handle fallback if the primary provider is unreachable? | Pipeline reliability | Test failover during integration | Provider fallback built (see providers.json matrix) |
+| 7 | What's the optimal config for provider/model per agent for demo day? | Demo strategy | Benchmark with seed script data | All-Fireworks (deepseek-v4-pro for agents, BGE + nomic for embeddings) |
 
 ---
 
@@ -379,7 +388,7 @@ To prevent scope creep:
 - No Celery/Redis (APScheduler in-process is sufficient for hackathon)
 - No Postgres (SQLite WAL mode is sufficient)
 - No email/webhook alerts
-- No back-test engine at launch (reputation scores start from day one of the demo corpus)
+- No back-test engine at launch (reputation scores start from day one of the shipped dataset)
 - No Rense.com custom parser
 - Sports vertical excluded
 - The "two AMD models only" restriction does not apply to Track 3 — do not artificially constrain model choice

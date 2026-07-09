@@ -134,18 +134,30 @@ describe("Router Shell — Slice 0", () => {
 			vi.restoreAllMocks();
 		});
 
-		it("shows a teal dot when scraper is running", async () => {
-			const fetchMock = vi.fn().mockResolvedValueOnce({
-				ok: true,
-				json: () =>
-					Promise.resolve({
-						running: true,
-						last_run: "2026-06-26T14:30:00Z",
-						articles_inserted: 142,
+		function mockFetch(scraperResponse: object | Error) {
+			const mock = vi.fn().mockImplementation((url: string) => {
+				if (url === "/api/scraper/status") {
+					if (scraperResponse instanceof Error) return Promise.reject(scraperResponse);
+					return Promise.resolve({
+						ok: true,
+						json: () => Promise.resolve(scraperResponse),
+					});
+				}
+				// /api/stats — return valid stats to avoid PageShell crash
+				return Promise.resolve({
+					ok: true,
+					json: () => Promise.resolve({
+						articles: 358, sources: 37, claims: 378, clusters: 17,
+						dateStart: "2026-03-03", dateEnd: "2026-07-03",
 					}),
+				});
 			});
-			vi.stubGlobal("fetch", fetchMock);
+			vi.stubGlobal("fetch", mock);
+			return mock;
+		}
 
+		it("shows a teal dot when scraper is running", async () => {
+			mockFetch({ running: true, last_run: "2026-06-26T14:30:00Z", articles_inserted: 142 });
 			render(<App />);
 
 			const dot = await screen.findByTestId("scraper-status-dot");
@@ -154,17 +166,7 @@ describe("Router Shell — Slice 0", () => {
 		});
 
 		it("shows a slate dot when scraper is paused", async () => {
-			const fetchMock = vi.fn().mockResolvedValueOnce({
-				ok: true,
-				json: () =>
-					Promise.resolve({
-						running: false,
-						last_run: null,
-						articles_inserted: 0,
-					}),
-			});
-			vi.stubGlobal("fetch", fetchMock);
-
+			mockFetch({ running: false, last_run: null, articles_inserted: 0 });
 			render(<App />);
 
 			const dot = await screen.findByTestId("scraper-status-dot");
@@ -173,11 +175,7 @@ describe("Router Shell — Slice 0", () => {
 		});
 
 		it("shows a dim dot when status fetch fails", async () => {
-			const fetchMock = vi
-				.fn()
-				.mockRejectedValueOnce(new Error("Network error"));
-			vi.stubGlobal("fetch", fetchMock);
-
+			mockFetch(new Error("Network error"));
 			render(<App />);
 
 			const dot = await screen.findByTestId("scraper-status-dot");

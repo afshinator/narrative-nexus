@@ -13,7 +13,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/api": "http://localhost:8000",  // change to 3006 for Docker
+      "/api": "http://localhost:3015",  // change to 3006 for Docker
     },
   },
   build: {

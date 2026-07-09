@@ -632,6 +632,31 @@ def api_coverage_landscape(conn=Depends(get_persistent_db)):
     }
 
 
+# ── Stats endpoint (UX54) ──────────────────────────────────────────────
+
+@app.get("/api/stats")
+def stats(conn = Depends(get_persistent_db)) -> dict:
+    """Return live corpus statistics for the footer."""
+    try:
+        articles = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
+        sources = conn.execute("SELECT COUNT(*) FROM sources").fetchone()[0]
+        claims = conn.execute("SELECT COUNT(*) FROM claims").fetchone()[0]
+        clusters = conn.execute("SELECT COUNT(*) FROM clusters").fetchone()[0]
+        dates = conn.execute(
+            "SELECT MIN(published_at) as d1, MAX(published_at) as d2 FROM articles WHERE published_at IS NOT NULL"
+        ).fetchone()
+        return {
+            "articles": articles,
+            "sources": sources,
+            "claims": claims,
+            "clusters": clusters,
+            "dateStart": dates["d1"] or "",
+            "dateEnd": dates["d2"] or "",
+        }
+    except Exception:
+        return {"articles": 0, "sources": 0, "claims": 0, "clusters": 0, "dateStart": "", "dateEnd": ""}
+
+
 # ── Scraper control endpoints ──────────────────────────────────────────
 
 @app.get("/api/scraper/status")
