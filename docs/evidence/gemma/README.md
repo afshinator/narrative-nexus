@@ -162,3 +162,73 @@ No claims were persisted from any Gemma run. The raw stdout above is the evidenc
   Model string resolves, system_fingerprint consistent, usage tokens tracked.
 - **Hosting:** Fireworks on-demand, NVIDIA H200 GPU — organizer-confirmed
   prize-eligible for AMD Hackathon ACT II Track 3.
+
+---
+
+## Batch Run — Venezuela Cluster (924)
+
+**Date:** 2026-07-10 14:30–14:34 PST
+**Deployment:** `accounts/afshinator-b1hiwmnhr/deployments/x5v99zxx` (display name: `nn2`)
+**Script:** `scripts/gemma_batch_extract.py`
+**Results:** `docs/evidence/gemma/batch_results.json`
+
+### Summary
+
+| Metric | Value |
+|---|---|
+| Articles attempted | 61 (all cluster 924, body > 200 chars) |
+| Parse OK | 36 (59.0%) |
+| Parse failures | 25 (41.0%) |
+| API errors | 0 |
+| Total claims extracted | 268 |
+| Claims tie-out | PASS (268 == 268) |
+| Claim count min | 0 |
+| Claim count median | 9 |
+| Claim count max | 24 |
+| Prompt tokens | 74,801 |
+| Completion tokens | 43,517 |
+| Total tokens | 118,318 |
+| Truncated articles | 0 (bodies under 6,000 char cap — note: 1 article body 8,756 chars was truncated to 6,000) |
+| Sources covered | 18 |
+
+### Per-source breakdown
+
+| Source | Articles | Parse OK | Claims |
+|---|---|---|---|
+| nytimes | 11 | 6 | 78 |
+| apnews | 8 | 4 | 12 |
+| theguardian | 7 | 5 | 55 |
+| bbc | 6 | 4 | 28 |
+| foxnews | 4 | 3 | 30 |
+| batimes | 4 | 3 | 11 |
+| MercoPress | 4 | 0 | 0 |
+| npr | 2 | 0 | 0 |
+| cbsnews | 2 | 2 | 11 |
+| aljazeera | 2 | 2 | 4 |
+| NHK World | 2 | 2 | 29 |
+| thehindu | 2 | 0 | 0 |
+| sputnikglobe | 2 | 2 | 10 |
+| abcnews | 1 | 1 | 0 |
+| globaltimes | 1 | 0 | 0 |
+| france24 | 1 | 0 | 0 |
+| jamaicaobserver | 1 | 1 | 0 |
+| theintercept | 1 | 1 | 0 |
+
+### Honest notes
+
+- **Nondeterminism:** Consistent with prior single-article runs. Article 6 (AP News)
+  previously produced 4/8/0 claims across 3 runs; the batch run produced 0 claims
+  on article 6.
+- **Parse failures (41%):** All from Gemma returning truncated, malformed, or
+  unparseable JSON (unbalanced braces at depths 1–99). No API errors — every
+  call returned with `finish=stop`. This is expected for a 4B-param model on
+  the completions endpoint without JSON-mode or structured-output guarantees.
+- **Empty claims (0-claim parse-OK):** Several articles returned valid JSON
+  containing `{"results": [{"article_id": N, "framing_score": S, "claims": []}]}`
+  — Gemma chose to extract zero claims. These count as parse-OK with n_claims=0.
+- **Body truncation:** 1 article body exceeded 6,000 chars (article 6, AP News,
+  8,756 chars). Truncated to 6,000 chars for the prompt.
+- **Cold start:** First call triggered deployment scale-up from 0 replicas
+  (~4 min wait). Subsequent calls ran at ~3–5 seconds per article.
+- **No DB writes:** Script reads from golden DB in read-only mode (mode=ro).
+  All output is in `batch_results.json`.

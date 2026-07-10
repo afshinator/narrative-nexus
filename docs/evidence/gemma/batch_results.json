@@ -1,0 +1,2776 @@
+[
+  {
+    "article_id": 6,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1742,
+      "total_tokens": 3335,
+      "completion_tokens": 1593,
+      "prompt_tokens_details": {
+        "cached_tokens": 1728
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 7112
+  },
+  {
+    "article_id": 8,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1710,
+      "total_tokens": 3033,
+      "completion_tokens": 1323,
+      "prompt_tokens_details": {
+        "cached_tokens": 1696
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 4133
+  },
+  {
+    "article_id": 9,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1696,
+      "total_tokens": 2266,
+      "completion_tokens": 570,
+      "prompt_tokens_details": {
+        "cached_tokens": 1664
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)",
+    "raw_text_preview": "[{'text': \"STEP 1: Rate editorial framing bias on a scale of 5/10 with occasional loaded language.\\n\\nSTEP 2: Neutralize editorial framing:\\n1. Venezuelans took search for the missing into their own hands as earthquake death toll climbed.\\n2. Citizens dug through the rubble of their homes, seeing few government rescue teams.\\n3. Authorities said La Guaira would be closed, but provided few details.\\n4. An international aid effort accelerated with rescue teams from around the globe arriving in Ven"
+  },
+  {
+    "article_id": 10,
+    "source": "bbc",
+    "n_claims": 9,
+    "claims": [
+      {
+        "text": "At least 920 people were killed in the Venezuela earthquakes.",
+        "entities": [
+          "Venezuela",
+          "earthquakes",
+          "people"
+        ]
+      },
+      {
+        "text": "Three people were pulled alive from the rubble, boosting rescuers' morale.",
+        "entities": [
+          "rescuers",
+          "morale"
+        ]
+      },
+      {
+        "text": "International search and rescue teams have arrived in the country.",
+        "entities": [
+          "international search and rescue teams",
+          "country"
+        ]
+      },
+      {
+        "text": "Dozens of buildings in Venezuela's north, including in Caracas, were destroyed by the quakes.",
+        "entities": [
+          "buildings",
+          "Venezuela's north",
+          "Caracas"
+        ]
+      },
+      {
+        "text": "Surviving medical facilities in Venezuela were already strained before the disaster.",
+        "entities": [
+          "medical facilities",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "There are reports of rescuers pulling people out of collapsed buildings with their bare hands.",
+        "entities": [
+          "rescues",
+          "bare hands"
+        ]
+      },
+      {
+        "text": "UK military flight carrying British search and rescue teams left RAF Brize Norton in Oxfordshire.",
+        "entities": [
+          "UK",
+          "Brize Norton",
+          "Oxfordshire"
+        ]
+      },
+      {
+        "text": "Multiple states in Venezuela were affected by the quakes.",
+        "entities": [
+          "Venezuela",
+          "states"
+        ]
+      },
+      {
+        "text": "An opposition leader in Venezuela said the devastation has been 'huge' and people are in 'shock'.",
+        "entities": [
+          "opposition leader",
+          "Venezuela",
+          "devastation",
+          "people"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1741,
+      "total_tokens": 2170,
+      "completion_tokens": 429,
+      "prompt_tokens_details": {
+        "cached_tokens": 1728
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1660
+  },
+  {
+    "article_id": 11,
+    "source": "bbc",
+    "n_claims": 14,
+    "claims": [
+      {
+        "text": "British search and rescue teams have been sent to Venezuela after earthquakes killed around 1,000 people.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The team consists of 68 personnel including sniffer dogs and drones.",
+        "entities": []
+      },
+      {
+        "text": "Two 7.2 and 7.5 magnitude earthquakes struck Venezuela within seconds.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "A Royal Air Force plane carrying the team departed from Brize Norton on Friday evening.",
+        "entities": [
+          "Brize Norton"
+        ]
+      },
+      {
+        "text": "The epicenter of the earthquakes was 100 miles west of Caracas.",
+        "entities": [
+          "Caracas"
+        ]
+      },
+      {
+        "text": "Around 70,000 people have been left homeless from the earthquakes.",
+        "entities": []
+      },
+      {
+        "text": "British officials will provide \u00a32 million in humanitarian aid to Venezuela.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Hundreds of aid workers are travelling to Venezuela to help survivors.",
+        "entities": []
+      },
+      {
+        "text": "Hospitals are running out of supplies to help earthquake victims.",
+        "entities": []
+      },
+      {
+        "text": "The UK rescue team is a collaboration between UK firefighters, medical professionals, and security specialists.",
+        "entities": []
+      },
+      {
+        "text": "Keir Starmer expressed his condolences to the people of Venezuela following the earthquakes.",
+        "entities": []
+      },
+      {
+        "text": "Delcy Rodr\u00edguez, Venezuela's Acting President, announced that over 200 aftershocks had occurred since the earthquake.",
+        "entities": [
+          "Delcy Rodr\u00edguez",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "A state of emergency was declared and all flights, trains, and other transport were halted after the earthquakes.",
+        "entities": []
+      },
+      {
+        "text": "Many people are demanding humanitarian aid to help their friends and family after losing homes.",
+        "entities": []
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 838,
+      "total_tokens": 1397,
+      "completion_tokens": 559,
+      "prompt_tokens_details": {
+        "cached_tokens": 832
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2344
+  },
+  {
+    "article_id": 14,
+    "source": "npr",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1522,
+      "total_tokens": 3570,
+      "completion_tokens": 2048,
+      "prompt_tokens_details": {
+        "cached_tokens": 1504
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 2",
+    "raw_text_preview": "[\n  {\n    \"article_id\": 14,\n    \"framing_score\": 10,\n    \"claims\": [\n      {\n        \"text\": \"Venezuela suffers a deadly earthquake\",\n        \"entities\": []\n      },\n      {\n        \"text\": \"The disaster has caused significant damage\",\n        \"entities\": []\n      },\n      {\n        \"text\": \"The U.S. has announced a response to the earthquake\",\n        \"entities\": []\n      },\n      {\n        \"text\": \"The response is one of the strongest since USAID's dismantling\",\n        \"entities\": []\n      },"
+  },
+  {
+    "article_id": 15,
+    "source": "theguardian",
+    "n_claims": 18,
+    "claims": [
+      {
+        "text": "Venezuela\u2019s interim president, Delcy Rodr\u00edguez, has vowed to fight to save \u2018as many people as possible\u2019 as the official death toll from the country\u2019s worst earthquake in more than a century almost doubled.",
+        "entities": [
+          "Venezuela",
+          "Delcy Rodr\u00edguez"
+        ]
+      },
+      {
+        "text": "The official death toll from the earthquake has risen to 920.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Foreign search and rescue groups were starting to arrive in Venezuela.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "More than 50,000 people are missing after two powerful earthquakes struck within a minute of each other in Venezuela.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Rescue teams are working to pull survivors from the rubble in Venezuela.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The US has deployed a disaster response team of more than 250 personnel to Venezuela.",
+        "entities": [
+          "Venezuela",
+          "US"
+        ]
+      },
+      {
+        "text": "Venezuela\u2019s interim president, Delcy Rodr\u00edguez, is visiting La Guaira.",
+        "entities": [
+          "Venezuela",
+          "Delcy Rodr\u00edguez"
+        ]
+      },
+      {
+        "text": "Jorge Rodr\u00edguez, president of the national assembly, said the official number of dead had risen to 920.",
+        "entities": [
+          "Jorge Rodr\u00edguez",
+          "Venezuela",
+          "national assembly"
+        ]
+      },
+      {
+        "text": "Rotny Bombart has been looking for his mother, Mar\u00eda Eugenia, in a collapsed tower block in La Guaira.",
+        "entities": [
+          "Rotny Bombart",
+          "Venezuela",
+          "Mar\u00eda Eugenia",
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Volunteer searchers and the relatives of the many missing voiced exasperation and anger at the lack of an official response in Venezuela.",
+        "entities": [
+          "Venezuela",
+          "volunteers",
+          "searchers",
+          "relatives"
+        ]
+      },
+      {
+        "text": "Another searcher, Diego Gonz\u00e1lez, said he was working to dig his cousin, Helari Rodr\u00edguez, out of the rubble in Venezuela.",
+        "entities": [
+          "Diego Gonz\u00e1lez",
+          "Venezuela",
+          "Helari Rodr\u00edguez"
+        ]
+      },
+      {
+        "text": "The US military is deploying troops to support the Venezuelan people in their hour of need.",
+        "entities": [
+          "US",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The UN is calling for aid to reach Venezuela as soon as possible.",
+        "entities": [
+          "UN",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Foreign nationals have been confirmed among the dead in Venezuela.",
+        "entities": [
+          "Venezuela",
+          "foreign nationals"
+        ]
+      },
+      {
+        "text": "King Charles and Queen Camilla have expressed their condolences to the people of Venezuela.",
+        "entities": [
+          "King Charles",
+          "Queen Camilla",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuelan authorities have been accused of misrule and corruption following the earthquakes.",
+        "entities": [
+          "Venezuela",
+          "authorities"
+        ]
+      },
+      {
+        "text": "Chaotic footage from the Jos\u00e9 Mar\u00eda Vargas hospital in La Guaira captured the extent to which Venezuela\u2019s public health system had withered.",
+        "entities": [
+          "Venezuela",
+          "Jos\u00e9 Mar\u00eda Vargas hospital"
+        ]
+      },
+      {
+        "text": "Delcy Rodr\u00edguez was elected in an election organized by the opposition party, Acci\u00f3n Democr\u00e1tica.",
+        "entities": [
+          "Delcy Rodr\u00edguez",
+          "Acci\u00f3n Democr\u00e1tica"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1707,
+      "total_tokens": 2574,
+      "completion_tokens": 867,
+      "prompt_tokens_details": {
+        "cached_tokens": 1696
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 4028
+  },
+  {
+    "article_id": 16,
+    "source": "theguardian",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1796,
+      "total_tokens": 2190,
+      "completion_tokens": 394,
+      "prompt_tokens_details": {
+        "cached_tokens": 1792
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1310
+  },
+  {
+    "article_id": 17,
+    "source": "theguardian",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1706,
+      "total_tokens": 1753,
+      "completion_tokens": 47,
+      "prompt_tokens_details": {
+        "cached_tokens": 1696
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 1",
+    "raw_text_preview": "<claim> Venezuela\u2019s acting president, Delcy Rodr\u00edguez, said the number of people killed in the double earthquake has risen to 589, with 2,980 injured. "
+  },
+  {
+    "article_id": 18,
+    "source": "foxnews",
+    "n_claims": 13,
+    "claims": [
+      {
+        "text": "The death toll from the catastrophic series of earthquakes is at least 235.",
+        "entities": [
+          "earthquakes"
+        ]
+      },
+      {
+        "text": "The number of injured people is at least 4,300.",
+        "entities": [
+          "injuries"
+        ]
+      },
+      {
+        "text": "The earthquakes hit roughly 120 miles west of Caracas.",
+        "entities": [
+          "Caracas"
+        ]
+      },
+      {
+        "text": "A woman was rescued from under a cement slab, AP reported.",
+        "entities": [
+          "woman",
+          "cement slab",
+          "AP"
+        ]
+      },
+      {
+        "text": "Maj. Gen. Kevin J. Jarrard arrived in Caracas to oversee U.S. military support.",
+        "entities": [
+          "Maj. Gen. Kevin J. Jarrard",
+          "Caracas"
+        ]
+      },
+      {
+        "text": "SOUTHCOM said it will utilize aircraft to provide specialized mobility services.",
+        "entities": [
+          "SOUTHCOM"
+        ]
+      },
+      {
+        "text": "The Trump administration pledged $150 million in aid.",
+        "entities": [
+          "Trump administration",
+          "$150 million"
+        ]
+      },
+      {
+        "text": "U.S. Navy warships are assisting in life-saving rescue operations.",
+        "entities": [
+          "U.S. Navy warships",
+          "life-saving rescue operations"
+        ]
+      },
+      {
+        "text": "The coastal region of La Guaira suffered heavy damage and casualties.",
+        "entities": [
+          "La Guaira",
+          "heavy damage"
+        ]
+      },
+      {
+        "text": "The country\u2019s main airport in La Guaira was closed due to damage.",
+        "entities": [
+          "main airport",
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Venezuela\u2019s interim government appealed for assistance.",
+        "entities": [
+          "interim government"
+        ]
+      },
+      {
+        "text": "Businesses were asked to make heavy construction equipment available.",
+        "entities": [
+          "businesses",
+          "heavy construction equipment"
+        ]
+      },
+      {
+        "text": "Rodr\u00edguez referred to La Guaira as a \u2018disaster zone.\u2019",
+        "entities": [
+          "Rodr\u00edguez",
+          "disaster zone"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1146,
+      "total_tokens": 1803,
+      "completion_tokens": 657,
+      "prompt_tokens_details": {
+        "cached_tokens": 1120
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 3086
+  },
+  {
+    "article_id": 19,
+    "source": "foxnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1266,
+      "total_tokens": 2161,
+      "completion_tokens": 895,
+      "prompt_tokens_details": {
+        "cached_tokens": 1248
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 21",
+    "raw_text_preview": "STEP 1 Analysis\nArticle: \"Trump says Venezuela earthquakes left 'devastating number of deaths' as US readies aid\"\n\nSTEP 1 - Editorial Framing Analysis (10/10)\nThis article demonstrates some of the worst framing bias I've seen. It's clearly authored by someone with a deep personal investment in opposing Venezuelan President Nicol\u00e1s Maduro.\n\nThe loaded language and emotional appeals are evident:\n- Direct quotes from Trump are hyper-charged (\"devastating number of deaths,\" \"left behind many victims"
+  },
+  {
+    "article_id": 23,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1601,
+      "total_tokens": 2098,
+      "completion_tokens": 497,
+      "prompt_tokens_details": {
+        "cached_tokens": 1600
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 17",
+    "raw_text_preview": "Claims:\n1. Families in La Guaira mourned loved ones and searched for survivors after earthquakes on June 25, 2026.\n2. People consorted with Gaby Rojas, whose two children died in the earthquakes.\n3. Rescue workers search for victims trapped in collapsed buildings in Caracas on June 24, 2026.\n4. Two 7.2 and 7.5 magnitude earthquakes on June 24, 2026, caused extensive damage across Venezuela.\n5. Many buildings collapsed in the earthquakes, killing hundreds and leaving thousands missing.\n6. Governm"
+  },
+  {
+    "article_id": 24,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1613,
+      "total_tokens": 2218,
+      "completion_tokens": 605,
+      "prompt_tokens_details": {
+        "cached_tokens": 1600
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2106
+  },
+  {
+    "article_id": 25,
+    "source": "bbc",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1594,
+      "total_tokens": 1786,
+      "completion_tokens": 192,
+      "prompt_tokens_details": {
+        "cached_tokens": 1568
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: Expecting ',' delimiter: line 1 column 14 (char 13)",
+    "raw_text_preview": "[{\"text\": \"{\"article_id\": 25, \"framing_score\": 5, \\\"results\\\": [{\\\"text\\\": \\\"Every person saved is a miracle: Families call to trapped loved ones in region devastated by Venezuela quakes\\\", \\\"entities\\\": [\\\"La Guaira\\\", \\\"Venezuela\\\", \\\"Caracas\\\", \\\"UN\\\", \\\"US\\\", \\\"UK\\\", \\\"Mexico\\\", \\\"Spain\\\", \\\"BBC\\\", \\\"News\\\", \\\"Mundo\\\", \\\"Macuto\\\", \\\"Caribe\\\", \\\"Catia La Mar\\\", \\\"Jes\u00fas Su\u00e1rez\\\", \\\"Carlos Eduardo\\\", \\\"Glendys Delgado\\\", \\\"Deiyer Gabril\\\", \\\"Macuto\\\", \\\"Caribe\\\", \\\"sim\u00f3n Bol\u00edvar International A"
+  },
+  {
+    "article_id": 26,
+    "source": "theguardian",
+    "n_claims": 13,
+    "claims": [
+      {
+        "text": "The death toll in Venezuela from the earthquake has risen to 1,430.",
+        "entities": [
+          "Jorge Rodr\u00edguez",
+          "Venezuela",
+          "earthquake"
+        ]
+      },
+      {
+        "text": "3,200 people were injured.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "3,100 people have been left homeless.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Rescuers are still searching for survivors.",
+        "entities": []
+      },
+      {
+        "text": "68,900 people have been reported unaccounted for.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The UN estimates the damage caused by the earthquake at $6.7 billion.",
+        "entities": [
+          "Venezuela",
+          "UN"
+        ]
+      },
+      {
+        "text": "The damage assessment accounts for losses to assets.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The death toll includes foreign nationals.",
+        "entities": []
+      },
+      {
+        "text": "15 Portuguese nationals or descendants were killed.",
+        "entities": []
+      },
+      {
+        "text": "7 Chinese nationals were killed.",
+        "entities": []
+      },
+      {
+        "text": "2 Brazilians were killed.",
+        "entities": []
+      },
+      {
+        "text": "5 Spaniards were killed.",
+        "entities": []
+      },
+      {
+        "text": "1 Italian-Venezuelan was killed.",
+        "entities": []
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1234,
+      "total_tokens": 1648,
+      "completion_tokens": 414,
+      "prompt_tokens_details": {
+        "cached_tokens": 1216
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1168
+  },
+  {
+    "article_id": 28,
+    "source": "foxnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1186,
+      "total_tokens": 1579,
+      "completion_tokens": 393,
+      "prompt_tokens_details": {
+        "cached_tokens": 1184
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1671
+  },
+  {
+    "article_id": 34,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1745,
+      "total_tokens": 3793,
+      "completion_tokens": 2048,
+      "prompt_tokens_details": {
+        "cached_tokens": 1728
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 2",
+    "raw_text_preview": "STEP 1: Rating\n1 \u2014 Pure wire-service style. Just the facts, no adjectives, no opinion.\nScore: 5\n- Contains loaded language: \"crashed, devasted, flattened, demolished, smashed\"\n- Uses dramatic metaphors: \"carved through the region like a chainsaw\"\n\nSTEP 2: Neutralized Text\n\nIn La Guaira, Venezuela, search teams race against the clock to find survivors after two powerful earthquakes on Thursday.\n\nAuthorities report 1,500 dead, and as civilian efforts help save some people trapped, the chances of f"
+  },
+  {
+    "article_id": 35,
+    "source": "apnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1708,
+      "total_tokens": 3756,
+      "completion_tokens": 2048,
+      "prompt_tokens_details": {
+        "cached_tokens": 1696
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 3",
+    "raw_text_preview": "{\n    \"results\": [\n        {\n            \"article_id\": 35,\n            \"framing_score\": 5,\n            \"claims\": [\n                {\n                    \"text\": \"An Associated Press investigation reveals that dozens of children who were separated under the first Trump administration have been re-separated, despite a judge\u2019s order to reunite them.\",\n                    \"entities\": [\n                        \"Associated Press\",\n                        \"Trump administration\",\n                       "
+  },
+  {
+    "article_id": 36,
+    "source": "bbc",
+    "n_claims": 5,
+    "claims": [
+      {
+        "text": "La Guaira port is experiencing a high number of casualties and missing persons due to the earthquake, with people using basic tools to rescue their loved ones.",
+        "entities": []
+      },
+      {
+        "text": "The earthquake struck twice in 39 seconds in Venezuela, causing significant destruction and displacement of people.",
+        "entities": []
+      },
+      {
+        "text": "Local volunteers and international teams are carrying out rescue efforts amidst the debris and lack of government aid.",
+        "entities": []
+      },
+      {
+        "text": "The Venezuelan government and its officials are not visible in the worst-affected areas, according to local residents.",
+        "entities": []
+      },
+      {
+        "text": "More international aid has been pledged to assist Venezuela, including from the US and China.",
+        "entities": []
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1591,
+      "total_tokens": 2186,
+      "completion_tokens": 595,
+      "prompt_tokens_details": {
+        "cached_tokens": 1568
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2726
+  },
+  {
+    "article_id": 37,
+    "source": "bbc",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1143,
+      "total_tokens": 1725,
+      "completion_tokens": 582,
+      "prompt_tokens_details": {
+        "cached_tokens": 1120
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1908
+  },
+  {
+    "article_id": 38,
+    "source": "bbc",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1067,
+      "total_tokens": 1477,
+      "completion_tokens": 410,
+      "prompt_tokens_details": {
+        "cached_tokens": 1056
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 1",
+    "raw_text_preview": "[[{\"article_id\": 38, \"framing_score\": 7, \"claims\": [{\"text\": \"A mother named Dayana Patino was pulled from the rubble of her wrecked home in Venezuela with her 18-day-old baby.\", \"entities\": [\"Dayana Patino\", \"Venezuela\"]}, {\"text\": \"Footage of the rescue has been shared around the world.\", \"entities\": []}, {\"text\": \"Tens of thousands of people are missing in Venezuela after earthquakes killed at least 1,450.\", \"entities\": [\"Venezuela\"]}, {\"text\": \"Search efforts are continuing, but hopes are di"
+  },
+  {
+    "article_id": 39,
+    "source": "theguardian",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1729,
+      "total_tokens": 1736,
+      "completion_tokens": 7,
+      "prompt_tokens_details": {
+        "cached_tokens": 1728
+      }
+    },
+    "parse_ok": false,
+    "error": "Empty response text (finish=stop)"
+  },
+  {
+    "article_id": 40,
+    "source": "theguardian",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1018,
+      "total_tokens": 1299,
+      "completion_tokens": 281,
+      "prompt_tokens_details": {
+        "cached_tokens": 992
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 935
+  },
+  {
+    "article_id": 42,
+    "source": "theguardian",
+    "n_claims": 24,
+    "claims": [
+      {
+        "text": "A man and his son were found alive under rubble in Caraballeda four days after the earthquake struck.",
+        "entities": [
+          "Caraballeda",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Rescuers in Caraballeda used French and American rescue teams.",
+        "entities": [
+          "Caraballeda",
+          "Venezuela",
+          "French rescue teams",
+          "American rescue teams"
+        ]
+      },
+      {
+        "text": "Caraballeda is 40km north of Caracas.",
+        "entities": [
+          "Caraballeda",
+          "Venezuela",
+          "Caracas"
+        ]
+      },
+      {
+        "text": "The quake's magnitude was 7.2 and 7.5.",
+        "entities": [
+          "quake"
+        ]
+      },
+      {
+        "text": "Almost 200 buildings were destroyed in the area.",
+        "entities": [
+          "area"
+        ]
+      },
+      {
+        "text": "Nearly four days passed since the earthquake struck Caraballeda.",
+        "entities": [
+          "Caraballeda"
+        ]
+      },
+      {
+        "text": "Caracas is the capital of Venezuela.",
+        "entities": [
+          "Caracas",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The interim president praised rescuers.",
+        "entities": [
+          "interim president",
+          "rescuers"
+        ]
+      },
+      {
+        "text": "Rescuers are still rescuing people from the rubble.",
+        "entities": [
+          "rescuers",
+          "rubble"
+        ]
+      },
+      {
+        "text": "Rescuers have not suspended their efforts.",
+        "entities": [
+          "rescuers",
+          "efforts"
+        ]
+      },
+      {
+        "text": "Rescuers offer a glimmer of hope in the earthquake tragedy.",
+        "entities": [
+          "rescuers",
+          "hope",
+          "earthquake tragedy"
+        ]
+      },
+      {
+        "text": "The quake tragedy has shaken Venezuela.",
+        "entities": [
+          "quake tragedy",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The quake tragedy has affected tens of thousands of people.",
+        "entities": [
+          "quake tragedy",
+          "tens of thousands of people"
+        ]
+      },
+      {
+        "text": "Tens of thousands of people have gone missing in the quake tragedy.",
+        "entities": [
+          "quake tragedy",
+          "tens of thousands of people"
+        ]
+      },
+      {
+        "text": "A 72-hour window for rescuing trapped victims is now closed.",
+        "entities": [
+          "72-hour window",
+          "trapped victims"
+        ]
+      },
+      {
+        "text": "Rescue teams have scrambled to save people.",
+        "entities": [
+          "rescue teams",
+          "people"
+        ]
+      },
+      {
+        "text": "Rescue teams from the US, Mexico, and elsewhere have scrambled to save people.",
+        "entities": [
+          "rescue teams",
+          "US",
+          "Mexico",
+          "elsewhere"
+        ]
+      },
+      {
+        "text": "US, Mexico, and elsewhere rescue teams have scrambled to save people.",
+        "entities": [
+          "US",
+          "Mexico",
+          "elsewhere"
+        ]
+      },
+      {
+        "text": "Desperate residents have dug by hand for relatives trapped in rubble.",
+        "entities": [
+          "residents",
+          "relatives",
+          "rubble"
+        ]
+      },
+      {
+        "text": "La Guaira is a port city near Venezuela's main international airport.",
+        "entities": [
+          "La Guaira",
+          "Venezuela",
+          "airport"
+        ]
+      },
+      {
+        "text": "Many buildings were damaged by the earthquake.",
+        "entities": [
+          "buildings",
+          "earthquake"
+        ]
+      },
+      {
+        "text": "Many apartments collapsed in the earthquake.",
+        "entities": [
+          "apartments",
+          "earthquake"
+        ]
+      },
+      {
+        "text": "Caracas is the country's main international airport.",
+        "entities": [
+          "Caracas",
+          "country",
+          "airport"
+        ]
+      },
+      {
+        "text": "The earthquake struck on Wednesday evening.",
+        "entities": [
+          "earthquake",
+          "Wednesday evening"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1318,
+      "total_tokens": 2817,
+      "completion_tokens": 1499,
+      "prompt_tokens_details": {
+        "cached_tokens": 1312
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 5934
+  },
+  {
+    "article_id": 44,
+    "source": "foxnews",
+    "n_claims": 17,
+    "claims": [
+      {
+        "text": "Search-and-rescue crews in Venezuela pulled 33 people alive from collapsed buildings over the weekend",
+        "entities": [
+          "Venezuela",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The death toll stood at 1,430 as of late Saturday",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "More than 3,000 have been injured and roughly the same number are living in shelters",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Worst devastation concentrated in La Guaira state",
+        "entities": [
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Several thousand living in shelters",
+        "entities": []
+      },
+      {
+        "text": "Entire apartment blocks pancaked after earthquakes",
+        "entities": [
+          "Venezuela",
+          "Venezuelan coast"
+        ]
+      },
+      {
+        "text": "Communications failures complicating rescue work",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "11-year-old boy found by Colombian team",
+        "entities": [
+          "Colombia",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Several thousand living in shelters",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Earthquakes struck in quick succession",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Hundreds of aftershocks continue to rattle damaged neighborhoods",
+        "entities": [
+          "Venezuela",
+          "damaged neighborhoods"
+        ]
+      },
+      {
+        "text": "The odds of finding survivors drop sharply after roughly 72 hours under rubble",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Families have listed 68,900 people missing Saturday",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Starlink providing communication services for humanitarian crisis",
+        "entities": [
+          "Starlink",
+          "humanitarian crisis"
+        ]
+      },
+      {
+        "text": "Starlink Mobile providing free connectivity to Venezuelan customers",
+        "entities": [
+          "Starlink",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Starlink coverage will work best with a clear view of the sky",
+        "entities": [
+          "Starlink",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Pope expressed solidarity with survivors and victims' families",
+        "entities": [
+          "Pope",
+          "Venezuela"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1152,
+      "total_tokens": 1769,
+      "completion_tokens": 617,
+      "prompt_tokens_details": {
+        "cached_tokens": 1120
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2871
+  },
+  {
+    "article_id": 46,
+    "source": "cbsnews",
+    "n_claims": 11,
+    "claims": [
+      {
+        "text": "Tens of thousands of people are presumed to be missing in Venezuela five days after twin earthquakes.",
+        "entities": []
+      },
+      {
+        "text": "More than 1,400 people have died in the earthquakes.",
+        "entities": []
+      },
+      {
+        "text": "Rescue teams are continuing the search for survivors.",
+        "entities": []
+      },
+      {
+        "text": "Genesis Fonseca is looking for her sister, who did not come to the hospital with their 6-year-old nephew.",
+        "entities": []
+      },
+      {
+        "text": "The quake has left a trail of debris, including remnants of people's lives, in the hard-hit city of La Guaira.",
+        "entities": []
+      },
+      {
+        "text": "A mother and 9-month-old baby were rescued from the rubble.",
+        "entities": []
+      },
+      {
+        "text": "Kenger, the 11-year-old survivor, is the nephew of Keyla Zerpa, who spoke to CBS News.",
+        "entities": [
+          "Keyla Zerpa"
+        ]
+      },
+      {
+        "text": "Keyla Zerpa's sister, the mother of the rescued baby, is still missing.",
+        "entities": []
+      },
+      {
+        "text": "Keyla Zerpa is seeking more support from the U.S.",
+        "entities": []
+      },
+      {
+        "text": "U.S. diplomat John Barrett is on the ground in Venezuela.",
+        "entities": []
+      },
+      {
+        "text": "Marco Rubio spoke to Venezuela's acting President Delcy Rodr\u00edguez after the earthquake.",
+        "entities": [
+          "Delcy Rodr\u00edguez"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 874,
+      "total_tokens": 1343,
+      "completion_tokens": 469,
+      "prompt_tokens_details": {
+        "cached_tokens": 864
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1639
+  },
+  {
+    "article_id": 47,
+    "source": "cbsnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 970,
+      "total_tokens": 1702,
+      "completion_tokens": 732,
+      "prompt_tokens_details": {
+        "cached_tokens": 960
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2899
+  },
+  {
+    "article_id": 48,
+    "source": "abcnews",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 504,
+      "total_tokens": 563,
+      "completion_tokens": 59,
+      "prompt_tokens_details": {
+        "cached_tokens": 480
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 144
+  },
+  {
+    "article_id": 51,
+    "source": "nytimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 934,
+      "total_tokens": 1554,
+      "completion_tokens": 620,
+      "prompt_tokens_details": {
+        "cached_tokens": 928
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 4",
+    "raw_text_preview": "<|begin_of_text|><|start_header_id|>assistant<|end_header_id|>\n\n<|start_of_turn>user\nReturn JSON with a \"results\" array \u2014 one object per article:\n  - \"article_id\": the integer ID provided with the article\n  - \"framing_score\": integer 1-10 from STEP 1\n  - \"claims\": array of claim objects, each with \"text\" (string) and \"entities\" (array of strings)\n\nArticles:\n--- ARTICLE 51 ---\nEfforts to Rescue Venezuela Quake Victims Grow More Desperate\nEarthquakes in Venezuela\n\nADVERTISEMENT\n\nSupported by\n\nThe "
+  },
+  {
+    "article_id": 52,
+    "source": "nytimes",
+    "n_claims": 11,
+    "claims": [
+      {
+        "text": "At funerals, Venezuela's wounded families and friends were united in grief for the 1,700 lives lost in the deadliest earthquakes in more than a century",
+        "entities": [
+          "Venezuela's wounded families and friends",
+          "the 1,700 lives lost in the deadliest earthquakes in more than a century",
+          "at funerals"
+        ]
+      },
+      {
+        "text": "A young beauty pageant queen whose dream of becoming Miss Venezuela was cut short at 26 years old",
+        "entities": [
+          "a young beauty pageant queen",
+          "Miss Venezuela",
+          "26 years old"
+        ]
+      },
+      {
+        "text": "A mother whose body was discovered in the rubble, covering the bodies of her two boys, ages 6 and 12",
+        "entities": [
+          "a mother",
+          "her two boys",
+          "ages 6 and 12"
+        ]
+      },
+      {
+        "text": "A man who had been deported to Venezuela from the United States just hours before the earthquake struck",
+        "entities": [
+          "a man",
+          "Venezuela",
+          "the United States",
+          "the earthquake"
+        ]
+      },
+      {
+        "text": "Hundreds of relatives and friends made the pilgrimage to a sprawling, mountainside cemetery to lay to rest loved ones",
+        "entities": [
+          "relatives and friends",
+          "a sprawling, mountainside cemetery",
+          "loved ones"
+        ]
+      },
+      {
+        "text": "Honny Gonz\u00e1lez, a teacher, found out her two boys had died in the earthquake",
+        "entities": [
+          "Honny Gonz\u00e1lez",
+          "her two boys",
+          "the earthquake"
+        ]
+      },
+      {
+        "text": "Eder \u00c1lvarez, a father, found out his wife and two children had died in a building collapse",
+        "entities": [
+          "Eder \u00c1lvarez",
+          "his wife and two children",
+          "a building collapse"
+        ]
+      },
+      {
+        "text": "Relatives and friends exchanged hugs during the funeral service for the victims",
+        "entities": [
+          "relatives and friends",
+          "the victims"
+        ]
+      },
+      {
+        "text": "A graphic designer, F\u00e1tima Dur\u00e1n, was mourned at her funeral",
+        "entities": [
+          "F\u00e1tima Dur\u00e1n",
+          "her funeral"
+        ]
+      },
+      {
+        "text": "A young man, Gustavo Adolfo Guevara Figueroa, was deported to Venezuela from the United States just hours before the earthquake",
+        "entities": [
+          "Gustavo Adolfo Guevara Figueroa",
+          "Venezuela",
+          "the United States",
+          "the earthquake"
+        ]
+      },
+      {
+        "text": "His family said he was moved to a hotel in La Guaira being used to hold recent deportees",
+        "entities": [
+          "his family",
+          "a hotel in La Guaira",
+          "recent deportees"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1336,
+      "total_tokens": 2124,
+      "completion_tokens": 788,
+      "prompt_tokens_details": {
+        "cached_tokens": 1312
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 3185
+  },
+  {
+    "article_id": 53,
+    "source": "nytimes",
+    "n_claims": 9,
+    "claims": [
+      {
+        "text": "The official death toll after Venezuela's twin earthquakes on Wednesday has already risen to 1,719 people.",
+        "entities": []
+      },
+      {
+        "text": "It often takes several weeks for a full picture to emerge after disasters of this magnitude.",
+        "entities": []
+      },
+      {
+        "text": "These earthquakes were particularly lethal.",
+        "entities": []
+      },
+      {
+        "text": "We are going to see the death toll continue to rise.",
+        "entities": []
+      },
+      {
+        "text": "The toll could still be a substantial undercount.",
+        "entities": []
+      },
+      {
+        "text": "The expected lengthy delay is due to several factors.",
+        "entities": []
+      },
+      {
+        "text": "It's not a priority for most response teams.",
+        "entities": []
+      },
+      {
+        "text": "The response has been further snarled.",
+        "entities": []
+      },
+      {
+        "text": "The work of recovering bodies is painstakingly slow.",
+        "entities": []
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 979,
+      "total_tokens": 2063,
+      "completion_tokens": 1084,
+      "prompt_tokens_details": {
+        "cached_tokens": 960
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 4683
+  },
+  {
+    "article_id": 54,
+    "source": "nytimes",
+    "n_claims": 11,
+    "claims": [
+      {
+        "text": "Volunteers in a middle-class neighborhood in Caracas used drills, picks and hammers to break through concrete, trying to find anyone in need of rescue.",
+        "entities": []
+      },
+      {
+        "text": "A single jackhammer.",
+        "entities": [
+          "jackhammer"
+        ]
+      },
+      {
+        "text": "A pair of pickaxes.",
+        "entities": [
+          "pickaxes"
+        ]
+      },
+      {
+        "text": "Men swinging with all their might to break through multiple stories of concrete to try to reach the living.",
+        "entities": [
+          "men",
+          "concrete",
+          "living"
+        ]
+      },
+      {
+        "text": "The scene on Saturday night in San Bernardino, a middle-class neighborhood in Caracas, showcased both the severe shortage of heavy machinery needed to rescue survivors after Wednesday\u2019s double earthquakes and the enormous community mobilization that has taken place to try to fill that gap.",
+        "entities": [
+          "San Bernardino",
+          "Caracas",
+          "Venezuela",
+          "community"
+        ]
+      },
+      {
+        "text": "At the Residencia Rita, an apartment building that crumbled when the quakes hit, finding anyone alive three days later would have been a miracle.",
+        "entities": [
+          "Residencia Rita",
+          "apartment building",
+          "earthquakes",
+          "miracle"
+        ]
+      },
+      {
+        "text": "They lined up like firefighters, passing buckets of rubble down the line to try to clear the way.",
+        "entities": [
+          "firefighters",
+          "rubble"
+        ]
+      },
+      {
+        "text": "They lined up like firefighters, passing buckets of rubble down the line to try to clear the way.",
+        "entities": [
+          "firefighters",
+          "rubble"
+        ]
+      },
+      {
+        "text": " \u201cWe will always have hope,\u201d said Mar\u00eda Alejandra Navarro, 25, a journalist with rescue training who said she had brought a team of 14 volunteers to the scene.",
+        "entities": [
+          "Mar\u00eda Alejandra Navarro",
+          "journalists",
+          "rescue",
+          "volunteers",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Subscribe to The Times to read as many articles as you like.",
+        "entities": [
+          "The Times"
+        ]
+      },
+      {
+        "text": "Julie Turkewitz is the Andes Bureau Chief for The Times, based in Bogot\u00e1, Colombia, covering Colombia, Venezuela, Bolivia, Ecuador and Peru.",
+        "entities": [
+          "Julie Turkewitz",
+          "Andes Bureau Chief",
+          "The Times",
+          "Colombia",
+          "Venezuela",
+          "Bolivia",
+          "Ecuador",
+          "Peru"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 765,
+      "total_tokens": 1493,
+      "completion_tokens": 728,
+      "prompt_tokens_details": {
+        "cached_tokens": 736
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 3949
+  },
+  {
+    "article_id": 55,
+    "source": "nytimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1662,
+      "total_tokens": 3030,
+      "completion_tokens": 1368,
+      "prompt_tokens_details": {
+        "cached_tokens": 1632
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: Expecting value: line 1 column 2 (char 1)",
+    "raw_text_preview": "### Claim Extractor Report\n\n#### [ARTICLE ID]: 55\n\n---\n#### Framer Bias Report\n\n1. **Score**: 5 (Moderate Editorial Framing)\n   - **Example**: \"The embattled president reluctantly signed the deeply divisive bill into law.\"\n   - **Analysis**: Clear editorial framing with adjectives like \"reluctantly\" and \"deeply divisive\" indicating a moderate editorial slant.\n\n---\n\n#### Claim Extractor Report\n\n##### **Claims**\n\n1. The Venezuela opposition party mobilized volunteers in the aftermath of the earthq"
+  },
+  {
+    "article_id": 56,
+    "source": "nytimes",
+    "n_claims": 20,
+    "claims": [
+      {
+        "text": "The U.S. seized Venezuelan President Nicol\u00e1s Maduro in a January raid and demanded allegiance from his successor.",
+        "entities": [
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "The U.S. is imagining all the upsides of turning Venezuela into a protectorate.",
+        "entities": [
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "President Trump probably didn't foresee a pair of devastating earthquakes that have resulted in the worst natural disaster in Venezuela in decades.",
+        "entities": [
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "Venezuela's earthquake was the worst natural disaster in Venezuela in decades.",
+        "entities": []
+      },
+      {
+        "text": "Venezuela has a disastrous past few decades.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela has had a disastrous past few decades.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela has a cratering public health system.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela has the world's highest inflation rate.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela has a creaky electric grid.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela's autocratic president was captured in a January raid.",
+        "entities": [
+          "Nicol\u00e1s Maduro"
+        ]
+      },
+      {
+        "text": "Venezuela's autocratic president was captured in a January raid by the U.S.",
+        "entities": [
+          "Nicol\u00e1s Maduro",
+          "U.S."
+        ]
+      },
+      {
+        "text": "Venezuela is effectively a vassal state under the Trump administration.",
+        "entities": [
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "Venezuela is effectively a vassal state under the Trump administration who controls most of the country's export revenues.",
+        "entities": [
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "The Trump administration is controlling Venezuela's export revenues from a Citibank account in New York.",
+        "entities": [
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "Venezuela has had a chaotic past six months.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela has had a chaotic past six months with a seizure of its autocratic president.",
+        "entities": [
+          "Venezuela",
+          "Nicol\u00e1s Maduro"
+        ]
+      },
+      {
+        "text": "Venezuela is supposed to hold free elections in the future.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela's tragedy has become America's problem.",
+        "entities": [
+          "Venezuela",
+          "U.S."
+        ]
+      },
+      {
+        "text": "Venezuela's tragedy has become America's problem under the Trump administration.",
+        "entities": [
+          "Venezuela",
+          "U.S.",
+          "Trump administration"
+        ]
+      },
+      {
+        "text": "Venezuela has a creaky electric grid under the Trump administration.",
+        "entities": [
+          "Venezuela",
+          "Trump administration"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 837,
+      "total_tokens": 1606,
+      "completion_tokens": 769,
+      "prompt_tokens_details": {
+        "cached_tokens": 832
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 3310
+  },
+  {
+    "article_id": 57,
+    "source": "nytimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 758,
+      "total_tokens": 765,
+      "completion_tokens": 7,
+      "prompt_tokens_details": {
+        "cached_tokens": 736
+      }
+    },
+    "parse_ok": false,
+    "error": "Empty response text (finish=stop)"
+  },
+  {
+    "article_id": 58,
+    "source": "nytimes",
+    "n_claims": 15,
+    "claims": [
+      {
+        "text": "Venezuela experienced a large earthquake with a magnitude of 7.1.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The earthquake struck just offshore at a depth of approximately 12 miles.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Search and rescue teams are attempting to find survivors under the rubble.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Rescue operations are hampered by the lack of resources in Venezuela.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Many communities have limited supplies of food and clean water.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "More than 1,000 people have been killed and over 3,000 injured.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Search and rescue operations continue in La Guaira.",
+        "entities": [
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Volunteers are arriving with supplies, but traffic is blocking rescue crews.",
+        "entities": [
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Rescue workers are having difficulty reaching survivors due to traffic.",
+        "entities": [
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "The government has limited access to government vehicles and personnel.",
+        "entities": [
+          "Venezuela",
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Many volunteers are donating supplies, but they are arriving with them.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The bridge has shifted due to the traffic, which has prevented rescue operations.",
+        "entities": [
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Supplies are being delivered to people in need.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Several hospitals are operating under tents.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The death toll is expected to continue to rise.",
+        "entities": [
+          "Venezuela"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 806,
+      "total_tokens": 1364,
+      "completion_tokens": 558,
+      "prompt_tokens_details": {
+        "cached_tokens": 800
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2274
+  },
+  {
+    "article_id": 60,
+    "source": "nytimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1761,
+      "total_tokens": 3809,
+      "completion_tokens": 2048,
+      "prompt_tokens_details": {
+        "cached_tokens": 1760
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 2",
+    "raw_text_preview": "[{\\\"id\\\":0,\\\"object\\\":\\\"text_completion\\\",\\\"created\\\":1621951970,\\\"model\\\":\\\"davinci:base\\\",\\\"choices\\\":[{\\\"text\\\":\\\"\\n\\nSTEP 1 \u2014 Rate editorial framing bias on a scale of 1-10:\\n- 6 = Moderate editorial framing. Clear word choices that steer interpretation.\\n\\nSTEP 2 \u2014 Strip editorial framing (remove adjectives, hedges, passive-voice attribution).**\n\n**\n10 = Pure opinion piece. Every sentence carries judgment.\\n\\\\t- \\\"The corrupt administration rammed through yet another catastrophic policy Tue"
+  },
+  {
+    "article_id": 61,
+    "source": "nytimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 826,
+      "total_tokens": 833,
+      "completion_tokens": 7,
+      "prompt_tokens_details": {
+        "cached_tokens": 800
+      }
+    },
+    "parse_ok": false,
+    "error": "Empty response text (finish=stop)"
+  },
+  {
+    "article_id": 62,
+    "source": "nytimes",
+    "n_claims": 12,
+    "claims": [
+      {
+        "text": "Venezuela's economy had begun crumbling more than a decade ago.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela's economy was on the rise until the earthquakes struck.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Millions of Venezuelans fled the country due to the economy's decline.",
+        "entities": [
+          "Venezuela",
+          "Venezuelans"
+        ]
+      },
+      {
+        "text": "Venezuela's repressive government stole an election and clamped down after the nation's decline.",
+        "entities": [
+          "Venezuela",
+          "repressive government"
+        ]
+      },
+      {
+        "text": "The Trump administration intervened in Venezuela by raiding the capital and declaring it would run the country.",
+        "entities": [
+          "Trump administration",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Oil was flowing again and Venezuela's leaders were mending ties with global lenders.",
+        "entities": [
+          "Venezuela",
+          "oil",
+          "leaders"
+        ]
+      },
+      {
+        "text": "Energy executives were flocking to Caracas to explore potential deals.",
+        "entities": [
+          "Caracas",
+          "energy executives"
+        ]
+      },
+      {
+        "text": "The twin earthquakes upended Venezuela's economic rebirth.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela must now manage an enormous disaster response.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela already had massive reconstruction needs before the earthquakes.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Venezuela's government must rebuild without ready access to resources.",
+        "entities": [
+          "Venezuela",
+          "government"
+        ]
+      },
+      {
+        "text": "Francisco Rodr\u00edguez is a prominent Venezuelan economist.",
+        "entities": [
+          "Francisco Rodr\u00edguez",
+          "Venezuelan economist"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 905,
+      "total_tokens": 1394,
+      "completion_tokens": 489,
+      "prompt_tokens_details": {
+        "cached_tokens": 896
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2080
+  },
+  {
+    "article_id": 63,
+    "source": "aljazeera",
+    "n_claims": 4,
+    "claims": [
+      {
+        "text": "Hundreds of Venezuelans are sheltering at a golf course in La Guaira.",
+        "entities": [
+          "Venezuelans",
+          "La Guaira"
+        ]
+      },
+      {
+        "text": "Upwards of 15,000 people are homeless.",
+        "entities": [
+          "Venezuelans"
+        ]
+      },
+      {
+        "text": "More than 1,700 people are dead.",
+        "entities": [
+          "Venezuelans"
+        ]
+      },
+      {
+        "text": "Tens of thousands remain missing.",
+        "entities": [
+          "Venezuelans"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 513,
+      "total_tokens": 1116,
+      "completion_tokens": 603,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1996
+  },
+  {
+    "article_id": 64,
+    "source": "aljazeera",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 528,
+      "total_tokens": 762,
+      "completion_tokens": 234,
+      "prompt_tokens_details": {
+        "cached_tokens": 512
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 728
+  },
+  {
+    "article_id": 69,
+    "source": "NHK World",
+    "n_claims": 17,
+    "claims": [
+      {
+        "text": "At least 164 people were killed and 971 were injured in Venezuela.",
+        "entities": [
+          "Venezuela",
+          "Caracas"
+        ]
+      },
+      {
+        "text": "Two massive earthquakes hit Venezuela.",
+        "entities": [
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The earthquakes occurred on Wednesday.",
+        "entities": [
+          "Wednesday"
+        ]
+      },
+      {
+        "text": "President Delcy Rodriguez declared a state of emergency.",
+        "entities": [
+          "President Delcy Rodriguez"
+        ]
+      },
+      {
+        "text": "Buildings collapsed in the capital.",
+        "entities": [
+          "Caracas"
+        ]
+      },
+      {
+        "text": "Rescue operations are underway.",
+        "entities": [
+          "rescue operations"
+        ]
+      },
+      {
+        "text": "The quakes occurred in northwestern Venezuela.",
+        "entities": [
+          "northwestern Venezuela"
+        ]
+      },
+      {
+        "text": "The quakes had magnitudes of over 7.",
+        "entities": [
+          "7"
+        ]
+      },
+      {
+        "text": "The quakes occurred about 160 kilometers west of Caracas.",
+        "entities": [
+          "Caracas"
+        ]
+      },
+      {
+        "text": "The Geological Survey classified the quakes as \"violent.\"",
+        "entities": [
+          "Geological Survey"
+        ]
+      },
+      {
+        "text": "There were no tsunami risks.",
+        "entities": [
+          "tsunami threats"
+        ]
+      },
+      {
+        "text": "The quakes likely caused extensive damage.",
+        "entities": [
+          "damage"
+        ]
+      },
+      {
+        "text": "The quakes likely caused high casualties.",
+        "entities": [
+          "casualties"
+        ]
+      },
+      {
+        "text": "The estimated fatalities were \"red alert\" level.",
+        "entities": [
+          "red alert",
+          "red alert levels"
+        ]
+      },
+      {
+        "text": "The US National Oceanic and Atmospheric Administration issued tsunami threat messages.",
+        "entities": [
+          "US National Oceanic and Atmospheric Administration"
+        ]
+      },
+      {
+        "text": "The US Geological Survey says the quakes hit Venezuela on Wednesday.",
+        "entities": [
+          "US Geological Survey"
+        ]
+      },
+      {
+        "text": "The quakes occurred shortly after 22:00 UTC.",
+        "entities": [
+          "22:00 UTC",
+          "UTC"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 709,
+      "total_tokens": 1057,
+      "completion_tokens": 348,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1623
+  },
+  {
+    "article_id": 70,
+    "source": "NHK World",
+    "n_claims": 12,
+    "claims": [
+      {
+        "text": "The health minister has suggested that the death toll from Wednesday's powerful earthquakes has risen to around 235.",
+        "entities": [
+          "Venezuela's health minister",
+          "Carlos Alvarado",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The earthquakes struck about 160 kilometers west of Caracas.",
+        "entities": [
+          "Caracas",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Hundreds of people are believed to be buried in the rubble.",
+        "entities": []
+      },
+      {
+        "text": "The health minister stated that medical institutions have received around 235 victims.",
+        "entities": [
+          "Carlos Alvarado",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "The health minister stated that more than 4,300 people have been treated.",
+        "entities": [
+          "Carlos Alvarado",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Buildings have collapsed in Caracas and La Guaira, home to an international airport.",
+        "entities": [
+          "Caracas",
+          "La Guaira",
+          "Venezuela"
+        ]
+      },
+      {
+        "text": "Over 200 people are trapped under the rubble.",
+        "entities": []
+      },
+      {
+        "text": "Mexico and El Salvador have dispatched rescue teams.",
+        "entities": [
+          "Mexico",
+          "El Salvador"
+        ]
+      },
+      {
+        "text": "The US military is preparing to deploy troops.",
+        "entities": [
+          "US military"
+        ]
+      },
+      {
+        "text": "Venezuela's interim government has requested the US military's assistance.",
+        "entities": [
+          "Venezuela's interim government"
+        ]
+      },
+      {
+        "text": "A website has been created to share information on friends and families.",
+        "entities": []
+      },
+      {
+        "text": "The website has a list of more than 50,000 people who are said to be unaccounted for.",
+        "entities": []
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 703,
+      "total_tokens": 1269,
+      "completion_tokens": 566,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 2137
+  },
+  {
+    "article_id": 71,
+    "source": "globaltimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1443,
+      "total_tokens": 1450,
+      "completion_tokens": 7,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Empty response text (finish=stop)"
+  },
+  {
+    "article_id": 74,
+    "source": "france24",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 575,
+      "total_tokens": 2623,
+      "completion_tokens": 2048,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 3",
+    "raw_text_preview": "{\n  \"results\": [\n    {\n      \"article_id\": 74,\n      \"framing_score\": 9,\n      \"claims\": [\n        {\n          \"text\": \"The earthquake relief was hampered by political crisis.\",\n          \"entities\": [\n            \"Venezuela\",\n            \"earthquake\",\n            \"political crisis\"\n          ]\n        },\n        {\n          \"text\": \"Venezuela is in survival mode.\",\n          \"entities\": [\n            \"Venezuela\",\n            \"survival mode\",\n            \"regime\"\n          ]\n        },\n        {"
+  },
+  {
+    "article_id": 76,
+    "source": "batimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1010,
+      "total_tokens": 1604,
+      "completion_tokens": 594,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1630
+  },
+  {
+    "article_id": 77,
+    "source": "batimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1640,
+      "total_tokens": 1716,
+      "completion_tokens": 76,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 1",
+    "raw_text_preview": "STEP 1:\n\nRate: 1/10\nReasoning:\nThis is a pure wire-service style news article with only the most basic, factual information. There is no editorial framing at all. The article provides only the bare facts of the death toll, rescue efforts, and humanitarian needs without any opinion or judgment.\n"
+  },
+  {
+    "article_id": 78,
+    "source": "batimes",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1748,
+      "total_tokens": 2019,
+      "completion_tokens": 271,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1167
+  },
+  {
+    "article_id": 79,
+    "source": "batimes",
+    "n_claims": 11,
+    "claims": [
+      {
+        "text": "Milei's government is sending humanitarian aid to Venezuela after two strong earthquakes struck.",
+        "entities": [
+          "Milei's government",
+          "Venezuela",
+          "earthquakes"
+        ]
+      },
+      {
+        "text": "President Javier Milei and his cabinet chief, Manuel Adorni, are coordinating a task force to send rescuers.",
+        "entities": [
+          "President Javier Milei",
+          "Cabinet Chief Manuel Adorni",
+          "Venezuela",
+          "rescuers"
+        ]
+      },
+      {
+        "text": "Foreign Minister Pablo Quirno is involved in coordinating aid efforts.",
+        "entities": [
+          "Foreign Minister Pablo Quirno",
+          "Venezuela",
+          "aid efforts"
+        ]
+      },
+      {
+        "text": "Venezuela declared a national emergency after the earthquakes left at least 180 dead and hundreds injured.",
+        "entities": [
+          "Venezuela",
+          "earthquakes",
+          "national emergency",
+          "at least 180"
+        ]
+      },
+      {
+        "text": "Relations between Argentina and Venezuela have historically been tense, but tensions could improve following cooperation.",
+        "entities": [
+          "Argentina",
+          "Venezuela",
+          "tensions",
+          "cooperation"
+        ]
+      },
+      {
+        "text": "The Argentine government is closely monitoring the situation and is expressing solidarity with the Venezuelan people.",
+        "entities": [
+          "Argentine government",
+          "Venezuelan people",
+          "situation",
+          "solidarity"
+        ]
+      },
+      {
+        "text": "The Argentine government issued a statement offering to collaborate with any international organizations on humanitarian assistance.",
+        "entities": [
+          "Argentine government",
+          "Venezuelan people",
+          "humanitarian assistance",
+          "international organizations"
+        ]
+      },
+      {
+        "text": "Despite diplomatic tensions, the Argentine government is sending aid to Venezuela.",
+        "entities": [
+          "Argentine government",
+          "Venezuelan people",
+          "aid",
+          "diplomatic tensions"
+        ]
+      },
+      {
+        "text": "Argentina swiftly expressed solidarity with Venezuelans after the tragedy.",
+        "entities": [
+          "Argentina",
+          "Venezuelans",
+          "tragedy",
+          "solidarity"
+        ]
+      },
+      {
+        "text": "Relations could improve following cooperation.",
+        "entities": [
+          "Argentina",
+          "Venezuela",
+          "cooperation"
+        ]
+      },
+      {
+        "text": "Argentina and Venezuela have diplomatic tensions, but the Argentine government is offering aid.",
+        "entities": [
+          "Argentina",
+          "Venezuela",
+          "diplomatic tensions",
+          "aid"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1132,
+      "total_tokens": 1861,
+      "completion_tokens": 729,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 4305
+  },
+  {
+    "article_id": 81,
+    "source": "thehindu",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 992,
+      "total_tokens": 1271,
+      "completion_tokens": 279,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 15",
+    "raw_text_preview": "The Indian Army field hospital was provided by the Indian Army to the earthquake-affected people of Venezuela\n\n--- ARTICLE 82 ---\nDelhi Airport to receive 1st direct Boeing 777 from Canada\nIndia\u2019s first-ever direct flight between India and Canada, which will be a Boeing 777 from Air India, will land at the Indira Gandhi International Airport (IGIA) in New Delhi on Tuesday (June 28, 2026) afternoon.\n\nThis direct flight from New Delhi to Toronto is a milestone for India-Canada travel. Air India wi"
+  },
+  {
+    "article_id": 82,
+    "source": "thehindu",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 975,
+      "total_tokens": 1634,
+      "completion_tokens": 659,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: Expecting value: line 1 column 2 (char 1)",
+    "raw_text_preview": "STEP 1 - Analysis\n\nArticle title: Indian humanitarian assistance reaches Venezuela: Jaishankar on Op. Amistad\n\nFRAME TYPE: 5\nMOSTLY NEUTRAL WITH OCCASIONAL LOADED LANGUAGE\nClear word choices steer interpretation while allowing some editorial framing\n\nSTEP 2 - Stripped Framing\n\nARTICLE 82 - Stripped Framing\n\n[No significant framing identified - standard wire reporting]\n\nSTEP 3 - Claim Extraction\n\nARTICLE 82 Claims (11 claims extracted)\n\n1. Relief supplies, medical equipment, an field hospital uni"
+  },
+  {
+    "article_id": 84,
+    "source": "jamaicaobserver",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1504,
+      "total_tokens": 1639,
+      "completion_tokens": 135,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 438
+  },
+  {
+    "article_id": 85,
+    "source": "MercoPress",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1068,
+      "total_tokens": 2015,
+      "completion_tokens": 947,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 2",
+    "raw_text_preview": "You are a forensic claim extractor. For each article you receive:\n\nSTEP 1 \u2014 Rate editorial framing bias on a scale of 1-10:\n  1 = Pure wire-service style. Just the facts, no adjectives, no opinion.\n  3 = Mostly neutral with occasional loaded language.\n  5 = Moderate editorial framing. Clear word choices that steer interpretation.\n  7 = Heavy editorializing. Strong adjectives, clear author opinion, dramatic framing.\n  10 = Pure opinion piece. Every sentence carries judgment.\n\nSTEP 2 \u2014 Strip edito"
+  },
+  {
+    "article_id": 86,
+    "source": "MercoPress",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 981,
+      "total_tokens": 1703,
+      "completion_tokens": 722,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 1",
+    "raw_text_preview": "STEP 1: 7 (Moderate editorializing)\n\nSTEP 2: Neutralizes loaded language (deleted controversial claims):\nAuthorities raised the death toll to 1,450.\n\nSTEP 3: Claims:\n1. A twin earthquake struck north-central Venezuela on Wednesday.\n2. The quakes were among the most powerful recorded in Venezuela in more than a century.\n3. The quakes had magnitudes of 7.2 and 7.5.\n4. More than 72 hours after the quakes, rescuers are requesting masks and resources for adequate sanitary conditions.\n5. The presence "
+  },
+  {
+    "article_id": 87,
+    "source": "MercoPress",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1038,
+      "total_tokens": 2649,
+      "completion_tokens": 1611,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 1",
+    "raw_text_preview": "Here are the results for article 87:\n\nframing_score: 3\nresults: [{\n\t\"article_id\": 87,\n\t\"framing_score\": 3,\n\t\"claims\": [{\n\t\t\"text\": \"The United Kingdom deployed a specialist search and rescue team of 68 people to Venezuela to assist in locating and rescuing people trapped in the rubble.\",\n\t\t\"entities\": [\"United Kingdom\", \"specialist search and rescue team\", \"Venezuela\", \"search and rescue team\"]\n\t}, {\n\t\t\"text\": \"The UK International Search and Rescue team departed from RAF Brize Norton on a Royal"
+  },
+  {
+    "article_id": 88,
+    "source": "MercoPress",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1037,
+      "total_tokens": 1195,
+      "completion_tokens": 158,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 3",
+    "raw_text_preview": "STEP 1 - Editorial Framing Bias\n\nScore: 7/10\n(Clear judgment from framing, strong language, but neutral facts)\n\nSTEP 2 - Frame-Neutral Text\n\nThe number of victims from the twin earthquake that struck Venezuela was at least 920 dead and 3,360 injured, according to the toll given by the president of the National Assembly. Rescue teams worked against the clock more than 48 hours after the quakes, as the chances of finding survivors narrowed.\n\nMost deaths were concentrated in the coastal state of La"
+  },
+  {
+    "article_id": 89,
+    "source": "theintercept",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1386,
+      "total_tokens": 1771,
+      "completion_tokens": 385,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1353
+  },
+  {
+    "article_id": 94,
+    "source": "sputnikglobe",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1520,
+      "total_tokens": 2371,
+      "completion_tokens": 851,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 3162
+  },
+  {
+    "article_id": 96,
+    "source": "sputnikglobe",
+    "n_claims": 10,
+    "claims": [
+      {
+        "text": "The most affected areas are Venezuela's capital Caracas and the states of Miranda, La Guaira, Aragua, Carabobo, and Falcon",
+        "entities": [
+          "Venezuela's capital Caracas",
+          "Miranda",
+          "La Guaira",
+          "Aragua",
+          "Carabobo",
+          "Falcon"
+        ]
+      },
+      {
+        "text": "Infrastructure and disruptions to essential services were damaged",
+        "entities": []
+      },
+      {
+        "text": "Mobile communications and the internet are experiencing disruptions",
+        "entities": []
+      },
+      {
+        "text": "Maiquetia International Airport was closed due to infrastructure damage",
+        "entities": [
+          "Maiquetia International Airport"
+        ]
+      },
+      {
+        "text": "The government has declared a state of emergency and suspended school classes and non-essential activities",
+        "entities": []
+      },
+      {
+        "text": "The General Emergency Staff has been activated to coordinate actions",
+        "entities": [
+          "General Emergency Staff"
+        ]
+      },
+      {
+        "text": "Preliminary reports indicate 32 fatalities and more than 700 injuries",
+        "entities": []
+      },
+      {
+        "text": "Various countries and international organizations have expressed solidarity with Venezuela",
+        "entities": [
+          "Various countries",
+          "international organizations",
+          "the UN",
+          "the US",
+          "India",
+          "Mexico",
+          "other countries in the region"
+        ]
+      },
+      {
+        "text": "A Sputnik correspondent in Caracas reported that debris clearance work has begun",
+        "entities": [
+          "Sputnik correspondent",
+          "Caracas"
+        ]
+      },
+      {
+        "text": "The correspondent spoke with people on the streets, who are frightened by what happened",
+        "entities": []
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 650,
+      "total_tokens": 1016,
+      "completion_tokens": 366,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 1528
+  },
+  {
+    "article_id": 100,
+    "source": "npr",
+    "n_claims": 0,
+    "claims": [],
+    "usage": {
+      "prompt_tokens": 1576,
+      "total_tokens": 3624,
+      "completion_tokens": 2048,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": false,
+    "error": "Parse error: unbalanced JSON at depth 2",
+    "raw_text_preview": "[ {\"article_id\":100,\"framing_score\":9.0,\"claims\": [{\"text\": \"The backhoe operator at the site of the collapsed 12-story building was never there.\", \"entities\": [\"backhoe operator\"]}, {\"text\": \"The government backhoe operator failed to show up.\", \"entities\": [\"government backhoe operator\"]}, {\"text\": \"The backhoe operator did not attend to the collapsed 12-story building.\", \"entities\": [\"backhoe operator\"]}, {\"text\": \"The government backhoe operator was absent from the collapsed building site.\", "
+  },
+  {
+    "article_id": 101,
+    "source": "apnews",
+    "n_claims": 12,
+    "claims": [
+      {
+        "text": "More than 100 Venezuelans who were deported from the US are missing.",
+        "entities": [
+          "Venezuelans",
+          "US"
+        ]
+      },
+      {
+        "text": "A helicopter takes off from a US Navy ship.",
+        "entities": [
+          "US Navy ship",
+          "helicopter"
+        ]
+      },
+      {
+        "text": "The US Navy ship is docked at the seaport.",
+        "entities": [
+          "US Navy ship",
+          "seaport"
+        ]
+      },
+      {
+        "text": "Survivors are being held in a hotel.",
+        "entities": [
+          "Survivors",
+          "hotel"
+        ]
+      },
+      {
+        "text": "A man sits in earthquake rubble.",
+        "entities": [
+          "man",
+          "earthquake rubble"
+        ]
+      },
+      {
+        "text": "The US runs 12 deportation flights to Venezuela.",
+        "entities": [
+          "US",
+          "Venezuela",
+          "deportation flights"
+        ]
+      },
+      {
+        "text": "The flights resumed in February 2025.",
+        "entities": [
+          "flights",
+          "February 2025"
+        ]
+      },
+      {
+        "text": "Lisbeth Portillo said she escaped the rubble.",
+        "entities": [
+          "Lisbeth Portillo",
+          "rubble"
+        ]
+      },
+      {
+        "text": "She was born again.",
+        "entities": [
+          "Lisbeth Portillo"
+        ]
+      },
+      {
+        "text": "Portillo has bruises.",
+        "entities": [
+          "Lisbeth Portillo",
+          "bruises"
+        ]
+      },
+      {
+        "text": "Portillo crossed the US border in 2021.",
+        "entities": [
+          "Lisbeth Portillo",
+          "US border",
+          "2021"
+        ]
+      },
+      {
+        "text": "Her children were able to reunite with her.",
+        "entities": [
+          "Lisbeth Portillo",
+          "children"
+        ]
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1587,
+      "total_tokens": 2171,
+      "completion_tokens": 584,
+      "prompt_tokens_details": {
+        "cached_tokens": 416
+      }
+    },
+    "parse_ok": true,
+    "finish_reason": "stop",
+    "raw_text_len": 3059
+  }
+]
