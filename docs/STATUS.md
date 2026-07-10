@@ -141,7 +141,7 @@ CONFOUNDED: Copy B and P4 differ in BOTH blob-split AND sim_threshold. The 3→0
 
 ## Next Action
 
-UX2 committed (2b6bafb): intro strip, 7 tooltips, tier legend rewrite. Vitest: 13 failures (11 router-shell pre-existing + 1 schema/better-sqlite3 stale + 1 docker/D2 volume). POC server killed. Next: human reviews rendered copy.
+GEMMA integration complete. Uncommitted changes: `config/providers.json` (+fireworks-gemma entry), `README.md` (+Gemma subsection), `scripts/gemma_check.sh`, `scripts/gemma_agent4_run.py`, `docs/evidence/gemma/`, `docs/implementation-rounds/001-006`. Human reviews and commits.
 
 ## Design Law (human — standing, UX18)
 
@@ -209,3 +209,5 @@ Laws 2 and 3 SUPERSEDE design-tokens.md where they conflict.
 | 32 | Shipped with untested test breakage (vitest baseline drift) | UX54 added fetch("/api/stats") to PageShell without updating the 3 scraper status indicator tests in router-shell.test.tsx. Those tests stubbed global fetch with a single-response mock; PageShell's second fetch call received undefined and crashed with "Cannot read properties of undefined (reading 'then')". 3 new failures shipped unnoticed (15 total vs 12 baseline). Fixed in UX55: mockFetch helper routes by URL to serve both /api/scraper/status and /api/stats. |
 
 ## Completed Work (recent)
+
+- GEMMA: Gemma 4 E4B integration (6 rounds, 001-006). Provider entry added to `config/providers.json` (`fireworks-gemma`, deployment `x5v99zxx`). Chat endpoint blocked (no chat template), completions workaround discovered. Verified smoke test (34/8 tokens) + Agent 2 extraction (8 claims, 564/564 tokens). Nondeterministic across 3 runs (4/8/0 claims) — consistent with small model on complex prompt. Evidence: `docs/evidence/gemma/README.md`. README updated with Gemma subsection. Deployment deleted (bills while idle). All changes uncommitted.
