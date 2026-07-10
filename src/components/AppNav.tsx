@@ -7,6 +7,7 @@ import { OnboardingDialog } from "./OnboardingDialog";
 const navItems = [
 	{ to: "/", label: "Sources" },
 	{ to: "/pipeline", label: "Pipeline" },
+	{ to: "/investigate", label: "Investigate" },
 	{ to: "/panel", label: "Panel" },
 ] as const;
 
