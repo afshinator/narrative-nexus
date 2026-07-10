@@ -54,8 +54,12 @@ The app ships as a single self-contained container — FastAPI backend, the pre-
 ```bash
 git clone https://github.com/afshinator/narrative-nexus
 cd narrative-nexus
-docker compose up
+docker compose up --build
 ```
+
+> **Always use `--build`.** `docker compose up` alone reuses any existing
+> `narrative-nexus_app` image from a prior run and will serve stale code even
+> after you pull new changes; `--build` forces a fresh image from current source.
 
 Then open **http://localhost:8000**.
 
@@ -147,3 +151,5 @@ Unset (the default) leaves the scraper fully functional for local or single-user
 ---
 
 *"Narrative Nexus tracks consensus reality, not truth."*
+README.md
+Displaying README.md.
