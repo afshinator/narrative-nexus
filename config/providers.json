@@ -50,6 +50,12 @@
         "name": "OpenAI",
         "model": "gpt-4o-mini",
         "amd": false
+      },
+      {
+        "id": "fireworks-gemma",
+        "name": "Fireworks AI (Gemma 4 E4B)",
+        "model": "accounts/afshinator-b1hiwmnhr/deployments/x5v99zxx",
+        "amd": true
       }
     ]
   },

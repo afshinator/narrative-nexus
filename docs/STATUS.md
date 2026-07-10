@@ -1,7 +1,7 @@
 # Narrative Nexus — STATUS
 
-**Last updated:** 2026-07-09 (pre-exit)
-**Phase:** REPO-CLEANUP — Root file inventory: 39 root files analyzed, 14 STALE identified (shell redirect typos =0.9.5/=5.0.0/--db, dead biome.json/.stylelintrc.json, one-off diagnostic scripts count_chars/test_count/output_results/run_output, scratch dumps tmp_content_*.txt, dead .readonly sentinel, gitignored logs). .env flagged with secrets (already gitignored). Cleanup inventory (docs/cleanup-inventory.md): 42 safe-to-delete scratch files, ~65 needing judgment, 2 GOLDEN DBs. Human executed deletions in 9eefd5f/a13d97b/b1eef14/594eba3.
+**Last updated:** 2026-07-10
+**Phase:** GEMMA — Gemma 4 E4B integration (provider entry, completions workaround, verified extraction, README section, evidence file). Deployment deleted. All changes uncommitted. FP: 378/10/358/17/13653.
 **Phase:** NAV-HIDE — Investigate link removed from top nav (src/components/AppNav.tsx:1-line deletion). Page, route, and component preserved — /investigate still resolves. Build passes. FP: 378/10/358/17/13653.
 **Phase:** UX59 — Docker chapter closeout (documentation only). UX57+UX58 verified on host: single-container Docker judge-runnable (smoke.sh ALL PASS, /api/stats 358/37, browser pages populated, egress OK). Keyless scraper functional (358→1855 disposable copy, host DB intact). NN_DISABLE_SCRAPER=1 verified. Deferred: HF Spaces deployment (after deck/video). FP: 378/10/358/17/13653.
 **Phase:** UX57 — Dockerfile.app COPY destination fixed (/data/nn.db → /data/demo/demo.db) to match NN_DB_PATH in docker-compose.yml. Container was silently booting with empty DB. Swept 30+ nn.db references — no runtime code paths, 1 test flagged (PROPOSED). scripts/smoke.sh added: 6-step container rebuild + fingerprint verification. Empty-DB guard implemented in UX58. FP: 378/10/358/17/13653.

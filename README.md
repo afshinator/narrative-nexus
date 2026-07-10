@@ -39,6 +39,18 @@ The output is a **living reputation ledger**: six behavioral dimensions per sour
 
 Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The shipped database was constructed by running these agents — clustering, claim extraction, claim matching, and consensus — through Fireworks during hackathon week (July 3–5, 2026), using the hackathon-provided Fireworks credits.
 
+### Gemma integration
+
+**Gemma 4 E4B** (deployed on-demand via Fireworks AI) is integrated as a
+selectable LLM provider (`fireworks-gemma` in `config/providers.json`,
+visible in the Pipeline page dropdowns). In a verified test run, Gemma
+executed Narrative Nexus's Agent 2 claim-extraction prompt on a demo
+article and returned valid structured claims. Full evidence — model
+string, smoke test, extraction output, and token usage — is in
+[`docs/evidence/gemma/README.md`](docs/evidence/gemma/README.md).
+Gemma is an optional provider; the shipped database was built with the
+default Fireworks/DeepSeek configuration.
+
 **Provider configurability:** runtime provider selection is visible on the Pipeline page (`/pipeline`), where each agent stage shows a dropdown of available compute providers. Fireworks entries carry an `(AMD)` badge. The architecture is deliberately provider-agnostic — Fireworks/AMD is the default, not a hard dependency.
 
 **Honest wording note:** we say "configured to run" because individual LLM responses carry no hardware attestation trail. The system routes AI workloads through Fireworks AI on AMD Instinct via `config/providers.json` defaults and the Pipeline page dropdowns.
