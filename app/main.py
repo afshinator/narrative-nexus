@@ -779,9 +779,12 @@ async def serve_spa(full_path: str = ""):
             # Hashed assets: cache forever (content hash changes on edit)
             if full_path.startswith("assets/") and "/" in full_path:
                 headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            # index.html accessed directly — same no-store as SPA fallback
+            elif full_path == "index.html":
+                headers["Cache-Control"] = "no-store"
             return FileResponse(file_path, headers=headers)
     # SPA fallback: all client-side routes serve index.html — never cache
     return FileResponse(
         _os.path.join(_DIST_DIR, "index.html"),
-        headers={"Cache-Control": "no-cache, must-revalidate"},
+        headers={"Cache-Control": "no-store"},
     )
