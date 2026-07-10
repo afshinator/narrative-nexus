@@ -766,11 +766,22 @@ async def serve_spa(full_path: str = ""):
     /assets/app.js   → dist/assets/app.js (if exists)
     /source/5        → dist/index.html (SPA fallback)
     /cluster/966     → dist/index.html (SPA fallback)
+
+    Cache policy:
+      /assets/* — filenames contain content hash → cache forever (immutable)
+      all other paths (index.html, SPA fallback) → no-cache, revalidate
     """
     # Direct file match: serve static assets under dist/
     if full_path:
         file_path = _os.path.join(_DIST_DIR, full_path)
         if _os.path.isfile(file_path):
-            return FileResponse(file_path)
-    # SPA fallback: all client-side routes serve index.html
-    return FileResponse(_os.path.join(_DIST_DIR, "index.html"))
+            headers = {}
+            # Hashed assets: cache forever (content hash changes on edit)
+            if full_path.startswith("assets/") and "/" in full_path:
+                headers["Cache-Control"] = "public, max-age=31536000, immutable"
+            return FileResponse(file_path, headers=headers)
+    # SPA fallback: all client-side routes serve index.html — never cache
+    return FileResponse(
+        _os.path.join(_DIST_DIR, "index.html"),
+        headers={"Cache-Control": "no-cache, must-revalidate"},
+    )
