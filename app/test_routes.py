@@ -20,10 +20,22 @@ def _disable_pipeline():
 
 
 @pytest.fixture
-def client():
-    """FastAPI test client with lifespan (scheduler attached to app.state)."""
-    with TestClient(app) as c:
-        yield c
+def client(tmp_path):
+    """FastAPI test client with lifespan, isolated from the golden DB.
+
+    Copies data/demo/demo.db to a temp file so the scraper and any other
+    DB writes are confined to a per-test scratch copy.  The golden DB
+    is never opened by this fixture.
+    """
+    import shutil
+    db_copy = tmp_path / "test.db"
+    shutil.copy("data/demo/demo.db", str(db_copy))
+    os.environ["NN_DB_PATH"] = str(db_copy)
+    try:
+        with TestClient(app) as c:
+            yield c
+    finally:
+        del os.environ["NN_DB_PATH"]
 
 
 class TestHealth:

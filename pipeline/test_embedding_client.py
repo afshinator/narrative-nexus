@@ -120,3 +120,34 @@ class TestEmbeddingClientAPI:
             call_kwargs = mock_embeddings.call_args.kwargs
             assert call_kwargs["model"] == "nomic-ai/nomic-embed-text-v1.5"
             assert call_kwargs["input"] == ["clustering: hello", "clustering: world"]
+
+
+# ── PIPE-1: Config-driven provider resolution ───────────────────────────
+
+
+class TestEmbeddingClientBaseURL:
+    """Provider dict with base_url → EmbeddingClient uses it over _EMBEDDING_BASE_URLS."""
+
+    @pytest.mark.asyncio
+    async def test_uses_base_url_from_provider_dict(self):
+        provider = {
+            "id": "fireworks",
+            "name": "Fireworks Custom",
+            "model": "nomic-ai/nomic-embed-text-v1.5",
+            "base_url": "https://custom-fireworks.example.com/v1",
+            "amd": True,
+        }
+        with patch("pipeline.embedding_client.openai.AsyncOpenAI") as mock_cls:
+            mock_instance = mock_cls.return_value
+            mock_embeddings = AsyncMock()
+            mock_instance.embeddings.create = mock_embeddings
+            mock_embeddings.return_value.data = [
+                MagicMock(embedding=[0.1, 0.2, 0.3]),
+            ]
+
+            client = EmbeddingClient(provider, api_key="k")
+            await client.embed(["hello"])
+
+            # Verify AsyncOpenAI was created with the provider's base_url
+            call_kwargs = mock_cls.call_args.kwargs
+            assert call_kwargs["base_url"] == "https://custom-fireworks.example.com/v1"

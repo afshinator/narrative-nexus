@@ -115,9 +115,9 @@ def run_daily_pipeline(
         a2 = ForensicExtractionAgent(
             db_path=db_path,
             llm_provider=a2_llm_provider,
-            # Env var fallback for API key
+            # Env var fallback for API key — config-driven: api_key_env field, then {ID}_API_KEY
             api_key=os.environ.get(
-                f"{a2_llm_provider['id'].upper()}_API_KEY", ""
+                a2_llm_provider.get("api_key_env") or f"{a2_llm_provider['id'].upper()}_API_KEY", ""
             ),
         )
         a2_result = asyncio.run(a2.run(article_map=article_map))

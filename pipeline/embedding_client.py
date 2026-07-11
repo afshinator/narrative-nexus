@@ -86,6 +86,8 @@ class EmbeddingClient:
         self.model: str = provider["model"]
         self.provider_name: str = provider["name"]
         self._api_key: str = api_key
+        # Config-driven base_url: read from provider dict, fall back to hardcoded map
+        self._base_url: str | None = provider.get("base_url")
 
         if self.provider_id in _UNSUPPORTED_EMBEDDING_PROVIDERS:
             raise EmbeddingError(
@@ -159,7 +161,7 @@ class EmbeddingClient:
     async def _embed_api(self, texts: list[str]) -> list[list[float]]:
         """Call the provider's embeddings API via openai.AsyncOpenAI."""
         if self._openai_client is None:
-            base_url = _EMBEDDING_BASE_URLS.get(self.provider_id)
+            base_url = self._base_url or _EMBEDDING_BASE_URLS.get(self.provider_id)
             if base_url is None:
                 raise EmbeddingError(
                     f"No base URL for embedding provider {self.provider_id!r}"

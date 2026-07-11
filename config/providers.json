@@ -5,18 +5,24 @@
         "id": "fireworks",
         "name": "Fireworks AI",
         "model": "BAAI/bge-base-en-v1.5",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
         "amd": true
       },
       {
         "id": "fireworks-nomic",
         "name": "Fireworks AI (nomic)",
         "model": "nomic-ai/nomic-embed-text-v1.5",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
         "amd": true
       },
       {
         "id": "openai",
         "name": "OpenAI",
         "model": "text-embedding-3-small",
+        "base_url": "https://api.openai.com/v1",
+        "api_key_env": "OPENAI_API_KEY",
         "amd": false
       },
       {
@@ -29,32 +35,82 @@
     "llm": [
       {
         "id": "fireworks",
-        "name": "Fireworks AI",
+        "name": "Fireworks AI (DeepSeek V4 Pro)",
         "model": "accounts/fireworks/models/deepseek-v4-pro",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
+        "amd": true
+      },
+      {
+        "id": "fireworks-glm-5p1",
+        "name": "Fireworks AI (GLM 5P1)",
+        "model": "accounts/fireworks/models/glm-5p1",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
+        "amd": true
+      },
+      {
+        "id": "fireworks-glm-5p2",
+        "name": "Fireworks AI (GLM 5P2)",
+        "model": "accounts/fireworks/models/glm-5p2",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
+        "amd": true
+      },
+      {
+        "id": "fireworks-gpt-oss",
+        "name": "Fireworks AI (GPT-OSS 120B)",
+        "model": "accounts/fireworks/models/gpt-oss-120b",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
+        "amd": true
+      },
+      {
+        "id": "fireworks-kimi-k2p5",
+        "name": "Fireworks AI (Kimi K2P5)",
+        "model": "accounts/fireworks/models/kimi-k2p5",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
+        "amd": true
+      },
+      {
+        "id": "fireworks-kimi-k2p6",
+        "name": "Fireworks AI (Kimi K2P6)",
+        "model": "accounts/fireworks/models/kimi-k2p6",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
         "amd": true
       },
       {
         "id": "opencode",
         "name": "OpenCode Zen",
         "model": "deepseek-v4-flash-free",
+        "base_url": "https://opencode.ai/zen/v1",
+        "api_key_env": "OPENCODE_API_KEY",
         "amd": false
       },
       {
         "id": "deepseek",
         "name": "DeepSeek API",
         "model": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com/v1",
+        "api_key_env": "DEEPSEEK_API_KEY",
         "amd": false
       },
       {
         "id": "openai",
         "name": "OpenAI",
         "model": "gpt-4o-mini",
+        "base_url": "https://api.openai.com/v1",
+        "api_key_env": "OPENAI_API_KEY",
         "amd": false
       },
       {
         "id": "fireworks-gemma",
-        "name": "Fireworks AI (Gemma 4 E4B)",
+        "name": "Fireworks AI (Gemma 4 E4B — standby)",
         "model": "accounts/afshinator-b1hiwmnhr/deployments/x5v99zxx",
+        "base_url": "https://api.fireworks.ai/inference/v1",
+        "api_key_env": "FIREWORKS_API_KEY",
         "amd": true
       }
     ]

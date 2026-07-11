@@ -137,3 +137,64 @@ class TestLLMClientFromConfig:
         assert provider["id"] == "opencode"
         client = LLMClient(provider, api_key="k")
         assert client.model == "deepseek-v4-flash-free"
+
+
+# ── PIPE-1: Config-driven provider resolution ───────────────────────────
+
+
+class TestLLMClientBaseURL:
+    """Provider dict with base_url → LLMClient uses it, not PROVIDER_BASE_URLS."""
+
+    def test_uses_base_url_from_provider_dict(self):
+        provider = {
+            "id": "my-provider",
+            "name": "My Provider",
+            "model": "my-model",
+            "base_url": "https://custom.example.com/v1",
+            "amd": False,
+        }
+        client = LLMClient(provider, api_key="k")
+        base = str(client._openai.base_url).rstrip("/")
+        assert base == "https://custom.example.com/v1"
+
+    def test_falls_back_when_no_base_url_in_dict(self):
+        """Without base_url, falls back to PROVIDER_BASE_URLS (existing behavior)."""
+        client = LLMClient(SAMPLE_LLM_PROVIDER, api_key="k")
+        base = str(client._openai.base_url).rstrip("/")
+        assert base == PROVIDER_BASE_URLS["opencode"].rstrip("/")
+
+    def test_no_valueerror_when_id_not_in_map_but_base_url_present(self):
+        """The actual bug: id NOT in PROVIDER_BASE_URLS, but base_url IS in dict."""
+        provider = {
+            "id": "fireworks-gemma",
+            "name": "Fireworks (Gemma)",
+            "model": "accounts/fireworks/models/gemma-4-e4b",
+            "base_url": "https://api.fireworks.ai/inference/v1",
+            "amd": True,
+        }
+        client = LLMClient(provider, api_key="k")
+        assert client.provider_id == "fireworks-gemma"
+        assert client.model == "accounts/fireworks/models/gemma-4-e4b"
+
+
+class TestLLMClientAPIKeyEnv:
+    """Provider dict with api_key_env → LLMClient reads that env var."""
+
+    def test_uses_api_key_env_from_provider_dict(self, monkeypatch):
+        monkeypatch.setenv("FIREWORKS_API_KEY", "test-fireworks-key-xyz")
+        provider = {
+            "id": "fireworks-gemma",
+            "name": "Fireworks (Gemma)",
+            "model": "accounts/fireworks/models/gemma-4-e4b",
+            "base_url": "https://api.fireworks.ai/inference/v1",
+            "api_key_env": "FIREWORKS_API_KEY",
+            "amd": True,
+        }
+        client = LLMClient(provider, api_key="")
+        assert client.provider_id == "fireworks-gemma"
+
+    def test_falls_back_to_id_api_key_when_no_api_key_env(self, monkeypatch):
+        """Without api_key_env, falls back to {ID}_API_KEY."""
+        monkeypatch.setenv("OPENCODE_API_KEY", "oc-key-123")
+        client = LLMClient(SAMPLE_LLM_PROVIDER, api_key="")
+        assert client.provider_id == "opencode"

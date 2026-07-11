@@ -50,3 +50,8 @@ data/nn.db
 
 # Local dev read-only sentinel (submission container gets its own via Dockerfile)
 .readonly
+
+data/demo/demo.db-wal
+data/demo/demo.db-shm
+
+

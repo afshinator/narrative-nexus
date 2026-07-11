@@ -61,14 +61,15 @@ class LLMClient:
         self.provider_name: str = provider["name"]
 
         if not api_key:
-            api_key = os.environ.get(_env_key(self.provider_id), "")
+            key_env = provider.get("api_key_env") or _env_key(self.provider_id)
+            api_key = os.environ.get(key_env, "")
         if not api_key:
             raise ValueError(
                 f"No API key for provider {self.provider_id!r}. "
                 f"Set {_env_key(self.provider_id)} env var or pass api_key=."
             )
 
-        base_url = PROVIDER_BASE_URLS.get(self.provider_id)
+        base_url = provider.get("base_url") or PROVIDER_BASE_URLS.get(self.provider_id)
         if base_url is None:
             raise ValueError(f"Unknown provider id: {self.provider_id!r}")
 
