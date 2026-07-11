@@ -499,8 +499,7 @@ function Accordion({
           >
             {dropdown.options.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name}
-                {p.amd ? " (AMD)" : ""} — {p.model}
+                {(p as any).label || `${p.name}${p.amd ? " (AMD)" : ""} — ${p.model}`}
               </option>
             ))}
           </select>

@@ -35,7 +35,8 @@
     "llm": [
       {
         "id": "fireworks",
-        "name": "Fireworks AI (DeepSeek V4 Pro)",
+        "name": "Fireworks AI",
+        "label": "Fireworks AI — DeepSeek V4 Pro",
         "model": "accounts/fireworks/models/deepseek-v4-pro",
         "base_url": "https://api.fireworks.ai/inference/v1",
         "api_key_env": "FIREWORKS_API_KEY",
@@ -43,7 +44,8 @@
       },
       {
         "id": "fireworks-glm-5p1",
-        "name": "Fireworks AI (GLM 5P1)",
+        "name": "Fireworks AI",
+        "label": "Fireworks AI — GLM 5.1",
         "model": "accounts/fireworks/models/glm-5p1",
         "base_url": "https://api.fireworks.ai/inference/v1",
         "api_key_env": "FIREWORKS_API_KEY",
@@ -51,7 +53,8 @@
       },
       {
         "id": "fireworks-glm-5p2",
-        "name": "Fireworks AI (GLM 5P2)",
+        "name": "Fireworks AI",
+        "label": "Fireworks AI — GLM 5.2",
         "model": "accounts/fireworks/models/glm-5p2",
         "base_url": "https://api.fireworks.ai/inference/v1",
         "api_key_env": "FIREWORKS_API_KEY",
@@ -59,7 +62,8 @@
       },
       {
         "id": "fireworks-gpt-oss",
-        "name": "Fireworks AI (GPT-OSS 120B)",
+        "name": "Fireworks AI",
+        "label": "Fireworks AI — GPT-OSS 120B",
         "model": "accounts/fireworks/models/gpt-oss-120b",
         "base_url": "https://api.fireworks.ai/inference/v1",
         "api_key_env": "FIREWORKS_API_KEY",
@@ -67,7 +71,8 @@
       },
       {
         "id": "fireworks-kimi-k2p5",
-        "name": "Fireworks AI (Kimi K2P5)",
+        "name": "Fireworks AI",
+        "label": "Fireworks AI — Kimi K2.5",
         "model": "accounts/fireworks/models/kimi-k2p5",
         "base_url": "https://api.fireworks.ai/inference/v1",
         "api_key_env": "FIREWORKS_API_KEY",
@@ -75,7 +80,8 @@
       },
       {
         "id": "fireworks-kimi-k2p6",
-        "name": "Fireworks AI (Kimi K2P6)",
+        "name": "Fireworks AI",
+        "label": "Fireworks AI — Kimi K2.6",
         "model": "accounts/fireworks/models/kimi-k2p6",
         "base_url": "https://api.fireworks.ai/inference/v1",
         "api_key_env": "FIREWORKS_API_KEY",
@@ -104,14 +110,6 @@
         "base_url": "https://api.openai.com/v1",
         "api_key_env": "OPENAI_API_KEY",
         "amd": false
-      },
-      {
-        "id": "fireworks-gemma",
-        "name": "Fireworks AI (Gemma 4 E4B — standby)",
-        "model": "accounts/afshinator-b1hiwmnhr/deployments/x5v99zxx",
-        "base_url": "https://api.fireworks.ai/inference/v1",
-        "api_key_env": "FIREWORKS_API_KEY",
-        "amd": true
       }
     ]
   },
