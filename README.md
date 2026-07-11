@@ -41,9 +41,10 @@ Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Ev
 
 ### Gemma integration
 
-**Gemma 4 E4B** (deployed on-demand via Fireworks AI) is integrated as a
-selectable LLM provider (`fireworks-gemma` in `config/providers.json`,
-visible in the Pipeline page dropdowns). In verified test runs, Gemma
+**Gemma 4 E4B** (deployed on-demand via Fireworks AI) was verified against
+Agent 2's claim-extraction prompt across the full 61-article Venezuela cluster
+(268 structured claims); documented in `docs/evidence/gemma/`. It is not
+wired into the shipped provider configuration. In verified test runs, Gemma
 executed Narrative Nexus's Agent 2 claim-extraction prompt across the
 full 61-article Venezuela story cluster, returning 268 structured claims
 (36 of 61 articles parsed cleanly — per-article results and token usage
