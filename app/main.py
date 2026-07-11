@@ -559,13 +559,13 @@ def api_cluster_report(cluster_id: int, conn = Depends(get_persistent_db)):
 
     # UX41: silent edits, corrections, time-to-consensus
     silent_edits = conn.execute(
-        "SELECT COUNT(*) FROM silent_edits se "
+        "SELECT COUNT(DISTINCT se.id) FROM silent_edits se "
         "INNER JOIN claims c ON c.article_id = se.article_id "
         "WHERE c.cluster_id = ?",
         (cluster_id,),
     ).fetchone()[0]
     corrections = conn.execute(
-        "SELECT COUNT(*) FROM corrections co "
+        "SELECT COUNT(DISTINCT co.id) FROM corrections co "
         "INNER JOIN claims c ON c.article_id = co.article_id "
         "WHERE c.cluster_id = ?",
         (cluster_id,),
