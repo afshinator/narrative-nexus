@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 
 interface SourceRow {
@@ -318,13 +318,13 @@ export default function ClusterReportPage() {
 								{(() => {
 									const absorbed = data.claims.filter((c) => c.state === "CONSENSUS_ABSORBED");
 									const rest = data.claims.filter((c) => c.state !== "CONSENSUS_ABSORBED");
-									const renderClaim = (c: ClaimRow, _i: number, isAbsorbed: boolean) => (
+									const renderClaim = (c: ClaimRow, _i: number, isAbsorbed: boolean, showSource: boolean) => (
 										<tr
 											key={c.id}
 											className={`border-b border-[var(--nn-border)] last:border-b-0 ${isAbsorbed ? "bg-[var(--nn-teal)]/5" : ""}`}
 										>
 											<td className="px-1.5 py-1.5 font-mono text-[0.75rem] text-[var(--nn-text-dim)] whitespace-nowrap">
-												{c.domains.join(", ")}
+												{showSource ? c.domains.join(", ") : "\u00A0"}
 											</td>
 											<td className="px-1.5 py-1.5 text-[var(--nn-text)] max-w-[500px] truncate" title={c.text}>
 												{isAbsorbed ? <strong>{c.text}</strong> : c.text}
@@ -336,15 +336,41 @@ export default function ClusterReportPage() {
 											</td>
 										</tr>
 									);
+
+									// Group pending/unresolved claims by source set
+									const groupKey = (c: ClaimRow) => [...c.domains].sort().join(", ");
+									const groups = new Map<string, ClaimRow[]>();
+									for (const c of rest) {
+										const k = groupKey(c);
+										if (!groups.has(k)) groups.set(k, []);
+										groups.get(k)!.push(c);
+									}
+									const sortedGroups = [...groups.entries()].sort(([ak, ag], [bk, bg]) => {
+										const aSources = ak.split(", ").length;
+										const bSources = bk.split(", ").length;
+										if (aSources !== bSources) return bSources - aSources;  // more sources first
+										if (ag.length !== bg.length) return bg.length - ag.length;  // more claims first
+										return ak.localeCompare(bk);  // alphabetical
+									});
+
 									return (
 										<>
-											{absorbed.map((c, i) => renderClaim(c, i, true))}
+											{absorbed.map((c, i) => renderClaim(c, i, true, true))}
 											{rest.length > 0 && (
 												<>
 													<tr><td colSpan={3} className="pt-4 pb-1 font-sans text-[0.75rem] font-semibold text-[var(--nn-text-dim)]">
 														Awaiting cross-source corroboration &mdash; {data.summary.pending + (data.summary.totalClaims - data.summary.absorbed - data.summary.pending)} claims pending or unresolved
 													</td></tr>
-													{rest.map((c, i) => renderClaim(c, i, false))}
+													{sortedGroups.map(([key, claims]) => (
+														<Fragment key={key}>
+															<tr className="border-b border-[var(--nn-border)] bg-[var(--nn-surface2)]">
+																<td colSpan={3} className="px-1.5 py-1.5 font-mono text-[0.75rem] text-[var(--nn-text-dim)]">
+																	{key} &mdash; {claims.length} claim{claims.length !== 1 ? "s" : ""}
+																</td>
+															</tr>
+															{claims.map((c, i) => renderClaim(c, i, false, false))}
+														</Fragment>
+													))}
 												</>
 											)}
 										</>
