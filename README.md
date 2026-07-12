@@ -39,6 +39,16 @@ The output is a **living reputation ledger**: six behavioral dimensions per sour
 
 Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The shipped database was constructed by running these agents — clustering, claim extraction, claim matching, and consensus — through Fireworks during hackathon week (July 3–5, 2026), using the hackathon-provided Fireworks credits.
 
+### Direct AMD GPU validation
+
+The production embedding model — `BAAI/bge-base-en-v1.5`, the model Agent 1
+uses for article clustering — was loaded and executed directly on the
+hackathon's AMD GPU pod: an AMD Radeon (`gfx1100`, RDNA3) under ROCm 7.2 with
+PyTorch 2.9. The model initialized on the AMD device (`model device: cuda:0`)
+and produced correct 768-dimensional vectors. This is a capability validation
+(not a corpus re-embedding); full transcript and limitations in
+[`docs/evidence/amd/README.md`](docs/evidence/amd/README.md).
+
 ### Gemma integration
 
 **Gemma 4 E4B** (deployed on-demand via Fireworks AI) was verified against
@@ -142,7 +152,7 @@ Then open **http://localhost:8000** — same as the Docker path.
 | Routing / State | react-router, zustand |
 | Visualizations | D3 (scatter, timeline, pipeline), Chart.js (radar) |
 | Backend | FastAPI, SQLite (WAL), APScheduler |
-| AI | Provider-agnostic LLM + embedding clients. Default: Fireworks AI (AMD Instinct). Alternatives: DeepSeek, OpenAI, local CPU via sentence-transformers |
+| AI | Provider-agnostic LLM + embedding clients. Default: Fireworks AI (AMD Instinct). Alternatives: DeepSeek, OpenAI, local CPU/ROCm via sentence-transformers|
 
 ## The analytical model, briefly
 
