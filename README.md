@@ -169,7 +169,7 @@ Set `NN_DISABLE_SCRAPER=1` to disable the scraper on shared or hosted instances.
 
 Unset (the default) leaves the scraper fully functional for local or single-user deployments.
 
-**Intended target:** Hugging Face Spaces (Docker SDK Space, `app_port: 8000`, set `NN_DISABLE_SCRAPER=1` as a Space variable). See `docs/deployment-todo.md` for the deferred hosting checklist.
+**Intended target:** Hugging Face Spaces (Docker SDK Space, `app_port: 8000`, set `NN_DISABLE_SCRAPER=1` as a Space variable). 
 
 ---
 
