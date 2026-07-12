@@ -16,14 +16,16 @@ Built for the AMD Developer Hackathon ACT II (Track 3 — Unicorn) by **DreamTea
 
 ## What it does
 
-Four AI agents run in sequence over live news:
+Four agents run in sequence over live news — two AI-powered, two deterministic:
 
 1. **Intake & Clustering** — embeds articles from 37 outlets, groups them into story clusters by semantic similarity (DBSCAN over BGE embeddings, 14-day windows).
 2. **Forensic Extraction** — strips editorial framing and extracts atomic factual claims as structured JSON via LLM.
 3. **Consensus Alignment** — pure math: finds where ≥2 independent consensus-pool sources converge on the same claim. That convergence is "consensus reality."
-4. **Silent Auditor** — re-reads old articles and flags significant unannounced edits.
+4. **Silent Auditor** — re-reads old articles and flags significant unannounced edits (deterministic text diff — `difflib`, no LLM).
+The output is a **living reputation ledger**: six behavioral dimensions per source per topic vertical, no composite score. 
 
-The output is a **living reputation ledger**: six behavioral dimensions per source per topic vertical, no composite score. The Sources scatter plot splits the panel into four behavioral archetypes — **Early Breakers, Unmatched Breakers, Late but Reliable, and Consensus Echoes** — visible at a glance.
+The Sources scatter plot splits the panel into four behavioral archetypes — **Early Breakers, Unmatched Breakers, Late but Reliable, and Consensus Echoes** — visible at a glance.
+
 
 ## AMD Platform Usage
 
@@ -34,10 +36,9 @@ The output is a **living reputation ledger**: six behavioral dimensions per sour
 | Agent 1 — Embeddings & Clustering | Fireworks AI | `config/providers.json` (`"agent1_embedding": "fireworks"`) |
 | Agent 1 — LLM Classification | Fireworks AI | `config/providers.json` (`"agent1_llm": "fireworks"`) |
 | Agent 2 — Forensic Claim Extraction | Fireworks AI | `config/providers.json` (`"agent2_llm": "fireworks"`) |
-| Agent 4 — Silent Auditor | Fireworks AI | `config/providers.json` (`"agent4_llm": "fireworks"`) |
 | Claim Matching (cross-stage) | Fireworks AI (nomic-embed) | `config/providers.json` (`"claim_matching_embedding": "fireworks-nomic"`) |
 
-Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The shipped database was constructed by running these agents — clustering, claim extraction, claim matching, and consensus — through Fireworks during hackathon week (July 3–5, 2026), using the hackathon-provided Fireworks credits.
+Fireworks AI serves inference on AMD Instinct MI300X and MI250X accelerators. Every LLM inference and embedding call through the Fireworks provider routes through AMD Instinct hardware. The shipped database was constructed by running these agents — clustering, classification, claim extraction, and claim matching — through Fireworks during hackathon, using the hackathon-provided Fireworks credits.
 
 ### Direct AMD GPU validation
 

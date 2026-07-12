@@ -21,7 +21,7 @@
 ## [The machine]
 *Navigate to Pipeline.*
 
- Four AI agents run in sequence. 
+Four AI agents run in sequence. 
 
 One reads articles from 37 news outlets across six continents and groups them by story. 
 
