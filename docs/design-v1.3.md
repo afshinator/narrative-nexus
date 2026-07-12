@@ -2,7 +2,7 @@
 
 Historical design document (v1.3, 2026-07-07). Where this conflicts with README.md or docs/STATUS.md, those are current.
 
-**Hackathon:** AMD Developer Hackathon: ACT II | Ends July 11, 2026
+**Hackathon:** AMD Developer Hackathon: ACT II | Ends July 12, 2026 (extended)
 **Track:** Track 3 — Unicorn (creativity, originality, product/market potential)
 **Status:** Corrected to match current code/DB reality (2026-07-07). Supersedes v1.2.
 
@@ -18,6 +18,13 @@ Historical design document (v1.3, 2026-07-07). Where this conflicts with README.
 - Docker optional for Track 3 submission (§2, §8): Submission is repo + video + deck. Docker Compose included as deployment convenience.
 - 924 Venezuela earthquake timeline backfilled and unsuppressed (UX43-47): 145 claim_sources rows with first_seen_at, timeline now available via Stories page.
 - §9 Open questions marked RESOLVED: Hardware (48GB GPU), models (DeepSeek V4), credits, JSON reliability, fallback, demo config all decided.
+
+**Post-v1.3 amendments (2026-07-12):**
+- Header: hackathon deadline extended to July 12, 2026.
+- §3 [PENDING] hardware resolved: hackathon pod is AMD Radeon gfx1100 (RDNA3), ROCm 7.2 + PyTorch 2.9. Production embedding model (BAAI/bge-base-en-v1.5) validated running directly on it — capability validation, see `docs/evidence/amd/README.md`.
+- §3 [DECISION] extraction model resolved: deepseek-v4-pro shipped as default for all LLM agent slots. Post-PIPE-1, `providers.json` entries carry `base_url` + `api_key_env`; 9 LLM entries shipped (6 Fireworks incl. GLM 5.1/5.2, GPT-OSS 120B, Kimi K2.5/K2.6, plus opencode/deepseek/openai).
+- §8 corrected: `docker-compose.yml` defines only the `app` service. The `worker` container was designed but not shipped; `worker/server.py` is a non-wired stub (verified in AMD-AV1, `docs/implementation-rounds/025-amd-av1.md`).
+- §8: hosted-deployment guard is `NN_DISABLE_SCRAPER=1` (see README "Hosted deployment").
 
 ---
 
@@ -121,9 +128,9 @@ Compares historical snapshots of article body text to detect significant unrepor
 
 **Note on provider selection:** Provider assignments are configurable at runtime via the Pipeline Flow page dropdowns, backed by `config/providers.json`. All agent defaults are Fireworks AI (see `providers.json:56-62`). An AMD 1-click shortcut sets all agents to Fireworks (AMD Instinct-backed). Fallback providers ensure the pipeline works even without AMD access. See `docs/impact-provider-agnostic-architecture.md` for the full provider matrix.
 
-**[PENDING]:** Exact VRAM of hackathon Radeon GPU pods. Expected 16–48GB based on ROCm-on-Radeon documentation. All planned GPU workloads (embedding models) fit well within this.
+**[RESOLVED — see 2026-07-12 amendments]:** Hackathon pod confirmed as AMD Radeon gfx1100 (RDNA3) on ROCm 7.2. The production embedding model was validated running directly on it (`docs/evidence/amd/README.md`). Exact VRAM total not measured; all planned GPU workloads (embedding models) fit comfortably regardless.
 
-**[DECISION when access arrives]:** Which Fireworks model for extraction (Llama 3.3 70B vs DeepSeek-V4-Pro) and synthesis. Benchmark JSON output reliability on both before committing. DeepSeek-V4-Pro is the leading alternative to Llama for structured extraction tasks. For non-Fireworks providers, model selection follows defaults in `config/providers.json`.
+**[DECIDED: deepseek-v4-pro]:** Shipped as the default for all LLM agent slots; JSON output reliability sufficient via `response_format`. For non-Fireworks providers, model selection follows defaults in `config/providers.json`.
 
 ### Data format contracts [LOCKED]
 
