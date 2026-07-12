@@ -50,7 +50,9 @@ The close already had "one verified run," "nothing mocked," and "clones from the
 ## [The machine]
 *Navigate to Pipeline.*
 
-> Four AI agents run in sequence. One reads articles from 37 news outlets across six continents and groups them by story. One strips the spin and extracts individual factual claims. One does pure math to find where independent outlets *converge* on the same claim — that convergence is what we call consensus reality. And one re-reads old articles to catch silent edits. *(gesture at the provider labels on each stage)* Every AI stage runs on Fireworks AI — that's inference on AMD Instinct hardware — and each stage's provider is configurable. And that configurability is tested, not decorative: we deployed Gemma 4 E4B on-demand through Fireworks and verified it running our claim-extraction prompt across the full sixty-one-article Venezuela cluster — 268 structured claims extracted, evidence in the repo. The shipped database itself was built on the default Fireworks DeepSeek configuration. This is a real engine, not a slideshow.
+> Four AI agents run in sequence. One reads articles from 37 news outlets across six continents and groups them by story. One strips the spin and extracts individual factual claims. One does pure math to find where independent outlets *converge* on the same claim — that convergence is what we call consensus reality. And one re-reads old articles to catch silent edits. *(gesture at the provider labels on each stage)* 
+
+Every AI stage runs on Fireworks AI — that's inference on AMD Instinct hardware — and each stage's provider is configurable. And that configurability is tested, not decorative: we deployed Gemma 4 E4B on-demand through Fireworks and verified it running our claim-extraction prompt across the full sixty-one-article Venezuela cluster — 268 structured claims extracted, evidence in the repo. The shipped database itself was built on the default Fireworks DeepSeek configuration. This is a real engine, not a slideshow.
 
 ---
 
