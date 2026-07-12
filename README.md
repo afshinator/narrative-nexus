@@ -52,18 +52,15 @@ and produced correct 768-dimensional vectors. This is a capability validation
 ### Gemma integration
 
 **Gemma 4 E4B** (deployed on-demand via Fireworks AI) was verified against
-Agent 2's claim-extraction prompt across the full 61-article Venezuela cluster
-(268 structured claims); documented in `docs/evidence/gemma/`. It is not
-wired into the shipped provider configuration. In verified test runs, Gemma
-executed Narrative Nexus's Agent 2 claim-extraction prompt across the
-full 61-article Venezuela story cluster, returning 268 structured claims
-(36 of 61 articles parsed cleanly — per-article results and token usage
-in [`docs/evidence/gemma/batch_results.json`](docs/evidence/gemma/batch_results.json)).
+Agent 2's claim-extraction prompt across the full 61-article Venezuela
+cluster, returning 268 structured claims (36 of 61 articles parsed cleanly —
+per-article results and token usage in
+[`docs/evidence/gemma/batch_results.json`](docs/evidence/gemma/batch_results.json)).
 Full evidence — model string, smoke test, extraction output, and batch
 summary — is in
 [`docs/evidence/gemma/README.md`](docs/evidence/gemma/README.md).
-Gemma is an optional provider; the shipped database was built with the
-default Fireworks/DeepSeek configuration.
+Gemma is not wired into the shipped provider configuration; the shipped
+database was built with the default Fireworks/DeepSeek configuration.
 
 **Provider configurability:** runtime provider selection is visible on the Pipeline page (`/pipeline`), where each agent stage shows a dropdown of available compute providers. Fireworks entries carry an `(AMD)` badge. The architecture is deliberately provider-agnostic — Fireworks/AMD is the default, not a hard dependency.
 
@@ -177,5 +174,3 @@ Unset (the default) leaves the scraper fully functional for local or single-user
 ---
 
 *"Narrative Nexus tracks consensus reality, not truth."*
-README.md
-Displaying README.md.

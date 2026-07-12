@@ -1,4 +1,7 @@
 # NARRATIVE NEXUS — Project Definition v1.3
+
+Historical design document (v1.3, 2026-07-07). Where this conflicts with README.md or docs/STATUS.md, those are current.
+
 **Hackathon:** AMD Developer Hackathon: ACT II | Ends July 11, 2026
 **Track:** Track 3 — Unicorn (creativity, originality, product/market potential)
 **Status:** Corrected to match current code/DB reality (2026-07-07). Supersedes v1.2.
