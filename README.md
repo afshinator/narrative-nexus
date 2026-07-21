@@ -2,7 +2,7 @@
 
 **A media-behavior measurement instrument.** Narrative Nexus monitors 37 news outlets across 6 continents and algorithmically measures their *reporting behavior* over time — not to judge who is "right," but to answer: which sources reliably break stories ahead of the mainstream consensus, which generate systematic noise, and which quietly rewrite their articles after publication?
 
-Built for the AMD Developer Hackathon ACT II (Track 3 — Unicorn) by **DreamTeam**.
+Built for the AMD Developer Hackathon ACT II (Track 3 — Unicorn) by **DreamTeam** (Just me!).
 
 > *"Narrative Nexus tracks consensus reality, not truth."*
 
