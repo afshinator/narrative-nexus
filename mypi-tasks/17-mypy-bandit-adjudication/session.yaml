@@ -1,0 +1,251 @@
+version: "1.2"
+
+# #O1: do mypy and bandit earn a slot? Both were provisioned (#117) and measured once, but no
+# sample from either has ever been adjudicated. They sit in tool-selection.md under
+# "Provisioned, no verdict yet" — this run is the verdict. 61 rows, 20 cohorts, both readers
+# judge the same rows.
+session:
+  id: "mypy-bandit-adjudication-17"
+  workspace_root: "/Users/afshin/Documents/dev/narrative-nexus"
+  max_cost_usd: 0.80
+  # Unpriced models: the token bound is the only ceiling that can actually move.
+  agent_stop_threshold_percent: 100
+  record_scorecard: false
+  attester: "recorder"
+  stall_timeout_ms: 600000
+  peer_prompt_timeout_ms: 900000
+  verify_models: "strict"
+
+  supervisor_system_prompt: |
+    This is a read-only adjudication run over this repository's own source at commit 07d9f1b.
+    No peer may edit or execute anything; every peer is read-only.
+
+    Sequence:
+    1. Dispatch reader-a and reader-b in the same message so they run in parallel and cannot see
+       each other's work. Both readers judge the SAME 61 rows. reader-a's assignment file is
+       `mypi-tasks/17-mypy-bandit-adjudication/fixtures/assignments/reader-a.json`, reader-b's is
+       the identical `reader-b.json`. Dispatch each reader THREE work orders covering contiguous
+       ranges of the 61 ids in file order: rows 1-20, 21-40, 41-61. The reader system prompts are
+       byte-identical; the split lives only in the work orders. Never split the rows into
+       disjoint halves — both readers must cover all 61.
+    2. When a reader reports a work order, append its verdict array to
+       run-details/adjudication/<agent-id>.json yourself. Collect all three before treating that
+       reader as done.
+    3. Then dispatch recorder with both full verdict arrays, fixtures/findings.json,
+       fixtures/sample.json, fixtures/supplementary/README.md and the raw outputs under
+       fixtures/raw/ and fixtures/supplementary/.
+
+    Police four things and re-ask any peer that breaks them:
+    - every id in that peer's assignment appears exactly once across its three replies;
+    - every verdict carries validity, actionability and consequence, and a verdict whose
+      validity is not `present` uses `not_applicable` for both;
+    - `present` rows cite a path:line that exists in this repository and name the construct at
+      that line;
+    - no row claims a tool would have prevented a bug: validity is about the code, not about
+      consequences that may or may not have happened.
+
+    Two things this run must not let slide. `bandit/B101` is 678 of bandit's 739 rows and is one
+    construct repeated across test files — it needs ONE class decision, not 678 verdicts, and the
+    recorder must make that call explicitly. And mypy's collector run stops after 3 syntax
+    diagnostics on `scripts/v1_concurrency_test.py:6`, so the 28-row type frame exists only
+    because that one file was excluded for the measurement; the exclusion must be stated, not
+    assumed away.
+
+    final.md must state in one paragraph whether `mypy` and whether `bandit` earn a slot and for
+    which rule families, including any rule that is true but whose remedy is unsafe. A cohort with
+    fewer than 5 adjudications is an anecdote and gets no rate.
+
+ask:
+  title: "Do mypy and bandit earn a slot, and for which rules?"
+  description: |
+    Three anti-slop audits (this repo, finance-hub, narrative-nexus) produced a selection table
+    in which every row has an adjudicated sample behind it — findings were read against the code
+    and scored on validity, actionability and consequence. Two tools were added to the toolchain
+    afterwards (#117) and never got that treatment: `mypy` 2.4.0 and `bandit` 1.9.4, both pinned
+    and hashed but unadjudicated. They currently sit in `tool-selection.md` under "Provisioned, no
+    verdict yet".
+
+    They are the only Python type and security signal available. Python is otherwise covered by
+    ruff alone, and ruff's rules are mechanical — imports, annotations, string prefixes. If mypy
+    or bandit earns a slot, this repo's 15,743 LOC of Python get a second and third signal; if not,
+    the honest outcome is that Python is lint-only and the table should say so.
+
+    The first measurements are not encouraging and are the reason for the run. `mypy` returned 3
+    diagnostics and exited 2, because `scripts/v1_concurrency_test.py:6` is not valid Python and
+    mypy has no continue-past-syntax-error mode. `bandit` returned 739 findings of which 678 are
+    `B101 assert_used` in test files. Neither number says whether the reported rows are true,
+    whether fixing them matters, or what leaving them costs.
+
+    So 61 rows are adjudicated here: the 3 mypy syntax rows plus 28 typed rows from a declared
+    supplementary run that excludes the unparseable file, and 34 bandit rows spanning all ten of
+    its rules. Both readers judge all 61. The question is the same three dimensions used on every
+    prior audit.
+  definition_of_done:
+    - "Every sampled row has a verdict from both readers, each carrying validity, actionability, consequence, and a path:line that exists in the scanned tree."
+    - "Every present verdict names the construct at that line — the import, the call, the type annotation, the assert or the subprocess invocation — because these rules are about a construct, not a type."
+    - "The recorder reports per cohort the counts on validity, actionability and consequence, labels any cohort under 5 adjudications an anecdote with no rate, and states where the two readers disagreed and which the code supports."
+    - "The report decides `bandit/B101` as one class — 678 of the tool's 739 rows are a single construct in test files — and states whether that rule earns a slot on tests at all."
+    - "The report states that mypy's collector run stops at `scripts/v1_concurrency_test.py:6` with 3 syntax diagnostics, that the 28-row type frame exists only because that one file was excluded for the measurement, and that the exclusion is declared rather than silent."
+    - "final.md states in one paragraph whether each of `mypy` and `bandit` earns a slot and for which rule families, including any rule that is true but whose remedy is unsafe, and what this run does not establish."
+
+agents:
+  - id: "reader-a"
+    title: "Verdicts on 61 mypy and bandit findings"
+    model: "commandcode/deepseek/deepseek-v4-flash"
+    permissions: { read: true, edit: false, shell: false }
+    max_cost_usd: 0.30
+    max_tokens: 8000000
+    system_prompt: |
+      This is the fourth adjudication run in a series of anti-slop audits. The prior three judged
+      analyzers on three repositories (a TypeScript service, a Next.js app, and this one) on three
+      independent dimensions: whether a finding is true, whether fixing it would materially improve
+      the code, and what leaving it alone costs. Two tools were added to the pinned toolchain
+      afterwards and never got that treatment — `mypy` 2.4.0 and `bandit` 1.9.4. This run judges
+      them. You are one of two readers on the same 61 rows; the other has identical instructions
+      and cannot see your work.
+
+      You receive your rows through the supervisor's work orders, dispatched as three orders of
+      20, 20 and 21 rows. Each order names your assignment file (the full 61-id list) and the
+      contiguous id range you own. Row detail is in
+      `mypi-tasks/17-mypy-bandit-adjudication/fixtures/findings.json` (id, rule_id, path, line,
+      message, raw). The raw tool output is under `fixtures/raw/` and `fixtures/supplementary/`;
+      read `fixtures/supplementary/README.md` before judging any `mypy` row, because 28 of the 31
+      mypy rows exist only because one unparseable file was excluded from the measurement. Read
+      the code at every cited path:line. The message is the tool's claim, not evidence.
+
+      These verdicts decide whether two rows move into the project's steady-state table or get
+      dropped. A careless `present` keeps a tool that costs provisioning and a second failure
+      domain; a careless `absent` discards the only Python type or security signal in the set. Your
+      actionability and consequence calls are one opinion, not a measurement — record them
+      honestly rather than rounding them toward agreement.
+
+      Reply to the supervisor only, and answer at most one work order per reply (about 20 rows).
+      For each id emit one line in the form `id | validity | actionability | consequence |
+      evidence | reason`, then a fenced JSON array of objects with exactly the keys id, validity,
+      actionability, consequence, evidence, reason, construct — one object per id in that order. If
+      a row's cited path:line does not exist in this repository, reply `undecidable` with evidence
+      `path:line missing` rather than guessing. If you are blocked, say what you need and stop.
+
+      For each row decide three independent things:
+      validity — is the rule's claim true of this code?
+        present      the claim holds; name the construct at that line (the import, the call, the
+                     type annotation, the assert, the subprocess invocation)
+        absent       the code does not do what the rule claims, so the finding is wrong
+        duplicate    true, but one of your other rows already covers the same construct
+        undecidable  the line cannot settle it
+      actionability — would changing it materially improve the code? (only when validity is present)
+        material, marginal, none
+      consequence — what does leaving it alone cost?
+        high     a failure path that can lose data or hide an error
+        medium   a real defect that will be paid for later
+        low      a local imprecision with no behavioural reach
+        none     nothing
+      Use not_applicable for both whenever validity is not present, and set construct to the empty
+      string.
+
+      Three traps, all seen in earlier runs. A rule can be right and worthless: a missing type
+      annotation on a local variable is true and changes nothing. A rule can be right and its
+      remedy unsafe: removing an `assert` to silence bandit deletes a test's only assertion, and
+      `B608` "string-built SQL" is often a parameterised query the rule cannot see. And a rule can
+      be wrong about a line for reasons its message does not show — read the construct, not the
+      message.
+
+  - id: "reader-b"
+    title: "Verdicts on 61 mypy and bandit findings"
+    model: "commandcode/gpt-6-luna"
+    permissions: { read: true, edit: false, shell: false }
+    max_cost_usd: 0.30
+    max_tokens: 8000000
+    system_prompt: |
+      This is the fourth adjudication run in a series of anti-slop audits. The prior three judged
+      analyzers on three repositories (a TypeScript service, a Next.js app, and this one) on three
+      independent dimensions: whether a finding is true, whether fixing it would materially improve
+      the code, and what leaving it alone costs. Two tools were added to the pinned toolchain
+      afterwards and never got that treatment — `mypy` 2.4.0 and `bandit` 1.9.4. This run judges
+      them. You are one of two readers on the same 61 rows; the other has identical instructions
+      and cannot see your work.
+
+      You receive your rows through the supervisor's work orders, dispatched as three orders of
+      20, 20 and 21 rows. Each order names your assignment file (the full 61-id list) and the
+      contiguous id range you own. Row detail is in
+      `mypi-tasks/17-mypy-bandit-adjudication/fixtures/findings.json` (id, rule_id, path, line,
+      message, raw). The raw tool output is under `fixtures/raw/` and `fixtures/supplementary/`;
+      read `fixtures/supplementary/README.md` before judging any `mypy` row, because 28 of the 31
+      mypy rows exist only because one unparseable file was excluded from the measurement. Read
+      the code at every cited path:line. The message is the tool's claim, not evidence.
+
+      These verdicts decide whether two rows move into the project's steady-state table or get
+      dropped. A careless `present` keeps a tool that costs provisioning and a second failure
+      domain; a careless `absent` discards the only Python type or security signal in the set. Your
+      actionability and consequence calls are one opinion, not a measurement — record them
+      honestly rather than rounding them toward agreement.
+
+      Reply to the supervisor only, and answer at most one work order per reply (about 20 rows).
+      For each id emit one line in the form `id | validity | actionability | consequence |
+      evidence | reason`, then a fenced JSON array of objects with exactly the keys id, validity,
+      actionability, consequence, evidence, reason, construct — one object per id in that order. If
+      a row's cited path:line does not exist in this repository, reply `undecidable` with evidence
+      `path:line missing` rather than guessing. If you are blocked, say what you need and stop.
+
+      For each row decide three independent things:
+      validity — is the rule's claim true of this code?
+        present      the claim holds; name the construct at that line (the import, the call, the
+                     type annotation, the assert, the subprocess invocation)
+        absent       the code does not do what the rule claims, so the finding is wrong
+        duplicate    true, but one of your other rows already covers the same construct
+        undecidable  the line cannot settle it
+      actionability — would changing it materially improve the code? (only when validity is present)
+        material, marginal, none
+      consequence — what does leaving it alone cost?
+        high     a failure path that can lose data or hide an error
+        medium   a real defect that will be paid for later
+        low      a local imprecision with no behavioural reach
+        none     nothing
+      Use not_applicable for both whenever validity is not present, and set construct to the empty
+      string.
+
+      Three traps, all seen in earlier runs. A rule can be right and worthless: a missing type
+      annotation on a local variable is true and changes nothing. A rule can be right and its
+      remedy unsafe: removing an `assert` to silence bandit deletes a test's only assertion, and
+      `B608` "string-built SQL" is often a parameterised query the rule cannot see. And a rule can
+      be wrong about a line for reasons its message does not show — read the construct, not the
+      message.
+
+  - id: "recorder"
+    title: "Reconcile the verdict sets and decide whether mypy and bandit earn slots"
+    model: "commandcode/z-ai/glm-5.3-flashx"
+    permissions: { read: true, edit: false, shell: false }
+    max_cost_usd: 0.20
+    max_tokens: 6000000
+    system_prompt: |
+      Two readers judged the same 61 sampled `mypy` and `bandit` findings on this repository, each
+      covering all 61 rows, without seeing each other's work. The supervisor has written both
+      replies to run-details/adjudication/<agent-id>.json. This run's gate trusts one agent's
+      verdict block, and that agent is you: nothing is reported as finished unless you attest every
+      criterion, quoting it exactly.
+
+      You receive both verdict arrays, fixtures/findings.json, fixtures/sample.json,
+      fixtures/supplementary/README.md and the raw outputs under fixtures/raw/ and
+      fixtures/supplementary/. You own the reconciliation and the per-cohort table.
+
+      Do five things, in this order. First, per id, check the claim against the code at the cited
+      line and against the named construct: a verdict that says `present` without naming the
+      construct at that line is unsupported — mark it so rather than correcting it silently.
+      Second, report per cohort the counts on validity, actionability and consequence, labelling
+      any cohort under 5 adjudications an anecdote with no rate. Third, decide `bandit/B101` as one
+      class: 678 of bandit's 739 rows are `assert_used` in test files, the five sampled rows are a
+      sample of one construct, and the question is whether an `assert` in a test suite is a finding
+      at all — answer it once, on the code, not per row. Fourth, where the two readers disagree, say
+      which the code supports and why; a restatement of the rule is not a resolution. Fifth, state
+      that mypy's collector run stops at `scripts/v1_concurrency_test.py:6` with 3 syntax
+      diagnostics, so the 28-row type frame exists only because that one file was excluded for the
+      measurement, and name the exclusion as declared rather than silent.
+
+      Two failure modes from earlier runs. Metric-literalism: accepting a rule's claim because the
+      message says so, when the cited line does not contain the construct. And invented evidence:
+      quoting a line that does not exist or does not contain the expression.
+
+      Finish with a fenced JSON array containing one object per criterion below, each with the keys
+      criterion, result (pass or fail), evidence. Quote each criterion verbatim from the task list;
+      the gate rejects anything that is not a byte-for-byte match, and a fail is a legitimate
+      answer.

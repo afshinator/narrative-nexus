@@ -1,0 +1,117 @@
+{
+  "rows": 61,
+  "banditFrame": 739,
+  "mypyFrame": 31,
+  "strata": [
+    {
+      "key": "bandit/B101",
+      "frame": 678,
+      "sampled": 5
+    },
+    {
+      "key": "bandit/B108",
+      "frame": 5,
+      "sampled": 5
+    },
+    {
+      "key": "bandit/B110",
+      "frame": 3,
+      "sampled": 3
+    },
+    {
+      "key": "bandit/B306",
+      "frame": 18,
+      "sampled": 5
+    },
+    {
+      "key": "bandit/B310",
+      "frame": 6,
+      "sampled": 5
+    },
+    {
+      "key": "bandit/B311",
+      "frame": 3,
+      "sampled": 3
+    },
+    {
+      "key": "bandit/B404",
+      "frame": 1,
+      "sampled": 1
+    },
+    {
+      "key": "bandit/B603",
+      "frame": 1,
+      "sampled": 1
+    },
+    {
+      "key": "bandit/B607",
+      "frame": 1,
+      "sampled": 1
+    },
+    {
+      "key": "bandit/B608",
+      "frame": 23,
+      "sampled": 5
+    },
+    {
+      "key": "mypy/annotation-unchecked",
+      "frame": 1,
+      "sampled": 1
+    },
+    {
+      "key": "mypy/arg-type",
+      "frame": 3,
+      "sampled": 3
+    },
+    {
+      "key": "mypy/assignment",
+      "frame": 7,
+      "sampled": 5
+    },
+    {
+      "key": "mypy/attr-defined",
+      "frame": 2,
+      "sampled": 2
+    },
+    {
+      "key": "mypy/misc",
+      "frame": 1,
+      "sampled": 1
+    },
+    {
+      "key": "mypy/name-defined",
+      "frame": 2,
+      "sampled": 2
+    },
+    {
+      "key": "mypy/operator",
+      "frame": 1,
+      "sampled": 1
+    },
+    {
+      "key": "mypy/return-value",
+      "frame": 7,
+      "sampled": 5
+    },
+    {
+      "key": "mypy/syntax",
+      "frame": 3,
+      "sampled": 3
+    },
+    {
+      "key": "mypy/var-annotated",
+      "frame": 4,
+      "sampled": 4
+    }
+  ],
+  "excluded": [
+    {
+      "cohort": "bandit/* (not sampled)",
+      "note": "every bandit rule with frame <= 5 is taken whole"
+    },
+    {
+      "cohort": "mypy/* (not sampled)",
+      "note": "every mypy family with frame <= 5 is taken whole"
+    }
+  ]
+}
