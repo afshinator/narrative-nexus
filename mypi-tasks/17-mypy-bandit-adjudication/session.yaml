@@ -76,9 +76,9 @@ ask:
     `B101 assert_used` in test files. Neither number says whether the reported rows are true,
     whether fixing them matters, or what leaving them costs.
 
-    So 61 rows are adjudicated here: the 3 mypy syntax rows plus 28 typed rows from a declared
-    supplementary run that excludes the unparseable file, and 34 bandit rows spanning all ten of
-    its rules. Both readers judge all 61. The question is the same three dimensions used on every
+    So 61 rows are adjudicated here: 27 from mypy — its 3 syntax rows plus 24 of the 28 typed rows
+    that a declared supplementary run produced after excluding the unparseable file — and 34
+    bandit rows spanning all ten of its rules. Both readers judge all 61. The question is the same three dimensions used on every
     prior audit.
   definition_of_done:
     - "Every sampled row has a verdict from both readers, each carrying validity, actionability, consequence, and a path:line that exists in the scanned tree."
@@ -106,8 +106,9 @@ agents:
       You receive your rows through the supervisor's work orders, dispatched as three orders of
       20, 20 and 21 rows. Each order names your assignment file (the full 61-id list) and the
       contiguous id range you own. Row detail is in
-      `mypi-tasks/17-mypy-bandit-adjudication/fixtures/findings.json` (id, rule_id, path, line,
-      message, raw). The raw tool output is under `fixtures/raw/` and `fixtures/supplementary/`;
+      `mypi-tasks/17-mypy-bandit-adjudication/fixtures/findings.json` (id, tool, rule_id, path, line,
+      message, severity_note, raw — `severity_note` carries bandit's own severity and confidence,
+      which the collector maps HIGH to error and LOW to info). The raw tool output is under `fixtures/raw/` and `fixtures/supplementary/`;
       read `fixtures/supplementary/README.md` before judging any `mypy` row, because 28 of the 31
       mypy rows exist only because one unparseable file was excluded from the measurement. Read
       the code at every cited path:line. The message is the tool's claim, not evidence.
@@ -166,8 +167,9 @@ agents:
       You receive your rows through the supervisor's work orders, dispatched as three orders of
       20, 20 and 21 rows. Each order names your assignment file (the full 61-id list) and the
       contiguous id range you own. Row detail is in
-      `mypi-tasks/17-mypy-bandit-adjudication/fixtures/findings.json` (id, rule_id, path, line,
-      message, raw). The raw tool output is under `fixtures/raw/` and `fixtures/supplementary/`;
+      `mypi-tasks/17-mypy-bandit-adjudication/fixtures/findings.json` (id, tool, rule_id, path, line,
+      message, severity_note, raw — `severity_note` carries bandit's own severity and confidence,
+      which the collector maps HIGH to error and LOW to info). The raw tool output is under `fixtures/raw/` and `fixtures/supplementary/`;
       read `fixtures/supplementary/README.md` before judging any `mypy` row, because 28 of the 31
       mypy rows exist only because one unparseable file was excluded from the measurement. Read
       the code at every cited path:line. The message is the tool's claim, not evidence.
