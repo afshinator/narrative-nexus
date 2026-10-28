@@ -55,3 +55,7 @@ data/demo/demo.db-wal
 data/demo/demo.db-shm
 
 
+
+# mypi-multi-agent tasks: session.yaml and fixtures are tracked, run artifacts are not.
+mypi-tasks/**/run-details/
+.mypi/**/run-details/

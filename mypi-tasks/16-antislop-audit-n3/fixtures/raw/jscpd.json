@@ -1,0 +1,2837 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 197,
+        "endLoc": {
+          "column": 29,
+          "line": 197,
+          "position": 6727
+        },
+        "name": "app/test_routes.py",
+        "start": 185,
+        "startLoc": {
+          "column": 48,
+          "line": 185,
+          "position": 6267
+        }
+      },
+      "format": "python",
+      "fragment": "        db_path = str(tmp_path / \"profile_vf.db\")\n        init_db(db_path)\n        conn = sqlite3.connect(db_path)\n        conn.row_factory = sqlite3.Row\n        src_id = insert_source(conn, \"TS\", \"ts.com\", 1)\n        insert_snapshot(conn, src_id, \"geopolitics\", \"2026-01-01\", r_val=10)\n        insert_snapshot(conn, src_id, \"economics\", \"2026-01-01\", r_val=90)\n        conn.close()\n\n        os.environ[\"NN_DB_PATH\"] = db_path\n        try:\n            with TestClient(app) as c:\n                resp = c.get(f\"/api/sources/{src_id}/profile?vertical=economics\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 368,
+        "endLoc": {
+          "column": 29,
+          "line": 368,
+          "position": 13913
+        },
+        "name": "app/test_routes.py",
+        "start": 356,
+        "startLoc": {
+          "column": 47,
+          "line": 356,
+          "position": 13453
+        }
+      },
+      "tokens": 89
+    },
+    {
+      "firstFile": {
+        "end": 84,
+        "endLoc": {
+          "column": 3,
+          "line": 84,
+          "position": 2538
+        },
+        "name": "db/claims.py",
+        "start": 73,
+        "startLoc": {
+          "column": 52,
+          "line": 73,
+          "position": 2309
+        }
+      },
+      "format": "python",
+      "fragment": "        query += \" WHERE \" + \" AND \".join(conditions)\n    query += \" ORDER BY created_at DESC\"\n\n    if limit > 0:\n        query += \" LIMIT ? OFFSET ?\"\n        params.extend([limit, offset])\n\n    rows = conn.execute(query, params).fetchall()\n    return [dict(r) for r in rows]\n\n\ndef update_claim_state(",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 56,
+        "endLoc": {
+          "column": 3,
+          "line": 56,
+          "position": 1355
+        },
+        "name": "db/clusters.py",
+        "start": 44,
+        "startLoc": {
+          "column": 30,
+          "line": 44,
+          "position": 1125
+        }
+      },
+      "tokens": 50
+    },
+    {
+      "firstFile": {
+        "end": 47,
+        "endLoc": {
+          "column": 5,
+          "line": 47,
+          "position": 1415
+        },
+        "name": "package-lock.json",
+        "start": 9,
+        "startLoc": {
+          "column": 24,
+          "line": 9,
+          "position": 180
+        }
+      },
+      "format": "json",
+      "fragment": "      \"version\": \"0.0.0\",\n      \"dependencies\": {\n        \"@fontsource/ibm-plex-mono\": \"^5.2.7\",\n        \"@fontsource/ibm-plex-sans\": \"^5.2.8\",\n        \"@fontsource/space-grotesk\": \"^5.2.10\",\n        \"@tailwindcss/vite\": \"^4.3.1\",\n        \"chart.js\": \"^4.5.1\",\n        \"class-variance-authority\": \"^0.7.1\",\n        \"clsx\": \"^2.1.1\",\n        \"d3\": \"^7.9.0\",\n        \"lucide-react\": \"^1.21.0\",\n        \"radix-ui\": \"^1.6.0\",\n        \"react\": \"^19.2.7\",\n        \"react-chartjs-2\": \"^5.3.1\",\n        \"react-dom\": \"^19.2.7\",\n        \"react-router\": \"^7.18.0\",\n        \"shadcn\": \"^4.11.0\",\n        \"tailwind-merge\": \"^3.6.0\",\n        \"tailwindcss\": \"^4.3.1\",\n        \"tw-animate-css\": \"^1.4.0\",\n        \"zustand\": \"^5.0.14\"\n      },\n      \"devDependencies\": {\n        \"@testing-library/jest-dom\": \"^6.9.1\",\n        \"@testing-library/react\": \"^16.3.2\",\n        \"@testing-library/user-event\": \"^14.6.1\",\n        \"@types/d3\": \"^7.4.3\",\n        \"@types/node\": \"^24.13.2\",\n        \"@types/react\": \"^19.2.17\",\n        \"@types/react-dom\": \"^19.2.3\",\n        \"@vitejs/plugin-react\": \"^6.0.2\",\n        \"jsdom\": \"^29.1.1\",\n        \"oxlint\": \"^1.69.0\",\n        \"typescript\": \"~6.0.2\",\n        \"vite\": \"^8.1.0\",\n        \"vitest\": \"^4.1.9\",\n        \"yaml\": \"^2.9.0\"\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 39,
+      "secondFile": {
+        "end": 52,
+        "endLoc": {
+          "column": 1,
+          "line": 52,
+          "position": 1410
+        },
+        "name": "package.json",
+        "start": 14,
+        "startLoc": {
+          "column": 3,
+          "line": 14,
+          "position": 327
+        }
+      },
+      "tokens": 141
+    },
+    {
+      "firstFile": {
+        "end": 1522,
+        "endLoc": {
+          "column": 6,
+          "line": 1522,
+          "position": 55191
+        },
+        "name": "package-lock.json",
+        "start": 1504,
+        "startLoc": {
+          "column": 37,
+          "line": 1504,
+          "position": 54663
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-id\": \"1.1.2\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 1765,
+        "endLoc": {
+          "column": 6,
+          "line": 1765,
+          "position": 64176
+        },
+        "name": "package-lock.json",
+        "start": 1747,
+        "startLoc": {
+          "column": 40,
+          "line": 1747,
+          "position": 63648
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 1522,
+        "endLoc": {
+          "column": 6,
+          "line": 1522,
+          "position": 55191
+        },
+        "name": "package-lock.json",
+        "start": 1504,
+        "startLoc": {
+          "column": 37,
+          "line": 1504,
+          "position": 54663
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-id\": \"1.1.2\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 1971,
+        "endLoc": {
+          "column": 6,
+          "line": 1971,
+          "position": 71952
+        },
+        "name": "package-lock.json",
+        "start": 1953,
+        "startLoc": {
+          "column": 43,
+          "line": 1953,
+          "position": 71424
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 1522,
+        "endLoc": {
+          "column": 6,
+          "line": 1522,
+          "position": 55191
+        },
+        "name": "package-lock.json",
+        "start": 1504,
+        "startLoc": {
+          "column": 37,
+          "line": 1504,
+          "position": 54663
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-id\": \"1.1.2\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 2677,
+        "endLoc": {
+          "column": 6,
+          "line": 2677,
+          "position": 98738
+        },
+        "name": "package-lock.json",
+        "start": 2659,
+        "startLoc": {
+          "column": 38,
+          "line": 2659,
+          "position": 98210
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 1572,
+        "endLoc": {
+          "column": 6,
+          "line": 1572,
+          "position": 56989
+        },
+        "name": "package-lock.json",
+        "start": 1553,
+        "startLoc": {
+          "column": 116,
+          "line": 1553,
+          "position": 56472
+        }
+      },
+      "format": "json",
+      "fragment": "      \"integrity\": \"sha512-j2VTDz1vgCsmuG0k5lBfOcM8n5JPFqZBcMryasFjHYMhwxYL5SRUV5lMSUpRdNtw3D/Sv8pzJtrlAgkssYSsQQ==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@radix-ui/react-primitive\": \"2.1.6\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 1595,
+        "endLoc": {
+          "column": 6,
+          "line": 1595,
+          "position": 57810
+        },
+        "name": "package-lock.json",
+        "start": 1576,
+        "startLoc": {
+          "column": 116,
+          "line": 1576,
+          "position": 57293
+        }
+      },
+      "tokens": 54
+    },
+    {
+      "firstFile": {
+        "end": 1572,
+        "endLoc": {
+          "column": 6,
+          "line": 1572,
+          "position": 56989
+        },
+        "name": "package-lock.json",
+        "start": 1553,
+        "startLoc": {
+          "column": 116,
+          "line": 1553,
+          "position": 56472
+        }
+      },
+      "format": "json",
+      "fragment": "      \"integrity\": \"sha512-j2VTDz1vgCsmuG0k5lBfOcM8n5JPFqZBcMryasFjHYMhwxYL5SRUV5lMSUpRdNtw3D/Sv8pzJtrlAgkssYSsQQ==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@radix-ui/react-primitive\": \"2.1.6\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 2012,
+        "endLoc": {
+          "column": 6,
+          "line": 2012,
+          "position": 73377
+        },
+        "name": "package-lock.json",
+        "start": 1993,
+        "startLoc": {
+          "column": 116,
+          "line": 1993,
+          "position": 72860
+        }
+      },
+      "tokens": 54
+    },
+    {
+      "firstFile": {
+        "end": 1572,
+        "endLoc": {
+          "column": 6,
+          "line": 1572,
+          "position": 56989
+        },
+        "name": "package-lock.json",
+        "start": 1553,
+        "startLoc": {
+          "column": 116,
+          "line": 1553,
+          "position": 56472
+        }
+      },
+      "format": "json",
+      "fragment": "      \"integrity\": \"sha512-j2VTDz1vgCsmuG0k5lBfOcM8n5JPFqZBcMryasFjHYMhwxYL5SRUV5lMSUpRdNtw3D/Sv8pzJtrlAgkssYSsQQ==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@radix-ui/react-primitive\": \"2.1.6\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 2508,
+        "endLoc": {
+          "column": 6,
+          "line": 2508,
+          "position": 92388
+        },
+        "name": "package-lock.json",
+        "start": 2489,
+        "startLoc": {
+          "column": 116,
+          "line": 2489,
+          "position": 91871
+        }
+      },
+      "tokens": 54
+    },
+    {
+      "firstFile": {
+        "end": 1572,
+        "endLoc": {
+          "column": 6,
+          "line": 1572,
+          "position": 56989
+        },
+        "name": "package-lock.json",
+        "start": 1553,
+        "startLoc": {
+          "column": 116,
+          "line": 1553,
+          "position": 56472
+        }
+      },
+      "format": "json",
+      "fragment": "      \"integrity\": \"sha512-j2VTDz1vgCsmuG0k5lBfOcM8n5JPFqZBcMryasFjHYMhwxYL5SRUV5lMSUpRdNtw3D/Sv8pzJtrlAgkssYSsQQ==\",\n      \"license\": \"MIT\",\n      \"dependencies\": {\n        \"@radix-ui/react-primitive\": \"2.1.6\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 2943,
+        "endLoc": {
+          "column": 6,
+          "line": 2943,
+          "position": 108726
+        },
+        "name": "package-lock.json",
+        "start": 2924,
+        "startLoc": {
+          "column": 116,
+          "line": 2924,
+          "position": 108209
+        }
+      },
+      "tokens": 54
+    },
+    {
+      "firstFile": {
+        "end": 1622,
+        "endLoc": {
+          "column": 6,
+          "line": 1622,
+          "position": 58814
+        },
+        "name": "package-lock.json",
+        "start": 1604,
+        "startLoc": {
+          "column": 51,
+          "line": 1604,
+          "position": 58285
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-use-callback-ref\": \"1.1.2\",\n        \"@radix-ui/react-use-is-hydrated\": \"0.1.1\",\n        \"@radix-ui/react-use-layout-effect\": \"1.1.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 2154,
+        "endLoc": {
+          "column": 6,
+          "line": 2154,
+          "position": 79015
+        },
+        "name": "package-lock.json",
+        "start": 2136,
+        "startLoc": {
+          "column": 51,
+          "line": 2136,
+          "position": 78486
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 1652,
+        "endLoc": {
+          "column": 6,
+          "line": 1652,
+          "position": 59952
+        },
+        "name": "package-lock.json",
+        "start": 1632,
+        "startLoc": {
+          "column": 43,
+          "line": 1632,
+          "position": 59330
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-presence\": \"1.1.6\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\",\n        \"@radix-ui/react-use-previous\": \"1.1.2\",\n        \"@radix-ui/react-use-size\": \"1.1.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 21,
+      "secondFile": {
+        "end": 2588,
+        "endLoc": {
+          "column": 6,
+          "line": 2588,
+          "position": 95373
+        },
+        "name": "package-lock.json",
+        "start": 2568,
+        "startLoc": {
+          "column": 42,
+          "line": 2568,
+          "position": 94751
+        }
+      },
+      "tokens": 59
+    },
+    {
+      "firstFile": {
+        "end": 1652,
+        "endLoc": {
+          "column": 6,
+          "line": 1652,
+          "position": 59952
+        },
+        "name": "package-lock.json",
+        "start": 1633,
+        "startLoc": {
+          "column": 44,
+          "line": 1633,
+          "position": 59376
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\",\n        \"@radix-ui/react-use-previous\": \"1.1.2\",\n        \"@radix-ui/react-use-size\": \"1.1.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 2379,
+        "endLoc": {
+          "column": 6,
+          "line": 2379,
+          "position": 87420
+        },
+        "name": "package-lock.json",
+        "start": 2360,
+        "startLoc": {
+          "column": 48,
+          "line": 2360,
+          "position": 86844
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 1652,
+        "endLoc": {
+          "column": 6,
+          "line": 1652,
+          "position": 59952
+        },
+        "name": "package-lock.json",
+        "start": 1634,
+        "startLoc": {
+          "column": 57,
+          "line": 1634,
+          "position": 59435
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-use-controllable-state\": \"1.2.3\",\n        \"@radix-ui/react-use-previous\": \"1.1.2\",\n        \"@radix-ui/react-use-size\": \"1.1.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 2541,
+        "endLoc": {
+          "column": 6,
+          "line": 2541,
+          "position": 93660
+        },
+        "name": "package-lock.json",
+        "start": 2523,
+        "startLoc": {
+          "column": 52,
+          "line": 2523,
+          "position": 93143
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 1765,
+        "endLoc": {
+          "column": 6,
+          "line": 1765,
+          "position": 64176
+        },
+        "name": "package-lock.json",
+        "start": 1746,
+        "startLoc": {
+          "column": 42,
+          "line": 1746,
+          "position": 63606
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-context\": \"1.1.4\",\n        \"@radix-ui/react-menu\": \"2.1.18\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 1872,
+        "endLoc": {
+          "column": 6,
+          "line": 1872,
+          "position": 68257
+        },
+        "name": "package-lock.json",
+        "start": 1853,
+        "startLoc": {
+          "column": 37,
+          "line": 1853,
+          "position": 67687
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 1801,
+        "endLoc": {
+          "column": 6,
+          "line": 1801,
+          "position": 65567
+        },
+        "name": "package-lock.json",
+        "start": 1778,
+        "startLoc": {
+          "column": 37,
+          "line": 1778,
+          "position": 64835
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-id\": \"1.1.2\",\n        \"@radix-ui/react-portal\": \"1.1.12\",\n        \"@radix-ui/react-presence\": \"1.1.6\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-slot\": \"1.3.0\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\",\n        \"aria-hidden\": \"^1.2.4\",\n        \"react-remove-scroll\": \"^2.7.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 24,
+      "secondFile": {
+        "end": 2221,
+        "endLoc": {
+          "column": 6,
+          "line": 2221,
+          "position": 81634
+        },
+        "name": "package-lock.json",
+        "start": 2198,
+        "startLoc": {
+          "column": 41,
+          "line": 2198,
+          "position": 80902
+        }
+      },
+      "tokens": 71
+    },
+    {
+      "firstFile": {
+        "end": 1801,
+        "endLoc": {
+          "column": 6,
+          "line": 1801,
+          "position": 65567
+        },
+        "name": "package-lock.json",
+        "start": 1783,
+        "startLoc": {
+          "column": 57,
+          "line": 1783,
+          "position": 65070
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-use-controllable-state\": \"1.2.3\",\n        \"aria-hidden\": \"^1.2.4\",\n        \"react-remove-scroll\": \"^2.7.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 2052,
+        "endLoc": {
+          "column": 6,
+          "line": 2052,
+          "position": 74943
+        },
+        "name": "package-lock.json",
+        "start": 2034,
+        "startLoc": {
+          "column": 51,
+          "line": 2034,
+          "position": 74446
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 1801,
+        "endLoc": {
+          "column": 6,
+          "line": 1801,
+          "position": 65567
+        },
+        "name": "package-lock.json",
+        "start": 1783,
+        "startLoc": {
+          "column": 57,
+          "line": 1783,
+          "position": 65070
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-use-controllable-state\": \"1.2.3\",\n        \"aria-hidden\": \"^1.2.4\",\n        \"react-remove-scroll\": \"^2.7.2\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 2485,
+        "endLoc": {
+          "column": 6,
+          "line": 2485,
+          "position": 91576
+        },
+        "name": "package-lock.json",
+        "start": 2467,
+        "startLoc": {
+          "column": 50,
+          "line": 2467,
+          "position": 91079
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 2031,
+        "endLoc": {
+          "column": 45,
+          "line": 2031,
+          "position": 74303
+        },
+        "name": "package-lock.json",
+        "start": 2019,
+        "startLoc": {
+          "column": 8,
+          "line": 2019,
+          "position": 73715
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/primitive\": \"1.1.4\",\n        \"@radix-ui/react-collection\": \"1.1.10\",\n        \"@radix-ui/react-compose-refs\": \"1.1.3\",\n        \"@radix-ui/react-context\": \"1.1.4\",\n        \"@radix-ui/react-direction\": \"1.1.2\",\n        \"@radix-ui/react-dismissable-layer\": \"1.1.13\",\n        \"@radix-ui/react-focus-guards\": \"1.1.4\",\n        \"@radix-ui/react-focus-scope\": \"1.1.10\",\n        \"@radix-ui/react-id\": \"1.1.2\",\n        \"@radix-ui/react-popper\": \"1.3.1\",\n        \"@radix-ui/react-portal\": \"1.1.12\",\n        \"@radix-ui/react-presence\": \"1.1.6\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 2461,
+        "endLoc": {
+          "column": 45,
+          "line": 2461,
+          "position": 90772
+        },
+        "name": "package-lock.json",
+        "start": 2449,
+        "startLoc": {
+          "column": 8,
+          "line": 2449,
+          "position": 90184
+        }
+      },
+      "tokens": 52
+    },
+    {
+      "firstFile": {
+        "end": 2084,
+        "endLoc": {
+          "column": 6,
+          "line": 2084,
+          "position": 76166
+        },
+        "name": "package-lock.json",
+        "start": 2065,
+        "startLoc": {
+          "column": 40,
+          "line": 2065,
+          "position": 75588
+        }
+      },
+      "format": "json",
+      "fragment": "        \"@radix-ui/react-menu\": \"2.1.18\",\n        \"@radix-ui/react-primitive\": \"2.1.6\",\n        \"@radix-ui/react-roving-focus\": \"1.1.13\",\n        \"@radix-ui/react-use-controllable-state\": \"1.2.3\"\n      },\n      \"peerDependencies\": {\n        \"@types/react\": \"*\",\n        \"@types/react-dom\": \"*\",\n        \"react\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\",\n        \"react-dom\": \"^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc\"\n      },\n      \"peerDependenciesMeta\": {\n        \"@types/react\": {\n          \"optional\": true\n        },\n        \"@types/react-dom\": {\n          \"optional\": true\n        }\n      }\n    },",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 20,
+      "secondFile": {
+        "end": 2618,
+        "endLoc": {
+          "column": 6,
+          "line": 2618,
+          "position": 96493
+        },
+        "name": "package-lock.json",
+        "start": 2599,
+        "startLoc": {
+          "column": 43,
+          "line": 2599,
+          "position": 95915
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 149,
+        "endLoc": {
+          "column": 56,
+          "line": 149,
+          "position": 6293
+        },
+        "name": "pipeline/agent1_intake.py",
+        "start": 138,
+        "startLoc": {
+          "column": 8,
+          "line": 138,
+          "position": 5731
+        }
+      },
+      "format": "python",
+      "fragment": "        window_days = 14\n        buckets: dict[int, list[int]] = {}\n\n        for i, row in enumerate(rows):\n            ts_str = row[\"published_at\"] or row[\"created_at\"]\n            try:\n                ts = datetime.fromisoformat(ts_str.replace(\"Z\", \"+00:00\"))\n            except (ValueError, TypeError):\n                ts = datetime(2020, 1, 1, tzinfo=timezone.utc)\n            epoch = datetime(2020, 1, 1, tzinfo=timezone.utc)\n            window_key = int((ts - epoch).total_seconds() / (86400 * window_days))\n            buckets.setdefault(window_key, []).append(i)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 201,
+        "endLoc": {
+          "column": 52,
+          "line": 201,
+          "position": 8385
+        },
+        "name": "scripts/recluster_all.py",
+        "start": 190,
+        "startLoc": {
+          "column": 4,
+          "line": 190,
+          "position": 7863
+        }
+      },
+      "tokens": 128
+    },
+    {
+      "firstFile": {
+        "end": 147,
+        "endLoc": {
+          "column": 61,
+          "line": 147,
+          "position": 6153
+        },
+        "name": "pipeline/agent1_intake.py",
+        "start": 141,
+        "startLoc": {
+          "column": 8,
+          "line": 141,
+          "position": 5800
+        }
+      },
+      "format": "python",
+      "fragment": "        for i, row in enumerate(rows):\n            ts_str = row[\"published_at\"] or row[\"created_at\"]\n            try:\n                ts = datetime.fromisoformat(ts_str.replace(\"Z\", \"+00:00\"))\n            except (ValueError, TypeError):\n                ts = datetime(2020, 1, 1, tzinfo=timezone.utc)\n            epoch = datetime(2020, 1, 1, tzinfo=timezone.utc)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 158,
+        "endLoc": {
+          "column": 57,
+          "line": 158,
+          "position": 5480
+        },
+        "name": "scripts/eps_sweep.py",
+        "start": 152,
+        "startLoc": {
+          "column": 4,
+          "line": 152,
+          "position": 5151
+        }
+      },
+      "tokens": 77
+    },
+    {
+      "firstFile": {
+        "end": 151,
+        "endLoc": {
+          "column": 162,
+          "line": 151,
+          "position": 6457
+        },
+        "name": "pipeline/agent1_intake.py",
+        "start": 144,
+        "startLoc": {
+          "column": 43,
+          "line": 144,
+          "position": 5953
+        }
+      },
+      "format": "python",
+      "fragment": "                ts = datetime.fromisoformat(ts_str.replace(\"Z\", \"+00:00\"))\n            except (ValueError, TypeError):\n                ts = datetime(2020, 1, 1, tzinfo=timezone.utc)\n            epoch = datetime(2020, 1, 1, tzinfo=timezone.utc)\n            window_key = int((ts - epoch).total_seconds() / (86400 * window_days))\n            buckets.setdefault(window_key, []).append(i)\n\n        # ── Cluster per window ──────────────────────────────────────────",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 8,
+      "secondFile": {
+        "end": 203,
+        "endLoc": {
+          "column": 15,
+          "line": 203,
+          "position": 8402
+        },
+        "name": "scripts/recluster_all.py",
+        "start": 196,
+        "startLoc": {
+          "column": 39,
+          "line": 196,
+          "position": 8065
+        }
+      },
+      "tokens": 83
+    },
+    {
+      "firstFile": {
+        "end": 42,
+        "endLoc": {
+          "column": 169,
+          "line": 42,
+          "position": 2257
+        },
+        "name": "pipeline/agent2_forensic.py",
+        "start": 33,
+        "startLoc": {
+          "column": 2,
+          "line": 33,
+          "position": 1368
+        }
+      },
+      "format": "python",
+      "fragment": "  1 = Pure wire-service style. Just the facts, no adjectives, no opinion.\n      Example: \"The president signed the bill into law Tuesday afternoon.\"\n  3 = Mostly neutral with occasional loaded language.\n      Example: \"The controversial legislation, debated for months, was signed Tuesday.\"\n  5 = Moderate editorial framing. Clear word choices that steer interpretation.\n      Example: \"The embattled president reluctantly signed the deeply divisive bill into law.\"\n  7 = Heavy editorializing. Strong adjectives, clear author opinion, dramatic framing.\n      Example: \"In a stunning capitulation, the president caved to pressure and signed the disastrous bill.\"\n  10 = Pure opinion piece. Every sentence carries judgment.\n      Example: \"The corrupt administration rammed through yet another catastrophic policy Tuesday, proving once again that they answer only to their billionaire donors.\"",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 10,
+      "secondFile": {
+        "end": 78,
+        "endLoc": {
+          "column": 167,
+          "line": 78,
+          "position": 3855
+        },
+        "name": "pipeline/framing.py",
+        "start": 69,
+        "startLoc": {
+          "column": 0,
+          "line": 69,
+          "position": 2984
+        }
+      },
+      "tokens": 81
+    },
+    {
+      "firstFile": {
+        "end": 29,
+        "endLoc": {
+          "column": 57,
+          "line": 29,
+          "position": 1165
+        },
+        "name": "pipeline/firecrawl_search.py",
+        "start": 14,
+        "startLoc": {
+          "column": 0,
+          "line": 14,
+          "position": 382
+        }
+      },
+      "format": "python",
+      "fragment": "_PANEL_DOMAINS: set[str] = {\n    \"reuters.com\", \"apnews.com\", \"bbc.com\", \"bbc.co.uk\",\n    \"nytimes.com\", \"washingtonpost.com\", \"wsj.com\", \"npr.org\",\n    \"cbsnews.com\", \"abcnews.go.com\", \"nbcnews.com\", \"cnn.com\",\n    \"politico.com\", \"thehill.com\", \"theguardian.com\", \"independent.co.uk\",\n    \"dw.com\", \"france24.com\", \"aljazeera.com\", \"aljazeera.net\",\n    \"japantimes.co.jp\", \"timesofisrael.com\", \"tehrantimes.com\",\n    \"tass.com\", \"sputnikglobe.com\", \"vaticannews.va\",\n    \"nhk.or.jp\", \"thehindu.com\", \"presstv.ir\", \"rt.com\",\n    \"foxnews.com\", \"breitbart.com\", \"zerohedge.com\", \"infowars.com\",\n    \"punchng.com\", \"vanguardngr.com\", \"premiumtimesng.com\",\n    \"namibian.com.na\", \"jamaicaobserver.com\",\n    \"mercopress.com\",\n}\n\nlogger = logging.getLogger(\"narrative_nexus.news_search\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 27,
+        "endLoc": {
+          "column": 57,
+          "line": 27,
+          "position": 1056
+        },
+        "name": "pipeline/news_search.py",
+        "start": 12,
+        "startLoc": {
+          "column": 0,
+          "line": 12,
+          "position": 273
+        }
+      },
+      "tokens": 97
+    },
+    {
+      "firstFile": {
+        "end": 39,
+        "endLoc": {
+          "column": 49,
+          "line": 39,
+          "position": 1364
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 28,
+        "startLoc": {
+          "column": 8,
+          "line": 28,
+          "position": 942
+        }
+      },
+      "format": "python",
+      "fragment": "        params.append(as_of)\n\n    rows = conn.execute(f\"\"\"\n        SELECT cs.source_id, COUNT(*) as cnt\n        FROM claim_sources cs\n        INNER JOIN (\n            SELECT claim_id, MIN(first_seen_at) as first_seen\n            FROM claim_sources\n            GROUP BY claim_id\n        ) firsts ON cs.claim_id = firsts.claim_id\n            AND cs.first_seen_at = firsts.first_seen\n        INNER JOIN claims c ON cs.claim_id = c.id",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 78,
+        "endLoc": {
+          "column": 49,
+          "line": 78,
+          "position": 2909
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 67,
+        "startLoc": {
+          "column": 8,
+          "line": 67,
+          "position": 2487
+        }
+      },
+      "tokens": 76
+    },
+    {
+      "firstFile": {
+        "end": 39,
+        "endLoc": {
+          "column": 49,
+          "line": 39,
+          "position": 1364
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 30,
+        "startLoc": {
+          "column": 9,
+          "line": 30,
+          "position": 973
+        }
+      },
+      "format": "python",
+      "fragment": "    rows = conn.execute(f\"\"\"\n        SELECT cs.source_id, COUNT(*) as cnt\n        FROM claim_sources cs\n        INNER JOIN (\n            SELECT claim_id, MIN(first_seen_at) as first_seen\n            FROM claim_sources\n            GROUP BY claim_id\n        ) firsts ON cs.claim_id = firsts.claim_id\n            AND cs.first_seen_at = firsts.first_seen\n        INNER JOIN claims c ON cs.claim_id = c.id",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 10,
+      "secondFile": {
+        "end": 98,
+        "endLoc": {
+          "column": 53,
+          "line": 98,
+          "position": 3678
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 89,
+        "startLoc": {
+          "column": 18,
+          "line": 89,
+          "position": 3251
+        }
+      },
+      "tokens": 69
+    },
+    {
+      "firstFile": {
+        "end": 39,
+        "endLoc": {
+          "column": 49,
+          "line": 39,
+          "position": 1364
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 32,
+        "startLoc": {
+          "column": 8,
+          "line": 32,
+          "position": 1046
+        }
+      },
+      "format": "python",
+      "fragment": "        FROM claim_sources cs\n        INNER JOIN (\n            SELECT claim_id, MIN(first_seen_at) as first_seen\n            FROM claim_sources\n            GROUP BY claim_id\n        ) firsts ON cs.claim_id = firsts.claim_id\n            AND cs.first_seen_at = firsts.first_seen\n        INNER JOIN claims c ON cs.claim_id = c.id",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 8,
+      "secondFile": {
+        "end": 136,
+        "endLoc": {
+          "column": 49,
+          "line": 136,
+          "position": 5078
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 129,
+        "startLoc": {
+          "column": 8,
+          "line": 129,
+          "position": 4760
+        }
+      },
+      "tokens": 50
+    },
+    {
+      "firstFile": {
+        "end": 79,
+        "endLoc": {
+          "column": 13,
+          "line": 79,
+          "position": 2923
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 71,
+        "startLoc": {
+          "column": 13,
+          "line": 71,
+          "position": 2596
+        }
+      },
+      "format": "python",
+      "fragment": "        FROM claim_sources cs\n        INNER JOIN (\n            SELECT claim_id, MIN(first_seen_at) as first_seen\n            FROM claim_sources\n            GROUP BY claim_id\n        ) firsts ON cs.claim_id = firsts.claim_id\n            AND cs.first_seen_at = firsts.first_seen\n        INNER JOIN claims c ON cs.claim_id = c.id\n        WHERE c.state = 'CONSENSUS_ABSORBED'",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 9,
+      "secondFile": {
+        "end": 99,
+        "endLoc": {
+          "column": 17,
+          "line": 99,
+          "position": 3696
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 91,
+        "startLoc": {
+          "column": 17,
+          "line": 91,
+          "position": 3337
+        }
+      },
+      "tokens": 50
+    },
+    {
+      "firstFile": {
+        "end": 79,
+        "endLoc": {
+          "column": 44,
+          "line": 79,
+          "position": 2954
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 71,
+        "startLoc": {
+          "column": 13,
+          "line": 71,
+          "position": 2596
+        }
+      },
+      "format": "python",
+      "fragment": "        FROM claim_sources cs\n        INNER JOIN (\n            SELECT claim_id, MIN(first_seen_at) as first_seen\n            FROM claim_sources\n            GROUP BY claim_id\n        ) firsts ON cs.claim_id = firsts.claim_id\n            AND cs.first_seen_at = firsts.first_seen\n        INNER JOIN claims c ON cs.claim_id = c.id\n        WHERE c.state = 'CONSENSUS_ABSORBED'",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 9,
+      "secondFile": {
+        "end": 137,
+        "endLoc": {
+          "column": 44,
+          "line": 137,
+          "position": 5123
+        },
+        "name": "pipeline/snapshots.py",
+        "start": 129,
+        "startLoc": {
+          "column": 13,
+          "line": 129,
+          "position": 4765
+        }
+      },
+      "tokens": 55
+    },
+    {
+      "firstFile": {
+        "end": 38,
+        "endLoc": {
+          "column": 70,
+          "line": 38,
+          "position": 1205
+        },
+        "name": "pipeline/test_agent1_intake.py",
+        "start": 32,
+        "startLoc": {
+          "column": 57,
+          "line": 32,
+          "position": 961
+        }
+      },
+      "format": "python",
+      "fragment": "    \"\"\"Temp DB with sources and articles, no claims yet.\"\"\"\n    path = tempfile.mktemp(suffix=\".db\")\n    init_db(path)\n    conn = get_db(path)\n    try:\n        s1 = insert_source(conn, name=\"Reuters\", domain=\"reuters.com\", tier=1)\n        s2 = insert_source(conn, name=\"BBC\", domain=\"bbc.com\", tier=2)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 25,
+        "endLoc": {
+          "column": 70,
+          "line": 25,
+          "position": 788
+        },
+        "name": "pipeline/test_runner.py",
+        "start": 18,
+        "startLoc": {
+          "column": 75,
+          "line": 18,
+          "position": 543
+        }
+      },
+      "tokens": 59
+    },
+    {
+      "firstFile": {
+        "end": 38,
+        "endLoc": {
+          "column": 70,
+          "line": 38,
+          "position": 1205
+        },
+        "name": "pipeline/test_agent1_intake.py",
+        "start": 32,
+        "startLoc": {
+          "column": 57,
+          "line": 32,
+          "position": 961
+        }
+      },
+      "format": "python",
+      "fragment": "    \"\"\"Temp DB with sources and articles, no claims yet.\"\"\"\n    path = tempfile.mktemp(suffix=\".db\")\n    init_db(path)\n    conn = get_db(path)\n    try:\n        s1 = insert_source(conn, name=\"Reuters\", domain=\"reuters.com\", tier=1)\n        s2 = insert_source(conn, name=\"BBC\", domain=\"bbc.com\", tier=2)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 27,
+        "endLoc": {
+          "column": 70,
+          "line": 27,
+          "position": 824
+        },
+        "name": "pipeline/test_runner_scheduler.py",
+        "start": 20,
+        "startLoc": {
+          "column": 75,
+          "line": 20,
+          "position": 579
+        }
+      },
+      "tokens": 59
+    },
+    {
+      "firstFile": {
+        "end": 38,
+        "endLoc": {
+          "column": 70,
+          "line": 38,
+          "position": 1205
+        },
+        "name": "pipeline/test_agent1_intake.py",
+        "start": 32,
+        "startLoc": {
+          "column": 57,
+          "line": 32,
+          "position": 961
+        }
+      },
+      "format": "python",
+      "fragment": "    \"\"\"Temp DB with sources and articles, no claims yet.\"\"\"\n    path = tempfile.mktemp(suffix=\".db\")\n    init_db(path)\n    conn = get_db(path)\n    try:\n        s1 = insert_source(conn, name=\"Reuters\", domain=\"reuters.com\", tier=1)\n        s2 = insert_source(conn, name=\"BBC\", domain=\"bbc.com\", tier=2)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 27,
+        "endLoc": {
+          "column": 70,
+          "line": 27,
+          "position": 813
+        },
+        "name": "scripts/test_seed.py",
+        "start": 21,
+        "startLoc": {
+          "column": 53,
+          "line": 21,
+          "position": 569
+        }
+      },
+      "tokens": 59
+    },
+    {
+      "firstFile": {
+        "end": 109,
+        "endLoc": {
+          "column": 24,
+          "line": 109,
+          "position": 4310
+        },
+        "name": "pipeline/test_agent1_intake.py",
+        "start": 91,
+        "startLoc": {
+          "column": 44,
+          "line": 91,
+          "position": 3645
+        }
+      },
+      "format": "python",
+      "fragment": "        \"\"\"Clusters are actually persisted.\"\"\"\n        from pipeline.agent1_intake import IntakeClusteringAgent\n\n        agent = IntakeClusteringAgent(\n            db_path=db_path,\n            embedding_provider=LOCAL_CPU_PROVIDER,\n        )\n        await agent.run()\n\n        conn = get_db(db_path)\n        try:\n            clusters = list_clusters(conn)\n            assert len(clusters) >= 1\n            # ponytail: vertical is now classifier-driven, not hardcoded\n            from pipeline.vertical_classifier import get_vertical_list\n            valid_verticals = set(get_vertical_list())\n            assert all(c[\"vertical\"] in valid_verticals for c in clusters)\n        finally:\n            conn.close()",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 19,
+      "secondFile": {
+        "end": 166,
+        "endLoc": {
+          "column": 24,
+          "line": 166,
+          "position": 6540
+        },
+        "name": "pipeline/test_agent1_intake.py",
+        "start": 148,
+        "startLoc": {
+          "column": 89,
+          "line": 148,
+          "position": 5875
+        }
+      },
+      "tokens": 84
+    },
+    {
+      "firstFile": {
+        "end": 83,
+        "endLoc": {
+          "column": 13,
+          "line": 83,
+          "position": 3014
+        },
+        "name": "pipeline/test_agent2_forensic.py",
+        "start": 70,
+        "startLoc": {
+          "column": 16,
+          "line": 70,
+          "position": 2546
+        }
+      },
+      "format": "python",
+      "fragment": "                ]}\n            ]\n        })\n\n        with patch(\"pipeline.agent2_forensic.LLMClient\") as mock_llm_cls:\n            mock_client = mock_llm_cls.return_value\n            mock_client.chat = AsyncMock(return_value=mock_response)\n\n            from pipeline.agent2_forensic import ForensicExtractionAgent\n            agent = ForensicExtractionAgent(\n                db_path=db_file,\n                llm_provider=LLM_PROVIDER,\n                api_key=\"test-key\",\n            )",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 159,
+        "endLoc": {
+          "column": 13,
+          "line": 159,
+          "position": 6080
+        },
+        "name": "pipeline/test_agent2_forensic.py",
+        "start": 149,
+        "startLoc": {
+          "column": 86,
+          "line": 149,
+          "position": 5635
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 66,
+        "endLoc": {
+          "column": 3,
+          "line": 66,
+          "position": 2354
+        },
+        "name": "pipeline/test_runner.py",
+        "start": 19,
+        "startLoc": {
+          "column": 39,
+          "line": 19,
+          "position": 585
+        }
+      },
+      "format": "python",
+      "fragment": "    path = tempfile.mktemp(suffix=\".db\")\n    init_db(path)\n\n    conn = get_db(path)\n    try:\n        s1 = insert_source(conn, name=\"Reuters\", domain=\"reuters.com\", tier=1)\n        s2 = insert_source(conn, name=\"BBC\", domain=\"bbc.com\", tier=2)\n\n        c1 = create_cluster(conn, vertical=\"geopolitics\", title=\"Test Cluster\")\n\n        a1 = insert_article(conn, source_id=s1, url=\"http://r.com/1\", title=\"R1\")\n        a2 = insert_article(conn, source_id=s2, url=\"http://b.com/1\", title=\"B1\")\n\n        t0 = datetime(2026, 1, 1, tzinfo=timezone.utc)\n        t1 = datetime(2026, 1, 3, tzinfo=timezone.utc)\n\n        cl1 = insert_claim(conn, article_id=a1, cluster_id=c1, text=\"Claim 1\")\n        cl2 = insert_claim(conn, article_id=a2, cluster_id=c1, text=\"Claim 2\")\n\n        add_claim_source(conn, claim_id=cl1, source_id=s1)\n        add_claim_source(conn, claim_id=cl1, source_id=s2)\n        add_claim_source(conn, claim_id=cl2, source_id=s2)\n\n        conn.execute(\n            \"UPDATE claim_sources SET first_seen_at = ? WHERE claim_id = ? AND source_id = ?\",\n            (t0.isoformat(), cl1, s1),\n        )\n        conn.execute(\n            \"UPDATE claim_sources SET first_seen_at = ? WHERE claim_id = ? AND source_id = ?\",\n            (t1.isoformat(), cl1, s2),\n        )\n        conn.execute(\n            \"UPDATE claim_sources SET first_seen_at = ? WHERE claim_id = ? AND source_id = ?\",\n            (t0.isoformat(), cl2, s2),\n        )\n\n        update_claim_state(conn, cl1, \"CONSENSUS_ABSORBED\", absorbed_at=t1.isoformat())\n        conn.execute(\"UPDATE claims SET created_at = ? WHERE id = ?\", (t0.isoformat(), cl1))\n        conn.execute(\"UPDATE claims SET created_at = ? WHERE id = ?\", (t0.isoformat(), cl2))\n        conn.commit()\n    finally:\n        conn.close()\n\n    yield path\n    os.unlink(path)\n\n\ndef test_run_daily_pipeline_processes_all_clusters(db_path):",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 48,
+      "secondFile": {
+        "end": 68,
+        "endLoc": {
+          "column": 3,
+          "line": 68,
+          "position": 2390
+        },
+        "name": "pipeline/test_runner_scheduler.py",
+        "start": 21,
+        "startLoc": {
+          "column": 39,
+          "line": 21,
+          "position": 621
+        }
+      },
+      "tokens": 329
+    },
+    {
+      "firstFile": {
+        "end": 348,
+        "endLoc": {
+          "column": 90,
+          "line": 348,
+          "position": 12720
+        },
+        "name": "pipeline/test_snapshots.py",
+        "start": 341,
+        "startLoc": {
+          "column": 4,
+          "line": 341,
+          "position": 12404
+        }
+      },
+      "format": "python",
+      "fragment": "    write_daily_snapshots(\n        db,\n        date_str=date_str,\n        vertical=\"geopolitics\",\n        r_orig={1: 50.0, 2: 30.0, 3: 10.0},\n        r_val={1: 60.0, 2: 40.0, 3: 20.0},\n        r_speed={1: 25.0, 2: None, 3: None},\n        archetypes={1: \"EARLY_BREAKER\", 2: \"CONSENSUS_FOLLOWER\", 3: \"CONSENSUS_FOLLOWER\"},",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 8,
+      "secondFile": {
+        "end": 463,
+        "endLoc": {
+          "column": 90,
+          "line": 463,
+          "position": 17294
+        },
+        "name": "pipeline/test_snapshots.py",
+        "start": 458,
+        "startLoc": {
+          "column": 4,
+          "line": 458,
+          "position": 16994
+        }
+      },
+      "tokens": 76
+    },
+    {
+      "firstFile": {
+        "end": 12,
+        "endLoc": {
+          "column": 25,
+          "line": 12,
+          "position": 383
+        },
+        "name": "scripts/_deepseek_backfill_300.py",
+        "start": 2,
+        "startLoc": {
+          "column": 64,
+          "line": 2,
+          "position": 87
+        }
+      },
+      "format": "python",
+      "fragment": "\"\"\"Quick DeepSeek LLM backfill — 300 articles with 10s pause.\"\"\"\nimport os, asyncio, json, sqlite3, sys, time\nfrom pathlib import Path\n_PROJ = Path(__file__).resolve().parent.parent\nsys.path.insert(0, str(_PROJ))\nfrom dotenv import load_dotenv\nload_dotenv(_PROJ / \".env\")\nimport openai\nfrom pipeline.framing import score_llm_prompt\n\nAPI_KEY = os.environ.get(\"DEEPSEEK_API_KEY\", \"\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 12,
+        "endLoc": {
+          "column": 25,
+          "line": 12,
+          "position": 392
+        },
+        "name": "scripts/_fireworks_backfill_300.py",
+        "start": 2,
+        "startLoc": {
+          "column": 73,
+          "line": 2,
+          "position": 96
+        }
+      },
+      "tokens": 70
+    },
+    {
+      "firstFile": {
+        "end": 39,
+        "endLoc": {
+          "column": 11,
+          "line": 39,
+          "position": 1136
+        },
+        "name": "scripts/_deepseek_backfill_300.py",
+        "start": 24,
+        "startLoc": {
+          "column": 46,
+          "line": 24,
+          "position": 750
+        }
+      },
+      "format": "python",
+      "fragment": "        base_url=\"https://api.deepseek.com/v1\",\n        api_key=API_KEY,\n        timeout=30.0,\n    )\n\n    conn = sqlite3.connect(DB)\n    conn.row_factory = sqlite3.Row\n    rows = conn.execute(\n        \"SELECT a.id, a.title, a.body FROM article_framing af \"\n        \"JOIN articles a ON a.id = af.article_id \"\n        \"WHERE af.llm_score IS NULL ORDER BY a.id LIMIT ?\",\n        (BATCH,),\n    ).fetchall()\n    conn.close()\n\n    print(f\"Backfilling {len(rows)} articles with {DELAY}s pause...\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 40,
+        "endLoc": {
+          "column": 11,
+          "line": 40,
+          "position": 1201
+        },
+        "name": "scripts/_fireworks_backfill_300.py",
+        "start": 25,
+        "startLoc": {
+          "column": 25,
+          "line": 25,
+          "position": 815
+        }
+      },
+      "tokens": 53
+    },
+    {
+      "firstFile": {
+        "end": 50,
+        "endLoc": {
+          "column": 39,
+          "line": 50,
+          "position": 1450
+        },
+        "name": "scripts/_deepseek_backfill_300.py",
+        "start": 39,
+        "startLoc": {
+          "column": 68,
+          "line": 39,
+          "position": 1193
+        }
+      },
+      "format": "python",
+      "fragment": "    print(f\"Backfilling {len(rows)} articles with {DELAY}s pause...\")\n    start_time = time.time()\n    scored = 0\n    failed = 0\n    total_tokens = 0\n\n    for i, row in enumerate(rows):\n        if i > 0:\n            await asyncio.sleep(DELAY)\n\n        body = (row[\"body\"] or \"\")[:2000]\n        prompt = score_llm_prompt(body)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 51,
+        "endLoc": {
+          "column": 39,
+          "line": 51,
+          "position": 1515
+        },
+        "name": "scripts/_fireworks_backfill_300.py",
+        "start": 40,
+        "startLoc": {
+          "column": 68,
+          "line": 40,
+          "position": 1258
+        }
+      },
+      "tokens": 59
+    },
+    {
+      "firstFile": {
+        "end": 76,
+        "endLoc": {
+          "column": 46,
+          "line": 76,
+          "position": 2397
+        },
+        "name": "scripts/_deepseek_backfill_300.py",
+        "start": 52,
+        "startLoc": {
+          "column": 8,
+          "line": 52,
+          "position": 1460
+        }
+      },
+      "format": "python",
+      "fragment": "        try:\n            resp = await client.chat.completions.create(\n                model=MODEL,\n                messages=[{\"role\": \"user\", \"content\": prompt}],\n                response_format={\"type\": \"json_object\"},\n                temperature=0.0,\n                max_tokens=2000,\n            )\n            content = resp.choices[0].message.content or \"{}\"\n            score_val = int(json.loads(content)[\"score\"])\n            tokens = resp.usage.total_tokens if resp.usage else 0\n            total_tokens += tokens\n\n            conn = sqlite3.connect(DB)\n            conn.execute(\n                \"UPDATE article_framing SET llm_score = ? WHERE article_id = ?\",\n                (score_val, row[\"id\"]),\n            )\n            conn.commit()\n            conn.close()\n            scored += 1\n\n            if (scored) % 10 == 0 or scored == 1:\n                elapsed = time.time() - start_time\n                remaining = len(rows) - scored",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 25,
+      "secondFile": {
+        "end": 78,
+        "endLoc": {
+          "column": 50,
+          "line": 78,
+          "position": 2587
+        },
+        "name": "scripts/_fireworks_backfill_300.py",
+        "start": 54,
+        "startLoc": {
+          "column": 12,
+          "line": 54,
+          "position": 1562
+        }
+      },
+      "tokens": 163
+    },
+    {
+      "firstFile": {
+        "end": 96,
+        "endLoc": {
+          "column": 22,
+          "line": 96,
+          "position": 2881
+        },
+        "name": "scripts/eps_sweep.py",
+        "start": 89,
+        "startLoc": {
+          "column": 54,
+          "line": 89,
+          "position": 2651
+        }
+      },
+      "format": "python",
+      "fragment": "def load_provider_config(path=\"config/providers.json\"):\n    with open(path) as f:\n        cfg = json.load(f)\n    default_id = cfg[\"defaults\"][\"agent1_embedding\"]\n    for p in cfg[\"providers\"][\"embeddings\"]:\n        if p[\"id\"] == default_id:\n            return p\n    raise SystemExit(f\"Provider '{default_id}' not found\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 8,
+      "secondFile": {
+        "end": 49,
+        "endLoc": {
+          "column": 22,
+          "line": 49,
+          "position": 1592
+        },
+        "name": "scripts/recluster_all.py",
+        "start": 42,
+        "startLoc": {
+          "column": 69,
+          "line": 42,
+          "position": 1362
+        }
+      },
+      "tokens": 52
+    },
+    {
+      "firstFile": {
+        "end": 143,
+        "endLoc": {
+          "column": 84,
+          "line": 143,
+          "position": 4887
+        },
+        "name": "scripts/eps_sweep.py",
+        "start": 132,
+        "startLoc": {
+          "column": 113,
+          "line": 132,
+          "position": 4413
+        }
+      },
+      "format": "python",
+      "fragment": "            print(f\"    Batch {start//BATCH + 1}: {len(batch)} texts, {len(batch_vecs)} vectors\", file=sys.stderr)\n\n        for (_, aid), vec in zip(uncached_pairs, new_vecs):\n            arr = np.array(vec, dtype=np.float64)\n            blob = arr.tobytes()\n            conn.execute(\n                \"INSERT OR REPLACE INTO embeddings (article_id, model, dim, vector) VALUES (?, ?, ?, ?)\",\n                (aid, model, len(vec), blob),\n            )\n            cached[aid] = arr\n        conn.commit()\n        print(f\"  Persisted {len(uncached_pairs)} new embeddings.\", file=sys.stderr)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 107,
+        "endLoc": {
+          "column": 84,
+          "line": 107,
+          "position": 4146
+        },
+        "name": "scripts/recluster_all.py",
+        "start": 96,
+        "startLoc": {
+          "column": 38,
+          "line": 96,
+          "position": 3672
+        }
+      },
+      "tokens": 80
+    },
+    {
+      "firstFile": {
+        "end": 272,
+        "endLoc": {
+          "column": 19,
+          "line": 272,
+          "position": 9660
+        },
+        "name": "scripts/eps_sweep.py",
+        "start": 266,
+        "startLoc": {
+          "column": 4,
+          "line": 266,
+          "position": 9412
+        }
+      },
+      "format": "python",
+      "fragment": "    rows = conn.execute(\"\"\"\n        SELECT a.id, a.title, a.body, a.published_at, a.created_at\n        FROM articles a\n        WHERE a.body_status = 'AVAILABLE'\n          AND a.body IS NOT NULL AND a.body != ''\n        ORDER BY a.id\n    \"\"\").fetchall()",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 161,
+        "endLoc": {
+          "column": 19,
+          "line": 161,
+          "position": 6364
+        },
+        "name": "scripts/recluster_all.py",
+        "start": 154,
+        "startLoc": {
+          "column": 4,
+          "line": 154,
+          "position": 6106
+        }
+      },
+      "tokens": 58
+    },
+    {
+      "firstFile": {
+        "end": 272,
+        "endLoc": {
+          "column": 19,
+          "line": 272,
+          "position": 9660
+        },
+        "name": "scripts/eps_sweep.py",
+        "start": 266,
+        "startLoc": {
+          "column": 4,
+          "line": 266,
+          "position": 9412
+        }
+      },
+      "format": "python",
+      "fragment": "    rows = conn.execute(\"\"\"\n        SELECT a.id, a.title, a.body, a.published_at, a.created_at\n        FROM articles a\n        WHERE a.body_status = 'AVAILABLE'\n          AND a.body IS NOT NULL AND a.body != ''\n        ORDER BY a.id\n    \"\"\").fetchall()",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 178,
+        "endLoc": {
+          "column": 19,
+          "line": 178,
+          "position": 6615
+        },
+        "name": "scripts/w1w2_sweep.py",
+        "start": 172,
+        "startLoc": {
+          "column": 4,
+          "line": 172,
+          "position": 6367
+        }
+      },
+      "tokens": 58
+    },
+    {
+      "firstFile": {
+        "end": 22,
+        "endLoc": {
+          "column": 48,
+          "line": 22,
+          "position": 638
+        },
+        "name": "scripts/gcc_cluster.py",
+        "start": 10,
+        "startLoc": {
+          "column": 33,
+          "line": 10,
+          "position": 338
+        }
+      },
+      "format": "python",
+      "fragment": "from collections import Counter, defaultdict\nfrom pathlib import Path\n\ntry:\n    from dotenv import load_dotenv\n    load_dotenv(Path(__file__).resolve().parent.parent / \".env\")\nexcept ImportError:\n    pass\n\nimport openai\n\nsys.path.insert(0, str(Path(__file__).resolve().parent.parent))\nfrom pipeline.cleaner import get_embedding_input",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 17,
+        "endLoc": {
+          "column": 48,
+          "line": 17,
+          "position": 480
+        },
+        "name": "scripts/z1z2_gap.py",
+        "start": 5,
+        "startLoc": {
+          "column": 24,
+          "line": 5,
+          "position": 180
+        }
+      },
+      "tokens": 64
+    },
+    {
+      "firstFile": {
+        "end": 15,
+        "endLoc": {
+          "column": 23,
+          "line": 15,
+          "position": 509
+        },
+        "name": "scripts/gemma_agent4_run.py",
+        "start": 9,
+        "startLoc": {
+          "column": 8,
+          "line": 9,
+          "position": 238
+        }
+      },
+      "format": "python",
+      "fragment": "def _key():\n    f = os.path.expanduser(\"~/.hermes/.env\")\n    with open(f) as fh:\n        for ln in fh:\n            if ln.strip().startswith(\"FIR\") and not ln.strip().startswith(\"#\"):\n                return ln.split(\"=\", 1)[1].strip().strip('\"').strip(\"'\")\n    raise RuntimeError(\"key not found\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 22,
+        "endLoc": {
+          "column": 23,
+          "line": 22,
+          "position": 845
+        },
+        "name": "scripts/gemma_batch_extract.py",
+        "start": 16,
+        "startLoc": {
+          "column": 12,
+          "line": 16,
+          "position": 574
+        }
+      },
+      "tokens": 79
+    },
+    {
+      "firstFile": {
+        "end": 71,
+        "endLoc": {
+          "column": 11,
+          "line": 71,
+          "position": 2451
+        },
+        "name": "scripts/gemma_agent4_run.py",
+        "start": 59,
+        "startLoc": {
+          "column": 4,
+          "line": 59,
+          "position": 2044
+        }
+      },
+      "format": "python",
+      "fragment": "    if \"results\" not in data:\n        for alt in (\"articles\", \"data\", \"output\"):\n            if alt in data and isinstance(data[alt], list):\n                data = {\"results\": data[alt]}\n                break\n    if \"results\" not in data:\n        for k in list(data.keys()):\n            if isinstance(data[k], list):\n                data = {\"results\": data[k]}\n                break\n    return data\n\ndef main():",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 101,
+        "endLoc": {
+          "column": 11,
+          "line": 101,
+          "position": 3229
+        },
+        "name": "scripts/gemma_batch_extract.py",
+        "start": 88,
+        "startLoc": {
+          "column": 4,
+          "line": 88,
+          "position": 2821
+        }
+      },
+      "tokens": 90
+    },
+    {
+      "firstFile": {
+        "end": 33,
+        "endLoc": {
+          "column": 15,
+          "line": 33,
+          "position": 1101
+        },
+        "name": "scripts/r2.9d_continue.py",
+        "start": 21,
+        "startLoc": {
+          "column": 36,
+          "line": 21,
+          "position": 700
+        }
+      },
+      "format": "python",
+      "fragment": "print(f\"Absorbed claims: {absorbed}\")\n\nrows = c.execute(\"\"\"\n    SELECT c.id as claim_id, c.text, c.cluster_id, cl.vertical,\n           c.convergence_type, c.absorbed_at,\n           a.source_id, s.name as source_name\n    FROM claims c\n    JOIN articles a ON a.id = c.article_id\n    JOIN sources s ON s.id = a.source_id\n    JOIN clusters cl ON cl.id = c.cluster_id\n    WHERE c.state = 'CONSENSUS_ABSORBED'\n    ORDER BY c.id\n\"\"\").fetchall()",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 159,
+        "endLoc": {
+          "column": 15,
+          "line": 159,
+          "position": 6953
+        },
+        "name": "scripts/r2.9d_rebuild.py",
+        "start": 148,
+        "startLoc": {
+          "column": 33,
+          "line": 148,
+          "position": 6553
+        }
+      },
+      "tokens": 94
+    },
+    {
+      "firstFile": {
+        "end": 59,
+        "endLoc": {
+          "column": 61,
+          "line": 59,
+          "position": 1970
+        },
+        "name": "scripts/r2.9d_continue.py",
+        "start": 52,
+        "startLoc": {
+          "column": 22,
+          "line": 52,
+          "position": 1692
+        }
+      },
+      "format": "python",
+      "fragment": "        supporters = c.execute(\"\"\"\n            SELECT s.name, s.tier\n            FROM claim_sources cs\n            JOIN sources s ON s.id = cs.source_id\n            WHERE cs.claim_id = ?\n        \"\"\", (cc[\"claim_id\"],)).fetchall()\n        \n        t1t2 = [s for s in supporters if s[\"tier\"] in (1, 2)]",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 8,
+      "secondFile": {
+        "end": 178,
+        "endLoc": {
+          "column": 61,
+          "line": 178,
+          "position": 7602
+        },
+        "name": "scripts/r2.9d_rebuild.py",
+        "start": 171,
+        "startLoc": {
+          "column": 25,
+          "line": 171,
+          "position": 7324
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 139,
+        "endLoc": {
+          "column": 32,
+          "line": 139,
+          "position": 5137
+        },
+        "name": "scripts/r2.9d_continue.py",
+        "start": 110,
+        "startLoc": {
+          "column": 36,
+          "line": 110,
+          "position": 4173
+        }
+      },
+      "format": "python",
+      "fragment": "print(\"\\n=== Snapshot Recompute ===\")\n\nfrom pipeline.runner import _compute_and_write_snapshots\n\nconn = sqlite3.connect(DB)\nc = conn.cursor()\n\n# Delete existing snapshots\ndeleted = c.execute(\"DELETE FROM snapshots\").rowcount\nprint(f\"Deleted {deleted} existing snapshots\")\n\n# Get date range\ndate_rows = c.execute(\n    \"SELECT MIN(published_at), MAX(published_at) FROM articles WHERE published_at IS NOT NULL\"\n).fetchone()\nmin_date_str = date_rows[0][:10]\nmax_date_str = date_rows[1][:10]\nmin_date = datetime.fromisoformat(min_date_str)\nmax_date = datetime.fromisoformat(max_date_str)\nndays = (max_date - min_date).days + 1\nprint(f\"Date range: {min_date_str} → {max_date_str} ({ndays} days)\")\n\ncurrent = min_date\ntotal_snaps = 0\nwhile current <= max_date:\n    date_str = current.strftime(\"%Y-%m-%d\")\n    as_of = (current + timedelta(days=1)).isoformat()\n    snap_count = _compute_and_write_snapshots(conn, date_str=date_str, as_of=as_of)\n    total_snaps += snap_count\n    current += timedelta(days=1)",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 30,
+      "secondFile": {
+        "end": 213,
+        "endLoc": {
+          "column": 32,
+          "line": 213,
+          "position": 9003
+        },
+        "name": "scripts/r2.9d_rebuild.py",
+        "start": 186,
+        "startLoc": {
+          "column": 44,
+          "line": 186,
+          "position": 8045
+        }
+      },
+      "tokens": 166
+    },
+    {
+      "firstFile": {
+        "end": 146,
+        "endLoc": {
+          "column": 20,
+          "line": 146,
+          "position": 5295
+        },
+        "name": "scripts/r2.9d_continue.py",
+        "start": 122,
+        "startLoc": {
+          "column": 0,
+          "line": 122,
+          "position": 4427
+        }
+      },
+      "format": "python",
+      "fragment": "date_rows = c.execute(\n    \"SELECT MIN(published_at), MAX(published_at) FROM articles WHERE published_at IS NOT NULL\"\n).fetchone()\nmin_date_str = date_rows[0][:10]\nmax_date_str = date_rows[1][:10]\nmin_date = datetime.fromisoformat(min_date_str)\nmax_date = datetime.fromisoformat(max_date_str)\nndays = (max_date - min_date).days + 1\nprint(f\"Date range: {min_date_str} → {max_date_str} ({ndays} days)\")\n\ncurrent = min_date\ntotal_snaps = 0\nwhile current <= max_date:\n    date_str = current.strftime(\"%Y-%m-%d\")\n    as_of = (current + timedelta(days=1)).isoformat()\n    snap_count = _compute_and_write_snapshots(conn, date_str=date_str, as_of=as_of)\n    total_snaps += snap_count\n    current += timedelta(days=1)\n\nconn.commit()\n\nc.execute(\"SELECT COUNT(DISTINCT date) FROM snapshots\")\nnd = c.fetchone()[0]\nc.execute(\"SELECT COUNT(*) FROM snapshots\")\nns = c.fetchone()[0]",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 25,
+      "secondFile": {
+        "end": 46,
+        "endLoc": {
+          "column": 20,
+          "line": 46,
+          "position": 1444
+        },
+        "name": "scripts/r2.9d_snapshots.py",
+        "start": 22,
+        "startLoc": {
+          "column": 0,
+          "line": 22,
+          "position": 576
+        }
+      },
+      "tokens": 164
+    },
+    {
+      "firstFile": {
+        "end": 147,
+        "endLoc": {
+          "column": 5,
+          "line": 147,
+          "position": 5301
+        },
+        "name": "scripts/r2.9d_continue.py",
+        "start": 135,
+        "startLoc": {
+          "column": 15,
+          "line": 135,
+          "position": 4908
+        }
+      },
+      "format": "python",
+      "fragment": "    date_str = current.strftime(\"%Y-%m-%d\")\n    as_of = (current + timedelta(days=1)).isoformat()\n    snap_count = _compute_and_write_snapshots(conn, date_str=date_str, as_of=as_of)\n    total_snaps += snap_count\n    current += timedelta(days=1)\n\nconn.commit()\n\nc.execute(\"SELECT COUNT(DISTINCT date) FROM snapshots\")\nnd = c.fetchone()[0]\nc.execute(\"SELECT COUNT(*) FROM snapshots\")\nns = c.fetchone()[0]\nprint(f\"Distinct dates: {nd}\")",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 13,
+      "secondFile": {
+        "end": 47,
+        "endLoc": {
+          "column": 1,
+          "line": 47,
+          "position": 1446
+        },
+        "name": "scripts/r2.9d_snapshots.py",
+        "start": 35,
+        "startLoc": {
+          "column": 15,
+          "line": 35,
+          "position": 1057
+        }
+      },
+      "tokens": 86
+    },
+    {
+      "firstFile": {
+        "end": 103,
+        "endLoc": {
+          "column": 21,
+          "line": 103,
+          "position": 3631
+        },
+        "name": "scripts/s3_checks.py",
+        "start": 88,
+        "startLoc": {
+          "column": 7,
+          "line": 88,
+          "position": 2973
+        }
+      },
+      "format": "python",
+      "fragment": "rows_f = conn.execute(\"\"\"\n    SELECT s.name,\n           COUNT(*) as total_claims,\n           SUM(CASE WHEN cluster_source_count = 1 THEN 1 ELSE 0 END) as solo,\n           ROUND(100.0 * SUM(CASE WHEN cluster_source_count = 1 THEN 1 ELSE 0 END) / COUNT(*), 1) as solo_pct\n    FROM (\n        SELECT a.source_id,\n               (SELECT COUNT(DISTINCT a2.source_id)\n                FROM claims c2 JOIN articles a2 ON a2.id = c2.article_id\n                WHERE c2.cluster_id = c.cluster_id) as cluster_source_count\n        FROM claims c\n        JOIN articles a ON a.id = c.article_id\n    )\n    JOIN sources s ON s.id = source_id\n    GROUP BY s.name\n    ORDER BY solo_pct DESC",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 125,
+        "endLoc": {
+          "column": 21,
+          "line": 125,
+          "position": 4480
+        },
+        "name": "scripts/s3_checks.py",
+        "start": 110,
+        "startLoc": {
+          "column": 8,
+          "line": 110,
+          "position": 3822
+        }
+      },
+      "tokens": 135
+    },
+    {
+      "firstFile": {
+        "end": 45,
+        "endLoc": {
+          "column": 49,
+          "line": 45,
+          "position": 1833
+        },
+        "name": "scripts/smoke_test_fireworks.py",
+        "start": 39,
+        "startLoc": {
+          "column": 19,
+          "line": 39,
+          "position": 1568
+        }
+      },
+      "format": "python",
+      "fragment": "async def chat_test(model_id):\n    provider = {\"id\": \"fireworks\", \"name\": \"Fireworks AI\", \"model\": model_id, \"amd\": True}\n    client = LLMClient(provider, api_key=FW_KEY)\n    t0 = time.time()\n    try:\n        resp = await client.chat(\n            messages=[{\"role\": \"user\", \"content\": \"Return JSON: {\\\"status\\\": \\\"ok\\\", \\\"number\\\": 42}\"}],",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 27,
+        "endLoc": {
+          "column": 49,
+          "line": 27,
+          "position": 871
+        },
+        "name": "scripts/test_gemma.py",
+        "start": 21,
+        "startLoc": {
+          "column": 20,
+          "line": 21,
+          "position": 606
+        }
+      },
+      "tokens": 59
+    },
+    {
+      "firstFile": {
+        "end": 275,
+        "endLoc": {
+          "column": 172,
+          "line": 275,
+          "position": 10040
+        },
+        "name": "scripts/survey-extraction.py",
+        "start": 264,
+        "startLoc": {
+          "column": 36,
+          "line": 264,
+          "position": 9600
+        }
+      },
+      "format": "python",
+      "fragment": "        \"per_source\": per_source_agg,\n    }\n\n    if args.output == \"-\":\n        json.dump(report, sys.stdout, indent=2)\n        sys.stdout.write(\"\\n\")\n    else:\n        with open(args.output, \"w\") as f:\n            json.dump(report, f, indent=2)\n        print(f\"\\nWrote {args.output}\", file=sys.stderr)\n\n    # ── Summary to stderr ───────────────────────────────────────────────",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 201,
+        "endLoc": {
+          "column": 172,
+          "line": 201,
+          "position": 7241
+        },
+        "name": "scripts/survey-sources.py",
+        "start": 190,
+        "startLoc": {
+          "column": 47,
+          "line": 190,
+          "position": 6801
+        }
+      },
+      "tokens": 70
+    },
+    {
+      "firstFile": {
+        "end": 15,
+        "endLoc": {
+          "column": 15,
+          "line": 15,
+          "position": 551
+        },
+        "name": "scripts/t4a_final_groups.py",
+        "start": 4,
+        "startLoc": {
+          "column": 0,
+          "line": 4,
+          "position": 117
+        }
+      },
+      "format": "python",
+      "fragment": "from collections import defaultdict\n\nconn = sqlite3.connect(\"file:data/nn.db?mode=ro\", uri=True)\nconn.row_factory = sqlite3.Row\n\nrows = conn.execute(\"\"\"\n    SELECT a.id, a.title, a.source_id, s.name as sn, a.published_at\n    FROM articles a JOIN sources s ON s.id = a.source_id\n    WHERE a.published_at >= '2026-06-01' AND a.published_at < '2026-07-01'\n      AND a.body_status = 'AVAILABLE'\n    ORDER BY a.published_at\n\"\"\").fetchall()",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 12,
+      "secondFile": {
+        "end": 15,
+        "endLoc": {
+          "column": 15,
+          "line": 15,
+          "position": 555
+        },
+        "name": "scripts/t4a_groups.py",
+        "start": 4,
+        "startLoc": {
+          "column": 0,
+          "line": 4,
+          "position": 121
+        }
+      },
+      "tokens": 93
+    },
+    {
+      "firstFile": {
+        "end": 15,
+        "endLoc": {
+          "column": 15,
+          "line": 15,
+          "position": 555
+        },
+        "name": "scripts/t4a_groups.py",
+        "start": 2,
+        "startLoc": {
+          "column": 71,
+          "line": 2,
+          "position": 94
+        }
+      },
+      "format": "python",
+      "fragment": "\"\"\"T4a: Identify 15 real story groups across >=3 sources in June 2026.\"\"\"\nimport sqlite3, re, sys\nfrom collections import defaultdict\n\nconn = sqlite3.connect(\"file:data/nn.db?mode=ro\", uri=True)\nconn.row_factory = sqlite3.Row\n\nrows = conn.execute(\"\"\"\n    SELECT a.id, a.title, a.source_id, s.name as sn, a.published_at\n    FROM articles a JOIN sources s ON s.id = a.source_id\n    WHERE a.published_at >= '2026-06-01' AND a.published_at < '2026-07-01'\n      AND a.body_status = 'AVAILABLE'\n    ORDER BY a.published_at\n\"\"\").fetchall()",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 15,
+        "endLoc": {
+          "column": 15,
+          "line": 15,
+          "position": 569
+        },
+        "name": "scripts/t4a_story_groups.py",
+        "start": 2,
+        "startLoc": {
+          "column": 85,
+          "line": 2,
+          "position": 108
+        }
+      },
+      "tokens": 100
+    },
+    {
+      "firstFile": {
+        "end": 37,
+        "endLoc": {
+          "column": 9,
+          "line": 37,
+          "position": 1214
+        },
+        "name": "scripts/x2_pairwise.py",
+        "start": 27,
+        "startLoc": {
+          "column": 63,
+          "line": 27,
+          "position": 969
+        }
+      },
+      "format": "python",
+      "fragment": "    (486, \"Science/Tech — Anthropic Mythos export ban lifted\"),\n]\n\nconn = sqlite3.connect(\"file:data/nn.db?mode=ro\", uri=True)\nconn.row_factory = sqlite3.Row\n\ntexts = []\nlabels = []\nfor aid, label in ARTICLES:\n    r = conn.execute(\"SELECT title, body FROM articles WHERE id=?\", (aid,)).fetchone()\n    if r:",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 34,
+        "endLoc": {
+          "column": 9,
+          "line": 34,
+          "position": 859
+        },
+        "name": "scripts/y3_verify.py",
+        "start": 24,
+        "startLoc": {
+          "column": 24,
+          "line": 24,
+          "position": 614
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 50,
+        "endLoc": {
+          "column": 55,
+          "line": 50,
+          "position": 1355
+        },
+        "name": "src/__tests__/cluster-report.test.tsx",
+        "start": 30,
+        "startLoc": {
+          "column": 1,
+          "line": 30,
+          "position": 906
+        }
+      },
+      "format": "tsx",
+      "fragment": "\t],\n};\n\nfunction mockFetch(response: unknown, status = 200) {\n\tvi.stubGlobal(\n\t\t\"fetch\",\n\t\tvi.fn(() =>\n\t\t\tstatus === 200\n\t\t\t\t? Promise.resolve({ ok: true, json: () => Promise.resolve(response) })\n\t\t\t\t: Promise.resolve({\n\t\t\t\t\t\tok: false,\n\t\t\t\t\t\tstatus,\n\t\t\t\t\t\tjson: () => Promise.resolve({ detail: \"Cluster not found\" }),\n\t\t\t\t\t}),\n\t\t),\n\t);\n}\n\nfunction renderPage(clusterId = \"1\") {\n\treturn render(\n\t\t<MemoryRouter initialEntries={[`/clusters/${clusterId}/report`]}>",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 21,
+      "secondFile": {
+        "end": 82,
+        "endLoc": {
+          "column": 55,
+          "line": 82,
+          "position": 1709
+        },
+        "name": "src/__tests__/timeline.test.tsx",
+        "start": 62,
+        "startLoc": {
+          "column": 11,
+          "line": 62,
+          "position": 1260
+        }
+      },
+      "tokens": 110
+    },
+    {
+      "firstFile": {
+        "end": 94,
+        "endLoc": {
+          "column": 4,
+          "line": 94,
+          "position": 2361
+        },
+        "name": "src/__tests__/cluster-report.test.tsx",
+        "start": 70,
+        "startLoc": {
+          "column": 57,
+          "line": 70,
+          "position": 1815
+        }
+      },
+      "format": "tsx",
+      "fragment": "\t\t\tscreen.getByRole(\"heading\", { name: /cluster report/i }),\n\t\t).toBeInTheDocument();\n\t\texpect(screen.getByText(/loading/i)).toBeInTheDocument();\n\t});\n\n\tit(\"shows error for 404\", async () => {\n\t\tmockFetch(null, 404);\n\t\trenderPage();\n\t\tawait waitFor(() =>\n\t\t\texpect(screen.getByText(/cluster not found/i)).toBeInTheDocument(),\n\t\t);\n\t});\n\n\tit(\"shows error on network failure\", async () => {\n\t\tvi.stubGlobal(\n\t\t\t\"fetch\",\n\t\t\tvi.fn(() => Promise.reject(new Error(\"Network error\"))),\n\t\t);\n\t\trenderPage();\n\t\tawait waitFor(() =>\n\t\t\texpect(screen.getByText(/network error/i)).toBeInTheDocument(),\n\t\t);\n\t});\n\n\tit(\"renders header with cluster title\", async () => {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 25,
+      "secondFile": {
+        "end": 125,
+        "endLoc": {
+          "column": 4,
+          "line": 125,
+          "position": 2631
+        },
+        "name": "src/__tests__/timeline.test.tsx",
+        "start": 101,
+        "startLoc": {
+          "column": 51,
+          "line": 101,
+          "position": 2085
+        }
+      },
+      "tokens": 138
+    },
+    {
+      "firstFile": {
+        "end": 67,
+        "endLoc": {
+          "column": 10,
+          "line": 67,
+          "position": 2184
+        },
+        "name": "src/__tests__/docker/compose.test.ts",
+        "start": 61,
+        "startLoc": {
+          "column": 23,
+          "line": 61,
+          "position": 1994
+        }
+      },
+      "format": "typescript",
+      "fragment": "\t\t\tconst networks = app.networks as string[] | Record<string, unknown>;\n\t\t\tconst names = Array.isArray(networks) ? networks : Object.keys(networks);\n\t\t\texpect(names).toContain(\"nn-network\");\n\t\t});\n\t});\n\n\tdescribe(\"worker service\", () => {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 92,
+        "endLoc": {
+          "column": 10,
+          "line": 92,
+          "position": 3145
+        },
+        "name": "src/__tests__/docker/compose.test.ts",
+        "start": 86,
+        "startLoc": {
+          "column": 26,
+          "line": 86,
+          "position": 2955
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 52,
+        "endLoc": {
+          "column": 50,
+          "line": 52,
+          "position": 3231
+        },
+        "name": "src/__tests__/investigate.test.tsx",
+        "start": 44,
+        "startLoc": {
+          "column": 302,
+          "line": 44,
+          "position": 2792
+        }
+      },
+      "format": "tsx",
+      "fragment": "      { event: \"consensus_result\", data: { per_claim: [{ claim_text: \"Claim one.\", source_count: 1, t1t2_reporting: 1, pool_size: 5, pct: 20, threshold: 65, would_absorb: false, would_need_for_absorption: \"need 2\" }, { claim_text: \"Claim two.\", source_count: 1, t1t2_reporting: 2, pool_size: 5, pct: 40, threshold: 65, would_absorb: false, would_need_for_absorption: \"need 2\" }], thresholds: {}, pool_size: 5, min_corroboration: 2 } },\n      { event: \"done\", data: { total_ms: 3000 } },\n    ]));\n\n    const { user } = renderPage();\n    await user.type(screen.getByPlaceholderText(/search any subject/i), \"Iran deal\");\n    await user.click(screen.getByRole(\"button\", { name: /analyze/i }));\n\n    await waitFor(() => { expect(screen.getByText(\"Articles (1 analyzed)\")).toBeInTheDocument(); });",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 9,
+      "secondFile": {
+        "end": 92,
+        "endLoc": {
+          "column": 50,
+          "line": 92,
+          "position": 6297
+        },
+        "name": "src/__tests__/investigate.test.tsx",
+        "start": 86,
+        "startLoc": {
+          "column": 132,
+          "line": 86,
+          "position": 5860
+        }
+      },
+      "tokens": 104
+    },
+    {
+      "firstFile": {
+        "end": 44,
+        "endLoc": {
+          "column": 7,
+          "line": 44,
+          "position": 1637
+        },
+        "name": "src/__tests__/store-settings.test.ts",
+        "start": 39,
+        "startLoc": {
+          "column": 44,
+          "line": 39,
+          "position": 1374
+        }
+      },
+      "format": "typescript",
+      "fragment": "\tit(\"initializes with all source IDs active\", async () => {\n\t\tconst { useStore } = await import(\"../store\");\n\t\tconst { DEFAULT_SOURCES } = await import(\"../data/sources\");\n\t\t// Reset to ensure we test the actual initial state\n\t\tuseStore.setState({ activeSources: DEFAULT_SOURCES.map((s) => s.id) });\n\t\tconst state = useStore.getState();",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 6,
+      "secondFile": {
+        "end": 54,
+        "endLoc": {
+          "column": 7,
+          "line": 54,
+          "position": 2050
+        },
+        "name": "src/__tests__/store-settings.test.ts",
+        "start": 49,
+        "startLoc": {
+          "column": 43,
+          "line": 49,
+          "position": 1814
+        }
+      },
+      "tokens": 51
+    },
+    {
+      "firstFile": {
+        "end": 54,
+        "endLoc": {
+          "column": 1,
+          "line": 54,
+          "position": 1312
+        },
+        "name": "src/components/VfTrendChart.tsx",
+        "start": 39,
+        "startLoc": {
+          "column": 0,
+          "line": 39,
+          "position": 808
+        }
+      },
+      "format": "tsx",
+      "fragment": "function cssVar(name: string): string {\n\tif (typeof document === \"undefined\") return \"#888\";\n\treturn (\n\t\tgetComputedStyle(document.documentElement).getPropertyValue(name).trim() ||\n\t\t\"#888\"\n\t);\n}\n\n/** Convert hex color to rgba with the given alpha. */\nfunction hexToRgba(hex: string, alpha: number): string {\n\tconst h = hex.replace(\"#\", \"\");\n\tconst r = parseInt(h.slice(0, 2), 16);\n\tconst g = parseInt(h.slice(2, 4), 16);\n\tconst b = parseInt(h.slice(4, 6), 16);\n\treturn `rgba(${r},${g},${b},${alpha})`;\n}",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 16,
+      "secondFile": {
+        "end": 520,
+        "endLoc": {
+          "column": 2,
+          "line": 520,
+          "position": 17072
+        },
+        "name": "src/pages/SourceProfile.tsx",
+        "start": 505,
+        "startLoc": {
+          "column": 1,
+          "line": 505,
+          "position": 16554
+        }
+      },
+      "tokens": 131
+    },
+    {
+      "firstFile": {
+        "end": 72,
+        "endLoc": {
+          "column": 98,
+          "line": 72,
+          "position": 1703
+        },
+        "name": "src/pages/ClusterReport.tsx",
+        "start": 58,
+        "startLoc": {
+          "column": 23,
+          "line": 58,
+          "position": 1345
+        }
+      },
+      "format": "tsx",
+      "fragment": "\t\t\t.then((d: ReportData) => {\n\t\t\t\tif (!cancelled) setData(d);\n\t\t\t})\n\t\t\t.catch((e: Error) => {\n\t\t\t\tif (!cancelled) setError(e.message);\n\t\t\t});\n\t\treturn () => {\n\t\t\tcancelled = true;\n\t\t};\n\t}, [clusterId]);\n\n\tif (error) {\n\t\treturn (\n\t\t\t<div className=\"mx-auto max-w-[1340px] space-y-6\">\n\t\t\t\t<p className=\"font-mono text-[0.75rem] uppercase tracking-[0.12em] text-[var(--nn-text-dim)]\">",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 15,
+      "secondFile": {
+        "end": 64,
+        "endLoc": {
+          "column": 98,
+          "line": 64,
+          "position": 1526
+        },
+        "name": "src/pages/Timeline.tsx",
+        "start": 50,
+        "startLoc": {
+          "column": 25,
+          "line": 50,
+          "position": 1168
+        }
+      },
+      "tokens": 78
+    },
+    {
+      "firstFile": {
+        "end": 111,
+        "endLoc": {
+          "column": 55,
+          "line": 111,
+          "position": 2967
+        },
+        "name": "src/pages/ClusterReport.tsx",
+        "start": 102,
+        "startLoc": {
+          "column": 3,
+          "line": 102,
+          "position": 2522
+        }
+      },
+      "format": "tsx",
+      "fragment": "\t\t\t</p>\n\t\t\t{/* Header */}\n\t\t\t<div className=\"flex items-center gap-3 mb-1.5\">\n\t\t\t\t<h1 className=\"font-heading text-[2rem] font-bold leading-none tracking-[-0.02em] text-[var(--nn-text)]\">\n\t\t\t\t\t{data.cluster.title}\n\t\t\t\t</h1>\n\t\t\t</div>\n\t\t\t{/* K3: narrative description — explains what the page is */}\n\t\t\t<p className=\"-mt-2 font-sans text-[0.85rem] leading-relaxed text-[var(--nn-text-dim)]\">\n\t\t\t\tOne story, reconstructed from {data.sources.length} sources — {data.summary.totalClaims} extracted claims, {data.summary.absorbed} absorbed into consensus.",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 10,
+      "secondFile": {
+        "end": 187,
+        "endLoc": {
+          "column": 55,
+          "line": 187,
+          "position": 5589
+        },
+        "name": "src/pages/Timeline.tsx",
+        "start": 178,
+        "startLoc": {
+          "column": 3,
+          "line": 178,
+          "position": 5174
+        }
+      },
+      "tokens": 57
+    },
+    {
+      "firstFile": {
+        "end": 446,
+        "endLoc": {
+          "column": 18,
+          "line": 446,
+          "position": 14809
+        },
+        "name": "src/pages/SourceProfile.tsx",
+        "start": 440,
+        "startLoc": {
+          "column": 14,
+          "line": 440,
+          "position": 14534
+        }
+      },
+      "format": "tsx",
+      "fragment": "\t\t\t\t{HERO_DIMS.map((dim) => {\n\t\t\t\t\tconst value = snapshot?.[dim.key as keyof DailySnapshot] as number | undefined;\n\t\t\t\t\tconst valueColor = value != null ? getPolarityColor(dim.key, value) : \"\";\n\t\t\t\t\treturn (\n\t\t\t\t\t\t<div key={dim.key} className=\"text-center\">\n\t\t\t\t\t\t\t<span\n\t\t\t\t\t\t\t\tclassName=\"block font-heading text-[1.65rem] font-bold leading-none tabular-nums\"",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 7,
+      "secondFile": {
+        "end": 467,
+        "endLoc": {
+          "column": 18,
+          "line": 467,
+          "position": 15587
+        },
+        "name": "src/pages/SourceProfile.tsx",
+        "start": 461,
+        "startLoc": {
+          "column": 13,
+          "line": 461,
+          "position": 15312
+        }
+      },
+      "tokens": 64
+    },
+    {
+      "firstFile": {
+        "end": 460,
+        "endLoc": {
+          "column": 3,
+          "line": 460,
+          "position": 15256
+        },
+        "name": "src/pages/SourceProfile.tsx",
+        "start": 447,
+        "startLoc": {
+          "column": 8,
+          "line": 447,
+          "position": 14889
+        }
+      },
+      "format": "tsx",
+      "fragment": "\t\t\t\t\t\t\t\tstyle={{ color: valueColor || \"var(--nn-text)\" }}\n\t\t\t\t\t\t\t>\n\t\t\t\t\t\t\t\t{value != null ? Math.round(value) : \"—\"}\n\t\t\t\t\t\t\t</span>\n\t\t\t\t\t\t\t<span className=\"mt-0.5 block font-mono text-[0.75rem] uppercase tracking-[0.05em] text-[var(--nn-text-dim)]\">\n\t\t\t\t\t\t\t\t{dim.label}\n\t\t\t\t\t\t\t</span>\n\t\t\t\t\t\t</div>\n\t\t\t\t\t);\n\t\t\t\t})}\n\t\t\t</div>\n\n\t\t\t{/* Secondary row — Speed + Framing */}\n\t\t\t<div className=\"mt-2 flex justify-around\">",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 14,
+      "secondFile": {
+        "end": 481,
+        "endLoc": {
+          "column": 3,
+          "line": 481,
+          "position": 16008
+        },
+        "name": "src/pages/SourceProfile.tsx",
+        "start": 468,
+        "startLoc": {
+          "column": 8,
+          "line": 468,
+          "position": 15655
+        }
+      },
+      "tokens": 69
+    },
+    {
+      "firstFile": {
+        "end": 289,
+        "endLoc": {
+          "column": 16,
+          "line": 289,
+          "position": 10452
+        },
+        "name": "src/pages/Sources.tsx",
+        "start": 279,
+        "startLoc": {
+          "column": 6,
+          "line": 279,
+          "position": 10148
+        }
+      },
+      "format": "tsx",
+      "fragment": "      visibleSources.map((source) => {\n        const score = scoreMap.get(source.id);\n        const archetype = score\n          ? getArchetype(\n              score.R_orig,\n              score.R_val,\n              panelMedian.orig,\n              panelMedian.val,\n            )\n          : null;\n        return {",
+      "isNew": false,
+      "kind": "exact",
+      "lines": 11,
+      "secondFile": {
+        "end": 334,
+        "endLoc": {
+          "column": 14,
+          "line": 334,
+          "position": 11751
+        },
+        "name": "src/pages/Sources.tsx",
+        "start": 324,
+        "startLoc": {
+          "column": 21,
+          "line": 324,
+          "position": 11467
+        }
+      },
+      "tokens": 50
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-10-28T17:05:14.422Z",
+    "formats": {
+      "bash": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 90,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 2,
+        "tokens": 550
+      },
+      "css": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 327,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 2,
+        "tokens": 3814
+      },
+      "javascript": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 204,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 4,
+        "tokens": 1483
+      },
+      "json": {
+        "clones": 18,
+        "duplicatedLines": 370,
+        "duplicatedTokens": 1061,
+        "lines": 12428,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 2.9771483746379146,
+        "percentageTokens": 2.874559739907884,
+        "sources": 8,
+        "tokens": 36910
+      },
+      "markdown": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 1497,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 10,
+        "tokens": 20802
+      },
+      "markup": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 37,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 2,
+        "tokens": 419
+      },
+      "python": {
+        "clones": 41,
+        "duplicatedLines": 528,
+        "duplicatedTokens": 3529,
+        "lines": 15733,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 3.35600330515477,
+        "percentageTokens": 3.929275271953949,
+        "sources": 116,
+        "tokens": 89813
+      },
+      "sql": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 166,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 3,
+        "tokens": 975
+      },
+      "text": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 76,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 3,
+        "tokens": 1128
+      },
+      "tsx": {
+        "clones": 9,
+        "duplicatedLines": 128,
+        "duplicatedTokens": 801,
+        "lines": 7336,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 1.7448200654307526,
+        "percentageTokens": 1.9575258437400718,
+        "sources": 41,
+        "tokens": 40919
+      },
+      "txt": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 15,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 81
+      },
+      "typescript": {
+        "clones": 2,
+        "duplicatedLines": 13,
+        "duplicatedTokens": 102,
+        "lines": 861,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 1.5098722415795587,
+        "percentageTokens": 1.78072625698324,
+        "sources": 12,
+        "tokens": 5728
+      },
+      "yaml": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 26,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 54
+      }
+    },
+    "total": {
+      "clones": 70,
+      "duplicatedLines": 1039,
+      "duplicatedTokens": 5493,
+      "lines": 38796,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 2.6781111454789155,
+      "percentageTokens": 2.7102370285578954,
+      "sources": 205,
+      "tokens": 202676
+    }
+  }
+}

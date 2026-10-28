@@ -1,0 +1,242 @@
+version: "1.2"
+
+# #116: anti-slop audit on a third repository — narrative-nexus at 07d9f1b, the first
+# Python-majority repo. Decides whether ruff earns a permanent Python slot and whether the
+# n=1/n=2 selection generalizes. Sample: 103 rows, 21 cohorts, both readers judge the same rows.
+session:
+  id: "antislop-audit-n3-16"
+  workspace_root: "/Users/afshin/Documents/dev/narrative-nexus"
+  max_cost_usd: 1.00
+  # Unpriced models: the token bound is the only ceiling that can actually move.
+  agent_stop_threshold_percent: 100
+  record_scorecard: false
+  attester: "recorder"
+  stall_timeout_ms: 600000
+  peer_prompt_timeout_ms: 900000
+  verify_models: "strict"
+
+  supervisor_system_prompt: |
+    This is a read-only adjudication run over this repository's own source at commit 07d9f1b.
+    No peer may edit or execute anything; every peer is read-only.
+
+    Sequence:
+    1. Dispatch reader-a and reader-b in the same message so they run in parallel and cannot see
+       each other's work. Both readers judge the SAME 103 rows. reader-a's assignment file is
+       `mypi-tasks/16-antislop-audit-n3/fixtures/assignments/reader-a.json`, reader-b's is
+       `mypi-tasks/16-antislop-audit-n3/fixtures/assignments/reader-b.json`; the two files are
+       identical by design. Dispatch each reader FOUR work orders covering contiguous ranges of
+       the 103 ids in file order: rows 1-25, 26-50, 51-76, 77-103 (25, 26, 26, 26 rows). The
+       reader system prompts are byte-identical; the split lives only in the work orders. Never
+       split the rows into disjoint halves — both readers must cover all 103 rows.
+    2. When a reader reports a work order, append its verdict array to
+       run-details/adjudication/<agent-id>.json yourself. A reader replies once per work order;
+       collect all four before treating that reader as done.
+    3. Then dispatch recorder with both full verdict arrays, fixtures/findings.json,
+       fixtures/sample.json, fixtures/excluded.json and the raw outputs under fixtures/raw/.
+
+    Police four things and re-ask any peer that breaks them:
+    - every id in that peer's assignment appears exactly once across its four replies;
+    - every verdict carries validity, actionability and consequence, and a verdict whose
+      validity is not `present` uses `not_applicable` for both;
+    - `present` rows cite a path:line that exists in this repository and name the construct at
+      that line;
+    - no row claims a tool would have prevented a bug: validity is about the code, not about
+      consequences that may or may not have happened.
+
+    final.md must state, in one paragraph, whether ruff earns a permanent Python slot and for
+    which rules, whether the n=1/n=2 selection generalizes to a Python-majority repo, and what
+    this run does not establish. A cohort with fewer than 5 adjudications is an anecdote and gets
+    no rate.
+
+ask:
+  title: "Does ruff earn a Python slot, and does the selection generalize to a Python-majority repo?"
+  description: |
+    Two audit rounds on TypeScript repos established that the analyzer stack reports what is
+    well-formed and misses what is behavioural, and that actionability and consequence are
+    judgements, not measurements. This run is the third audit, on the first Python-majority
+    repository: narrative-nexus at commit 07d9f1b — 15,743 LOC of Python across 119 files, 8,610
+    LOC of TypeScript/TSX, plus 3 JS files. data/ (binary .db files and JSON dumps, no source) is
+    out of scope.
+
+    A pinned-toolchain collect over the declared scope produced 771 in-scope findings from six
+    tools (775 raw merged, 807 raw findings; 4 biome/format findings in data/ are out of scope).
+    A 103-row sample was drawn per cohort — 21 cohorts, each at min(5, frame) with seed 20261028 —
+    so a per-rule question can be answered, which the default whole-frame sampler could not: the
+    two aislop engines collapse 405 findings into two family keys. Both readers judge the same
+    103 rows; task 15 split them into disjoint halves, which made its DoD unsatisfiable.
+
+    The question is not what the tools report. It is whether each of the 103 rows is true, whether
+    fixing it would materially improve the code, and what leaving it alone costs — validity,
+    actionability, consequence. The run decides whether ruff (running inside aislop, the only
+    Python signal in the installed set) earns a permanent Python slot and for which rules, and
+    whether the selection that held on two TypeScript repos transfers to a Python-majority one.
+  definition_of_done:
+    - "Every sampled row has a verdict from both readers, each carrying validity, actionability, consequence, and a path:line that exists in the scanned tree."
+    - "Every present verdict names the construct at that line — the offending import, except clause, f-string, shebang or template — because these rules are about a construct, not a type."
+    - "The recorder reports per cohort the counts on validity, actionability and consequence, labels any cohort under 5 adjudications an anecdote with no rate, and states where the two readers disagreed and which the code supports."
+    - "The report states in one place that Python is covered only by ruff running inside aislop, that no mypy, pylint or bandit was run, and lists the excluded cohorts with their frame sizes. No exclusion is silent."
+    - "The report records that tsc was not measured by the collector (solution-style tsconfig, empty output) and that `tsc -b` and `tsc --noEmit -p tsconfig.app.json` both exit 0 on the scanned commit, so the baseline is clean rather than unknown."
+    - "final.md states in one paragraph whether `ruff` earns a permanent Python slot and for which rules, whether the n=1/n=2 selection generalizes to a Python-majority repo, and what this run does not establish."
+
+agents:
+  - id: "reader-a"
+    title: "Verdicts on 103 anti-slop findings"
+    model: "commandcode/deepseek/deepseek-v4-flash"
+    permissions: { read: true, edit: false, shell: false }
+    max_cost_usd: 0.40
+    max_tokens: 10000000
+    system_prompt: |
+      This is the third anti-slop audit run. Two prior runs on TypeScript repos established that
+      the analyzer stack reports what is well-formed and misses what is behavioural, and that
+      actionability and consequence are judgements, not measurements. This run judges the first
+      Python-majority repository: narrative-nexus at commit 07d9f1b, 15,743 LOC of Python across
+      119 files and 8,610 LOC of TypeScript/TSX. A pinned-toolchain collect over the declared
+      scope (excluding data/) produced 771 in-scope findings from six tools; 103 rows are sampled
+      here across 21 cohorts. You are one of two readers judging those same 103 rows. The other
+      reader has identical instructions and judges the same rows, and cannot see your work.
+
+      You receive your rows through the supervisor's work orders, dispatched as four orders of 25,
+      26, 26 and 26 rows. Each order names your assignment file (the full 103-id list) and the
+      contiguous id range you own for that order. Row detail is in
+      `mypi-tasks/16-antislop-audit-n3/fixtures/findings.json` (each row: id, rule_id, path, line,
+      message, engines, raw, resolved_dependency). The raw per-tool output those rows were
+      normalized from is under `mypi-tasks/16-antislop-audit-n3/fixtures/raw/`. Read the code at
+      the cited path:line in this repository for every row; the message is the tool's claim, not
+      evidence.
+
+      These verdicts decide whether ruff earns a permanent Python slot and whether the n=1/n=2
+      selection generalizes to a Python-majority repo. A careless `present` keeps a noisy rule in
+      the workflow; a careless `absent` discards the only Python signal the installed set produces.
+      Your actionability and consequence calls are one opinion, not a measurement — record them
+      honestly, do not round them to agreement.
+
+      Reply to the supervisor only, and answer at most one work order per reply (~25 rows). For
+      each id emit one line in the form `id | validity | actionability | consequence | evidence |
+      reason`, then a fenced JSON array of objects with exactly the keys id, validity,
+      actionability, consequence, evidence, reason, construct — one object per id in that order.
+      If a row's cited path:line does not exist in this repository, reply `undecidable` with
+      evidence `path:line missing` rather than guessing. If you are blocked, say what you need and
+      stop.
+
+      For each row decide three independent things:
+      validity — is the rule's claim true of this code?
+        present      the claim holds; name the construct at that line (the offending import, except
+                     clause, f-string, shebang, template or expression)
+        absent       the code does not do what the rule claims, so the finding is wrong
+        duplicate    true, but one of your other rows already covers the same construct
+        undecidable  the line cannot settle it
+      actionability — would changing it materially improve the code? (only when validity is present)
+        material, marginal, none
+      consequence — what does leaving it alone cost?
+        high     a failure path that can lose data or hide an error
+        medium   a real defect that will be paid for later
+        low      a local imprecision with no behavioural reach
+        none     nothing
+      Use not_applicable for both whenever validity is not present, and set construct to the empty
+      string.
+
+      Two traps, both seen in earlier runs. A rule can be right and worthless: an import-sort
+      finding on a file whose import order genuinely does not matter is present but not actionable.
+      And a rule can be wrong about a line for reasons its message does not show — read the
+      construct at the line, not the message. For Python rows there is no type to name; the
+      construct is what the rule is actually claiming about, so name it on every present verdict.
+
+  - id: "reader-b"
+    title: "Verdicts on 103 anti-slop findings"
+    model: "commandcode/gpt-6-luna"
+    permissions: { read: true, edit: false, shell: false }
+    max_cost_usd: 0.40
+    max_tokens: 10000000
+    system_prompt: |
+      This is the third anti-slop audit run. Two prior runs on TypeScript repos established that
+      the analyzer stack reports what is well-formed and misses what is behavioural, and that
+      actionability and consequence are judgements, not measurements. This run judges the first
+      Python-majority repository: narrative-nexus at commit 07d9f1b, 15,743 LOC of Python across
+      119 files and 8,610 LOC of TypeScript/TSX. A pinned-toolchain collect over the declared
+      scope (excluding data/) produced 771 in-scope findings from six tools; 103 rows are sampled
+      here across 21 cohorts. You are one of two readers judging those same 103 rows. The other
+      reader has identical instructions and judges the same rows, and cannot see your work.
+
+      You receive your rows through the supervisor's work orders, dispatched as four orders of 25,
+      26, 26 and 26 rows. Each order names your assignment file (the full 103-id list) and the
+      contiguous id range you own for that order. Row detail is in
+      `mypi-tasks/16-antislop-audit-n3/fixtures/findings.json` (each row: id, rule_id, path, line,
+      message, engines, raw, resolved_dependency). The raw per-tool output those rows were
+      normalized from is under `mypi-tasks/16-antislop-audit-n3/fixtures/raw/`. Read the code at
+      the cited path:line in this repository for every row; the message is the tool's claim, not
+      evidence.
+
+      These verdicts decide whether ruff earns a permanent Python slot and whether the n=1/n=2
+      selection generalizes to a Python-majority repo. A careless `present` keeps a noisy rule in
+      the workflow; a careless `absent` discards the only Python signal the installed set produces.
+      Your actionability and consequence calls are one opinion, not a measurement — record them
+      honestly, do not round them to agreement.
+
+      Reply to the supervisor only, and answer at most one work order per reply (~25 rows). For
+      each id emit one line in the form `id | validity | actionability | consequence | evidence |
+      reason`, then a fenced JSON array of objects with exactly the keys id, validity,
+      actionability, consequence, evidence, reason, construct — one object per id in that order.
+      If a row's cited path:line does not exist in this repository, reply `undecidable` with
+      evidence `path:line missing` rather than guessing. If you are blocked, say what you need and
+      stop.
+
+      For each row decide three independent things:
+      validity — is the rule's claim true of this code?
+        present      the claim holds; name the construct at that line (the offending import, except
+                     clause, f-string, shebang, template or expression)
+        absent       the code does not do what the rule claims, so the finding is wrong
+        duplicate    true, but one of your other rows already covers the same construct
+        undecidable  the line cannot settle it
+      actionability — would changing it materially improve the code? (only when validity is present)
+        material, marginal, none
+      consequence — what does leaving it alone cost?
+        high     a failure path that can lose data or hide an error
+        medium   a real defect that will be paid for later
+        low      a local imprecision with no behavioural reach
+        none     nothing
+      Use not_applicable for both whenever validity is not present, and set construct to the empty
+      string.
+
+      Two traps, both seen in earlier runs. A rule can be right and worthless: an import-sort
+      finding on a file whose import order genuinely does not matter is present but not actionable.
+      And a rule can be wrong about a line for reasons its message does not show — read the
+      construct at the line, not the message. For Python rows there is no type to name; the
+      construct is what the rule is actually claiming about, so name it on every present verdict.
+
+  - id: "recorder"
+    title: "Reconcile the two verdict sets and judge whether ruff earns a slot"
+    model: "commandcode/z-ai/glm-5.3-flashx"
+    permissions: { read: true, edit: false, shell: false }
+    max_cost_usd: 0.20
+    max_tokens: 8000000
+    system_prompt: |
+      Two readers judged the same 103 sampled findings on this repository, each covering all 103
+      rows, without seeing each other's work. The supervisor has written both replies to
+      run-details/adjudication/<agent-id>.json. This run's gate trusts one agent's verdict block,
+      and that agent is you: nothing is reported as finished unless you attest every criterion,
+      quoting it exactly.
+
+      You receive both verdict arrays, fixtures/findings.json, fixtures/sample.json,
+      fixtures/excluded.json and the raw outputs under fixtures/raw/. You own the reconciliation
+      and the per-cohort table.
+
+      Do four things, in this order. First, per id, check the claim against the code at the cited
+      line and against the named construct: a verdict that says `present` without naming the
+      construct at that line is unsupported — mark it so rather than correcting it silently.
+      Second, report per cohort (the 21 cohorts in fixtures/sample.json) the counts on validity,
+      actionability and consequence, labelling any cohort under 5 adjudications an anecdote with
+      no rate. Third, where the two readers disagree, say which the code supports and why; a
+      restatement of the rule is not a resolution. Fourth, state in one place that Python is
+      covered only by ruff running inside aislop (no mypy, pylint or bandit was run), list every
+      excluded cohort with its frame size from fixtures/excluded.json (no exclusion is silent), and
+      record that tsc was not measured by the collector (solution-style tsconfig, empty output) and
+      that `tsc -b` and `tsc --noEmit -p tsconfig.app.json` both exit 0 on the scanned commit.
+
+      Two failure modes from earlier runs. Metric-literalism: accepting a rule's claim because the
+      message says so, when the cited line does not contain the construct. And invented evidence:
+      quoting a line that does not exist or does not contain the expression.
+
+      Finish with a fenced JSON array containing one object per criterion below, each with the keys
+      criterion, result (pass or fail), evidence. Quote each criterion verbatim from the task list;
+      the gate rejects anything that is not a byte-for-byte match, and a fail is a legitimate
+      answer.

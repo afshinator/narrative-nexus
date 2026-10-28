@@ -1,0 +1,1573 @@
+[
+  {
+    "id": "aislop:ruff/I001:scripts/_fireworks_backfill_300.py:3:74cfe969",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/I001",
+    "path": "scripts/_fireworks_backfill_300.py",
+    "line": 3,
+    "message": "Import block is un-sorted or un-formatted",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/I001:scripts/seed_demo.py:30:74cfe969",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/I001",
+    "path": "scripts/seed_demo.py",
+    "line": 30,
+    "message": "Import block is un-sorted or un-formatted",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/I001:scripts/smoke_test_fireworks.py:13:74cfe969",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/I001",
+    "path": "scripts/smoke_test_fireworks.py",
+    "line": 13,
+    "message": "Import block is un-sorted or un-formatted",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/I001:scripts/x2_pairwise.py:3:74cfe969",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/I001",
+    "path": "scripts/x2_pairwise.py",
+    "line": 3,
+    "message": "Import block is un-sorted or un-formatted",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/I001:scripts/r2.9d_rebuild.py:162:74cfe969",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/I001",
+    "path": "scripts/r2.9d_rebuild.py",
+    "line": 162,
+    "message": "Import block is un-sorted or un-formatted",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F401:pipeline/embedding_client.py:14:c73e1128",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F401",
+    "path": "pipeline/embedding_client.py",
+    "line": 14,
+    "message": "`os` imported but unused",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F401:pipeline/snapshots.py:12:2c78f309",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F401",
+    "path": "pipeline/snapshots.py",
+    "line": 12,
+    "message": "`pipeline.archetype.get_archetype` imported but unused",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F401:pipeline/investigate.py:12:90264655",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F401",
+    "path": "pipeline/investigate.py",
+    "line": 12,
+    "message": "`re` imported but unused",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F401:scripts/recluster_all.py:18:c73e1128",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F401",
+    "path": "scripts/recluster_all.py",
+    "line": 18,
+    "message": "`os` imported but unused",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F401:scripts/seed_demo.py:25:7d3b6fc6",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F401",
+    "path": "scripts/seed_demo.py",
+    "line": 25,
+    "message": "`datetime.timezone` imported but unused",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/BLE001:scripts/sanity_check.py:112:c3bee311",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/BLE001",
+    "path": "scripts/sanity_check.py",
+    "line": 112,
+    "message": "Do not catch blind exception: `Exception`",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/BLE001:pipeline/news_search.py:43:c3bee311",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/BLE001",
+    "path": "pipeline/news_search.py",
+    "line": 43,
+    "message": "Do not catch blind exception: `Exception`",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/BLE001:scripts/sanity_check.py:160:c3bee311",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/BLE001",
+    "path": "scripts/sanity_check.py",
+    "line": 160,
+    "message": "Do not catch blind exception: `Exception`",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/BLE001:scripts/sanity_check.py:99:c3bee311",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/BLE001",
+    "path": "scripts/sanity_check.py",
+    "line": 99,
+    "message": "Do not catch blind exception: `Exception`",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/BLE001:scripts/smoke_test_fireworks.py:53:c3bee311",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/BLE001",
+    "path": "scripts/smoke_test_fireworks.py",
+    "line": 53,
+    "message": "Do not catch blind exception: `Exception`",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/EXE001:scripts/v2a_db_search.py:1:2bb49dba",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/EXE001",
+    "path": "scripts/v2a_db_search.py",
+    "line": 1,
+    "message": "Shebang is present but file is not executable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/EXE001:scripts/recluster_all.py:1:2bb49dba",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/EXE001",
+    "path": "scripts/recluster_all.py",
+    "line": 1,
+    "message": "Shebang is present but file is not executable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/EXE001:scripts/sanity_check.py:1:2bb49dba",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/EXE001",
+    "path": "scripts/sanity_check.py",
+    "line": 1,
+    "message": "Shebang is present but file is not executable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/EXE001:scripts/survey-sources.py:1:2bb49dba",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/EXE001",
+    "path": "scripts/survey-sources.py",
+    "line": 1,
+    "message": "Shebang is present but file is not executable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/EXE001:scripts/w1w2_sweep.py:1:2bb49dba",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/EXE001",
+    "path": "scripts/w1w2_sweep.py",
+    "line": 1,
+    "message": "Shebang is present but file is not executable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP045:db/articles.py:36:94f0ac0d",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP045",
+    "path": "db/articles.py",
+    "line": 36,
+    "message": "Use `X | None` for type annotations",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP045:db/snapshots.py:14:94f0ac0d",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP045",
+    "path": "db/snapshots.py",
+    "line": 14,
+    "message": "Use `X | None` for type annotations",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP045:db/snapshots.py:12:94f0ac0d",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP045",
+    "path": "db/snapshots.py",
+    "line": 12,
+    "message": "Use `X | None` for type annotations",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP045:db/snapshots.py:42:94f0ac0d",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP045",
+    "path": "db/snapshots.py",
+    "line": 42,
+    "message": "Use `X | None` for type annotations",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP045:db/snapshots.py:31:94f0ac0d",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP045",
+    "path": "db/snapshots.py",
+    "line": 31,
+    "message": "Use `X | None` for type annotations",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP017:scripts/survey-sources.py:157:4ae63c57",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP017",
+    "path": "scripts/survey-sources.py",
+    "line": 157,
+    "message": "Use `datetime.UTC` alias",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP017:scripts/survey-sources.py:179:4ae63c57",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP017",
+    "path": "scripts/survey-sources.py",
+    "line": 179,
+    "message": "Use `datetime.UTC` alias",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP017:pipeline/runner_scheduler.py:47:4ae63c57",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP017",
+    "path": "pipeline/runner_scheduler.py",
+    "line": 47,
+    "message": "Use `datetime.UTC` alias",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP017:scripts/survey-extraction.py:177:4ae63c57",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP017",
+    "path": "scripts/survey-extraction.py",
+    "line": 177,
+    "message": "Use `datetime.UTC` alias",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/UP017:scripts/eps_sweep.py:158:4ae63c57",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/UP017",
+    "path": "scripts/eps_sweep.py",
+    "line": 158,
+    "message": "Use `datetime.UTC` alias",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F541:scripts/recluster_all.py:255:8eb43f9f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F541",
+    "path": "scripts/recluster_all.py",
+    "line": 255,
+    "message": "f-string without any placeholders",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F541:scripts/seed_demo.py:185:8eb43f9f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F541",
+    "path": "scripts/seed_demo.py",
+    "line": 185,
+    "message": "f-string without any placeholders",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F541:scripts/z1z2_gap.py:83:8eb43f9f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F541",
+    "path": "scripts/z1z2_gap.py",
+    "line": 83,
+    "message": "f-string without any placeholders",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F541:scripts/seed_demo.py:85:8eb43f9f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F541",
+    "path": "scripts/seed_demo.py",
+    "line": 85,
+    "message": "f-string without any placeholders",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/F541:scripts/seed_demo.py:184:8eb43f9f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/F541",
+    "path": "scripts/seed_demo.py",
+    "line": 184,
+    "message": "f-string without any placeholders",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/B008:app/main.py:205:82d4f616",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/B008",
+    "path": "app/main.py",
+    "line": 205,
+    "message": "Do not perform function call `Depends` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/B008:app/main.py:405:82d4f616",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/B008",
+    "path": "app/main.py",
+    "line": 405,
+    "message": "Do not perform function call `Depends` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/B008:app/main.py:387:82d4f616",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/B008",
+    "path": "app/main.py",
+    "line": 387,
+    "message": "Do not perform function call `Depends` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/B008:app/main.py:393:82d4f616",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/B008",
+    "path": "app/main.py",
+    "line": 393,
+    "message": "Do not perform function call `Depends` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ruff/B008:app/main.py:399:82d4f616",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ruff/B008",
+    "path": "app/main.py",
+    "line": 399,
+    "message": "Do not perform function call `Depends` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:18:e06c5fda",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hardcoded-url",
+    "path": "pipeline/scraper.py",
+    "line": 18,
+    "message": "Hardcoded environment URL in production code",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:25:e06c5fda",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hardcoded-url",
+    "path": "pipeline/scraper.py",
+    "line": 25,
+    "message": "Hardcoded environment URL in production code",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hardcoded-url:app/investigate_endpoint.py:44:e06c5fda",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hardcoded-url",
+    "path": "app/investigate_endpoint.py",
+    "line": 44,
+    "message": "Hardcoded environment URL in production code",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:9:e06c5fda",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hardcoded-url",
+    "path": "pipeline/scraper.py",
+    "line": 9,
+    "message": "Hardcoded environment URL in production code",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:28:e06c5fda",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hardcoded-url",
+    "path": "pipeline/scraper.py",
+    "line": 28,
+    "message": "Hardcoded environment URL in production code",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/unused-import:scripts/legacy/harvest_story.py:15:869b0a03",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/unused-import",
+    "path": "scripts/legacy/harvest_story.py",
+    "line": 15,
+    "message": "Imported symbol 'sys' is never used",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/unused-import:app/investigate_endpoint.py:9:6bf037ae",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/unused-import",
+    "path": "app/investigate_endpoint.py",
+    "line": 9,
+    "message": "Imported symbol 'Any' is never used",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/unused-import:pipeline/agent1_intake.py:19:c06bdb1f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/unused-import",
+    "path": "pipeline/agent1_intake.py",
+    "line": 19,
+    "message": "Imported symbol 'timedelta' is never used",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/unused-import:scripts/y3_verify.py:3:869b0a03",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/unused-import",
+    "path": "scripts/y3_verify.py",
+    "line": 3,
+    "message": "Imported symbol 'sys' is never used",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/unused-import:scripts/s3_checks.py:3:869b0a03",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/unused-import",
+    "path": "scripts/s3_checks.py",
+    "line": 3,
+    "message": "Imported symbol 'sys' is never used",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/swallowed-exception:pipeline/runner_scheduler.py:39:e342cb3e",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/swallowed-exception",
+    "path": "pipeline/runner_scheduler.py",
+    "line": 39,
+    "message": "Catch block only prints error without proper handling",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/swallowed-exception:scripts/w1w2_sweep.py:12:a610ed6e",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/swallowed-exception",
+    "path": "scripts/w1w2_sweep.py",
+    "line": 12,
+    "message": "Bare except with pass swallows errors silently",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/swallowed-exception:scripts/recluster_all.py:29:a610ed6e",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/swallowed-exception",
+    "path": "scripts/recluster_all.py",
+    "line": 29,
+    "message": "Bare except with pass swallows errors silently",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/swallowed-exception:scripts/sanity_check.py:255:a610ed6e",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/swallowed-exception",
+    "path": "scripts/sanity_check.py",
+    "line": 255,
+    "message": "Bare except with pass swallows errors silently",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/swallowed-exception:scripts/v2a_db_search.py:37:a610ed6e",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/swallowed-exception",
+    "path": "scripts/v2a_db_search.py",
+    "line": 37,
+    "message": "Bare except with pass swallows errors silently",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-chained-dict-get:scripts/survey-extraction.py:230:e9f436b0",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-chained-dict-get",
+    "path": "scripts/survey-extraction.py",
+    "line": 230,
+    "message": "Chained `.get(..., {})` defaults hide missing-data cases.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-chained-dict-get:pipeline/news_search.py:57:e9f436b0",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-chained-dict-get",
+    "path": "pipeline/news_search.py",
+    "line": 57,
+    "message": "Chained `.get(..., {})` defaults hide missing-data cases.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-chained-dict-get:pipeline/claim_matching.py:153:e9f436b0",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-chained-dict-get",
+    "path": "pipeline/claim_matching.py",
+    "line": 153,
+    "message": "Chained `.get(..., {})` defaults hide missing-data cases.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-chained-dict-get:scripts/gemma_batch_extract.py:272:e9f436b0",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-chained-dict-get",
+    "path": "scripts/gemma_batch_extract.py",
+    "line": 272,
+    "message": "Chained `.get(..., {})` defaults hide missing-data cases.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-chained-dict-get:scripts/gemma_batch_extract.py:271:e9f436b0",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-chained-dict-get",
+    "path": "scripts/gemma_batch_extract.py",
+    "line": 271,
+    "message": "Chained `.get(..., {})` defaults hide missing-data cases.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hallucinated-import:pipeline/extractor.py:2:da14d6c3",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hallucinated-import",
+    "path": "pipeline/extractor.py",
+    "line": 2,
+    "message": "Imports \"newspaper\" but it's not declared in requirements files, pyproject.toml, or Pipfile and isn't Python stdlib",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hallucinated-import:pipeline/vertical_classifier.py:12:d96dd5df",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hallucinated-import",
+    "path": "pipeline/vertical_classifier.py",
+    "line": 12,
+    "message": "Imports \"numpy\" but it's not declared in requirements files, pyproject.toml, or Pipfile and isn't Python stdlib",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hallucinated-import:pipeline/claim_matching.py:25:d96dd5df",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hallucinated-import",
+    "path": "pipeline/claim_matching.py",
+    "line": 25,
+    "message": "Imports \"numpy\" but it's not declared in requirements files, pyproject.toml, or Pipfile and isn't Python stdlib",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hallucinated-import:pipeline/extractor.py:3:da14d6c3",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hallucinated-import",
+    "path": "pipeline/extractor.py",
+    "line": 3,
+    "message": "Imports \"newspaper\" but it's not declared in requirements files, pyproject.toml, or Pipfile and isn't Python stdlib",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/hallucinated-import:worker/server.py:10:71d1b726",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/hallucinated-import",
+    "path": "worker/server.py",
+    "line": 10,
+    "message": "Imports \"pydantic\" but it's not declared in requirements files, pyproject.toml, or Pipfile and isn't Python stdlib",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-range-len-loop:scripts/z1z2_gap.py:131:b4ef48e7",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-range-len-loop",
+    "path": "scripts/z1z2_gap.py",
+    "line": 131,
+    "message": "`range(len(aids))` loop — usually a hand-rolled iteration pattern.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-range-len-loop:scripts/d2_near_miss.py:46:ff28bbdd",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-range-len-loop",
+    "path": "scripts/d2_near_miss.py",
+    "line": 46,
+    "message": "`range(len(rows))` loop — usually a hand-rolled iteration pattern.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-range-len-loop:scripts/x2_pairwise.py:87:daca6623",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-range-len-loop",
+    "path": "scripts/x2_pairwise.py",
+    "line": 87,
+    "message": "`range(len(labels))` loop — usually a hand-rolled iteration pattern.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-range-len-loop:scripts/z1z2_gap.py:86:b4ef48e7",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-range-len-loop",
+    "path": "scripts/z1z2_gap.py",
+    "line": 86,
+    "message": "`range(len(aids))` loop — usually a hand-rolled iteration pattern.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-range-len-loop:scripts/x2_pairwise.py:110:daca6623",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-range-len-loop",
+    "path": "scripts/x2_pairwise.py",
+    "line": 110,
+    "message": "`range(len(labels))` loop — usually a hand-rolled iteration pattern.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-print-debug:pipeline/runner.py:51:bcc3a0e5",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-print-debug",
+    "path": "pipeline/runner.py",
+    "line": 51,
+    "message": "`print()` in production code — usually a leftover debug statement.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-print-debug:pipeline/runner_scheduler.py:40:bcc3a0e5",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-print-debug",
+    "path": "pipeline/runner_scheduler.py",
+    "line": 40,
+    "message": "`print()` in production code — usually a leftover debug statement.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-print-debug:pipeline/agent1_intake.py:274:bcc3a0e5",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-print-debug",
+    "path": "pipeline/agent1_intake.py",
+    "line": 274,
+    "message": "`print()` in production code — usually a leftover debug statement.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-print-debug:pipeline/runner_scheduler.py:38:bcc3a0e5",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-print-debug",
+    "path": "pipeline/runner_scheduler.py",
+    "line": 38,
+    "message": "`print()` in production code — usually a leftover debug statement.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:ai-slop/python-print-debug:pipeline/agent1_intake.py:261:bcc3a0e5",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "ai-slop/python-print-debug",
+    "path": "pipeline/agent1_intake.py",
+    "line": 261,
+    "message": "`print()` in production code — usually a leftover debug statement.",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "aislop:security/vulnerable-dependency:package.json:0:c7d3ce64",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "security/vulnerable-dependency",
+    "path": "package.json",
+    "line": 0,
+    "message": "browserslist (high, dev-only) — transitive — may need override or parent upgrade",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": {
+      "package": "browserslist",
+      "version": "4.28.4",
+      "source": "package-lock.json"
+    }
+  },
+  {
+    "id": "aislop:security/vulnerable-dependency:package.json:0:1c431e21",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "security/vulnerable-dependency",
+    "path": "package.json",
+    "line": 0,
+    "message": "source-map-js (high, dev-only) — transitive — may need override or parent upgrade",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": {
+      "package": "source-map-js",
+      "version": "1.2.1",
+      "source": "package-lock.json"
+    }
+  },
+  {
+    "id": "aislop:security/vulnerable-dependency:package.json:0:2c7784ad",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "security/vulnerable-dependency",
+    "path": "package.json",
+    "line": 0,
+    "message": "baseline-browser-mapping (moderate, dev-only) — transitive — may need override or parent upgrade",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": {
+      "package": "baseline-browser-mapping",
+      "version": "2.10.38",
+      "source": "package-lock.json"
+    }
+  },
+  {
+    "id": "aislop:security/vulnerable-dependency:package.json:0:822577a4",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "security/vulnerable-dependency",
+    "path": "package.json",
+    "line": 0,
+    "message": "qs (moderate, dev-only) — transitive — may need override or parent upgrade",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": {
+      "package": "qs",
+      "version": "6.15.2",
+      "source": "package-lock.json"
+    }
+  },
+  {
+    "id": "aislop:security/vulnerable-dependency:package.json:0:b836a47f",
+    "tool": "aislop",
+    "primary_tool": "aislop",
+    "rule_id": "security/vulnerable-dependency",
+    "path": "package.json",
+    "line": 0,
+    "message": "vitest (moderate, dev-only) — no fix available",
+    "engines": [
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/aislop.stdout",
+    "severity": "info",
+    "resolved_dependency": {
+      "package": "vitest",
+      "version": "4.1.9",
+      "source": "package-lock.json"
+    }
+  },
+  {
+    "id": "fallow:unused_exports:src/components/ui/dialog.tsx:155:f4af66d7",
+    "tool": "fallow",
+    "primary_tool": "fallow",
+    "rule_id": "unused_exports",
+    "path": "src/components/ui/dialog.tsx",
+    "line": 155,
+    "message": "DialogClose",
+    "engines": [
+      "fallow",
+      "knip"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/fallow-0.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "fallow:unused_exports:src/components/ui/toggle.tsx:45:67e0d20f",
+    "tool": "fallow",
+    "primary_tool": "fallow",
+    "rule_id": "unused_exports",
+    "path": "src/components/ui/toggle.tsx",
+    "line": 45,
+    "message": "toggleVariants",
+    "engines": [
+      "fallow"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/fallow-0.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "fallow:unused_exports:src/components/ui/card.tsx:102:d62b6517",
+    "tool": "fallow",
+    "primary_tool": "fallow",
+    "rule_id": "unused_exports",
+    "path": "src/components/ui/card.tsx",
+    "line": 102,
+    "message": "CardTitle",
+    "engines": [
+      "fallow"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/fallow-0.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "fallow:unused_exports:src/components/ui/card.tsx:100:2b41c33c",
+    "tool": "fallow",
+    "primary_tool": "fallow",
+    "rule_id": "unused_exports",
+    "path": "src/components/ui/card.tsx",
+    "line": 100,
+    "message": "CardFooter",
+    "engines": [
+      "fallow",
+      "knip"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/fallow-0.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "fallow:unused_exports:src/components/ui/card.tsx:99:0cf90913",
+    "tool": "fallow",
+    "primary_tool": "fallow",
+    "rule_id": "unused_exports",
+    "path": "src/components/ui/card.tsx",
+    "line": 99,
+    "message": "CardDescription",
+    "engines": [
+      "fallow"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/fallow-0.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "jscpd:exact:package-lock.json:1783:4fdb5ca1",
+    "tool": "jscpd",
+    "primary_tool": "jscpd",
+    "rule_id": "exact",
+    "path": "package-lock.json",
+    "line": 1783,
+    "message": "clone of 19 lines in package-lock.json:2034 (51 tokens)",
+    "engines": [
+      "jscpd"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/jscpd.json",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "jscpd:exact:src/__tests__/cluster-report.test.tsx:30:8ca21b26",
+    "tool": "jscpd",
+    "primary_tool": "jscpd",
+    "rule_id": "exact",
+    "path": "src/__tests__/cluster-report.test.tsx",
+    "line": 30,
+    "message": "clone of 21 lines in src/__tests__/timeline.test.tsx:62 (110 tokens)",
+    "engines": [
+      "jscpd"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/jscpd.json",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "jscpd:exact:src/pages/ClusterReport.tsx:102:ab9baba5",
+    "tool": "jscpd",
+    "primary_tool": "jscpd",
+    "rule_id": "exact",
+    "path": "src/pages/ClusterReport.tsx",
+    "line": 102,
+    "message": "clone of 10 lines in src/pages/Timeline.tsx:178 (57 tokens)",
+    "engines": [
+      "jscpd"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/jscpd.json",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "jscpd:exact:scripts/eps_sweep.py:266:31c563ef",
+    "tool": "jscpd",
+    "primary_tool": "jscpd",
+    "rule_id": "exact",
+    "path": "scripts/eps_sweep.py",
+    "line": 266,
+    "message": "clone of 7 lines in scripts/recluster_all.py:154 (58 tokens)",
+    "engines": [
+      "jscpd"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/jscpd.json",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "jscpd:exact:package-lock.json:1553:8cbdc930",
+    "tool": "jscpd",
+    "primary_tool": "jscpd",
+    "rule_id": "exact",
+    "path": "package-lock.json",
+    "line": 1553,
+    "message": "clone of 20 lines in package-lock.json:2924 (54 tokens)",
+    "engines": [
+      "jscpd"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/jscpd.json",
+    "severity": "info",
+    "resolved_dependency": null
+  },
+  {
+    "id": "biome:assist/source/organizeImports:src/components/PageShell.tsx:1:acf8f636",
+    "tool": "biome",
+    "primary_tool": "biome",
+    "rule_id": "assist/source/organizeImports",
+    "path": "src/components/PageShell.tsx",
+    "line": 1,
+    "message": "Sort these imports.",
+    "engines": [
+      "biome"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/biome.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "biome:assist/source/organizeImports:vite.config.ts:2:acf8f636",
+    "tool": "biome",
+    "primary_tool": "biome",
+    "rule_id": "assist/source/organizeImports",
+    "path": "vite.config.ts",
+    "line": 2,
+    "message": "Sort these imports.",
+    "engines": [
+      "biome"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/biome.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "biome:assist/source/organizeImports:src/__tests__/router-shell.test.tsx:1:acf8f636",
+    "tool": "biome",
+    "primary_tool": "biome",
+    "rule_id": "assist/source/organizeImports",
+    "path": "src/__tests__/router-shell.test.tsx",
+    "line": 1,
+    "message": "Sort these imports.",
+    "engines": [
+      "biome"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/biome.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "biome:assist/source/organizeImports:src/pages/Investigate.tsx:1:6b278af8",
+    "tool": "biome",
+    "primary_tool": "biome",
+    "rule_id": "assist/source/organizeImports",
+    "path": "src/pages/Investigate.tsx",
+    "line": 1,
+    "message": "Sort the imported names.",
+    "engines": [
+      "biome"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/biome.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "biome:assist/source/organizeImports:db/__tests__/schema.test.ts:1:acf8f636",
+    "tool": "biome",
+    "primary_tool": "biome",
+    "rule_id": "assist/source/organizeImports",
+    "path": "db/__tests__/schema.test.ts",
+    "line": 1,
+    "message": "Sort these imports.",
+    "engines": [
+      "biome"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/biome.stdout",
+    "severity": "error",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:eslint(no-unused-vars):src/__tests__/pipeline-flow.test.tsx:15:db5539d1",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "eslint(no-unused-vars)",
+    "path": "src/__tests__/pipeline-flow.test.tsx",
+    "line": 15,
+    "message": "Function 'mockFetch' is declared but never used.",
+    "engines": [
+      "oxlint"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:react(set-state-in-effect):src/components/AppNav.tsx:19:cb3ab3e7",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "react(set-state-in-effect)",
+    "path": "src/components/AppNav.tsx",
+    "line": 19,
+    "message": "Calling setState synchronously within an effect can trigger cascading renders",
+    "engines": [
+      "oxlint",
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:react-hooks(exhaustive-deps):src/components/ScatterPlot.tsx:96:a842360e",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "react-hooks(exhaustive-deps)",
+    "path": "src/components/ScatterPlot.tsx",
+    "line": 96,
+    "message": "React Hook useEffect has missing dependencies: 'adjustedM.bottom', 'adjustedM.left', 'adjustedM.top', 'showQuadrants', 'xLabel', 'yLabel', 'regions', 'adjustedM.right', and 'xScaleType'",
+    "engines": [
+      "oxlint",
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:react(only-export-components):src/components/ui/button.tsx:67:23aebbb9",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "react(only-export-components)",
+    "path": "src/components/ui/button.tsx",
+    "line": 67,
+    "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+    "engines": [
+      "oxlint"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:react(only-export-components):src/components/ui/toggle.tsx:45:23aebbb9",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "react(only-export-components)",
+    "path": "src/components/ui/toggle.tsx",
+    "line": 45,
+    "message": "Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components.",
+    "engines": [
+      "oxlint"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:react(set-state-in-effect):src/pages/Sources.tsx:213:cb3ab3e7",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "react(set-state-in-effect)",
+    "path": "src/pages/Sources.tsx",
+    "line": 213,
+    "message": "Calling setState synchronously within an effect can trigger cascading renders",
+    "engines": [
+      "oxlint",
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "oxlint:react-hooks(exhaustive-deps):src/pages/Sources.tsx:298:642a72e5",
+    "tool": "oxlint",
+    "primary_tool": "oxlint",
+    "rule_id": "react-hooks(exhaustive-deps)",
+    "path": "src/pages/Sources.tsx",
+    "line": 298,
+    "message": "React Hook useMemo has unnecessary dependency: filter",
+    "engines": [
+      "oxlint",
+      "aislop"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/oxlint.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  },
+  {
+    "id": "knip:types:src/store.ts:15:e3cfc733",
+    "tool": "knip",
+    "primary_tool": "knip",
+    "rule_id": "types",
+    "path": "src/store.ts",
+    "line": 15,
+    "message": "types: AdHocClaim",
+    "engines": [
+      "knip"
+    ],
+    "raw": "mypi-tasks/16-antislop-audit-n3/fixtures/raw/knip.stdout",
+    "severity": "warning",
+    "resolved_dependency": null
+  }
+]

@@ -1,0 +1,362 @@
+{
+  "seed": 20261028,
+  "cap": 5,
+  "method": "stratified_per_cohort",
+  "finding_ids": [
+    "aislop:ruff/I001:scripts/_fireworks_backfill_300.py:3:74cfe969",
+    "aislop:ruff/I001:scripts/seed_demo.py:30:74cfe969",
+    "aislop:ruff/I001:scripts/smoke_test_fireworks.py:13:74cfe969",
+    "aislop:ruff/I001:scripts/x2_pairwise.py:3:74cfe969",
+    "aislop:ruff/I001:scripts/r2.9d_rebuild.py:162:74cfe969",
+    "aislop:ruff/F401:pipeline/embedding_client.py:14:c73e1128",
+    "aislop:ruff/F401:pipeline/snapshots.py:12:2c78f309",
+    "aislop:ruff/F401:pipeline/investigate.py:12:90264655",
+    "aislop:ruff/F401:scripts/recluster_all.py:18:c73e1128",
+    "aislop:ruff/F401:scripts/seed_demo.py:25:7d3b6fc6",
+    "aislop:ruff/BLE001:scripts/sanity_check.py:112:c3bee311",
+    "aislop:ruff/BLE001:pipeline/news_search.py:43:c3bee311",
+    "aislop:ruff/BLE001:scripts/sanity_check.py:160:c3bee311",
+    "aislop:ruff/BLE001:scripts/sanity_check.py:99:c3bee311",
+    "aislop:ruff/BLE001:scripts/smoke_test_fireworks.py:53:c3bee311",
+    "aislop:ruff/EXE001:scripts/v2a_db_search.py:1:2bb49dba",
+    "aislop:ruff/EXE001:scripts/recluster_all.py:1:2bb49dba",
+    "aislop:ruff/EXE001:scripts/sanity_check.py:1:2bb49dba",
+    "aislop:ruff/EXE001:scripts/survey-sources.py:1:2bb49dba",
+    "aislop:ruff/EXE001:scripts/w1w2_sweep.py:1:2bb49dba",
+    "aislop:ruff/UP045:db/articles.py:36:94f0ac0d",
+    "aislop:ruff/UP045:db/snapshots.py:14:94f0ac0d",
+    "aislop:ruff/UP045:db/snapshots.py:12:94f0ac0d",
+    "aislop:ruff/UP045:db/snapshots.py:42:94f0ac0d",
+    "aislop:ruff/UP045:db/snapshots.py:31:94f0ac0d",
+    "aislop:ruff/UP017:scripts/survey-sources.py:157:4ae63c57",
+    "aislop:ruff/UP017:scripts/survey-sources.py:179:4ae63c57",
+    "aislop:ruff/UP017:pipeline/runner_scheduler.py:47:4ae63c57",
+    "aislop:ruff/UP017:scripts/survey-extraction.py:177:4ae63c57",
+    "aislop:ruff/UP017:scripts/eps_sweep.py:158:4ae63c57",
+    "aislop:ruff/F541:scripts/recluster_all.py:255:8eb43f9f",
+    "aislop:ruff/F541:scripts/seed_demo.py:185:8eb43f9f",
+    "aislop:ruff/F541:scripts/z1z2_gap.py:83:8eb43f9f",
+    "aislop:ruff/F541:scripts/seed_demo.py:85:8eb43f9f",
+    "aislop:ruff/F541:scripts/seed_demo.py:184:8eb43f9f",
+    "aislop:ruff/B008:app/main.py:205:82d4f616",
+    "aislop:ruff/B008:app/main.py:405:82d4f616",
+    "aislop:ruff/B008:app/main.py:387:82d4f616",
+    "aislop:ruff/B008:app/main.py:393:82d4f616",
+    "aislop:ruff/B008:app/main.py:399:82d4f616",
+    "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:18:e06c5fda",
+    "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:25:e06c5fda",
+    "aislop:ai-slop/hardcoded-url:app/investigate_endpoint.py:44:e06c5fda",
+    "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:9:e06c5fda",
+    "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:28:e06c5fda",
+    "aislop:ai-slop/unused-import:scripts/legacy/harvest_story.py:15:869b0a03",
+    "aislop:ai-slop/unused-import:app/investigate_endpoint.py:9:6bf037ae",
+    "aislop:ai-slop/unused-import:pipeline/agent1_intake.py:19:c06bdb1f",
+    "aislop:ai-slop/unused-import:scripts/y3_verify.py:3:869b0a03",
+    "aislop:ai-slop/unused-import:scripts/s3_checks.py:3:869b0a03",
+    "aislop:ai-slop/swallowed-exception:pipeline/runner_scheduler.py:39:e342cb3e",
+    "aislop:ai-slop/swallowed-exception:scripts/w1w2_sweep.py:12:a610ed6e",
+    "aislop:ai-slop/swallowed-exception:scripts/recluster_all.py:29:a610ed6e",
+    "aislop:ai-slop/swallowed-exception:scripts/sanity_check.py:255:a610ed6e",
+    "aislop:ai-slop/swallowed-exception:scripts/v2a_db_search.py:37:a610ed6e",
+    "aislop:ai-slop/python-chained-dict-get:scripts/survey-extraction.py:230:e9f436b0",
+    "aislop:ai-slop/python-chained-dict-get:pipeline/news_search.py:57:e9f436b0",
+    "aislop:ai-slop/python-chained-dict-get:pipeline/claim_matching.py:153:e9f436b0",
+    "aislop:ai-slop/python-chained-dict-get:scripts/gemma_batch_extract.py:272:e9f436b0",
+    "aislop:ai-slop/python-chained-dict-get:scripts/gemma_batch_extract.py:271:e9f436b0",
+    "aislop:ai-slop/hallucinated-import:pipeline/extractor.py:2:da14d6c3",
+    "aislop:ai-slop/hallucinated-import:pipeline/vertical_classifier.py:12:d96dd5df",
+    "aislop:ai-slop/hallucinated-import:pipeline/claim_matching.py:25:d96dd5df",
+    "aislop:ai-slop/hallucinated-import:pipeline/extractor.py:3:da14d6c3",
+    "aislop:ai-slop/hallucinated-import:worker/server.py:10:71d1b726",
+    "aislop:ai-slop/python-range-len-loop:scripts/z1z2_gap.py:131:b4ef48e7",
+    "aislop:ai-slop/python-range-len-loop:scripts/d2_near_miss.py:46:ff28bbdd",
+    "aislop:ai-slop/python-range-len-loop:scripts/x2_pairwise.py:87:daca6623",
+    "aislop:ai-slop/python-range-len-loop:scripts/z1z2_gap.py:86:b4ef48e7",
+    "aislop:ai-slop/python-range-len-loop:scripts/x2_pairwise.py:110:daca6623",
+    "aislop:ai-slop/python-print-debug:pipeline/runner.py:51:bcc3a0e5",
+    "aislop:ai-slop/python-print-debug:pipeline/runner_scheduler.py:40:bcc3a0e5",
+    "aislop:ai-slop/python-print-debug:pipeline/agent1_intake.py:274:bcc3a0e5",
+    "aislop:ai-slop/python-print-debug:pipeline/runner_scheduler.py:38:bcc3a0e5",
+    "aislop:ai-slop/python-print-debug:pipeline/agent1_intake.py:261:bcc3a0e5",
+    "aislop:security/vulnerable-dependency:package.json:0:c7d3ce64",
+    "aislop:security/vulnerable-dependency:package.json:0:1c431e21",
+    "aislop:security/vulnerable-dependency:package.json:0:2c7784ad",
+    "aislop:security/vulnerable-dependency:package.json:0:822577a4",
+    "aislop:security/vulnerable-dependency:package.json:0:b836a47f",
+    "fallow:unused_exports:src/components/ui/dialog.tsx:155:f4af66d7",
+    "fallow:unused_exports:src/components/ui/toggle.tsx:45:67e0d20f",
+    "fallow:unused_exports:src/components/ui/card.tsx:102:d62b6517",
+    "fallow:unused_exports:src/components/ui/card.tsx:100:2b41c33c",
+    "fallow:unused_exports:src/components/ui/card.tsx:99:0cf90913",
+    "jscpd:exact:package-lock.json:1783:4fdb5ca1",
+    "jscpd:exact:src/__tests__/cluster-report.test.tsx:30:8ca21b26",
+    "jscpd:exact:src/pages/ClusterReport.tsx:102:ab9baba5",
+    "jscpd:exact:scripts/eps_sweep.py:266:31c563ef",
+    "jscpd:exact:package-lock.json:1553:8cbdc930",
+    "biome:assist/source/organizeImports:src/components/PageShell.tsx:1:acf8f636",
+    "biome:assist/source/organizeImports:vite.config.ts:2:acf8f636",
+    "biome:assist/source/organizeImports:src/__tests__/router-shell.test.tsx:1:acf8f636",
+    "biome:assist/source/organizeImports:src/pages/Investigate.tsx:1:6b278af8",
+    "biome:assist/source/organizeImports:db/__tests__/schema.test.ts:1:acf8f636",
+    "oxlint:eslint(no-unused-vars):src/__tests__/pipeline-flow.test.tsx:15:db5539d1",
+    "oxlint:react(set-state-in-effect):src/components/AppNav.tsx:19:cb3ab3e7",
+    "oxlint:react-hooks(exhaustive-deps):src/components/ScatterPlot.tsx:96:a842360e",
+    "oxlint:react(only-export-components):src/components/ui/button.tsx:67:23aebbb9",
+    "oxlint:react(only-export-components):src/components/ui/toggle.tsx:45:23aebbb9",
+    "oxlint:react(set-state-in-effect):src/pages/Sources.tsx:213:cb3ab3e7",
+    "oxlint:react-hooks(exhaustive-deps):src/pages/Sources.tsx:298:642a72e5",
+    "knip:types:src/store.ts:15:e3cfc733"
+  ],
+  "strata": [
+    {
+      "key": "aislop/ruff/I001",
+      "frame": 74,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/I001:scripts/_fireworks_backfill_300.py:3:74cfe969",
+        "aislop:ruff/I001:scripts/seed_demo.py:30:74cfe969",
+        "aislop:ruff/I001:scripts/smoke_test_fireworks.py:13:74cfe969",
+        "aislop:ruff/I001:scripts/x2_pairwise.py:3:74cfe969",
+        "aislop:ruff/I001:scripts/r2.9d_rebuild.py:162:74cfe969"
+      ]
+    },
+    {
+      "key": "aislop/ruff/F401",
+      "frame": 35,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/F401:pipeline/embedding_client.py:14:c73e1128",
+        "aislop:ruff/F401:pipeline/snapshots.py:12:2c78f309",
+        "aislop:ruff/F401:pipeline/investigate.py:12:90264655",
+        "aislop:ruff/F401:scripts/recluster_all.py:18:c73e1128",
+        "aislop:ruff/F401:scripts/seed_demo.py:25:7d3b6fc6"
+      ]
+    },
+    {
+      "key": "aislop/ruff/BLE001",
+      "frame": 34,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/BLE001:scripts/sanity_check.py:112:c3bee311",
+        "aislop:ruff/BLE001:pipeline/news_search.py:43:c3bee311",
+        "aislop:ruff/BLE001:scripts/sanity_check.py:160:c3bee311",
+        "aislop:ruff/BLE001:scripts/sanity_check.py:99:c3bee311",
+        "aislop:ruff/BLE001:scripts/smoke_test_fireworks.py:53:c3bee311"
+      ]
+    },
+    {
+      "key": "aislop/ruff/EXE001",
+      "frame": 30,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/EXE001:scripts/v2a_db_search.py:1:2bb49dba",
+        "aislop:ruff/EXE001:scripts/recluster_all.py:1:2bb49dba",
+        "aislop:ruff/EXE001:scripts/sanity_check.py:1:2bb49dba",
+        "aislop:ruff/EXE001:scripts/survey-sources.py:1:2bb49dba",
+        "aislop:ruff/EXE001:scripts/w1w2_sweep.py:1:2bb49dba"
+      ]
+    },
+    {
+      "key": "aislop/ruff/UP045",
+      "frame": 29,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/UP045:db/articles.py:36:94f0ac0d",
+        "aislop:ruff/UP045:db/snapshots.py:14:94f0ac0d",
+        "aislop:ruff/UP045:db/snapshots.py:12:94f0ac0d",
+        "aislop:ruff/UP045:db/snapshots.py:42:94f0ac0d",
+        "aislop:ruff/UP045:db/snapshots.py:31:94f0ac0d"
+      ]
+    },
+    {
+      "key": "aislop/ruff/UP017",
+      "frame": 22,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/UP017:scripts/survey-sources.py:157:4ae63c57",
+        "aislop:ruff/UP017:scripts/survey-sources.py:179:4ae63c57",
+        "aislop:ruff/UP017:pipeline/runner_scheduler.py:47:4ae63c57",
+        "aislop:ruff/UP017:scripts/survey-extraction.py:177:4ae63c57",
+        "aislop:ruff/UP017:scripts/eps_sweep.py:158:4ae63c57"
+      ]
+    },
+    {
+      "key": "aislop/ruff/F541",
+      "frame": 18,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/F541:scripts/recluster_all.py:255:8eb43f9f",
+        "aislop:ruff/F541:scripts/seed_demo.py:185:8eb43f9f",
+        "aislop:ruff/F541:scripts/z1z2_gap.py:83:8eb43f9f",
+        "aislop:ruff/F541:scripts/seed_demo.py:85:8eb43f9f",
+        "aislop:ruff/F541:scripts/seed_demo.py:184:8eb43f9f"
+      ]
+    },
+    {
+      "key": "aislop/ruff/B008",
+      "frame": 12,
+      "sampled": 5,
+      "ids": [
+        "aislop:ruff/B008:app/main.py:205:82d4f616",
+        "aislop:ruff/B008:app/main.py:405:82d4f616",
+        "aislop:ruff/B008:app/main.py:387:82d4f616",
+        "aislop:ruff/B008:app/main.py:393:82d4f616",
+        "aislop:ruff/B008:app/main.py:399:82d4f616"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/hardcoded-url",
+      "frame": 44,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:18:e06c5fda",
+        "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:25:e06c5fda",
+        "aislop:ai-slop/hardcoded-url:app/investigate_endpoint.py:44:e06c5fda",
+        "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:9:e06c5fda",
+        "aislop:ai-slop/hardcoded-url:pipeline/scraper.py:28:e06c5fda"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/unused-import",
+      "frame": 25,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/unused-import:scripts/legacy/harvest_story.py:15:869b0a03",
+        "aislop:ai-slop/unused-import:app/investigate_endpoint.py:9:6bf037ae",
+        "aislop:ai-slop/unused-import:pipeline/agent1_intake.py:19:c06bdb1f",
+        "aislop:ai-slop/unused-import:scripts/y3_verify.py:3:869b0a03",
+        "aislop:ai-slop/unused-import:scripts/s3_checks.py:3:869b0a03"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/swallowed-exception",
+      "frame": 12,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/swallowed-exception:pipeline/runner_scheduler.py:39:e342cb3e",
+        "aislop:ai-slop/swallowed-exception:scripts/w1w2_sweep.py:12:a610ed6e",
+        "aislop:ai-slop/swallowed-exception:scripts/recluster_all.py:29:a610ed6e",
+        "aislop:ai-slop/swallowed-exception:scripts/sanity_check.py:255:a610ed6e",
+        "aislop:ai-slop/swallowed-exception:scripts/v2a_db_search.py:37:a610ed6e"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/python-chained-dict-get",
+      "frame": 11,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/python-chained-dict-get:scripts/survey-extraction.py:230:e9f436b0",
+        "aislop:ai-slop/python-chained-dict-get:pipeline/news_search.py:57:e9f436b0",
+        "aislop:ai-slop/python-chained-dict-get:pipeline/claim_matching.py:153:e9f436b0",
+        "aislop:ai-slop/python-chained-dict-get:scripts/gemma_batch_extract.py:272:e9f436b0",
+        "aislop:ai-slop/python-chained-dict-get:scripts/gemma_batch_extract.py:271:e9f436b0"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/hallucinated-import",
+      "frame": 8,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/hallucinated-import:pipeline/extractor.py:2:da14d6c3",
+        "aislop:ai-slop/hallucinated-import:pipeline/vertical_classifier.py:12:d96dd5df",
+        "aislop:ai-slop/hallucinated-import:pipeline/claim_matching.py:25:d96dd5df",
+        "aislop:ai-slop/hallucinated-import:pipeline/extractor.py:3:da14d6c3",
+        "aislop:ai-slop/hallucinated-import:worker/server.py:10:71d1b726"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/python-range-len-loop",
+      "frame": 7,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/python-range-len-loop:scripts/z1z2_gap.py:131:b4ef48e7",
+        "aislop:ai-slop/python-range-len-loop:scripts/d2_near_miss.py:46:ff28bbdd",
+        "aislop:ai-slop/python-range-len-loop:scripts/x2_pairwise.py:87:daca6623",
+        "aislop:ai-slop/python-range-len-loop:scripts/z1z2_gap.py:86:b4ef48e7",
+        "aislop:ai-slop/python-range-len-loop:scripts/x2_pairwise.py:110:daca6623"
+      ]
+    },
+    {
+      "key": "aislop/ai-slop/python-print-debug",
+      "frame": 5,
+      "sampled": 5,
+      "ids": [
+        "aislop:ai-slop/python-print-debug:pipeline/runner.py:51:bcc3a0e5",
+        "aislop:ai-slop/python-print-debug:pipeline/runner_scheduler.py:40:bcc3a0e5",
+        "aislop:ai-slop/python-print-debug:pipeline/agent1_intake.py:274:bcc3a0e5",
+        "aislop:ai-slop/python-print-debug:pipeline/runner_scheduler.py:38:bcc3a0e5",
+        "aislop:ai-slop/python-print-debug:pipeline/agent1_intake.py:261:bcc3a0e5"
+      ]
+    },
+    {
+      "key": "aislop/security/vulnerable-dependency",
+      "frame": 23,
+      "sampled": 5,
+      "ids": [
+        "aislop:security/vulnerable-dependency:package.json:0:c7d3ce64",
+        "aislop:security/vulnerable-dependency:package.json:0:1c431e21",
+        "aislop:security/vulnerable-dependency:package.json:0:2c7784ad",
+        "aislop:security/vulnerable-dependency:package.json:0:822577a4",
+        "aislop:security/vulnerable-dependency:package.json:0:b836a47f"
+      ]
+    },
+    {
+      "key": "fallow/unused_exports",
+      "frame": 14,
+      "sampled": 5,
+      "ids": [
+        "fallow:unused_exports:src/components/ui/dialog.tsx:155:f4af66d7",
+        "fallow:unused_exports:src/components/ui/toggle.tsx:45:67e0d20f",
+        "fallow:unused_exports:src/components/ui/card.tsx:102:d62b6517",
+        "fallow:unused_exports:src/components/ui/card.tsx:100:2b41c33c",
+        "fallow:unused_exports:src/components/ui/card.tsx:99:0cf90913"
+      ]
+    },
+    {
+      "key": "jscpd/exact",
+      "frame": 66,
+      "sampled": 5,
+      "ids": [
+        "jscpd:exact:package-lock.json:1783:4fdb5ca1",
+        "jscpd:exact:src/__tests__/cluster-report.test.tsx:30:8ca21b26",
+        "jscpd:exact:src/pages/ClusterReport.tsx:102:ab9baba5",
+        "jscpd:exact:scripts/eps_sweep.py:266:31c563ef",
+        "jscpd:exact:package-lock.json:1553:8cbdc930"
+      ]
+    },
+    {
+      "key": "biome/assist/source",
+      "frame": 5,
+      "sampled": 5,
+      "ids": [
+        "biome:assist/source/organizeImports:src/components/PageShell.tsx:1:acf8f636",
+        "biome:assist/source/organizeImports:vite.config.ts:2:acf8f636",
+        "biome:assist/source/organizeImports:src/__tests__/router-shell.test.tsx:1:acf8f636",
+        "biome:assist/source/organizeImports:src/pages/Investigate.tsx:1:6b278af8",
+        "biome:assist/source/organizeImports:db/__tests__/schema.test.ts:1:acf8f636"
+      ]
+    },
+    {
+      "key": "oxlint (full frame)",
+      "frame": 7,
+      "sampled": 7,
+      "ids": [
+        "oxlint:eslint(no-unused-vars):src/__tests__/pipeline-flow.test.tsx:15:db5539d1",
+        "oxlint:react(set-state-in-effect):src/components/AppNav.tsx:19:cb3ab3e7",
+        "oxlint:react-hooks(exhaustive-deps):src/components/ScatterPlot.tsx:96:a842360e",
+        "oxlint:react(only-export-components):src/components/ui/button.tsx:67:23aebbb9",
+        "oxlint:react(only-export-components):src/components/ui/toggle.tsx:45:23aebbb9",
+        "oxlint:react(set-state-in-effect):src/pages/Sources.tsx:213:cb3ab3e7",
+        "oxlint:react-hooks(exhaustive-deps):src/pages/Sources.tsx:298:642a72e5"
+      ]
+    },
+    {
+      "key": "knip/types",
+      "frame": 1,
+      "sampled": 1,
+      "ids": [
+        "knip:types:src/store.ts:15:e3cfc733"
+      ]
+    }
+  ]
+}

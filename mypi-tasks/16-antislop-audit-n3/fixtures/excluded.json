@@ -1,0 +1,270 @@
+{
+  "note": "Four further biome/format findings sit in data/ and were excluded by --ignore 'data/**' (out of scope), so biome/format is 48 raw / 44 in scope.",
+  "excluded": [
+    {
+      "cohort": "aislop/python-formatting",
+      "frame": 71,
+      "reason": "formatting — settled as noise"
+    },
+    {
+      "cohort": "biome/format",
+      "frame": 44,
+      "reason": "formatting — settled as noise"
+    },
+    {
+      "cohort": "biome/lint/complexity/useArrowFunction",
+      "frame": 18,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "biome/lint/correctness/useExhaustiveDependencies",
+      "frame": 12,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "fallow/crap",
+      "frame": 10,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "aislop/ruff/F841",
+      "frame": 9,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/complexity/function-too-long",
+      "frame": 8,
+      "reason": "settled (measurement, not a verdict)"
+    },
+    {
+      "cohort": "fallow/unused_files",
+      "frame": 8,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "biome/lint/style/useTemplate",
+      "frame": 8,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "biome/lint/suspicious/noArrayIndexKey",
+      "frame": 7,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/code-quality/duplicate-block",
+      "frame": 6,
+      "reason": "settled (measurement, not a verdict)"
+    },
+    {
+      "cohort": "fallow/code-duplication",
+      "frame": 6,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "fallow/cognitive_crap",
+      "frame": 5,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "biome/parse",
+      "frame": 5,
+      "reason": "config gap, not source (Tailwind syntax disabled)"
+    },
+    {
+      "cohort": "aislop/complexity/file-too-large",
+      "frame": 4,
+      "reason": "settled (measurement, not a verdict)"
+    },
+    {
+      "cohort": "aislop/ruff/FURB162",
+      "frame": 4,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "biome/lint/a11y/useButtonType",
+      "frame": 4,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/ruff/C401",
+      "frame": 3,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "biome/lint/performance/useDomNodeTextContent",
+      "frame": 3,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/ruff/S110",
+      "frame": 3,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "biome/lint/complexity/noArguments",
+      "frame": 3,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "biome/lint/style/noNonNullAssertion",
+      "frame": 3,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "fallow/unused_types",
+      "frame": 3,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "fallow/all",
+      "frame": 3,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "aislop/ruff/FURB188",
+      "frame": 2,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ruff/PERF102",
+      "frame": 2,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ruff/F821",
+      "frame": 2,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "biome/lint/a11y/noSvgWithoutTitle",
+      "frame": 2,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "biome/lint/correctness/noInnerDeclarations",
+      "frame": 2,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/eslint/no-empty",
+      "frame": 2,
+      "reason": "settled (redundant with other tools)"
+    },
+    {
+      "cohort": "biome/lint/correctness/noSwitchDeclarations",
+      "frame": 2,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/ai-slop/unsafe-type-assertion",
+      "frame": 2,
+      "reason": "ai-slop rule outside the 7 sampled cohorts; settled or frame below 5"
+    },
+    {
+      "cohort": "biome/lint/suspicious/noExplicitAny",
+      "frame": 2,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/ai-slop/narrative-comment",
+      "frame": 2,
+      "reason": "ai-slop rule outside the 7 sampled cohorts; settled or frame below 5"
+    },
+    {
+      "cohort": "aislop/ruff/UP041",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "fallow/unlisted_dependencies",
+      "frame": 1,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "fallow/test_only_dependencies",
+      "frame": 1,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "aislop/ruff/S112",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "fallow/unresolved_imports",
+      "frame": 1,
+      "reason": "settled in the prior two runs"
+    },
+    {
+      "cohort": "aislop/ruff/PLW1510",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ruff/F811",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ruff/TRY004",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ruff/RUF059",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/complexity/too-many-params",
+      "frame": 1,
+      "reason": "settled (measurement, not a verdict)"
+    },
+    {
+      "cohort": "aislop/complexity/deep-nesting",
+      "frame": 1,
+      "reason": "settled (measurement, not a verdict)"
+    },
+    {
+      "cohort": "aislop/ruff/SIM115",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ruff/SIM905",
+      "frame": 1,
+      "reason": "ruff rule outside the 8 sampled cohorts; excluded from this sample"
+    },
+    {
+      "cohort": "aislop/ai-slop/python-broad-except",
+      "frame": 1,
+      "reason": "ai-slop rule outside the 7 sampled cohorts; settled or frame below 5"
+    },
+    {
+      "cohort": "biome/lint/correctness/noUnusedVariables",
+      "frame": 1,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/jsx-a11y/prefer-tag-over-role",
+      "frame": 1,
+      "reason": "settled (redundant with other tools)"
+    },
+    {
+      "cohort": "biome/lint/suspicious/useIterableCallbackReturn",
+      "frame": 1,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    },
+    {
+      "cohort": "aislop/ai-slop/double-type-assertion",
+      "frame": 1,
+      "reason": "ai-slop rule outside the 7 sampled cohorts; settled or frame below 5"
+    },
+    {
+      "cohort": "biome/lint/style/useNodejsImportProtocol",
+      "frame": 1,
+      "reason": "settled (formatter/lint assist, not an audit signal)"
+    }
+  ]
+}
