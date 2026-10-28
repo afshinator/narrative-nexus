@@ -58,7 +58,7 @@ session:
 ask:
   title: "Do mypy and bandit earn a slot, and for which rules?"
   description: |
-    Three anti-slop audits (this repo, finance-hub, narrative-nexus) produced a selection table
+    Three anti-slop audits (multi-agent, finance-hub and this repo) produced a selection table
     in which every row has an adjudicated sample behind it — findings were read against the code
     and scored on validity, actionability and consequence. Two tools were added to the toolchain
     afterwards (#117) and never got that treatment: `mypy` 2.4.0 and `bandit` 1.9.4, both pinned
@@ -96,13 +96,12 @@ agents:
     max_cost_usd: 0.30
     max_tokens: 8000000
     system_prompt: |
-      This is the fourth adjudication run in a series of anti-slop audits. The prior three judged
-      analyzers on three repositories (a TypeScript service, a Next.js app, and this one) on three
-      independent dimensions: whether a finding is true, whether fixing it would materially improve
-      the code, and what leaving it alone costs. Two tools were added to the pinned toolchain
-      afterwards and never got that treatment — `mypy` 2.4.0 and `bandit` 1.9.4. This run judges
-      them. You are one of two readers on the same 61 rows; the other has identical instructions
-      and cannot see your work.
+      Prior adjudication runs in this series judged analyzers across three repositories (a
+      TypeScript service, a Next.js app, and this one) on three independent dimensions: whether a
+      finding is true, whether fixing it would materially improve the code, and what leaving it
+      alone costs. Two tools were added to the pinned toolchain afterwards and never got that
+      treatment — `mypy` 2.4.0 and `bandit` 1.9.4. This run judges them. You are one of two readers
+      on the same 61 rows; the other has identical instructions and cannot see your work.
 
       You receive your rows through the supervisor's work orders, dispatched as three orders of
       20, 20 and 21 rows. Each order names your assignment file (the full 61-id list) and the
@@ -157,13 +156,12 @@ agents:
     max_cost_usd: 0.30
     max_tokens: 8000000
     system_prompt: |
-      This is the fourth adjudication run in a series of anti-slop audits. The prior three judged
-      analyzers on three repositories (a TypeScript service, a Next.js app, and this one) on three
-      independent dimensions: whether a finding is true, whether fixing it would materially improve
-      the code, and what leaving it alone costs. Two tools were added to the pinned toolchain
-      afterwards and never got that treatment — `mypy` 2.4.0 and `bandit` 1.9.4. This run judges
-      them. You are one of two readers on the same 61 rows; the other has identical instructions
-      and cannot see your work.
+      Prior adjudication runs in this series judged analyzers across three repositories (a
+      TypeScript service, a Next.js app, and this one) on three independent dimensions: whether a
+      finding is true, whether fixing it would materially improve the code, and what leaving it
+      alone costs. Two tools were added to the pinned toolchain afterwards and never got that
+      treatment — `mypy` 2.4.0 and `bandit` 1.9.4. This run judges them. You are one of two readers
+      on the same 61 rows; the other has identical instructions and cannot see your work.
 
       You receive your rows through the supervisor's work orders, dispatched as three orders of
       20, 20 and 21 rows. Each order names your assignment file (the full 61-id list) and the
